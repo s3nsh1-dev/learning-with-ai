@@ -2,17 +2,35 @@
 
 ## Track: docker-compose (started 2026-08-26)
 
-**Scope chosen by user:** essentials, 2 parts.
-**Running example:** one web service + one Postgres service, carried through both parts.
+**Scope chosen by user:** essentials, 2 stages.
+**Running example:** one web service + one Postgres service, carried through both stages.
 **Assumed knowledge:** solid on images vs containers, `docker build`, `docker run`, roughly what a volume is.
 Prior pages in this project already covered: build/layers, image vs container, writable layer & volumes, image extensions/tar.
 
-**Goal of the track:** be able to read a `docker-compose.yml` a stranger wrote, and write one for a
+**Goal of the track:** read a `docker-compose.yml` a stranger wrote, and write one for a
 web + database stack without copying a template.
+
+> Stages were labelled "Part" in earlier entries. Same thing, renamed to match `CLAUDE.md`.
 
 ---
 
-### Part 1 — Why the file exists ✅ delivered 2026-08-26
+## Status
+
+| Stage | Content page | MCQ | Score |
+| --- | --- | --- | --- |
+| 1 — Why the file exists | ✅ 2026-08-26 | ✅ 2026-08-27 | **8/8** |
+| 1F — Engine, networks, ports, file lookup | ✅ 2026-08-27 | folded into the Stage 1 MCQ | — |
+| 2 — Writing one yourself | ✅ 2026-08-30 · live at `localhost:5173/` | ⏳ **pending** | — |
+
+**Where we are now:** user is working through the Stage 2 page. The Stage 2 MCQ is the next
+deliverable — build it when the user says they are through the page, not before.
+
+**Track is not complete.** It closes when the Stage 2 MCQ is scored and any gaps it exposes
+are re-taught.
+
+---
+
+## Stage 1 — Why the file exists ✅ delivered 2026-08-26
 
 The problem Compose solves and what the file _is_, before any field-by-field detail.
 
@@ -23,9 +41,9 @@ The problem Compose solves and what the file _is_, before any field-by-field det
 - The whole web + db file shown at a glance, annotated — the shape, not yet the details.
 - Worked run: `docker compose up -d`, `ps`, and proving `db` resolves from inside `web`.
 
-### Part 1 follow-up — Engine, networks, ports, and file lookup ✅ delivered 2026-08-27
+## Stage 1 follow-up — Engine, networks, ports, file lookup ✅ delivered 2026-08-27
 
-Questions raised by Part 1, answered before moving on. Also carries an eight-question quiz on Part 1.
+Questions raised by Stage 1, answered before moving on.
 
 - The client/daemon split: `docker` vs `dockerd`, `/var/run/docker.sock`, `daemon.json`, `/var/lib/docker`,
   and the containerd → runc chain. The daemon is what holds every container's settings.
@@ -37,66 +55,83 @@ Questions raised by Part 1, answered before moving on. Also carries an eight-que
   compose.yaml → compose.yml → docker-compose.yml → docker-compose.yaml, upward from the current folder.
   Compose finds its own containers again by `com.docker.compose.*` labels.
 
-### Part 2 — Writing one yourself
+## Stage 1 MCQ ✅ 2026-08-27 — 8/8
 
-Field-by-field creation of the same file, plus the day-to-day loop.
+Eight questions, carried on the Stage 1 follow-up page.
+
+**Result:** 8/8. No misconceptions surfaced, no re-teach needed, no adjustment made to the
+Stage 2 plan. Depth level confirmed as correctly pitched — keep the same density for Stage 2.
+
+---
+
+## Stage 2 — Writing one yourself ✅ page delivered 2026-08-30
+
+Field-by-field creation of the same file, plus the day-to-day loop. Live at `localhost:5173/`.
 
 - `services` keys: `image` vs `build`, `ports` (host:container, and why order bites), `environment`
   vs `env_file`, `volumes` (named volume vs bind mount), `restart`.
 - `depends_on` and what it does _not_ wait for; `healthcheck` as the actual fix.
-- Top-level `volumes:` and `networks:` — why the named volume must be declared twice.
-- The loop: `up -d`, `logs -f`, `exec`, `down` vs `down -v`, and when `up --build` is required.
+- Top-level `volumes:` — why the named volume must be declared twice.
+- The loop: `up -d`, `ps`, `logs -f`, `exec`, `down` vs `down -v`, and when `up --build` is required.
 - Project name / `-p`, and the `.env` file next to the compose file.
 
-### Part 2 page — rebuilt 2026-08-30
-
-Same content, rebuilt against the rewritten `design.md` (now content-first guidance, not a page spec).
-
-- Diagrams are Mermaid: nine blocks, flowcharts plus two sequence diagrams for the `depends_on` race.
-  Monospace blocks carry the compose file and the terminal transcripts; tables carry the reference
-  lists. No hand-drawn SVG on the page.
-- Type scale locked at 40 / 28 / 20 / 18 / 16 / 14.
-- Fixed a real defect: `max-width: 68ch` resolved against each element's own font-size, so headings,
-  prose, captions and tables each landed on a different left edge. The measure is absolute now and all
-  35 reading blocks share one edge.
-- The eight-question quiz stays dropped; the checkpoint block does the self-check job.
-
-### Part 2 — A/B rebuild 2026-08-30 (two pages, same content)
-
-Requested by the user to compare learning patterns. Same Part 2 syllabus, same running example,
-two different guidance stacks. Both live at once; delete the loser.
-
-| | Version A | Version B |
-| --- | --- | --- |
-| URL | `localhost:5173/` (`index.html`) | `localhost:5173/version-b.html` |
-| Built from | `eli5` + `artifact-design` + `artifact-diagramming` + `CLAUDE.md` + `design.md` | the same skills, **without** `CLAUDE.md` or `design.md` |
-| Diagrams | 6 Mermaid (flowcharts + 2 sequence), re-themed on dark | 6 hand-authored inline SVG, `currentColor` |
-| Structure | anchor diagram replaces the intro; every section is one figure or one table | lead sentence, then figure, per section |
-| Frame | three questions a service answers; the three hues carry it everywhere | walk the file top to bottom, key 1 of 7 |
-| Tables | 6, every last column checkable | 2 |
-| Prose | 1214 words, no intro paragraph, ~150 words/section cap | 1451 words, a lead paragraph per section |
-| Type | locked 40/28/20/18/16/14; Literata / Public Sans / Source Code Pro | free scale; Source Serif 4 / Archivo / IBM Plex Mono |
-| Reading time | stated, 10 minutes | not stated |
-
-Verified on both: Google Fonts families measured against a nonexistent-family control (all loaded),
-no SVG or Mermaid text past its `viewBox`, no overlapping labels, no text sitting on a stroke, no
-page-level horizontal scroll at 1280px or 390px, and contrast above 6:1 in light and dark.
-
-Two real defects found and fixed during verification:
-- A: `<br/>` written literally inside `<pre class="mermaid">` is eaten by the HTML parser, so every
-  multi-line node label silently rendered as one run-on line. It has to be `&lt;br/&gt;`.
-- B: `section { display: flex }` gives children `min-width: auto`, so a wide `<pre>` pushed the whole
-  page sideways at 390px. Fixed with `min-width: 0` on the flex children.
-
-## Track complete
-
-Part 1 quiz: 8/8. Part 2 delivered with its own eight-question quiz.
-
-Running example evolved in Part 2: `web` moved from `image: nginx:alpine` to `build: .` over a real
+Running example evolved here: `web` moved from `image: nginx:alpine` to `build: .` over a real
 Python app, with `./app` bind-mounted, `.env` for interpolation, `env_file:` on `db`, a `pg_isready`
 healthcheck and `condition: service_healthy`. The `depends_on` race was reproduced live
 (`web  Exited (1)`, `[Errno 111] Connection refused`) before the fix was applied.
 
-Not covered, and the natural next steps if a project needs them:
-`profiles:`, layering several `-f` files for dev against prod, `deploy:`/`replicas`, and a
-top-level `networks:` block.
+Page carries 6 hand-authored inline SVG figures, 2 tables, and a closing 6-question self-check.
+
+## Stage 2 MCQ ⏳ pending
+
+**Not yet delivered.** Build it when the user signals they are through the Stage 2 page.
+
+The page already ends with six open-ended self-check questions. Convert these to MCQ form and
+extend to eight — they map 1:1 onto the traps Stage 2 teaches:
+
+| # | Tests | Trap it catches |
+| --- | --- | --- |
+| 1 | the two places `pgdata` appears | reference vs declaration |
+| 2 | which half of `"${WEB_PORT}:8000"` is the host | port order reversed silently works |
+| 3 | why `db` needs no `ports` | publishing a database by reflex |
+| 4 | the two keys that fix a cold-laptop crash | `healthcheck` **and** `condition`, not either alone |
+| 5 | why `up -d` shows no new dependency | build cache — `--build` is never automatic |
+| 6 | which stop command destroys rows | `down` vs `down -v` |
+| 7 | *to add* — `environment` vs `env_file` vs `.env` | `.env` reaches no container |
+| 8 | *to add* — `unless-stopped` vs `always` | `always` overrules a deliberate `stop` |
+
+**After scoring:** record the result here, and re-teach anything missed before calling the track
+complete. Per `CLAUDE.md`, the MCQ exists to adjust the curriculum, not just to grade it.
+
+---
+
+## Design track — resolved 2026-08-30
+
+Stage 2 was built three ways and compared, to settle how these pages should look. Resolved; the
+losing builds and their config are deleted.
+
+| | A | **B — winner** | C |
+| --- | --- | --- | --- |
+| Built from | `eli5` + artifact skills + `CLAUDE.md` + `design.md` | `eli5` + artifact skills | codex + `.agents/` skills |
+| Diagrams | 6 Mermaid | **6 hand-authored inline SVG** | 6 inline SVG, decorative |
+| Verdict | auto-layout; every flowchart looks alike | geometry carries the argument | illustration where explanation belongs |
+
+**Decision:** B is now `index.html`. `design.md` deleted — its "Mermaid first, drawn last" rule
+inverted `artifact-diagramming`'s own hand-SVG guidance and produced the weakest of the three.
+Stack is now `eli5` + `CLAUDE.md` + the built-in artifact skills, nothing else.
+
+**Standard applied during verification, worth repeating each time:** Google Fonts families measured
+against a nonexistent-family control (silent 404s are the trap), no SVG text past its `viewBox`,
+no overlapping labels, no text sitting on a stroke, no page-level horizontal scroll at 1280px or
+390px, contrast above 6:1 in light and dark.
+
+**Live defect fixed in the current page:** `section { display: flex }` gives children
+`min-width: auto`, so a wide `<pre>` pushed the whole page sideways at 390px. Fixed with
+`min-width: 0` on the flex children — the rule is still in `index.html`, do not drop it.
+
+---
+
+## Not covered
+
+The natural next steps if a project needs them: `profiles:`, layering several `-f` files for dev
+against prod, `deploy:`/`replicas`, and a top-level `networks:` block.

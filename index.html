@@ -381,6 +381,16 @@
         stroke-width: 2.5;
         fill: none;
       }
+      .dg .ln-hue2 {
+        stroke: var(--hue2);
+        stroke-width: 2.5;
+        fill: none;
+      }
+      .dg .ln-warn {
+        stroke: var(--warn);
+        stroke-width: 2.5;
+        fill: none;
+      }
       .dg .dash {
         stroke-dasharray: 7 6;
       }
@@ -819,7 +829,7 @@
       <section>
         <div class="sec-head">
           <span class="sec-kicker">Key 3 &middot; settings</span>
-          <h2>Two ways to hand over a value</h2>
+          <h2>Three files, read at two different moments</h2>
         </div>
 
         <p class="lead">
@@ -827,22 +837,75 @@
           variables.
         </p>
 
-        <div class="split">
-          <div class="card">
-            <h4>environment:</h4>
-            <p>
-              Values written into the compose file. Anyone reading the file sees them, which is fine
-              for a port, a log level, a hostname.
-            </p>
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg"
+              viewBox="0 0 920 380"
+              role="img"
+              aria-label="Two moments. First, .env is substituted into the text of compose.yaml and stops at the container wall. Second, environment and env_file cross the wall into the running process's environment."
+            >
+              <text x="16" y="26" class="sm dim">ON YOUR MACHINE</text>
+              <text x="684" y="26" class="sm dim">INSIDE THE CONTAINER</text>
+
+              <!-- the wall, with a gap wherever something actually crosses -->
+              <rect x="596" y="36" width="20" height="214" class="slab" />
+              <rect x="596" y="276" width="20" height="38" class="slab" />
+              <rect x="596" y="340" width="20" height="30" class="slab" />
+              <rect x="596" y="250" width="20" height="26" class="tint-a" />
+              <rect x="596" y="314" width="20" height="26" class="tint-b" />
+
+              <!-- moment 1 -->
+              <text x="16" y="64" class="sm b">MOMENT 1 &mdash; compose reads the file</text>
+              <rect x="16" y="76" width="160" height="88" rx="6" class="tint-warn" />
+              <text x="96" y="110" text-anchor="middle" class="mono b t-warn">.env</text>
+              <text x="96" y="138" text-anchor="middle" class="mono sm dim">TAG=16</text>
+
+              <line x1="184" y1="120" x2="254" y2="120" class="ln-warn" />
+              <polygon points="262,120 248,113 248,127" class="head" />
+              <text x="219" y="108" text-anchor="middle" class="sm dim">fills</text>
+
+              <rect x="272" y="68" width="290" height="104" rx="6" class="surface" />
+              <text x="417" y="94" text-anchor="middle" class="mono sm b">compose.yaml</text>
+              <text x="417" y="124" text-anchor="middle" class="mono sm dim">image: postgres:${TAG}</text>
+              <text x="417" y="150" text-anchor="middle" class="mono sm">image: postgres:<tspan class="b t-warn">16</tspan></text>
+
+              <line x1="566" y1="120" x2="576" y2="120" class="ln-bad" />
+              <line x1="579" y1="113" x2="593" y2="127" class="ln-bad" />
+              <line x1="593" y1="113" x2="579" y2="127" class="ln-bad" />
+              <text x="586" y="152" text-anchor="middle" class="sm b t-bad">stops here</text>
+
+              <line x1="16" y1="192" x2="904" y2="192" class="ln-dim dash" />
+
+              <!-- moment 2 -->
+              <text x="16" y="222" class="sm b">MOMENT 2 &mdash; the container starts</text>
+              <rect x="16" y="236" width="200" height="54" rx="6" class="tint-a" />
+              <text x="116" y="269" text-anchor="middle" class="mono sm b t-accent">environment:</text>
+              <rect x="16" y="300" width="200" height="54" rx="6" class="tint-b" />
+              <text x="116" y="333" text-anchor="middle" class="mono sm b t-hue2">env_file: .env.db</text>
+
+              <line x1="224" y1="263" x2="588" y2="263" class="ln-acc" />
+              <line x1="624" y1="263" x2="664" y2="263" class="ln-acc" />
+              <polygon points="672,263 658,256 658,270" class="head-acc" />
+              <line x1="224" y1="327" x2="588" y2="327" class="ln" />
+              <line x1="624" y1="327" x2="664" y2="327" class="ln" />
+              <polygon points="672,327 658,320 658,334" class="head" />
+
+              <rect x="684" y="250" width="220" height="104" rx="6" class="tint-good" />
+              <text x="794" y="284" text-anchor="middle" class="b">the process's env</text>
+              <text x="794" y="312" text-anchor="middle" class="mono sm">POSTGRES_USER=app</text>
+              <text x="794" y="336" text-anchor="middle" class="mono sm">DATABASE_URL=&hellip;</text>
+            </svg>
           </div>
-          <div class="card">
-            <h4>env_file:</h4>
-            <p>
-              Points at a file of <code>KEY=value</code> lines. Compose reads it and passes every
-              line in. This is where passwords go, because that file stays out of git.
-            </p>
-          </div>
-        </div>
+          <figcaption>
+            <strong>Only the bottom two arrows reach the container.</strong> A plain <code>.env</code>
+            is read while Compose is still parsing text, so it can change an image tag or a port
+            number and then its job is over &mdash; run <code>docker compose exec web env</code> and
+            you will not find <code>TAG</code> in there. <code>environment:</code> is for values you
+            do not mind reading in the file; <code>env_file:</code> is for the ones that stay out of
+            git. Two files one character apart, doing unrelated jobs.
+          </figcaption>
+        </figure>
 
         <pre><span class="c"># .env.db  — gitignored</span>
 POSTGRES_USER=app
@@ -862,16 +925,6 @@ POSTGRES_DB=appdb
           Read the last line slowly. The host in that URL is <code>db</code> &mdash; the service
           name from figure one, doing its job.
         </p>
-
-        <div class="callout note">
-          <span class="tag">Same name, different job</span>
-          <p>
-            A file called plain <code>.env</code> next to your compose file is
-            <strong>not</strong> handed to any container. Compose reads it while parsing the YAML, to
-            fill in blanks you wrote as <code>${LIKE_THIS}</code>. One file configures containers,
-            the other configures the file itself.
-          </p>
-        </div>
       </section>
 
       <!-- ========================= 5 ========================= -->
@@ -963,6 +1016,61 @@ POSTGRES_DB=appdb
         </div>
 
         <p class="lead">Containers exit. This is your standing instruction for when they do.</p>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg"
+              viewBox="0 0 920 340"
+              role="img"
+              aria-label="Four restart policies as timelines across three events. no stays down after a crash; on-failure comes back from a crash but not a reboot; unless-stopped comes back from both but stays down after you stop it; always comes back even then."
+            >
+              <rect x="752" y="56" width="156" height="232" class="band-bad" />
+
+              <text x="330" y="28" text-anchor="middle" class="sm">app crashes</text>
+              <text x="540" y="28" text-anchor="middle" class="sm">you reboot</text>
+              <text x="750" y="28" text-anchor="middle" class="sm b t-bad">you run stop</text>
+
+              <line x1="330" y1="40" x2="330" y2="292" class="ln-dim dash" />
+              <line x1="540" y1="40" x2="540" y2="292" class="ln-dim dash" />
+              <line x1="750" y1="40" x2="750" y2="292" class="ln-dim dash" />
+
+              <text x="16" y="96" class="mono sm b">no</text>
+              <rect x="140" y="76" width="186" height="30" rx="4" class="tint-good" />
+              <rect x="334" y="76" width="202" height="30" rx="4" class="box-open dash" />
+              <rect x="548" y="76" width="198" height="30" rx="4" class="box-open dash" />
+              <rect x="758" y="76" width="146" height="30" rx="4" class="box-open dash" />
+              <text x="16" y="154" class="mono sm b">on-failure</text>
+              <rect x="140" y="134" width="186" height="30" rx="4" class="tint-good" />
+              <rect x="334" y="134" width="202" height="30" rx="4" class="tint-good" />
+              <rect x="548" y="134" width="198" height="30" rx="4" class="box-open dash" />
+              <rect x="758" y="134" width="146" height="30" rx="4" class="box-open dash" />
+              <text x="16" y="212" class="mono sm b">unless-stopped</text>
+              <rect x="140" y="192" width="186" height="30" rx="4" class="tint-good" />
+              <rect x="334" y="192" width="202" height="30" rx="4" class="tint-good" />
+              <rect x="548" y="192" width="198" height="30" rx="4" class="tint-good" />
+              <rect x="758" y="192" width="146" height="30" rx="4" class="box-open dash" />
+              <text x="16" y="270" class="mono sm b">always</text>
+              <rect x="140" y="250" width="186" height="30" rx="4" class="tint-good" />
+              <rect x="334" y="250" width="202" height="30" rx="4" class="tint-good" />
+              <rect x="548" y="250" width="198" height="30" rx="4" class="tint-good" />
+              <rect x="758" y="250" width="146" height="30" rx="4" class="tint-good" />
+
+              <rect x="140" y="298" width="40" height="18" rx="3" class="tint-good" />
+              <text x="190" y="312" class="sm dim">running</text>
+              <rect x="286" y="298" width="40" height="18" rx="3" class="box-open dash" />
+              <text x="336" y="312" class="sm dim">stays down</text>
+            </svg>
+          </div>
+          <figcaption>
+            Read down the last column, inside the shaded band. <strong>That one segment is the
+            entire difference between the two policies you would actually pick.</strong> Under
+            <code>unless-stopped</code> a container you stopped on purpose stays stopped through the
+            next reboot; under <code>always</code> it is running again when you log back in, because
+            the policy outranks your decision. The first three columns are identical, which is why
+            the two get confused.
+          </figcaption>
+        </figure>
 
         <div class="tablewrap">
           <table>
@@ -1115,6 +1223,70 @@ POSTGRES_DB=appdb
           Compose stamps a project name on everything it creates, and by default that name is just
           the folder you happen to be standing in.
         </p>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg"
+              viewBox="0 0 920 360"
+              role="img"
+              aria-label="The folder name becomes the prefix on every container, network and volume Compose creates. Rename the folder and a second empty stack appears, while the original volume holding your rows is left outside it."
+            >
+              <rect x="16" y="60" width="190" height="80" rx="6" class="tint-a" />
+              <text x="111" y="94" text-anchor="middle" class="mono sm dim">/home/you/</text>
+              <text x="111" y="120" text-anchor="middle" class="mono b t-accent">myapp</text>
+              <line x1="214" y1="100" x2="268" y2="100" class="ln" />
+              <polygon points="276,100 262,93 262,107" class="head" />
+              <text x="245" y="88" text-anchor="middle" class="sm dim">stamps</text>
+
+              <rect x="290" y="44" width="614" height="112" rx="8" class="box-open dash" />
+              <rect x="310" y="72" width="180" height="64" rx="6" class="surface" />
+              <text x="400" y="102" text-anchor="middle" class="mono sm"><tspan class="b t-accent">myapp</tspan>-web-1</text>
+              <text x="400" y="124" text-anchor="middle" class="sm dim">container</text>
+              <rect x="506" y="72" width="180" height="64" rx="6" class="surface" />
+              <text x="596" y="102" text-anchor="middle" class="mono sm"><tspan class="b t-accent">myapp</tspan>-db-1</text>
+              <text x="596" y="124" text-anchor="middle" class="sm dim">container</text>
+              <rect x="702" y="72" width="182" height="64" rx="6" class="tint-good" />
+              <text x="793" y="102" text-anchor="middle" class="mono sm"><tspan class="b t-accent">myapp</tspan>_pgdata</text>
+              <text x="793" y="124" text-anchor="middle" class="sm dim">your rows live here</text>
+
+              <line x1="16" y1="180" x2="904" y2="180" class="ln-dim dash" />
+              <text x="16" y="206" class="sm b t-bad">you rename the folder</text>
+
+              <rect x="16" y="228" width="190" height="80" rx="6" class="tint-warn" />
+              <text x="111" y="262" text-anchor="middle" class="mono sm dim">/home/you/</text>
+              <text x="111" y="288" text-anchor="middle" class="mono b t-warn">shop</text>
+              <line x1="214" y1="268" x2="268" y2="268" class="ln" />
+              <polygon points="276,268 262,261 262,275" class="head" />
+
+              <rect x="290" y="222" width="400" height="112" rx="8" class="box-open dash" />
+              <text x="490" y="214" text-anchor="middle" class="sm dim">a second, empty stack</text>
+              <rect x="308" y="250" width="180" height="64" rx="6" class="surface" />
+              <text x="398" y="280" text-anchor="middle" class="mono sm"><tspan class="b t-warn">shop</tspan>-web-1</text>
+              <text x="398" y="302" text-anchor="middle" class="sm dim">container</text>
+              <rect x="500" y="250" width="172" height="64" rx="6" class="surface" />
+              <text x="586" y="280" text-anchor="middle" class="mono sm"><tspan class="b t-warn">shop</tspan>_pgdata</text>
+              <text x="586" y="302" text-anchor="middle" class="sm b t-bad">empty</text>
+
+              <line x1="694" y1="282" x2="701" y2="282" class="ln-bad" />
+              <line x1="703" y1="275" x2="717" y2="289" class="ln-bad" />
+              <line x1="717" y1="275" x2="703" y2="289" class="ln-bad" />
+              <line x1="719" y1="282" x2="726" y2="282" class="ln-bad" />
+
+              <rect x="730" y="250" width="174" height="64" rx="6" class="tint-good" />
+              <text x="817" y="280" text-anchor="middle" class="mono sm b t-good">myapp_pgdata</text>
+              <text x="817" y="302" text-anchor="middle" class="sm dim">still has your rows</text>
+            </svg>
+          </div>
+          <figcaption>
+            <strong>The volume on the bottom right is outside the new dashed boundary.</strong> It
+            was never deleted and nothing warns you &mdash; Compose matches its own objects by the
+            <code>com.docker.compose.project</code> label, so the renamed project simply cannot see
+            it and builds a fresh empty one beside it. Your database looks wiped and is not. Recover
+            by renaming the folder back, or pin a top-level <code>name: myapp</code> so the prefix
+            stops depending on where the folder lives.
+          </figcaption>
+        </figure>
 
         <pre>$ pwd
 /home/you/<span class="m">myapp</span>
@@ -1286,6 +1458,68 @@ WEB_PORT=8000
 
 <span class="k">volumes:</span>
   <span class="k">pgdata:</span></pre>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg"
+              viewBox="0 0 920 520"
+              role="img"
+              aria-label="The finished compose file with four links drawn in the margin, joining the pairs of lines that must agree: the port blank and the .env file, the hostname and the service key, service_healthy and the healthcheck block, and the volume mount and its top-level declaration."
+            >
+              <text x="40" y="60" class="mono sm">name: myapp</text>
+              <text x="40" y="84" class="mono sm">services:</text>
+              <text x="56" y="108" class="mono sm">web:</text>
+              <text x="72" y="132" class="mono sm dim">build: .</text>
+              <text x="72" y="156" class="mono sm dim">ports:</text>
+              <text x="88" y="180" class="mono sm">- "<tspan class="b t-warn">${WEB_PORT}</tspan>:8000"</text>
+              <text x="72" y="204" class="mono sm dim">environment:</text>
+              <text x="88" y="228" class="mono sm">DATABASE_URL: &hellip;@<tspan class="b t-accent">db</tspan>:5432/appdb</text>
+              <text x="72" y="252" class="mono sm dim">depends_on:</text>
+              <text x="88" y="276" class="mono sm dim">db:</text>
+              <text x="104" y="300" class="mono sm">condition: <tspan class="b t-good">service_healthy</tspan></text>
+              <text x="56" y="324" class="mono sm"><tspan class="b t-accent">db</tspan>:</text>
+              <text x="72" y="348" class="mono sm dim">image: postgres:16</text>
+              <text x="72" y="372" class="mono sm dim">volumes:</text>
+              <text x="88" y="396" class="mono sm">- <tspan class="b t-hue2">pgdata</tspan>:/var/lib/postgresql/data</text>
+              <text x="72" y="420" class="mono sm"><tspan class="b t-good">healthcheck:</tspan></text>
+              <text x="88" y="444" class="mono sm dim">test: ["CMD-SHELL", "pg_isready &hellip;"]</text>
+              <text x="40" y="468" class="mono sm">volumes:</text>
+              <text x="56" y="492" class="mono sm"><tspan class="b t-hue2">pgdata</tspan>:</text>
+
+              <line x1="400" y1="180" x2="762" y2="180" class="ln-warn" />
+              <text x="585" y="170" text-anchor="middle" class="sm dim">fills the blank</text>
+              <rect x="770" y="152" width="134" height="56" rx="6" class="tint-warn" />
+              <text x="837" y="176" text-anchor="middle" class="mono sm b t-warn">.env</text>
+              <text x="837" y="198" text-anchor="middle" class="mono sm dim">WEB_PORT=8000</text>
+
+              <path d="M 400 228 H 448 V 324 H 400" class="ln-acc" />
+              <circle cx="400" cy="228" r="4" class="head-acc" />
+              <circle cx="400" cy="324" r="4" class="head-acc" />
+              <text x="458" y="281" class="sm dim">same name</text>
+
+              <path d="M 400 300 H 560 V 420 H 400" class="ln-good" />
+              <circle cx="400" cy="300" r="4" class="head-good" />
+              <circle cx="400" cy="420" r="4" class="head-good" />
+              <text x="570" y="365" class="sm dim">one is useless without the other</text>
+
+              <path d="M 400 396 H 448 V 492 H 400" class="ln-hue2" />
+              <circle cx="400" cy="396" r="4" class="head-hue2" />
+              <circle cx="400" cy="492" r="4" class="head-hue2" />
+              <text x="458" y="449" class="sm dim">declare it as well</text>
+            </svg>
+          </div>
+          <figcaption>
+            <strong>Four pairs of lines have to agree, and nothing in the file marks them.</strong>
+            Three of the four fail loudly &mdash; a missing top-level <code>pgdata:</code> refuses to
+            start, a <code>${WEB_PORT}</code> with no <code>.env</code> resolves to an empty string,
+            and <code>service_healthy</code> without a <code>healthcheck</code> block is rejected
+            outright. The blue one is the quiet one: rename the service and the hostname in
+            <code>DATABASE_URL</code> still parses fine, then fails at runtime with
+            <code>could not translate host name</code>. <code>docker compose config</code> prints the
+            file with all four resolved, which is the fastest way to check them.
+          </figcaption>
+        </figure>
 
         <h3>Read it back to yourself</h3>
 
