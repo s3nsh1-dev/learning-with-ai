@@ -6,6 +6,9 @@ The user asks a question. You answer it as **one visual explainer page**, served
 
 Responses will be less verbose and address what prompt asks simple to digest knowledge with efficiency and accurate complexity based on prompt.
 
+This file governs logic only: routing, serving, verification. **Everything about how the page looks and
+reads lives in `@design.md`. Read it before you write `index.html`, every time.**
+
 ---
 
 ## The pattern — this is the whole thing
@@ -22,8 +25,8 @@ Responses will be less verbose and address what prompt asks simple to digest kno
   `localhost:5173`, not `127.0.0.1:5173`.
 
 - **How to answer.**
-  Check `Prompt.txt` for what user want explained. Response will be categorized in 2 sections. Judge the prompt the categorize it:
-  1. **Learning** — Ask user about how much he want the topic to be explored and other important questions for creating an curriculum for that topic and update the `Curriculum.md` file to keep track of stages. Curriculum will be divided into part (Number of parts will be based on how much depth we are going into) the start to final part will be covered via prompt exchange and explanation.
+  Check `prompt.txt` for what user want explained. Response will be categorized in 2 sections. Judge the prompt the categorize it:
+  1. **Learning** — Ask user about how much he want the topic to be explored and other important questions for creating an curriculum for that topic and update the `CURRICULUM.md` file to keep track of stages. Curriculum will be divided into part (Number of parts will be based on how much depth we are going into) the start to final part will be covered via prompt exchange and explanation.
 
   2. **Explaining** — When user ask a question, the answer will be simple and brief if question does not demand that much depth to be explored but if question is a followup on something we have been already exploring the go in step-step explanation but the scope of the answer in the document should only be topic level not sub-topic exploration (unless asked specifically).
 
@@ -33,15 +36,11 @@ Responses will be less verbose and address what prompt asks simple to digest kno
 
 ## Building the page
 
-Invoke the **`eli5`** skill (the user usually types `/eli5:eli5 <question>`), then **`artifact-design`** and **`artifact-diagramming`** — the diagrams _are_ the deliverable, so the second is not optional. Big pictures, few words, real depth in the captions.
-At the top of the file always page reading time like "X minutes read"
+Invoke the **`eli5`** skill (the user usually types `/eli5:eli5 <question>`), then **`artifact-design`**
+and **`artifact-diagramming`** — the diagrams _are_ the deliverable, so the second is not optional.
 
-### Shared skeleton, fresh palette
-
-1. The page grammar stays constant so it is instantly navigable:
-2. Reading friendly fonts. no styling which does not ease the learning process.
-3. Follow Professional simple to understand education content writing for every heading, sub-heading and main content for the generated document.
-4. Avoid the AI-design defaults from `artifact-design`: warm cream + serif + terracotta, lone acid-green pop, purple-blue gradient hero, Inter/Space Grotesk, emoji section markers, rounded cards with accent rails.
+`eli5` sets the approach. `@design.md` is the improvement layer on top of it, and it is the only place
+design decisions come from.
 
 ---
 
@@ -55,6 +54,8 @@ display face actually loaded - **a Google Fonts family that does not exist fails
 family of their own) and every heading rendered in Arial while the source read fine.
 `document.fonts.check()` is no help; it matches the fallback. Measure the rendered face
 against a nonexistent-family control instead.
+
+Then run the hand-over check at the end of `@design.md`.
 
 Delete Playwright's screenshots and `.playwright-mcp/` afterwards - the user sees them open
 in their editor.

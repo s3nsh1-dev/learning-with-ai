@@ -1,1 +1,1 @@
-i got 8/8 correct. should we start stage 2 or you have anything else. if not then start stage 2 
+@eli5 : i got 8/8 correct. should we start stage 2 or you have anything else. if not then start stage 2 . use style.css and script.js for js and css and index.html hold only skeleton
