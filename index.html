@@ -2,121 +2,102 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Writing a Compose File</title>
+    <title>Write the Compose File</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Public+Sans:wght@400;500;600&family=Source+Code+Pro:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
     />
     <style>
-      /* ================= tokens : light ================= */
+      /* ============ tokens: light ============ */
       :root {
         color-scheme: light dark;
 
-        --plain: "Public Sans", "Helvetica Neue", Arial, sans-serif;
-        --read: "Literata", Georgia, "Times New Roman", serif;
-        --mono: "Source Code Pro", ui-monospace, Menlo, monospace;
+        --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+        --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+        --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
-        --measure: 664px;
-        --col: 1020px;
+        --ground: #eaeef1;
+        --surface: #ffffff;
+        --surface-2: #f4f7f9;
+        --ink: #101a22;
+        --muted: #566976;
+        --rule: #ccd6dd;
 
-        --ground: #f1f2f3;
-        --ink: #1a1e23;
-        --muted: #5a636c;
-        --rule: #d2d6da;
-        --panel: #ffffff;
+        --accent: #15537d;
+        --hue2: #6a3d86;
+        --good: #1c6b41;
+        --bad: #9d2b2b;
+        --warn: #8a5410;
 
-        /* three questions = three hues */
-        --made: #2d4c6b; /* what it is made of   */
-        --made-bg: #e9eef4;
-        --made-fill: #d7e2ee;
+        --tint-a: #dfeaf3;
+        --tint-b: #ece3f4;
+        --tint-good: #dcecdf;
+        --tint-bad: #f6dfdf;
+        --tint-warn: #f7e9d3;
 
-        --conn: #1f5a52; /* what crosses its edge */
-        --conn-bg: #e8f0ee;
-        --conn-fill: #d3e5e0;
-
-        --when: #6a5117; /* when it runs          */
-        --when-bg: #f1eee6;
-        --when-fill: #e7dcc5;
-
-        /* two states */
-        --ok: #2c6b41;
-        --ok-bg: #e4efe6;
-        --bad: #93343a;
-        --bad-bg: #f4e5e5;
-
-        --code-bg: #191d22;
-        --code-ink: #d9dee4;
-        --code-key: #a8c4e0;
-        --code-val: #dcc08d;
-        --code-dim: #7e8894;
-        --code-ok: #92cba6;
-        --code-bad: #e79a9e;
-        --code-mark: #2e353d;
+        --code-bg: #0f1c25;
+        --code-ink: #d6e3ec;
+        --code-key: #8fc3e8;
+        --code-val: #e8c48a;
+        --code-dim: #7f95a4;
+        --code-mark: #2b4152;
       }
 
-      /* ================= tokens : dark ================= */
+      /* ============ tokens: dark ============ */
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme="light"]) {
-          --ground: #13161a;
-          --ink: #e4e8ec;
-          --muted: #97a1ab;
-          --rule: #2c3339;
-          --panel: #1b1f24;
+          --ground: #0d161d;
+          --surface: #15222b;
+          --surface-2: #1a2833;
+          --ink: #e3ecf2;
+          --muted: #93a8b6;
+          --rule: #2a3b47;
 
-          --made: #8fb5da;
-          --made-bg: #182129;
-          --made-fill: #223141;
+          --accent: #7cb4dd;
+          --hue2: #bb99d8;
+          --good: #66c48d;
+          --bad: #ef8f8f;
+          --warn: #d8ac63;
 
-          --conn: #63bfb0;
-          --conn-bg: #141f1e;
-          --conn-fill: #1c302d;
+          --tint-a: #1a2f3e;
+          --tint-b: #2b2338;
+          --tint-good: #17301f;
+          --tint-bad: #351c1c;
+          --tint-warn: #33291a;
 
-          --when: #d0af68;
-          --when-bg: #1f1c16;
-          --when-fill: #322c1e;
-
-          --ok: #6fc287;
-          --ok-bg: #16261b;
-          --bad: #e58b90;
-          --bad-bg: #2a1a1b;
-
-          --code-bg: #0e1114;
-          --code-mark: #262d34;
+          --code-bg: #0a1218;
+          --code-mark: #22323f;
         }
       }
 
       :root[data-theme="dark"] {
-        --ground: #13161a;
-        --ink: #e4e8ec;
-        --muted: #97a1ab;
-        --rule: #2c3339;
-        --panel: #1b1f24;
+        --ground: #0d161d;
+        --surface: #15222b;
+        --surface-2: #1a2833;
+        --ink: #e3ecf2;
+        --muted: #93a8b6;
+        --rule: #2a3b47;
 
-        --made: #8fb5da;
-        --made-bg: #182129;
-        --made-fill: #223141;
+        --accent: #7cb4dd;
+        --hue2: #bb99d8;
+        --good: #66c48d;
+        --bad: #ef8f8f;
+        --warn: #d8ac63;
 
-        --conn: #63bfb0;
-        --conn-bg: #141f1e;
-        --conn-fill: #1c302d;
+        --tint-a: #1a2f3e;
+        --tint-b: #2b2338;
+        --tint-good: #17301f;
+        --tint-bad: #351c1c;
+        --tint-warn: #33291a;
 
-        --when: #d0af68;
-        --when-bg: #1f1c16;
-        --when-fill: #322c1e;
-
-        --ok: #6fc287;
-        --ok-bg: #16261b;
-        --bad: #e58b90;
-        --bad-bg: #2a1a1b;
-
-        --code-bg: #0e1114;
-        --code-mark: #262d34;
+        --code-bg: #0a1218;
+        --code-mark: #22323f;
       }
 
-      /* ================= base ================= */
+      /* ============ base ============ */
       * {
         box-sizing: border-box;
       }
@@ -125,241 +106,422 @@
         margin: 0;
         background: var(--ground);
         color: var(--ink);
-        font-family: var(--read);
-        font-size: 18px;
-        line-height: 1.65;
-        font-weight: 400;
+        font-family: var(--serif);
+        font-size: 19px;
+        line-height: 1.7;
       }
 
-      .col {
-        width: min(100% - 48px, var(--col));
+      .wrap {
+        max-width: 980px;
         margin: 0 auto;
+        padding: 0 28px 120px;
       }
 
-      /* every block of reading matter shares one left edge and one measure */
-      p,
-      .meta,
-      figcaption,
-      .band,
-      h1,
-      h2,
-      h3,
-      ol,
-      ul {
-        max-width: var(--measure);
+      .measure {
+        max-width: 34em;
       }
 
-      /* ================= type scale : locked ================= */
-      h1 {
-        font-family: var(--plain);
-        font-size: 40px;
+      /* ============ masthead ============ */
+      .masthead {
+        padding: 84px 0 40px;
+      }
+
+      .eyebrow {
+        font-family: var(--sans);
+        font-size: 13px;
         font-weight: 600;
-        line-height: 1.18;
-        letter-spacing: -0.015em;
-        margin: 0 0 14px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin: 0 0 18px;
+      }
+
+      h1 {
+        font-family: var(--sans);
+        font-size: 52px;
+        line-height: 1.08;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0 0 20px;
         text-wrap: balance;
+        max-width: 14em;
+      }
+
+      .standfirst {
+        font-size: 21px;
+        line-height: 1.6;
+        color: var(--muted);
+        margin: 0;
+        max-width: 32em;
+      }
+
+      /* ============ sections ============ */
+      section {
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 4px;
+        padding: 40px 44px 46px;
+        margin-bottom: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      section > *,
+      figure > *,
+      .callout > * {
+        margin: 0;
+        /* flex items default to min-width:auto, which lets a wide <pre>
+           push the whole page sideways on a narrow screen */
+        min-width: 0;
+      }
+
+      .sec-head {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .sec-kicker {
+        font-family: var(--sans);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
       }
 
       h2 {
-        font-family: var(--plain);
-        font-size: 28px;
+        font-family: var(--sans);
+        font-size: 32px;
+        line-height: 1.2;
         font-weight: 600;
-        line-height: 1.25;
-        margin: 0 0 10px;
+        letter-spacing: -0.015em;
+        margin: 0;
         text-wrap: balance;
       }
 
       h3 {
-        font-family: var(--plain);
-        font-size: 20px;
+        font-family: var(--sans);
+        font-size: 19px;
         font-weight: 600;
-        line-height: 1.35;
-        margin: 34px 0 10px;
+        margin: 12px 0 0;
       }
 
       p {
-        font-size: 18px;
-        line-height: 1.65;
-        margin: 0 0 16px;
+        margin: 0;
       }
 
-      figcaption,
-      table,
-      .meta {
-        font-size: 16px;
-        line-height: 1.6;
-      }
-
-      .eyebrow,
-      thead th,
-      .tag {
-        font-family: var(--plain);
-        font-size: 14px;
-        font-weight: 500;
-        line-height: 1.4;
-      }
-
-      code {
-        font-family: var(--mono);
-        font-size: 0.86em;
-        background: var(--panel);
-        border: 1px solid var(--rule);
-        border-radius: 3px;
-        padding: 1px 5px;
-        white-space: nowrap;
+      .lead {
+        font-size: 22px;
+        line-height: 1.55;
+        max-width: 30em;
       }
 
       strong {
         font-weight: 600;
       }
 
+      code {
+        font-family: var(--mono);
+        font-size: 0.85em;
+        background: var(--surface-2);
+        border: 1px solid var(--rule);
+        padding: 1px 5px;
+        border-radius: 3px;
+        white-space: nowrap;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
       :focus-visible {
-        outline: 2px solid var(--made);
+        outline: 2px solid var(--accent);
         outline-offset: 3px;
       }
 
-      /* ================= masthead ================= */
-      .masthead {
-        padding: 76px 0 40px;
-      }
-
-      .meta {
-        font-family: var(--plain);
-        color: var(--muted);
-        margin: 0 0 26px;
-      }
-
-      .meta b {
-        color: var(--ink);
-        font-weight: 600;
-      }
-
-      .readtime {
-        font-family: var(--plain);
-        font-size: 14px;
-        font-weight: 500;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin: 0 0 20px;
-      }
-
-      /* ================= sections on their own ground ================= */
-      section {
-        padding: 52px 0 56px;
-      }
-
-      .g-made {
-        background: var(--made-bg);
-      }
-      .g-conn {
-        background: var(--conn-bg);
-      }
-      .g-when {
-        background: var(--when-bg);
-      }
-      .g-plain {
-        background: var(--ground);
-      }
-
-      .eyebrow {
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        margin: 0 0 12px;
-      }
-
-      .g-made .eyebrow {
-        color: var(--made);
-      }
-      .g-conn .eyebrow {
-        color: var(--conn);
-      }
-      .g-when .eyebrow {
-        color: var(--when);
-      }
-      .g-plain .eyebrow {
-        color: var(--muted);
-      }
-
-      /* ================= figures ================= */
+      /* ============ figures ============ */
       figure {
-        margin: 22px 0 0;
-        max-width: var(--col);
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
       }
 
       .plate {
-        background: var(--panel);
+        background: var(--surface-2);
         border: 1px solid var(--rule);
-        border-radius: 3px;
-        padding: 22px 18px;
+        border-radius: 4px;
+        padding: 26px 22px;
         overflow-x: auto;
       }
 
       figcaption {
+        font-size: 17px;
+        line-height: 1.6;
         color: var(--muted);
-        margin-top: 14px;
+        max-width: 36em;
       }
 
       figcaption strong {
         color: var(--ink);
       }
 
-      pre.mermaid {
-        margin: 0;
-        text-align: center;
-        min-width: 560px;
-      }
-
-      pre.mermaid svg {
-        max-width: 100%;
+      /* ============ diagram svg ============ */
+      .dg {
+        display: block;
+        width: 100%;
         height: auto;
+        color: var(--ink);
+        min-width: 620px;
       }
 
-      /* ================= monospace blocks ================= */
-      pre.term {
+      .dg text {
+        font-family: var(--sans);
+        fill: currentColor;
+        font-size: 15px;
+      }
+
+      .dg .mono {
+        font-family: var(--mono);
+      }
+      .dg .sm {
+        font-size: 13px;
+      }
+      .dg .lg {
+        font-size: 20px;
+      }
+      .dg .xl {
+        font-size: 27px;
+      }
+      .dg .b {
+        font-weight: 600;
+      }
+      .dg .dim {
+        fill: var(--muted);
+      }
+
+      .dg .surface {
+        fill: var(--surface);
+        stroke: var(--rule);
+        stroke-width: 2;
+      }
+      .dg .tint-a {
+        fill: var(--tint-a);
+        stroke: var(--accent);
+        stroke-width: 2;
+      }
+      .dg .tint-b {
+        fill: var(--tint-b);
+        stroke: var(--hue2);
+        stroke-width: 2;
+      }
+      .dg .tint-good {
+        fill: var(--tint-good);
+        stroke: var(--good);
+        stroke-width: 2;
+      }
+      .dg .tint-warn {
+        fill: var(--tint-warn);
+        stroke: var(--warn);
+        stroke-width: 2;
+      }
+      .dg .band-bad {
+        fill: var(--tint-bad);
+        stroke: none;
+      }
+      .dg .band-good {
+        fill: var(--tint-good);
+        stroke: none;
+      }
+      .dg .slab {
+        fill: var(--rule);
+        stroke: none;
+      }
+
+      .dg .t-accent {
+        fill: var(--accent);
+      }
+      .dg .t-hue2 {
+        fill: var(--hue2);
+      }
+      .dg .t-good {
+        fill: var(--good);
+      }
+      .dg .t-bad {
+        fill: var(--bad);
+      }
+      .dg .t-warn {
+        fill: var(--warn);
+      }
+
+      .dg .ln {
+        stroke: currentColor;
+        stroke-width: 2;
+        fill: none;
+      }
+      .dg .ln-dim {
+        stroke: var(--muted);
+        stroke-width: 2;
+        fill: none;
+      }
+      .dg .ln-bad {
+        stroke: var(--bad);
+        stroke-width: 2.5;
+        fill: none;
+      }
+      .dg .ln-good {
+        stroke: var(--good);
+        stroke-width: 2.5;
+        fill: none;
+      }
+      .dg .ln-acc {
+        stroke: var(--accent);
+        stroke-width: 2.5;
+        fill: none;
+      }
+      .dg .dash {
+        stroke-dasharray: 7 6;
+      }
+      .dg .box-open {
+        fill: none;
+        stroke: var(--muted);
+        stroke-width: 2;
+      }
+
+      .dg .head {
+        fill: currentColor;
+        stroke: none;
+      }
+      .dg .head-dim {
+        fill: var(--muted);
+        stroke: none;
+      }
+      .dg .head-bad {
+        fill: var(--bad);
+        stroke: none;
+      }
+      .dg .head-good {
+        fill: var(--good);
+        stroke: none;
+      }
+      .dg .head-acc {
+        fill: var(--accent);
+        stroke: none;
+      }
+      .dg .head-hue2 {
+        fill: var(--hue2);
+        stroke: none;
+      }
+
+      /* ============ code ============ */
+      pre {
         font-family: var(--mono);
         font-size: 15px;
         line-height: 1.7;
         background: var(--code-bg);
         color: var(--code-ink);
-        border-radius: 3px;
-        padding: 22px 24px;
+        border-radius: 4px;
+        padding: 24px 26px;
         overflow-x: auto;
-        margin: 22px 0 0;
-        max-width: var(--col);
+        margin: 0;
+        tab-size: 2;
       }
 
-      pre.term .k {
+      pre .k {
         color: var(--code-key);
       }
-      pre.term .v {
+      pre .v {
         color: var(--code-val);
       }
-      pre.term .c {
+      pre .c {
         color: var(--code-dim);
       }
-      pre.term .ok {
-        color: var(--code-ok);
-      }
-      pre.term .bad {
-        color: var(--code-bad);
-      }
-      pre.term .m {
+      pre .m {
         background: var(--code-mark);
         border-radius: 3px;
         padding: 1px 4px;
       }
+      pre .bad {
+        color: #f2a0a0;
+      }
+      pre .ok {
+        color: #90d9ad;
+      }
 
-      /* ================= tables ================= */
+      /* ============ callout ============ */
+      .callout {
+        border-left: 3px solid var(--rule);
+        padding: 4px 0 4px 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-width: 36em;
+      }
+
+      .callout .tag {
+        font-family: var(--sans);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .callout.warn {
+        border-left-color: var(--bad);
+      }
+      .callout.warn .tag {
+        color: var(--bad);
+      }
+
+      .callout.note {
+        border-left-color: var(--accent);
+      }
+      .callout.note .tag {
+        color: var(--accent);
+      }
+
+      /* ============ two-up ============ */
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .split .card {
+        border: 1px solid var(--rule);
+        border-radius: 4px;
+        padding: 20px 22px;
+        background: var(--surface-2);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .split .card h4 {
+        font-family: var(--mono);
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--accent);
+      }
+
+      .split .card p {
+        font-size: 17px;
+        line-height: 1.55;
+        color: var(--muted);
+      }
+
+      /* ============ table ============ */
       .tablewrap {
         overflow-x: auto;
-        margin: 22px 0 0;
-        max-width: var(--col);
       }
 
       table {
         width: 100%;
         border-collapse: collapse;
+        font-size: 16.5px;
         font-variant-numeric: tabular-nums;
       }
 
@@ -372,496 +534,558 @@
       }
 
       thead th {
-        letter-spacing: 0.08em;
+        font-family: var(--sans);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.11em;
         text-transform: uppercase;
         color: var(--muted);
         border-bottom: 2px solid var(--rule);
+      }
+
+      td:first-child {
         white-space: nowrap;
       }
 
-      tbody td:first-child {
-        white-space: nowrap;
-        font-family: var(--mono);
-        font-size: 14px;
-      }
-
-      td.check {
-        font-family: var(--mono);
-        font-size: 14px;
-      }
-
-      .s-ok {
-        color: var(--ok);
+      .yes {
+        color: var(--good);
         font-weight: 600;
       }
-      .s-bad {
+      .no {
         color: var(--bad);
         font-weight: 600;
       }
 
-      /* ================= band ================= */
-      .band {
-        /* rule sits in the gutter so the text keeps the shared left edge */
-        margin: 22px 0 0 -23px;
-        padding: 4px 0 4px 20px;
-        border-left: 3px solid var(--rule);
-        max-width: calc(var(--measure) + 23px);
-      }
-
-      .band p {
+      /* ============ checklist ============ */
+      ol.check {
         margin: 0;
-      }
-
-      .band p + p {
-        margin-top: 8px;
-      }
-
-      .band .tag {
-        display: block;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        font-weight: 600;
-        margin-bottom: 6px;
-      }
-
-      .band.broken {
-        border-left-color: var(--bad);
-      }
-      .band.broken .tag {
-        color: var(--bad);
-      }
-
-      .band.working {
-        border-left-color: var(--ok);
-      }
-      .band.working .tag {
-        color: var(--ok);
-      }
-
-      /* ================= closing ================= */
-      ol,
-      ul {
-        margin: 22px 0 0;
-        padding-left: 1.25em;
-      }
-
-      li {
-        margin-bottom: 10px;
+        padding-left: 1.3em;
+        max-width: 36em;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        font-size: 18px;
       }
 
       footer {
-        padding: 48px 0 90px;
+        padding: 44px 4px 0;
+        color: var(--muted);
+        font-size: 17.5px;
+        line-height: 1.65;
+        max-width: 38em;
       }
 
-      @media (max-width: 720px) {
+      @media (max-width: 760px) {
+        code {
+          white-space: normal;
+          overflow-wrap: anywhere;
+        }
         h1 {
-          font-size: 32px;
+          font-size: 36px;
         }
         h2 {
-          font-size: 24px;
+          font-size: 26px;
         }
         body {
-          font-size: 17px;
+          font-size: 18px;
         }
         section {
-          padding: 36px 0 40px;
+          padding: 28px 22px 32px;
+        }
+        .split {
+          grid-template-columns: 1fr;
+        }
+        .lead {
+          font-size: 20px;
         }
       }
     </style>
   </head>
 
   <body>
-    <!-- ===================== masthead + anchor ===================== -->
-    <header class="masthead g-plain">
-      <div class="col">
-        <p class="readtime">10 minutes read</p>
-        <h1>Every key in a service block answers one of three questions</h1>
-        <p class="meta">
-          <b>Assumes</b> Part 1: what a compose file is, and that service names resolve as hostnames
-          on the project network. &nbsp;<b>After this</b> you can write the web + database file from
-          an empty screen, and say why a stranger put each line in theirs.
+    <div class="wrap">
+      <header class="masthead">
+        <p class="eyebrow">Docker Compose &middot; Part 2</p>
+        <h1>Write the compose file</h1>
+        <p class="standfirst">
+          Part 1 showed what the file is. This part types one from an empty screen: seven keys, the
+          five commands you run every day, and the one line that lies to you.
+        </p>
+      </header>
+
+      <!-- ========================= 1 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">The shape of it</span>
+          <h2>One file, two running things</h2>
+        </div>
+
+        <p class="lead">
+          You describe the containers you want. Compose makes them, and puts them on a private
+          network of their own.
         </p>
 
         <figure>
           <div class="plate">
-            <pre class="mermaid">
-flowchart TB
-  F["a service block"] --> Q1["what is it made of?"]
-  F --> Q2["what crosses its edge?"]
-  F --> Q3["when does it run?"]
-  Q1 --> K1["image&lt;br/&gt;build"]
-  Q2 --> K2["ports&lt;br/&gt;volumes&lt;br/&gt;environment&lt;br/&gt;env_file"]
-  Q3 --> K3["depends_on&lt;br/&gt;healthcheck&lt;br/&gt;restart"]
-  class Q1,K1 made
-  class Q2,K2 conn
-  class Q3,K3 when
-            </pre>
+            <svg
+              class="dg"
+              viewBox="0 0 920 340"
+              role="img"
+              aria-label="A compose.yaml file, read by docker compose up, produces a project containing a web container and a db container on one private network, where web reaches db by the hostname db on port 5432"
+            >
+              <!-- the file -->
+              <rect x="16" y="60" width="210" height="220" rx="6" class="surface" />
+              <rect x="16" y="60" width="210" height="36" rx="6" class="tint-a" />
+              <rect x="16" y="84" width="210" height="12" class="tint-a" />
+              <text x="121" y="85" text-anchor="middle" class="mono sm b t-accent">compose.yaml</text>
+              <text x="36" y="128" class="mono sm">services:</text>
+              <text x="54" y="154" class="mono sm b t-accent">web:</text>
+              <text x="72" y="178" class="mono sm dim">build: .</text>
+              <text x="72" y="200" class="mono sm dim">ports: ...</text>
+              <text x="54" y="228" class="mono sm b t-hue2">db:</text>
+              <text x="72" y="252" class="mono sm dim">image: ...</text>
+              <text x="72" y="274" class="mono sm dim">volumes: ...</text>
+
+              <!-- read -->
+              <line x1="238" y1="170" x2="308" y2="170" class="ln" />
+              <polygon points="316,170 302,163 302,177" class="head" />
+              <text x="273" y="156" text-anchor="middle" class="mono sm">up -d</text>
+
+              <!-- project -->
+              <rect x="336" y="44" width="568" height="272" rx="8" class="box-open dash" />
+              <text x="620" y="70" text-anchor="middle" class="sm dim">one project &middot; one private network</text>
+
+              <rect x="366" y="96" width="230" height="150" rx="6" class="tint-a" />
+              <text x="481" y="140" text-anchor="middle" class="lg b mono t-accent">web</text>
+              <text x="481" y="172" text-anchor="middle" class="sm">your Python app</text>
+              <text x="481" y="198" text-anchor="middle" class="sm">listening on 8000</text>
+
+              <rect x="650" y="96" width="224" height="150" rx="6" class="tint-b" />
+              <text x="762" y="140" text-anchor="middle" class="lg b mono t-hue2">db</text>
+              <text x="762" y="172" text-anchor="middle" class="sm">postgres:16</text>
+              <text x="762" y="198" text-anchor="middle" class="sm">no door outside</text>
+
+              <path d="M 481 246 L 481 288 L 762 288 L 762 254" class="ln-dim" />
+              <polygon points="762,246 755,259 769,259" class="head-dim" />
+              <text x="621" y="280" text-anchor="middle" class="mono sm b">db:5432</text>
+            </svg>
           </div>
           <figcaption>
-            A service block looks like an unordered pile of keys. Every key belongs to one of these
-            three groups, and the group tells you what breaks if you get it wrong: the wrong answer
-            to the first gives you old code, to the second an unreachable or exposed service, to the
-            third a container that starts too early. <strong>The three colours on this page mean
-            these three questions</strong>, everywhere they appear. Green and red mean only working
-            and broken.
+            Inside the dashed boundary <strong>the service name is the hostname</strong>, so
+            <code>web</code> connects to <code>db:5432</code> and never needs an IP address. Nothing
+            outside can reach either container until you publish a port, which is the next key but
+            one.
           </figcaption>
         </figure>
-      </div>
-    </header>
+      </section>
 
-    <!-- ===================== made of ===================== -->
-    <section class="g-made">
-      <div class="col">
-        <p class="eyebrow">Made of &middot; image, build</p>
-        <h2>Two roads to a filesystem, and only one of them re-runs</h2>
+      <!-- ========================= 2 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">Key 1 &middot; where it comes from</span>
+          <h2><code>image</code> or <code>build</code>, never both</h2>
+        </div>
+
+        <p class="lead">Every service needs a filesystem to start from. There are two ways to get one.</p>
 
         <figure>
           <div class="plate">
-            <pre class="mermaid">
-flowchart LR
-  A["image: postgres:16"] -->|"pull once"| I1["image on disk"]
-  B["build: ."] -->|"docker build"| I2["image on disk"]
-  I1 --> C["container"]
-  I2 --> C
-  class A,B,I1,I2,C made
-            </pre>
+            <svg
+              class="dg"
+              viewBox="0 0 920 300"
+              role="img"
+              aria-label="image pulls a finished image from a registry; build makes an image from your Dockerfile and source. Both paths end at the same container."
+            >
+              <!-- lane 1 -->
+              <text x="16" y="44" class="mono b t-hue2">image: postgres:16</text>
+              <rect x="16" y="58" width="210" height="86" rx="6" class="tint-b" />
+              <text x="121" y="94" text-anchor="middle" class="b">Docker Hub</text>
+              <text x="121" y="120" text-anchor="middle" class="sm">someone else built it</text>
+              <line x1="238" y1="101" x2="296" y2="101" class="ln" />
+              <polygon points="304,101 290,94 290,108" class="head" />
+              <text x="271" y="88" text-anchor="middle" class="sm">pull</text>
+              <rect x="312" y="58" width="170" height="86" rx="6" class="surface" />
+              <text x="397" y="94" text-anchor="middle" class="b">image</text>
+              <text x="397" y="120" text-anchor="middle" class="mono sm dim">postgres:16</text>
+
+              <!-- lane 2 -->
+              <text x="16" y="182" class="mono b t-accent">build: .</text>
+              <rect x="16" y="196" width="210" height="86" rx="6" class="tint-a" />
+              <text x="121" y="232" text-anchor="middle" class="b">Dockerfile</text>
+              <text x="121" y="258" text-anchor="middle" class="sm">plus your source</text>
+              <line x1="238" y1="239" x2="296" y2="239" class="ln" />
+              <polygon points="304,239 290,232 290,246" class="head" />
+              <text x="271" y="226" text-anchor="middle" class="sm">build</text>
+              <rect x="312" y="196" width="170" height="86" rx="6" class="surface" />
+              <text x="397" y="232" text-anchor="middle" class="b">image</text>
+              <text x="397" y="258" text-anchor="middle" class="mono sm dim">myapp-web</text>
+
+              <!-- merge -->
+              <path d="M 482 101 L 546 101 L 546 170" class="ln-dim" />
+              <path d="M 482 239 L 546 239 L 546 170" class="ln-dim" />
+              <line x1="546" y1="170" x2="620" y2="170" class="ln-dim" />
+              <polygon points="628,170 614,163 614,177" class="head-dim" />
+
+              <rect x="640" y="120" width="240" height="100" rx="6" class="surface" />
+              <text x="760" y="162" text-anchor="middle" class="lg b">container</text>
+              <text x="760" y="190" text-anchor="middle" class="sm dim">a running copy of an image</text>
+            </svg>
           </div>
           <figcaption>
-            Both roads end at the same object, so a service takes one or the other, never both. The
-            asymmetry is on the left arrow: a pull is skipped once the image is cached, and so is a
-            build. Compose will not notice that your <code>Dockerfile</code> changed, because it
-            never looks.
+            Same destination, different source. Off-the-shelf things &mdash; databases, caches,
+            proxies &mdash; use <code>image</code>. Code you wrote uses <code>build</code>, where the
+            dot means <em>the Dockerfile is in this folder</em>.
           </figcaption>
         </figure>
 
-        <div class="tablewrap">
-          <table>
-            <thead>
-              <tr>
-                <th>You write</th>
-                <th>Filesystem comes from</th>
-                <th>Re-runs when</th>
-                <th>Check it with</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>image: postgres:16</td>
-                <td>Docker Hub</td>
-                <td>the tag is not cached yet</td>
-                <td class="check">compose images &rarr; postgres 16</td>
-              </tr>
-              <tr>
-                <td>build: .</td>
-                <td><code>./Dockerfile</code> plus this folder</td>
-                <td>you pass <code>--build</code>, never otherwise</td>
-                <td class="check">compose images &rarr; myapp-web latest</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="band broken">
-          <span class="tag">The silent one</span>
+        <div class="callout warn">
+          <span class="tag">Build runs once</span>
           <p>
-            Edit <code>requirements.txt</code>, run <code>up -d</code>, get no error and no new
-            dependency. Compose reused the cached image. Run
+            Edit your <code>Dockerfile</code> or <code>requirements.txt</code>, run
+            <code>up -d</code> again, and Compose silently reuses the old image. You get no warning
+            and no error &mdash; just old code. Ask for the rebuild:
             <code>docker compose up -d --build</code>.
           </p>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ===================== ports ===================== -->
-    <section class="g-conn">
-      <div class="col">
-        <p class="eyebrow">Crosses the edge &middot; ports</p>
-        <h2>The left number is your laptop</h2>
+      <!-- ========================= 3 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">Key 2 &middot; reaching in</span>
+          <h2>Ports: a door in the wall</h2>
+        </div>
+
+        <p class="lead">
+          A container is sealed. <code>ports</code> cuts exactly one door so your browser can get
+          through.
+        </p>
 
         <figure>
-          <pre class="term">ports:
-  - <span class="v">"8000:8000"</span>
-      <span class="c">│      └── the port your app listens on, inside</span>
-      <span class="c">└───────── the port you type into the browser</span>
+          <div class="plate">
+            <svg
+              class="dg"
+              viewBox="0 0 920 300"
+              role="img"
+              aria-label="A browser on the host reaches an app listening inside the container through a published port; the left number is the host port and the right number is the container port"
+            >
+              <text x="16" y="38" class="sm dim">YOUR LAPTOP</text>
+              <rect x="16" y="54" width="200" height="96" rx="6" class="surface" />
+              <text x="116" y="94" text-anchor="middle" class="b">browser</text>
+              <text x="116" y="122" text-anchor="middle" class="mono sm t-accent">localhost:8000</text>
 
-<span class="c"># db has no ports: at all — web reaches it on the project network</span>
-$ docker compose exec web python -c "import socket;socket.create_connection(('db',5432))"
-<span class="ok">(no output — connected)</span>
+              <!-- wall -->
+              <rect x="330" y="24" width="20" height="160" class="slab" />
+              <rect x="330" y="80" width="20" height="46" class="tint-a" />
+              <text x="340" y="204" text-anchor="middle" class="sm dim">the wall</text>
 
-$ curl -s localhost:5432
-<span class="bad">curl: (7) Failed to connect to localhost port 5432: Connection refused</span></pre>
+              <line x1="228" y1="103" x2="322" y2="103" class="ln-acc" />
+              <line x1="358" y1="103" x2="418" y2="103" class="ln-acc" />
+              <polygon points="426,103 412,96 412,110" class="head-acc" />
+
+              <text x="440" y="38" class="sm dim">INSIDE THE CONTAINER</text>
+              <rect x="440" y="54" width="464" height="96" rx="6" class="tint-a" />
+              <text x="672" y="94" text-anchor="middle" class="b">your app is listening</text>
+              <text x="672" y="122" text-anchor="middle" class="mono sm">0.0.0.0:8000</text>
+
+              <!-- mapping -->
+              <text x="460" y="248" text-anchor="middle" class="xl b mono">"8000:8000"</text>
+              <line x1="418" y1="260" x2="418" y2="274" class="ln-dim" />
+              <line x1="502" y1="260" x2="502" y2="274" class="ln-dim" />
+              <text x="400" y="292" text-anchor="middle" class="sm dim">laptop side</text>
+              <text x="540" y="292" text-anchor="middle" class="sm dim">container side</text>
+            </svg>
+          </div>
           <figcaption>
-            Reversed, the file still starts &mdash; <code>"3000:8000"</code> is valid and puts the
-            app on <code>localhost:3000</code>. The quotes are load-bearing: YAML parses a bare
-            <code>5432:5432</code> as a sexagesimal integer, not a pair. Leaving
-            <code>ports</code> off a database is the normal choice, not an omission.
+            <strong>Left is your laptop, right is inside.</strong> Reversed, it still starts:
+            <code>"3000:8000"</code> is a working file that puts the app on
+            <code>localhost:3000</code>. The quotes are not decoration &mdash; YAML reads a bare
+            <code>5432:5432</code> as a sexagesimal number.
           </figcaption>
         </figure>
 
-        <div class="tablewrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Entry</th>
-                <th>Reachable at</th>
-                <th>Listening on</th>
-                <th>Check it with</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>omitted</td>
-                <td>nothing on the host</td>
-                <td>project network only</td>
-                <td class="check">compose port db 5432 &rarr; error</td>
-              </tr>
-              <tr>
-                <td>"8000:8000"</td>
-                <td><code>localhost:8000</code></td>
-                <td class="s-bad">every interface</td>
-                <td class="check">ss -ltn &rarr; 0.0.0.0:8000</td>
-              </tr>
-              <tr>
-                <td>"127.0.0.1:5432:5432"</td>
-                <td><code>localhost:5432</code></td>
-                <td class="s-ok">this machine only</td>
-                <td class="check">ss -ltn &rarr; 127.0.0.1:5432</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="callout warn">
+          <span class="tag">Our db has no ports at all</span>
+          <p>
+            It does not need one: <code>web</code> reaches it across the private network. Publishing
+            <code>"5432:5432"</code> exposes Postgres to everything that can see your machine. If
+            you really want a GUI client on it, bind it to yourself only:
+            <code>"127.0.0.1:5432:5432"</code>.
+          </p>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ===================== env ===================== -->
-    <section class="g-conn">
-      <div class="col">
-        <p class="eyebrow">Crosses the edge &middot; environment, env_file, .env</p>
-        <h2>Three places to put a value, read at two different moments</h2>
-
-        <div class="tablewrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Where you write it</th>
-                <th>Read</th>
-                <th>Ends up in</th>
-                <th>Check it with</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>environment:</td>
-                <td>at container start</td>
-                <td>the container's env</td>
-                <td class="check">compose exec web env</td>
-              </tr>
-              <tr>
-                <td>env_file: .env.db</td>
-                <td>at container start</td>
-                <td>the container's env</td>
-                <td class="check">compose exec db env</td>
-              </tr>
-              <tr>
-                <td>.env</td>
-                <td class="s-bad">while parsing the YAML</td>
-                <td>the file's own <code>${blanks}</code></td>
-                <td class="check">compose config</td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- ========================= 4 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">Key 3 &middot; settings</span>
+          <h2>Two ways to hand over a value</h2>
         </div>
 
-        <figure>
-          <pre class="term"><span class="c"># .env — beside compose.yaml, fills blanks in the file</span>
-TAG=16
-WEB_PORT=8000
+        <p class="lead">
+          A container starts knowing nothing about your machine. Configuration arrives as environment
+          variables.
+        </p>
 
-<span class="c"># .env.db — gitignored, handed to the container</span>
+        <div class="split">
+          <div class="card">
+            <h4>environment:</h4>
+            <p>
+              Values written into the compose file. Anyone reading the file sees them, which is fine
+              for a port, a log level, a hostname.
+            </p>
+          </div>
+          <div class="card">
+            <h4>env_file:</h4>
+            <p>
+              Points at a file of <code>KEY=value</code> lines. Compose reads it and passes every
+              line in. This is where passwords go, because that file stays out of git.
+            </p>
+          </div>
+        </div>
+
+        <pre><span class="c"># .env.db  — gitignored</span>
 POSTGRES_USER=app
 POSTGRES_PASSWORD=s3cret
 POSTGRES_DB=appdb
 
 <span class="c"># compose.yaml</span>
   <span class="k">db:</span>
-    <span class="k">image:</span> <span class="v">postgres:${TAG}</span>          <span class="c"># .env fills this</span>
-    <span class="k">env_file:</span> <span class="v">.env.db</span>              <span class="c"># goes inside the container</span>
+    <span class="k">image:</span> <span class="v">postgres:16</span>
+    <span class="k">env_file:</span> <span class="v">.env.db</span>
+
   <span class="k">web:</span>
     <span class="k">environment:</span>
       <span class="k">DATABASE_URL:</span> <span class="v">postgresql://app:s3cret@<span class="m">db</span>:5432/appdb</span></pre>
-          <figcaption>
-            The two files have almost the same name and nothing else in common.
-            <code>.env</code> is substituted into the text of the YAML before Compose understands
-            it, so it can change an image tag or a port number; it reaches no container.
-            <code>env_file</code> is handed to the process. The marked <code>db</code> in the URL is
-            the service name from Part 1, still doing hostname duty.
-          </figcaption>
-        </figure>
-      </div>
-    </section>
 
-    <!-- ===================== volumes ===================== -->
-    <section class="g-conn">
-      <div class="col">
-        <p class="eyebrow">Crosses the edge &middot; volumes</p>
-        <h2>The first character of the source tells you which kind it is</h2>
+        <p class="measure">
+          Read the last line slowly. The host in that URL is <code>db</code> &mdash; the service
+          name from figure one, doing its job.
+        </p>
+
+        <div class="callout note">
+          <span class="tag">Same name, different job</span>
+          <p>
+            A file called plain <code>.env</code> next to your compose file is
+            <strong>not</strong> handed to any container. Compose reads it while parsing the YAML, to
+            fill in blanks you wrote as <code>${LIKE_THIS}</code>. One file configures containers,
+            the other configures the file itself.
+          </p>
+        </div>
+      </section>
+
+      <!-- ========================= 5 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">Key 4 &middot; keeping things</span>
+          <h2>Volumes: the two kinds of storage</h2>
+        </div>
+
+        <p class="lead">
+          Everything a container writes vanishes when the container is removed. A volume is how
+          bytes escape that.
+        </p>
 
         <figure>
           <div class="plate">
-            <pre class="mermaid">
-flowchart LR
-  DB["db"] -->|"writes rows"| V["named volume&lt;br/&gt;myapp_pgdata"]
-  V -.->|"Docker picks&lt;br/&gt;the location"| DK["Docker's area on disk"]
-  WEB["web"] <-->|"same bytes"| BM["bind mount&lt;br/&gt;./app"]
-  BM -.->|"you pick&lt;br/&gt;the location"| PF["your project folder"]
-  class DB,WEB conn
-  class V,DK ok
-  class BM,PF warnb
-            </pre>
+            <svg
+              class="dg"
+              viewBox="0 0 920 310"
+              role="img"
+              aria-label="A named volume stores data in an area Docker manages and outlives the container; a bind mount is a two-way live link to a folder in your project"
+            >
+              <!-- named volume -->
+              <text x="16" y="36" class="mono b t-good">pgdata:/var/lib/postgresql/data</text>
+              <rect x="16" y="50" width="196" height="88" rx="6" class="surface" />
+              <text x="114" y="88" text-anchor="middle" class="b mono">db</text>
+              <text x="114" y="116" text-anchor="middle" class="sm dim">writes rows here</text>
+              <line x1="224" y1="94" x2="286" y2="94" class="ln-good" />
+              <polygon points="294,94 280,87 280,101" class="head-good" />
+              <text x="259" y="80" text-anchor="middle" class="sm dim">stores in</text>
+              <rect x="302" y="50" width="240" height="88" rx="6" class="tint-good" />
+              <text x="422" y="88" text-anchor="middle" class="b">named volume</text>
+              <text x="422" y="116" text-anchor="middle" class="mono sm">myapp_pgdata</text>
+              <text x="566" y="88" class="sm">Docker picks the location.</text>
+              <text x="566" y="116" class="sm">Outlives the container.</text>
+
+              <!-- bind mount -->
+              <text x="16" y="204" class="mono b t-warn">./app:/app</text>
+              <rect x="16" y="218" width="196" height="88" rx="6" class="surface" />
+              <text x="114" y="256" text-anchor="middle" class="b mono">web</text>
+              <text x="114" y="284" text-anchor="middle" class="mono sm dim">/app</text>
+              <line x1="224" y1="252" x2="286" y2="252" class="ln" />
+              <polygon points="294,252 280,245 280,259" class="head" />
+              <line x1="294" y1="278" x2="232" y2="278" class="ln" />
+              <polygon points="224,278 238,271 238,285" class="head" />
+              <text x="259" y="238" text-anchor="middle" class="sm dim">both ways</text>
+              <rect x="302" y="218" width="240" height="88" rx="6" class="tint-warn" />
+              <text x="422" y="256" text-anchor="middle" class="b">your project folder</text>
+              <text x="422" y="284" text-anchor="middle" class="mono sm">./app</text>
+              <text x="566" y="256" class="sm">You pick the location.</text>
+              <text x="566" y="284" class="sm">Your editor writes it live.</text>
+            </svg>
           </div>
           <figcaption>
-            A source starting with <code>.</code> or <code>/</code> is a bind mount; anything else
-            is a named volume. The named volume is Docker's to place, name and delete &mdash; it is
-            how a database survives the container being replaced. The bind mount is two-way and
-            live, which is why saving a file changes what the running app serves without a rebuild.
+            Tell them apart by the first character:
+            <strong
+              >a source starting with <code>.</code> or <code>/</code> is a bind mount</strong
+            >, anything else is a named volume. The bind mount is why you save a file and the running
+            app picks it up without a rebuild.
           </figcaption>
         </figure>
 
-        <h3>Why <code>pgdata</code> appears twice</h3>
+        <h3>The name you write twice</h3>
 
-        <figure>
-          <pre class="term"><span class="k">services:</span>
+        <pre><span class="k">services:</span>
   <span class="k">db:</span>
     <span class="k">volumes:</span>
-      - <span class="m">pgdata</span>:/var/lib/postgresql/data   <span class="c"># mount it here</span>
+      - <span class="m">pgdata</span>:/var/lib/postgresql/data   <span class="c"># 1. use it</span>
 
-<span class="k">volumes:</span>                                   <span class="c"># and declare it exists</span>
-  <span class="m">pgdata:</span>
+<span class="k">volumes:</span>                                   <span class="c"># 2. declare it</span>
+  <span class="m">pgdata:</span></pre>
 
-<span class="c"># delete the bottom two lines and:</span>
-$ docker compose up -d
-<span class="bad">service "db" refers to undefined volume pgdata: invalid compose project</span></pre>
-          <figcaption>
-            The service line is a reference; the top-level block is the declaration. Requiring both
-            turns a mistyped volume name into that error instead of a second, silently empty
-            database that loses your rows without ever failing.
-          </figcaption>
-        </figure>
-      </div>
-    </section>
+        <div class="callout warn">
+          <span class="tag">If you skip the second one</span>
+          <p>
+            Compose refuses to start:
+            <code>service "db" refers to undefined volume pgdata</code>. The service line says
+            <em>mount this</em>; the top-level block says <em>this exists</em>. Requiring both turns
+            a typo into an error rather than a silently empty database.
+          </p>
+        </div>
+      </section>
 
-    <!-- ===================== restart ===================== -->
-    <section class="g-when">
-      <div class="col">
-        <p class="eyebrow">When it runs &middot; restart</p>
-        <h2>Only the last column separates the two you would actually use</h2>
+      <!-- ========================= 6 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">Key 5 &middot; after a crash</span>
+          <h2>What <code>restart</code> actually promises</h2>
+        </div>
+
+        <p class="lead">Containers exit. This is your standing instruction for when they do.</p>
 
         <div class="tablewrap">
           <table>
             <thead>
               <tr>
-                <th>Value</th>
-                <th>Process crashes</th>
-                <th>Daemon restarts</th>
-                <th>After you run <code>stop</code></th>
+                <th>You write</th>
+                <th>App crashes</th>
+                <th>You reboot the laptop</th>
+                <th>You ran <code>stop</code></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>no</td>
-                <td class="s-bad">stays down</td>
-                <td class="s-bad">stays down</td>
-                <td class="s-bad">stays down</td>
+                <td><code>no</code></td>
+                <td class="no">stays down</td>
+                <td class="no">stays down</td>
+                <td class="no">stays down</td>
               </tr>
               <tr>
-                <td>on-failure</td>
-                <td class="s-ok">restarts</td>
-                <td class="s-bad">stays down</td>
-                <td class="s-bad">stays down</td>
+                <td><code>on-failure</code></td>
+                <td class="yes">restarts</td>
+                <td class="no">stays down</td>
+                <td class="no">stays down</td>
               </tr>
               <tr>
-                <td>unless-stopped</td>
-                <td class="s-ok">restarts</td>
-                <td class="s-ok">comes back</td>
-                <td class="s-bad">stays down</td>
+                <td><code>unless-stopped</code></td>
+                <td class="yes">restarts</td>
+                <td class="yes">comes back</td>
+                <td class="no">stays down</td>
               </tr>
               <tr>
-                <td>always</td>
-                <td class="s-ok">restarts</td>
-                <td class="s-ok">comes back</td>
-                <td class="s-ok">comes back anyway</td>
+                <td><code>always</code></td>
+                <td class="yes">restarts</td>
+                <td class="yes">comes back</td>
+                <td class="yes">comes back anyway</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p style="margin-top: 18px">
-          Stop a container under <code>always</code>, reboot, and it is running again &mdash; the
-          policy outranks your decision. Use <code>unless-stopped</code>.
+        <p class="measure">
+          The last column is the entire difference between the bottom two.
+          <code>always</code> overrules you: it starts again on the next boot even though you
+          deliberately stopped it. <strong><code>unless-stopped</code> is the one you want.</strong>
         </p>
-      </div>
-    </section>
+      </section>
 
-    <!-- ===================== depends_on ===================== -->
-    <section class="g-when">
-      <div class="col">
-        <p class="eyebrow">When it runs &middot; depends_on, healthcheck</p>
-        <h2>
-          <code>depends_on</code> waits for a process, and a process is not a database
-        </h2>
+      <!-- ========================= 7 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">Key 6 &middot; the trap</span>
+          <h2>The line that lies to you</h2>
+        </div>
+
+        <p class="lead">
+          <code>depends_on: [db]</code> reads like <em>wait for the database</em>. It means
+          <strong>start db first</strong>, and then it stops caring.
+        </p>
 
         <figure>
           <div class="plate">
-            <pre class="mermaid">
-sequenceDiagram
-    autonumber
-    participant C as compose
-    participant D as db
-    participant W as web
-    C->>D: create + start
-    D-->>C: process is running
-    Note over D: postgres still&lt;br/&gt;opening its socket
-    C->>W: create + start
-    W->>D: connect db:5432
-    D--xW: nothing listening
-    W-->>C: Exited (1)
-            </pre>
+            <svg
+              class="dg"
+              viewBox="0 0 920 380"
+              role="img"
+              aria-label="Two timelines. With depends_on alone, web connects while Postgres is still booting and is refused. With a healthcheck and condition service_healthy, Compose polls until Postgres accepts connections and only then starts web."
+            >
+              <!-- lane A -->
+              <text x="16" y="34" class="mono b t-bad">depends_on: [db]</text>
+              <text x="186" y="34" class="sm dim">&mdash; waits for the process, nothing more</text>
+
+              <rect x="180" y="70" width="420" height="54" rx="4" class="band-bad" />
+              <text x="390" y="60" text-anchor="middle" class="sm dim">postgres still booting</text>
+
+              <line x1="100" y1="124" x2="866" y2="124" class="ln" />
+              <polygon points="878,124 862,117 862,131" class="head" />
+
+              <line x1="180" y1="112" x2="180" y2="136" class="ln" />
+              <text x="180" y="158" text-anchor="middle" class="sm">db starts</text>
+
+              <line x1="390" y1="70" x2="390" y2="140" class="ln-bad" />
+              <text x="390" y="184" text-anchor="middle" class="sm b t-bad">web connects</text>
+              <text x="390" y="206" text-anchor="middle" class="sm t-bad">Errno 111 refused</text>
+
+              <line x1="600" y1="112" x2="600" y2="136" class="ln" />
+              <text x="600" y="158" text-anchor="middle" class="sm">postgres ready</text>
+
+              <!-- divider -->
+              <line x1="16" y1="228" x2="904" y2="228" class="ln-dim dash" />
+
+              <!-- lane B -->
+              <text x="16" y="262" class="mono b t-good">condition: service_healthy</text>
+              <text x="266" y="262" class="sm dim">&mdash; waits for the answer</text>
+
+              <rect x="180" y="290" width="420" height="46" rx="4" class="band-good" />
+              <text x="390" y="282" text-anchor="middle" class="sm dim">pg_isready every 2s</text>
+
+              <line x1="100" y1="336" x2="866" y2="336" class="ln" />
+              <polygon points="878,336 862,329 862,343" class="head" />
+
+              <line x1="180" y1="324" x2="180" y2="348" class="ln" />
+              <text x="180" y="370" text-anchor="middle" class="sm">db starts</text>
+
+              <line x1="600" y1="290" x2="600" y2="348" class="ln-good" />
+              <text x="600" y="370" text-anchor="middle" class="sm b t-good">healthy</text>
+
+              <line x1="740" y1="324" x2="740" y2="348" class="ln-good" />
+              <text x="740" y="370" text-anchor="middle" class="sm b t-good">web connects</text>
+            </svg>
           </div>
           <figcaption>
-            Step 2 is the whole defect. Compose treats a running process as the dependency being
-            met, but Postgres needs another second or two before it accepts a connection. Whether
-            <code>web</code> wins or loses this race depends on whether the image was cached, so the
-            same file works on a warm laptop and fails on a cold one.
+            The bug is the position of one tick. In the top timeline <code>web</code> connects
+            <strong>inside</strong> the shaded window, when the process exists but the socket is not
+            open yet. On a warm laptop the image is cached and <code>web</code> is slow enough to
+            win; on a cold one it loses. That is the bug that "only happens sometimes".
           </figcaption>
         </figure>
 
-        <figure>
-          <pre class="term">$ docker compose up -d
- ✔ Container myapp-db-1   Started
- ✔ Container myapp-web-1  Started
+        <h3>Make db prove it is ready</h3>
 
-$ docker compose ps
-NAME            SERVICE   STATUS
-myapp-db-1      db        running
-myapp-web-1     web       <span class="bad">Exited (1)</span>
-
-$ docker compose logs web
-myapp-web-1  | psycopg.OperationalError: connection failed:
-myapp-web-1  | <span class="bad">[Errno 111] Connection refused</span></pre>
-          <figcaption>
-            The failure to recognise later. <code>db</code> is <code>running</code> and healthy by
-            every casual measure, and the service that depends on it is dead. Nothing in this output
-            points at <code>depends_on</code>, which is why the rule is worth memorising rather than
-            deriving.
-          </figcaption>
-        </figure>
-
-        <h3>The fix is two keys, and both are required</h3>
-
-        <figure>
-          <pre class="term">  <span class="k">db:</span>
+        <pre>  <span class="k">db:</span>
     <span class="k">image:</span> <span class="v">postgres:16</span>
-    <span class="k">healthcheck:</span>                                  <span class="c"># 1. makes db provable</span>
+    <span class="k">healthcheck:</span>
       <span class="k">test:</span> <span class="v">["CMD-SHELL", "pg_isready -U app -d appdb"]</span>
       <span class="k">interval:</span> <span class="v">2s</span>
       <span class="k">retries:</span> <span class="v">15</span>
@@ -870,127 +1094,29 @@ myapp-web-1  | <span class="bad">[Errno 111] Connection refused</span></pre>
   <span class="k">web:</span>
     <span class="k">depends_on:</span>
       <span class="k">db:</span>
-        <span class="k">condition:</span> <span class="ok">service_healthy</span>            <span class="c"># 2. makes web wait</span></pre>
-        </figure>
+        <span class="k">condition:</span> <span class="ok">service_healthy</span></pre>
 
-        <figure>
-          <div class="plate">
-            <pre class="mermaid">
-sequenceDiagram
-    autonumber
-    participant C as compose
-    participant D as db
-    participant W as web
-    C->>D: create + start
-    loop every 2s, up to 15 times
-        C->>D: pg_isready
-        D--xC: not accepting yet
-    end
-    C->>D: pg_isready
-    D-->>C: accepting connections
-    Note over D: status: healthy
-    C->>W: create + start
-    W->>D: connect db:5432
-    D-->>W: connected
-            </pre>
-          </div>
-          <figcaption>
-            <code>pg_isready</code> is already inside the Postgres image, so nothing is installed to
-            make this work. The healthcheck is what promotes <code>db</code> from
-            <em>running</em> to <em>healthy</em>; the condition is what makes <code>web</code> care.
-            Add the healthcheck alone and nothing waits; add the condition alone and Compose refuses
-            to start, because a service with no healthcheck can never become healthy.
-          </figcaption>
-        </figure>
-
-        <div class="band working">
-          <span class="tag">Same file, after the fix</span>
-          <p>
-            <code>myapp-db-1</code> reaches <code>Up (healthy)</code> at about six seconds, then
-            <code>myapp-web-1</code> starts and connects on the first try. The 15 retries at 2s give
-            it 30 seconds before Compose gives up on the dependency.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== the loop ===================== -->
-    <section class="g-plain">
-      <div class="col">
-        <p class="eyebrow">The daily loop</p>
-        <h2>Five commands, and one of them deletes your rows</h2>
-
-        <figure>
-          <div class="plate">
-            <pre class="mermaid">
-flowchart LR
-  U["up -d"] --> P["ps"]
-  P --> L["logs -f web"]
-  L --> E["exec web sh"]
-  E -->|"done for the day"| DW["down"]
-  L -.->|"you edited&lt;br/&gt;the Dockerfile"| B["up -d --build"]
-  B --> P
-  class U,P,L,E made
-  class DW,B when
-            </pre>
-          </div>
-          <figcaption>
-            <code>-d</code> returns the terminal. <code>logs -f</code> with no service name
-            interleaves every container, which is how a restart loop becomes visible: the same
-            startup lines repeating every few seconds. <code>exec</code> needs the container to be
-            up, so it is useless on the crash above &mdash; <code>logs</code> is the tool for a dead
-            container.
-          </figcaption>
-        </figure>
-
-        <div class="tablewrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Command</th>
-                <th>Containers</th>
-                <th>Network</th>
-                <th>After it, <code>docker volume ls</code> shows</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>stop</td>
-                <td>stopped, kept</td>
-                <td>kept</td>
-                <td class="check s-ok">myapp_pgdata</td>
-              </tr>
-              <tr>
-                <td>down</td>
-                <td>removed</td>
-                <td>removed</td>
-                <td class="check s-ok">myapp_pgdata</td>
-              </tr>
-              <tr>
-                <td>down -v</td>
-                <td>removed</td>
-                <td>removed</td>
-                <td class="check s-bad">nothing</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p style="margin-top: 18px">
-          <code>./app</code> is unaffected by all three. A bind mount is a path on your disk, not an
-          object Docker owns, so no Compose command can remove it.
+        <p class="measure">
+          <code>pg_isready</code> already ships inside the Postgres image, so there is nothing to
+          install. You need <strong>both</strong> halves: the healthcheck is what makes
+          <code>db</code> healthy rather than merely running, and the condition is what makes
+          <code>web</code> wait for it. Either one alone changes nothing.
         </p>
-      </div>
-    </section>
+      </section>
 
-    <!-- ===================== project name ===================== -->
-    <section class="g-plain">
-      <div class="col">
-        <p class="eyebrow">The name on everything</p>
-        <h2>Rename the folder and Compose loses your containers</h2>
+      <!-- ========================= 8 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">Key 7 &middot; identity</span>
+          <h2>Whose containers are these?</h2>
+        </div>
 
-        <figure>
-          <pre class="term">$ pwd
+        <p class="lead">
+          Compose stamps a project name on everything it creates, and by default that name is just
+          the folder you happen to be standing in.
+        </p>
+
+        <pre>$ pwd
 /home/you/<span class="m">myapp</span>
 
 $ docker compose ps
@@ -999,183 +1125,192 @@ NAME              SERVICE   STATUS
 <span class="m">myapp</span>-db-1        db        running
 
 $ docker volume ls
-local     <span class="m">myapp</span>_pgdata
+<span class="m">myapp</span>_pgdata</pre>
 
-<span class="c"># pin it so it stops depending on the folder</span>
-<span class="k">name:</span> <span class="v">myapp</span></pre>
+        <p class="measure">
+          Rename the folder and Compose stops recognising the containers it started; you quietly get
+          a second set, and the old volume keeps your data hostage under the old name. Pin it with a
+          top-level <code>name: myapp</code> and it no longer depends on where the folder lives.
+        </p>
+
+        <h3>Filling blanks with <code>.env</code></h3>
+
+        <pre><span class="c"># .env — next to compose.yaml</span>
+TAG=16
+WEB_PORT=8000
+
+<span class="c"># compose.yaml</span>
+  <span class="k">db:</span>
+    <span class="k">image:</span> <span class="v">postgres:${TAG}</span>
+  <span class="k">web:</span>
+    <span class="k">ports:</span>
+      - <span class="v">"${WEB_PORT}:8000"</span></pre>
+
+        <p class="measure">
+          Before debugging anything else, look at what Compose actually read:
+          <code>docker compose config</code> prints the file with every blank filled in and every
+          default made explicit.
+        </p>
+      </section>
+
+      <!-- ========================= 9 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">Every day</span>
+          <h2>Five commands and one loop</h2>
+        </div>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg"
+              viewBox="0 0 920 210"
+              role="img"
+              aria-label="The daily loop: up -d, then ps, then logs -f web, then exec web sh, and back to up -d with --build after editing the Dockerfile"
+            >
+              <rect x="16" y="40" width="196" height="80" rx="6" class="tint-a" />
+              <text x="114" y="74" text-anchor="middle" class="mono b">up -d</text>
+              <text x="114" y="100" text-anchor="middle" class="sm">start everything</text>
+
+              <line x1="220" y1="80" x2="242" y2="80" class="ln" />
+              <polygon points="250,80 236,73 236,87" class="head" />
+
+              <rect x="258" y="40" width="196" height="80" rx="6" class="surface" />
+              <text x="356" y="74" text-anchor="middle" class="mono b">ps</text>
+              <text x="356" y="100" text-anchor="middle" class="sm">what is running</text>
+
+              <line x1="462" y1="80" x2="484" y2="80" class="ln" />
+              <polygon points="492,80 478,73 478,87" class="head" />
+
+              <rect x="500" y="40" width="196" height="80" rx="6" class="surface" />
+              <text x="598" y="74" text-anchor="middle" class="mono b">logs -f web</text>
+              <text x="598" y="100" text-anchor="middle" class="sm">why it is not</text>
+
+              <line x1="704" y1="80" x2="726" y2="80" class="ln" />
+              <polygon points="734,80 720,73 720,87" class="head" />
+
+              <rect x="742" y="40" width="162" height="80" rx="6" class="surface" />
+              <text x="823" y="74" text-anchor="middle" class="mono b">exec web sh</text>
+              <text x="823" y="100" text-anchor="middle" class="sm">look inside</text>
+
+              <path d="M 823 120 L 823 166 L 114 166 L 114 128" class="ln-dim dash" />
+              <polygon points="114,120 107,133 121,133" class="head-dim" />
+              <text x="468" y="158" text-anchor="middle" class="sm dim">
+                add --build after editing the Dockerfile
+              </text>
+            </svg>
+          </div>
           <figcaption>
-            The project name defaults to the lowercased directory name, and Compose finds its own
-            containers again by matching it in the <code>com.docker.compose.project</code> label.
-            Rename the folder and you get a second, empty stack while the first one's volume keeps
-            your data under the old prefix. A top-level <code>name:</code> removes the dependency on
-            where the folder lives.
+            <code>-d</code> gives you the terminal back. <code>logs -f</code> follows output as it
+            appears; drop the service name to interleave every container, which is how you spot one
+            of them restarting in a loop.
           </figcaption>
         </figure>
-      </div>
-    </section>
 
-    <!-- ===================== boundary + close ===================== -->
-    <footer class="g-plain">
-      <div class="col">
-        <h2>What this leaves out</h2>
+        <h3>Stopping, and the difference that costs you data</h3>
+
         <div class="tablewrap">
           <table>
             <thead>
               <tr>
-                <th>Not covered</th>
-                <th>You need it when</th>
-                <th>What you would type</th>
+                <th>Command</th>
+                <th>Containers</th>
+                <th>Named volume <code>pgdata</code></th>
+                <th>Bind mount <code>./app</code></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>profiles:</td>
-                <td>only some people should start a service</td>
-                <td class="check">compose --profile debug up -d</td>
+                <td><code>stop</code></td>
+                <td>stopped, still there</td>
+                <td class="yes">kept</td>
+                <td class="yes">kept</td>
               </tr>
               <tr>
-                <td>-f</td>
-                <td>dev and prod share a file but differ</td>
-                <td class="check">compose -f compose.yaml -f prod.yaml up</td>
+                <td><code>down</code></td>
+                <td>removed</td>
+                <td class="yes">kept</td>
+                <td class="yes">kept</td>
               </tr>
               <tr>
-                <td>networks:</td>
-                <td>one flat project network is not enough</td>
-                <td class="check">compose config &rarr; two networks listed</td>
-              </tr>
-              <tr>
-                <td>deploy: replicas</td>
-                <td>one container of a service is not enough</td>
-                <td class="check">compose up -d --scale web=3</td>
+                <td><code>down -v</code></td>
+                <td>removed</td>
+                <td class="no">deleted</td>
+                <td class="yes">kept</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <h3>Where the track ends</h3>
-        <p>
-          That is both parts. You can now do each of these, and check that you did:
+        <p class="measure">
+          The last column never changes: <code>./app</code> is your folder, not Docker's, so no
+          Compose command can remove it. The middle column is where your rows live, and
+          <code>-v</code> is four keystrokes away from deleting them.
         </p>
-        <ul>
+      </section>
+
+      <!-- ========================= 10 ========================= -->
+      <section>
+        <div class="sec-head">
+          <span class="sec-kicker">All together</span>
+          <h2>The finished file</h2>
+        </div>
+
+        <pre><span class="k">name:</span> <span class="v">myapp</span>
+
+<span class="k">services:</span>
+  <span class="k">web:</span>
+    <span class="k">build:</span> <span class="v">.</span>
+    <span class="k">ports:</span>
+      - <span class="v">"${WEB_PORT}:8000"</span>
+    <span class="k">environment:</span>
+      <span class="k">DATABASE_URL:</span> <span class="v">postgresql://app:s3cret@db:5432/appdb</span>
+    <span class="k">volumes:</span>
+      - <span class="v">./app:/app</span>
+    <span class="k">depends_on:</span>
+      <span class="k">db:</span>
+        <span class="k">condition:</span> <span class="v">service_healthy</span>
+    <span class="k">restart:</span> <span class="v">unless-stopped</span>
+
+  <span class="k">db:</span>
+    <span class="k">image:</span> <span class="v">postgres:${TAG}</span>
+    <span class="k">env_file:</span> <span class="v">.env.db</span>
+    <span class="k">volumes:</span>
+      - <span class="v">pgdata:/var/lib/postgresql/data</span>
+    <span class="k">healthcheck:</span>
+      <span class="k">test:</span> <span class="v">["CMD-SHELL", "pg_isready -U app -d appdb"]</span>
+      <span class="k">interval:</span> <span class="v">2s</span>
+      <span class="k">retries:</span> <span class="v">15</span>
+      <span class="k">start_period:</span> <span class="v">5s</span>
+    <span class="k">restart:</span> <span class="v">unless-stopped</span>
+
+<span class="k">volumes:</span>
+  <span class="k">pgdata:</span></pre>
+
+        <h3>Read it back to yourself</h3>
+
+        <ol class="check">
           <li>
-            Write the web + database file from empty, and have
-            <code>docker compose config</code> print it back with no error.
+            Point at the two places <code>pgdata</code> appears and say what each one is doing.
           </li>
+          <li>Which half of <code>"${WEB_PORT}:8000"</code> is your laptop?</li>
+          <li>Why does <code>db</code> work with no <code>ports</code> line at all?</li>
           <li>
-            Point at each key in a stranger's file and name which of the three questions it answers.
+            A colleague's <code>web</code> crashes on a cold laptop with
+            <code>depends_on: [db]</code> already present. Name the two keys that fix it.
           </li>
-          <li>
-            Reproduce the <code>Exited (1)</code> race by deleting the healthcheck, then put it back
-            and watch <code>db</code> reach <code>Up (healthy)</code> before <code>web</code> starts.
-          </li>
-          <li>Say, before running it, which of <code>down</code> and <code>down -v</code> keeps your rows.</li>
-        </ul>
-      </div>
-    </footer>
+          <li>You edited <code>requirements.txt</code> and ran <code>up -d</code>. Why is nothing different?</li>
+          <li>Which stop command destroys your rows, and which one keeps them?</li>
+        </ol>
+      </section>
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.12.0/mermaid.min.js"
-      integrity="sha512-5TKaYvhenABhlGIKSxAWLFJBZCSQw7HTV7aL1dJcBokM/+3PNtfgJFlv8E6Us/B1VMlQ4u8sPzjudL9TEQ06ww=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script>
-      (function () {
-        var blocks = Array.prototype.slice.call(document.querySelectorAll("pre.mermaid"));
-        blocks.forEach(function (b) {
-          b.dataset.src = b.textContent;
-        });
-
-        function draw() {
-          var c = getComputedStyle(document.documentElement);
-          var v = function (n) {
-            return c.getPropertyValue(n).trim();
-          };
-
-          blocks.forEach(function (b) {
-            b.removeAttribute("data-processed");
-            b.textContent = b.dataset.src;
-          });
-
-          mermaid.initialize({
-            startOnLoad: false,
-            securityLevel: "strict",
-            theme: "base",
-            fontFamily: '"Public Sans", Helvetica, Arial, sans-serif',
-            themeVariables: {
-              fontSize: "15px",
-              background: v("--panel"),
-              primaryColor: v("--panel"),
-              primaryTextColor: v("--ink"),
-              primaryBorderColor: v("--muted"),
-              secondaryColor: v("--made-fill"),
-              tertiaryColor: v("--panel"),
-              lineColor: v("--muted"),
-              textColor: v("--ink"),
-              mainBkg: v("--panel"),
-              nodeBorder: v("--muted"),
-              clusterBkg: v("--panel"),
-              clusterBorder: v("--rule"),
-              edgeLabelBackground: v("--panel"),
-              actorBkg: v("--made-fill"),
-              actorBorder: v("--made"),
-              actorTextColor: v("--ink"),
-              actorLineColor: v("--muted"),
-              signalColor: v("--ink"),
-              signalTextColor: v("--ink"),
-              labelBoxBkgColor: v("--when-fill"),
-              labelBoxBorderColor: v("--when"),
-              labelTextColor: v("--ink"),
-              loopTextColor: v("--ink"),
-              noteBkgColor: v("--when-fill"),
-              noteBorderColor: v("--when"),
-              noteTextColor: v("--ink"),
-              sequenceNumberColor: v("--panel"),
-            },
-            themeCSS:
-              ".made > rect,.made > polygon,.made > circle{fill:" +
-              v("--made-fill") +
-              ";stroke:" +
-              v("--made") +
-              ";}" +
-              ".conn > rect,.conn > polygon{fill:" +
-              v("--conn-fill") +
-              ";stroke:" +
-              v("--conn") +
-              ";}" +
-              ".when > rect,.when > polygon{fill:" +
-              v("--when-fill") +
-              ";stroke:" +
-              v("--when") +
-              ";}" +
-              ".ok > rect{fill:" +
-              v("--ok-bg") +
-              ";stroke:" +
-              v("--ok") +
-              ";}" +
-              ".warnb > rect{fill:" +
-              v("--when-fill") +
-              ";stroke:" +
-              v("--when") +
-              ";}" +
-              ".nodeLabel,.edgeLabel,.messageText,.loopText{font-family:'Public Sans',Helvetica,Arial,sans-serif;}",
-          });
-
-          mermaid.run({ nodes: blocks });
-        }
-
-        draw();
-
-        // re-draw on either route into dark: the OS preference, or an explicit stamp
-        var mq = window.matchMedia("(prefers-color-scheme: dark)");
-        if (mq.addEventListener) {
-          mq.addEventListener("change", draw);
-        }
-        new MutationObserver(draw).observe(document.documentElement, {
-          attributes: true,
-          attributeFilter: ["data-theme"],
-        });
-      })();
-    </script>
+      <footer>
+        <p>
+          Left out on purpose, roughly in the order you will need them: <code>profiles:</code> for
+          services only some people run, several <code>-f</code> files layered for dev against prod,
+          and a top-level <code>networks:</code> block for when one network stops being enough.
+        </p>
+      </footer>
+    </div>
   </body>
 </html>

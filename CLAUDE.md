@@ -2,12 +2,8 @@
 
 # Learning with Claude
 
-The user asks a question. You answer it as **one visual explainer page**, served at a fixed local URL they keep open in a browser tab. They reload; the new answer is there.
-
+The user shares a prompt. You answer it as **one visual explainer page**, served at a fixed local URL they keep open in a browser tab. They reload; the new answer is there.
 Responses will be less verbose and address what prompt asks simple to digest knowledge with efficiency and accurate complexity based on prompt.
-
-This file governs logic only: routing, serving, verification. **Everything about how the page looks and
-reads lives in `@design.md`. Read it before you write `index.html`, every time.**
 
 ---
 
@@ -26,7 +22,7 @@ reads lives in `@design.md`. Read it before you write `index.html`, every time.*
 
 - **How to answer.**
   Check `prompt.txt` for what user want explained. Response will be categorized in 2 sections. Judge the prompt the categorize it:
-  1. **Learning** — Ask user about how much he want the topic to be explored and other important questions for creating an curriculum for that topic and update the `CURRICULUM.md` file to keep track of stages. Curriculum will be divided into part (Number of parts will be based on how much depth we are going into) the start to final part will be covered via prompt exchange and explanation.
+  1. **Learning** — Ask user about how much he want the topic to be explored and other important questions for creating an curriculum for that topic and update the `CURRICULUM.md` file to keep track of stages. Curriculum will be divided into part (Number of parts will be based on how much depth we are going into) the start to final part will be covered via prompt exchange and explanation. By the end of every stage there will be a MCQ testing the learning understand and constantly adjusting if need and match user understand and help reach him the full grasp of the `CURRICULUM.md` topic.
 
   2. **Explaining** — When user ask a question, the answer will be simple and brief if question does not demand that much depth to be explored but if question is a followup on something we have been already exploring the go in step-step explanation but the scope of the answer in the document should only be topic level not sub-topic exploration (unless asked specifically).
 
@@ -36,26 +32,15 @@ reads lives in `@design.md`. Read it before you write `index.html`, every time.*
 
 ## Building the page
 
-Invoke the **`eli5`** skill (the user usually types `/eli5:eli5 <question>`), then **`artifact-design`**
-and **`artifact-diagramming`** — the diagrams _are_ the deliverable, so the second is not optional.
-
-`eli5` sets the approach. `@design.md` is the improvement layer on top of it, and it is the only place
-design decisions come from.
+1. Invoke the **`eli5`** skill (the user usually types `/eli5:eli5 <question>`), then **`artifact-design`** and **`artifact-diagramming`** — the diagrams _are_ the deliverable, so the second is not optional.
+2. Go in depth with hand crafted svg when topic demands it.
+3. Be creative while creating with artifacts.
+4. When going deep on topic, well crafted SVG's are easy to understand along with explanation but not verbose.
+5. Reader is visual learner.
 
 ---
 
 ## Verification — every time, before you hand it over
 
 Do a basic playwright test for diagrams and explanation guidance. check if all the CONTENT make sense and follow a simple but knowledge effective tone.
-
-Check every figure for text past its `viewBox` and for overlapping labels, and confirm the
-display face actually loaded - **a Google Fonts family that does not exist fails silently**.
-`Saira SemiExpanded` 404s (the expanded widths are on the variable `Saira` `wdth` axis, not a
-family of their own) and every heading rendered in Arial while the source read fine.
-`document.fonts.check()` is no help; it matches the fallback. Measure the rendered face
-against a nonexistent-family control instead.
-
-Then run the hand-over check at the end of `@design.md`.
-
-Delete Playwright's screenshots and `.playwright-mcp/` afterwards - the user sees them open
-in their editor.
+Delete Playwright's screenshots and `.playwright-mcp/` afterwards
