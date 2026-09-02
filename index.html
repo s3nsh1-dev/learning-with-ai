@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Write the Compose File</title>
+    <title>Eight Traps in a Compose File</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,1540 +11,1741 @@
       href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
     />
     <style>
-      /* ============ tokens: light ============ */
-      :root {
-        color-scheme: light dark;
+/* ============ tokens: light ============ */
+:root {
+  color-scheme: light dark;
 
-        --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
-        --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
-        --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
-        --ground: #eaeef1;
-        --surface: #ffffff;
-        --surface-2: #f4f7f9;
-        --ink: #101a22;
-        --muted: #566976;
-        --rule: #ccd6dd;
+  --ground: #eaeef1;
+  --surface: #ffffff;
+  --surface-2: #f4f7f9;
+  --ink: #101a22;
+  --muted: #566976;
+  --rule: #ccd6dd;
 
-        --accent: #15537d;
-        --hue2: #6a3d86;
-        --good: #1c6b41;
-        --bad: #9d2b2b;
-        --warn: #8a5410;
+  --accent: #15537d;
+  --hue2: #6a3d86;
+  --good: #1c6b41;
+  --bad: #9d2b2b;
+  --warn: #8a5410;
 
-        --tint-a: #dfeaf3;
-        --tint-b: #ece3f4;
-        --tint-good: #dcecdf;
-        --tint-bad: #f6dfdf;
-        --tint-warn: #f7e9d3;
+  --tint-a: #dfeaf3;
+  --tint-b: #ece3f4;
+  --tint-good: #dcecdf;
+  --tint-bad: #f6dfdf;
+  --tint-warn: #f7e9d3;
 
-        --code-bg: #0f1c25;
-        --code-ink: #d6e3ec;
-        --code-key: #8fc3e8;
-        --code-val: #e8c48a;
-        --code-dim: #7f95a4;
-        --code-mark: #2b4152;
-      }
+  --code-bg: #0f1c25;
+  --code-ink: #d6e3ec;
+  --code-key: #8fc3e8;
+  --code-val: #e8c48a;
+  --code-dim: #7f95a4;
+  --code-mark: #2b4152;
+}
 
-      /* ============ tokens: dark ============ */
-      @media (prefers-color-scheme: dark) {
-        :root:not([data-theme="light"]) {
-          --ground: #0d161d;
-          --surface: #15222b;
-          --surface-2: #1a2833;
-          --ink: #e3ecf2;
-          --muted: #93a8b6;
-          --rule: #2a3b47;
+/* ============ tokens: dark ============ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0d161d;
+    --surface: #15222b;
+    --surface-2: #1a2833;
+    --ink: #e3ecf2;
+    --muted: #93a8b6;
+    --rule: #2a3b47;
 
-          --accent: #7cb4dd;
-          --hue2: #bb99d8;
-          --good: #66c48d;
-          --bad: #ef8f8f;
-          --warn: #d8ac63;
+    --accent: #7cb4dd;
+    --hue2: #bb99d8;
+    --good: #66c48d;
+    --bad: #ef8f8f;
+    --warn: #d8ac63;
 
-          --tint-a: #1a2f3e;
-          --tint-b: #2b2338;
-          --tint-good: #17301f;
-          --tint-bad: #351c1c;
-          --tint-warn: #33291a;
+    --tint-a: #1a2f3e;
+    --tint-b: #2b2338;
+    --tint-good: #17301f;
+    --tint-bad: #351c1c;
+    --tint-warn: #33291a;
 
-          --code-bg: #0a1218;
-          --code-mark: #22323f;
-        }
-      }
+    --code-bg: #0a1218;
+    --code-mark: #22323f;
+  }
+}
 
-      :root[data-theme="dark"] {
-        --ground: #0d161d;
-        --surface: #15222b;
-        --surface-2: #1a2833;
-        --ink: #e3ecf2;
-        --muted: #93a8b6;
-        --rule: #2a3b47;
+:root[data-theme="dark"] {
+  --ground: #0d161d;
+  --surface: #15222b;
+  --surface-2: #1a2833;
+  --ink: #e3ecf2;
+  --muted: #93a8b6;
+  --rule: #2a3b47;
 
-        --accent: #7cb4dd;
-        --hue2: #bb99d8;
-        --good: #66c48d;
-        --bad: #ef8f8f;
-        --warn: #d8ac63;
+  --accent: #7cb4dd;
+  --hue2: #bb99d8;
+  --good: #66c48d;
+  --bad: #ef8f8f;
+  --warn: #d8ac63;
 
-        --tint-a: #1a2f3e;
-        --tint-b: #2b2338;
-        --tint-good: #17301f;
-        --tint-bad: #351c1c;
-        --tint-warn: #33291a;
+  --tint-a: #1a2f3e;
+  --tint-b: #2b2338;
+  --tint-good: #17301f;
+  --tint-bad: #351c1c;
+  --tint-warn: #33291a;
 
-        --code-bg: #0a1218;
-        --code-mark: #22323f;
-      }
+  --code-bg: #0a1218;
+  --code-mark: #22323f;
+}
 
-      /* ============ base ============ */
-      * {
-        box-sizing: border-box;
-      }
+/* ============ base ============ */
+* {
+  box-sizing: border-box;
+}
 
-      body {
-        margin: 0;
-        background: var(--ground);
-        color: var(--ink);
-        font-family: var(--serif);
-        font-size: 19px;
-        line-height: 1.7;
-      }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.7;
+}
 
-      .wrap {
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 0 28px 120px;
-      }
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 28px 120px;
+}
 
-      .measure {
-        max-width: 34em;
-      }
+.measure {
+  max-width: 34em;
+}
 
-      /* ============ masthead ============ */
-      .masthead {
-        padding: 84px 0 40px;
-      }
+p {
+  margin: 0;
+}
 
-      .eyebrow {
-        font-family: var(--sans);
-        font-size: 13px;
-        font-weight: 600;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: var(--accent);
-        margin: 0 0 18px;
-      }
+strong {
+  font-weight: 600;
+}
 
-      h1 {
-        font-family: var(--sans);
-        font-size: 52px;
-        line-height: 1.08;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        margin: 0 0 20px;
-        text-wrap: balance;
-        max-width: 14em;
-      }
+a {
+  color: var(--accent);
+}
 
-      .standfirst {
-        font-size: 21px;
-        line-height: 1.6;
-        color: var(--muted);
-        margin: 0;
-        max-width: 32em;
-      }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
 
-      /* ============ sections ============ */
-      section {
-        background: var(--surface);
-        border: 1px solid var(--rule);
-        border-radius: 4px;
-        padding: 40px 44px 46px;
-        margin-bottom: 22px;
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-      }
+code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
 
-      section > *,
-      figure > *,
-      .callout > * {
-        margin: 0;
-        /* flex items default to min-width:auto, which lets a wide <pre>
-           push the whole page sideways on a narrow screen */
-        min-width: 0;
-      }
+/* ============ masthead ============ */
+.masthead {
+  padding: 76px 0 34px;
+}
 
-      .sec-head {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 18px;
+}
 
-      .sec-kicker {
-        font-family: var(--sans);
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
+h1 {
+  font-family: var(--sans);
+  font-size: 52px;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px;
+  text-wrap: balance;
+  max-width: 14em;
+}
 
-      h2 {
-        font-family: var(--sans);
-        font-size: 32px;
-        line-height: 1.2;
-        font-weight: 600;
-        letter-spacing: -0.015em;
-        margin: 0;
-        text-wrap: balance;
-      }
+.standfirst {
+  font-size: 21px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 32em;
+}
 
-      h3 {
-        font-family: var(--sans);
-        font-size: 19px;
-        font-weight: 600;
-        margin: 12px 0 0;
-      }
+/* ============ sticky progress rail ============ */
+.rail {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 11px 0;
+  margin-bottom: 22px;
+  background: var(--ground);
+  border-bottom: 1px solid var(--rule);
+}
 
-      p {
-        margin: 0;
-      }
+.rail-dots {
+  display: flex;
+  gap: 7px;
+}
 
-      .lead {
-        font-size: 22px;
-        line-height: 1.55;
-        max-width: 30em;
-      }
+.dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--rule);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+}
 
-      strong {
-        font-weight: 600;
-      }
+.dot.hit {
+  background: var(--good);
+  border-color: var(--good);
+  color: var(--surface);
+}
 
-      code {
-        font-family: var(--mono);
-        font-size: 0.85em;
-        background: var(--surface-2);
-        border: 1px solid var(--rule);
-        padding: 1px 5px;
-        border-radius: 3px;
-        white-space: nowrap;
-      }
+.dot.miss {
+  background: var(--bad);
+  border-color: var(--bad);
+  color: var(--surface);
+}
 
-      a {
-        color: var(--accent);
-      }
+.rail-tally {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 
-      :focus-visible {
-        outline: 2px solid var(--accent);
-        outline-offset: 3px;
-      }
+/* ============ sections ============ */
+section {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 36px 40px 40px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
 
-      /* ============ figures ============ */
-      figure {
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-      }
+/* flex children default to min-width:auto, which lets a wide <pre>
+   push the whole page sideways on a narrow screen */
+section > *,
+figure > *,
+.qbody > *,
+.verdict > * {
+  margin: 0;
+  min-width: 0;
+}
 
-      .plate {
-        background: var(--surface-2);
-        border: 1px solid var(--rule);
-        border-radius: 4px;
-        padding: 26px 22px;
-        overflow-x: auto;
-      }
+.sec-kicker {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 
-      figcaption {
-        font-size: 17px;
-        line-height: 1.6;
-        color: var(--muted);
-        max-width: 36em;
-      }
+h2 {
+  font-family: var(--sans);
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
 
-      figcaption strong {
-        color: var(--ink);
-      }
+.lead {
+  font-size: 21px;
+  line-height: 1.55;
+  max-width: 30em;
+}
 
-      /* ============ diagram svg ============ */
-      .dg {
-        display: block;
-        width: 100%;
-        height: auto;
-        color: var(--ink);
-        min-width: 620px;
-      }
+/* ============ question card ============ */
+.q {
+  scroll-margin-top: 72px;
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  gap: 0 22px;
+}
 
-      .dg text {
-        font-family: var(--sans);
-        fill: currentColor;
-        font-size: 15px;
-      }
+.qnum {
+  font-family: var(--mono);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--rule);
+  padding-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
 
-      .dg .mono {
-        font-family: var(--mono);
-      }
-      .dg .sm {
-        font-size: 13px;
-      }
-      .dg .lg {
-        font-size: 20px;
-      }
-      .dg .xl {
-        font-size: 27px;
-      }
-      .dg .b {
-        font-weight: 600;
-      }
-      .dg .dim {
-        fill: var(--muted);
-      }
+.q.answered .qnum {
+  color: var(--accent);
+}
 
-      .dg .surface {
-        fill: var(--surface);
-        stroke: var(--rule);
-        stroke-width: 2;
-      }
-      .dg .tint-a {
-        fill: var(--tint-a);
-        stroke: var(--accent);
-        stroke-width: 2;
-      }
-      .dg .tint-b {
-        fill: var(--tint-b);
-        stroke: var(--hue2);
-        stroke-width: 2;
-      }
-      .dg .tint-good {
-        fill: var(--tint-good);
-        stroke: var(--good);
-        stroke-width: 2;
-      }
-      .dg .tint-warn {
-        fill: var(--tint-warn);
-        stroke: var(--warn);
-        stroke-width: 2;
-      }
-      .dg .band-bad {
-        fill: var(--tint-bad);
-        stroke: none;
-      }
-      .dg .band-good {
-        fill: var(--tint-good);
-        stroke: none;
-      }
-      .dg .slab {
-        fill: var(--rule);
-        stroke: none;
-      }
+.qbody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-      .dg .t-accent {
-        fill: var(--accent);
-      }
-      .dg .t-hue2 {
-        fill: var(--hue2);
-      }
-      .dg .t-good {
-        fill: var(--good);
-      }
-      .dg .t-bad {
-        fill: var(--bad);
-      }
-      .dg .t-warn {
-        fill: var(--warn);
-      }
+.qtest {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 
-      .dg .ln {
-        stroke: currentColor;
-        stroke-width: 2;
-        fill: none;
-      }
-      .dg .ln-dim {
-        stroke: var(--muted);
-        stroke-width: 2;
-        fill: none;
-      }
-      .dg .ln-bad {
-        stroke: var(--bad);
-        stroke-width: 2.5;
-        fill: none;
-      }
-      .dg .ln-good {
-        stroke: var(--good);
-        stroke-width: 2.5;
-        fill: none;
-      }
-      .dg .ln-acc {
-        stroke: var(--accent);
-        stroke-width: 2.5;
-        fill: none;
-      }
-      .dg .ln-hue2 {
-        stroke: var(--hue2);
-        stroke-width: 2.5;
-        fill: none;
-      }
-      .dg .ln-warn {
-        stroke: var(--warn);
-        stroke-width: 2.5;
-        fill: none;
-      }
-      .dg .dash {
-        stroke-dasharray: 7 6;
-      }
-      .dg .box-open {
-        fill: none;
-        stroke: var(--muted);
-        stroke-width: 2;
-      }
+.qstem {
+  font-size: 21px;
+  line-height: 1.5;
+  max-width: 31em;
+}
 
-      .dg .head {
-        fill: currentColor;
-        stroke: none;
-      }
-      .dg .head-dim {
-        fill: var(--muted);
-        stroke: none;
-      }
-      .dg .head-bad {
-        fill: var(--bad);
-        stroke: none;
-      }
-      .dg .head-good {
-        fill: var(--good);
-        stroke: none;
-      }
-      .dg .head-acc {
-        fill: var(--accent);
-        stroke: none;
-      }
-      .dg .head-hue2 {
-        fill: var(--hue2);
-        stroke: none;
-      }
+/* ============ options ============ */
+.opts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  max-width: 40em;
+}
 
-      /* ============ code ============ */
-      pre {
-        font-family: var(--mono);
-        font-size: 15px;
-        line-height: 1.7;
-        background: var(--code-bg);
-        color: var(--code-ink);
-        border-radius: 4px;
-        padding: 24px 26px;
-        overflow-x: auto;
-        margin: 0;
-        tab-size: 2;
-      }
+.opt {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 14px;
+  align-items: start;
+  text-align: left;
+  font-family: var(--serif);
+  font-size: 17.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 13px 16px;
+  cursor: pointer;
+}
 
-      pre .k {
-        color: var(--code-key);
-      }
-      pre .v {
-        color: var(--code-val);
-      }
-      pre .c {
-        color: var(--code-dim);
-      }
-      pre .m {
-        background: var(--code-mark);
-        border-radius: 3px;
-        padding: 1px 4px;
-      }
-      pre .bad {
-        color: #f2a0a0;
-      }
-      pre .ok {
-        color: #90d9ad;
-      }
+.opt .ltr {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--surface);
+  text-align: center;
+  line-height: 22px;
+  height: 24px;
+}
 
-      /* ============ callout ============ */
-      .callout {
-        border-left: 3px solid var(--rule);
-        padding: 4px 0 4px 22px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        max-width: 36em;
-      }
+.opt code {
+  font-size: 0.82em;
+}
 
-      .callout .tag {
-        font-family: var(--sans);
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
+.opt:hover:not(:disabled) {
+  border-color: var(--accent);
+}
 
-      .callout.warn {
-        border-left-color: var(--bad);
-      }
-      .callout.warn .tag {
-        color: var(--bad);
-      }
+.opt:disabled {
+  cursor: default;
+}
 
-      .callout.note {
-        border-left-color: var(--accent);
-      }
-      .callout.note .tag {
-        color: var(--accent);
-      }
+.q.answered .opt:not(.picked):not(.key) {
+  opacity: 0.62;
+}
 
-      /* ============ two-up ============ */
-      .split {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-      }
+.opt.key {
+  background: var(--tint-good);
+  border-color: var(--good);
+}
 
-      .split .card {
-        border: 1px solid var(--rule);
-        border-radius: 4px;
-        padding: 20px 22px;
-        background: var(--surface-2);
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
+.opt.key .ltr {
+  color: var(--good);
+  border-color: var(--good);
+}
 
-      .split .card h4 {
-        font-family: var(--mono);
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-        color: var(--accent);
-      }
+.opt.picked.wrong {
+  background: var(--tint-bad);
+  border-color: var(--bad);
+}
 
-      .split .card p {
-        font-size: 17px;
-        line-height: 1.55;
-        color: var(--muted);
-      }
+.opt.picked.wrong .ltr {
+  color: var(--bad);
+  border-color: var(--bad);
+}
 
-      /* ============ table ============ */
-      .tablewrap {
-        overflow-x: auto;
-      }
+.mark {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 4px;
+}
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 16.5px;
-        font-variant-numeric: tabular-nums;
-      }
+.opt.key .mark {
+  color: var(--good);
+}
 
-      th,
-      td {
-        text-align: left;
-        padding: 11px 14px;
-        border-bottom: 1px solid var(--rule);
-        vertical-align: top;
-      }
+.opt.picked.wrong .mark {
+  color: var(--bad);
+}
 
-      thead th {
-        font-family: var(--sans);
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.11em;
-        text-transform: uppercase;
-        color: var(--muted);
-        border-bottom: 2px solid var(--rule);
-      }
+/* ============ verdict panel ============ */
+.verdict {
+  border-left: 3px solid var(--good);
+  padding: 2px 0 2px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 40em;
+}
 
-      td:first-child {
-        white-space: nowrap;
-      }
+.verdict.was-wrong {
+  border-left-color: var(--bad);
+}
 
-      .yes {
-        color: var(--good);
-        font-weight: 600;
-      }
-      .no {
-        color: var(--bad);
-        font-weight: 600;
-      }
+.verdict .tag {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--good);
+}
 
-      /* ============ checklist ============ */
-      ol.check {
-        margin: 0;
-        padding-left: 1.3em;
-        max-width: 36em;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        font-size: 18px;
-      }
+.verdict.was-wrong .tag {
+  color: var(--bad);
+}
 
-      footer {
-        padding: 44px 4px 0;
-        color: var(--muted);
-        font-size: 17.5px;
-        line-height: 1.65;
-        max-width: 38em;
-      }
+.verdict p {
+  font-size: 17.5px;
+  line-height: 1.62;
+  color: var(--muted);
+}
 
-      @media (max-width: 760px) {
-        code {
-          white-space: normal;
-          overflow-wrap: anywhere;
-        }
-        h1 {
-          font-size: 36px;
-        }
-        h2 {
-          font-size: 26px;
-        }
-        body {
-          font-size: 18px;
-        }
-        section {
-          padding: 28px 22px 32px;
-        }
-        .split {
-          grid-template-columns: 1fr;
-        }
-        .lead {
-          font-size: 20px;
-        }
-      }
+.verdict p strong {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .verdict[data-open] {
+    animation: rise 0.22s ease-out;
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+}
+
+/* ============ figures ============ */
+figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plate {
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 22px 20px;
+  overflow-x: auto;
+}
+
+figcaption {
+  font-size: 16.5px;
+  line-height: 1.58;
+  color: var(--muted);
+  max-width: 36em;
+}
+
+figcaption strong {
+  color: var(--ink);
+}
+
+/* ============ diagram svg ============ */
+.dg {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--ink);
+  min-width: 560px;
+}
+
+.dg.wide {
+  min-width: 620px;
+}
+
+.dg text {
+  font-family: var(--sans);
+  fill: currentColor;
+  font-size: 15px;
+}
+
+.dg .mono {
+  font-family: var(--mono);
+}
+.dg .sm {
+  font-size: 13px;
+}
+.dg .lg {
+  font-size: 20px;
+}
+.dg .b {
+  font-weight: 600;
+}
+.dg .dim {
+  fill: var(--muted);
+}
+
+.dg .surface {
+  fill: var(--surface);
+  stroke: var(--rule);
+  stroke-width: 2;
+}
+.dg .tint-a {
+  fill: var(--tint-a);
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.dg .tint-b {
+  fill: var(--tint-b);
+  stroke: var(--hue2);
+  stroke-width: 2;
+}
+.dg .tint-good {
+  fill: var(--tint-good);
+  stroke: var(--good);
+  stroke-width: 2;
+}
+.dg .tint-bad {
+  fill: var(--tint-bad);
+  stroke: var(--bad);
+  stroke-width: 2;
+}
+.dg .tint-warn {
+  fill: var(--tint-warn);
+  stroke: var(--warn);
+  stroke-width: 2;
+}
+.dg .band-bad {
+  fill: var(--tint-bad);
+  stroke: none;
+}
+.dg .band-good {
+  fill: var(--tint-good);
+  stroke: none;
+}
+.dg .slab {
+  fill: var(--rule);
+  stroke: none;
+}
+.dg .gap {
+  fill: var(--surface-2);
+  stroke: none;
+}
+.dg .chip {
+  fill: var(--accent);
+  stroke: none;
+}
+
+.dg .t-accent {
+  fill: var(--accent);
+}
+.dg .t-hue2 {
+  fill: var(--hue2);
+}
+.dg .t-good {
+  fill: var(--good);
+}
+.dg .t-bad {
+  fill: var(--bad);
+}
+.dg .t-warn {
+  fill: var(--warn);
+}
+.dg .t-inv {
+  fill: var(--surface);
+}
+
+.dg .ln {
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+.dg .ln-dim {
+  stroke: var(--muted);
+  stroke-width: 2;
+  fill: none;
+}
+.dg .ln-bad {
+  stroke: var(--bad);
+  stroke-width: 2.5;
+  fill: none;
+}
+.dg .ln-good {
+  stroke: var(--good);
+  stroke-width: 2.5;
+  fill: none;
+}
+.dg .ln-acc {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  fill: none;
+}
+.dg .ln-hue2 {
+  stroke: var(--hue2);
+  stroke-width: 2.5;
+  fill: none;
+}
+.dg .ln-warn {
+  stroke: var(--warn);
+  stroke-width: 2.5;
+  fill: none;
+}
+.dg .dash {
+  stroke-dasharray: 7 6;
+}
+.dg .box-open {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2;
+}
+
+.dg .head {
+  fill: currentColor;
+  stroke: none;
+}
+.dg .head-dim {
+  fill: var(--muted);
+  stroke: none;
+}
+.dg .head-bad {
+  fill: var(--bad);
+  stroke: none;
+}
+.dg .head-good {
+  fill: var(--good);
+  stroke: none;
+}
+.dg .head-acc {
+  fill: var(--accent);
+  stroke: none;
+}
+.dg .head-warn {
+  fill: var(--warn);
+  stroke: none;
+}
+
+/* ============ code ============ */
+pre {
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.7;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  border-radius: 4px;
+  padding: 20px 22px;
+  overflow-x: auto;
+  margin: 0;
+  tab-size: 2;
+  max-width: 100%;
+}
+
+pre.tight {
+  font-size: 14px;
+}
+
+pre .k {
+  color: var(--code-key);
+}
+pre .v {
+  color: var(--code-val);
+}
+pre .c {
+  color: var(--code-dim);
+}
+pre .m {
+  background: var(--code-mark);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+pre .bad {
+  color: #f2a0a0;
+}
+pre .ok {
+  color: #90d9ad;
+}
+
+/* ============ scorecard ============ */
+.scorecard {
+  border-color: var(--accent);
+}
+
+.score-top {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.score-num {
+  font-family: var(--mono);
+  font-size: 62px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-say {
+  font-size: 20px;
+  line-height: 1.45;
+  color: var(--muted);
+  max-width: 24em;
+}
+
+.missed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 38em;
+}
+
+.missed li {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 14px;
+  align-items: baseline;
+  font-size: 17.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  border-top: 1px solid var(--rule);
+  padding-top: 10px;
+}
+
+.missed li b {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--bad);
+}
+
+.missed li span {
+  color: var(--ink);
+}
+
+footer {
+  padding: 40px 4px 0;
+  color: var(--muted);
+  font-size: 17.5px;
+  line-height: 1.65;
+  max-width: 38em;
+}
+
+@media (max-width: 760px) {
+  code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  h1 {
+    font-size: 34px;
+  }
+  h2 {
+    font-size: 25px;
+  }
+  body {
+    font-size: 18px;
+  }
+  section {
+    padding: 26px 20px 30px;
+  }
+  .q {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .qnum {
+    font-size: 26px;
+    padding-top: 0;
+  }
+  .qstem {
+    font-size: 19px;
+  }
+  .lead {
+    font-size: 19px;
+  }
+  .score-num {
+    font-size: 48px;
+  }
+}
     </style>
   </head>
 
   <body>
     <div class="wrap">
       <header class="masthead">
-        <p class="eyebrow">Docker Compose &middot; Part 2</p>
-        <h1>Write the compose file</h1>
+        <p class="eyebrow">Docker Compose &middot; Stage 2 MCQ</p>
+        <h1>Eight traps in a compose file</h1>
         <p class="standfirst">
-          Part 1 showed what the file is. This part types one from an empty screen: seven keys, the
-          five commands you run every day, and the one line that lies to you.
+          Every question here is a mistake that starts cleanly and fails later. Pick one answer,
+          read what it costs you, move on. One shot each.
         </p>
       </header>
 
-      <!-- ========================= 1 ========================= -->
+      <nav class="rail" aria-label="Progress">
+        <div class="rail-dots">
+          <a class="dot" href="#q1">1</a>
+          <a class="dot" href="#q2">2</a>
+          <a class="dot" href="#q3">3</a>
+          <a class="dot" href="#q4">4</a>
+          <a class="dot" href="#q5">5</a>
+          <a class="dot" href="#q6">6</a>
+          <a class="dot" href="#q7">7</a>
+          <a class="dot" href="#q8">8</a>
+        </div>
+        <p class="rail-tally" id="tally" aria-live="polite">0 of 8 answered</p>
+      </nav>
+
+      <!-- ===================== map ===================== -->
       <section>
-        <div class="sec-head">
-          <span class="sec-kicker">The shape of it</span>
-          <h2>One file, two running things</h2>
+        <div>
+          <span class="sec-kicker">Before you start</span>
+          <h2>Where the eight questions live</h2>
         </div>
 
         <p class="lead">
-          You describe the containers you want. Compose makes them, and puts them on a private
-          network of their own.
+          This is the file you finished in Stage 2. Each question stands on a real line of it.
         </p>
 
         <figure>
           <div class="plate">
             <svg
-              class="dg"
-              viewBox="0 0 920 340"
+              class="dg wide"
+              viewBox="0 0 920 760"
               role="img"
-              aria-label="A compose.yaml file, read by docker compose up, produces a project containing a web container and a db container on one private network, where web reaches db by the hostname db on port 5432"
+              aria-label="The finished compose file with a question number in the left gutter beside each line the quiz asks about. Five of the eight numbers appear on two separate lines, because those questions are about pairs of lines that have to agree."
             >
-              <!-- the file -->
-              <rect x="16" y="60" width="210" height="220" rx="6" class="surface" />
-              <rect x="16" y="60" width="210" height="36" rx="6" class="tint-a" />
-              <rect x="16" y="84" width="210" height="12" class="tint-a" />
-              <text x="121" y="85" text-anchor="middle" class="mono sm b t-accent">compose.yaml</text>
-              <text x="36" y="128" class="mono sm">services:</text>
-              <text x="54" y="154" class="mono sm b t-accent">web:</text>
-              <text x="72" y="178" class="mono sm dim">build: .</text>
-              <text x="72" y="200" class="mono sm dim">ports: ...</text>
-              <text x="54" y="228" class="mono sm b t-hue2">db:</text>
-              <text x="72" y="252" class="mono sm dim">image: ...</text>
-              <text x="72" y="274" class="mono sm dim">volumes: ...</text>
+              <line x1="478" y1="18" x2="478" y2="742" class="ln-dim dash" />
 
-              <!-- read -->
-              <line x1="238" y1="170" x2="308" y2="170" class="ln" />
-              <polygon points="316,170 302,163 302,177" class="head" />
-              <text x="273" y="156" text-anchor="middle" class="mono sm">up -d</text>
+              <!-- ---- file listing ---- -->
+              <text x="64" y="44" class="mono sm">services:</text>
+              <text x="82" y="68" class="mono sm b t-accent">web:</text>
+              <text x="100" y="92" class="mono sm dim">build: .</text>
+              <text x="100" y="116" class="mono sm dim">ports:</text>
+              <text x="118" y="140" class="mono sm">- "${WEB_PORT}:8000"</text>
+              <text x="100" y="164" class="mono sm dim">environment:</text>
+              <text x="118" y="188" class="mono sm">DATABASE_URL: &hellip;@db:5432/appdb</text>
+              <text x="100" y="212" class="mono sm dim">volumes:</text>
+              <text x="118" y="236" class="mono sm">- ./app:/app</text>
+              <text x="100" y="260" class="mono sm dim">depends_on:</text>
+              <text x="118" y="284" class="mono sm dim">db:</text>
+              <text x="136" y="308" class="mono sm">condition: service_healthy</text>
+              <text x="100" y="332" class="mono sm">restart: unless-stopped</text>
 
-              <!-- project -->
-              <rect x="336" y="44" width="568" height="272" rx="8" class="box-open dash" />
-              <text x="620" y="70" text-anchor="middle" class="sm dim">one project &middot; one private network</text>
+              <text x="82" y="380" class="mono sm b t-hue2">db:</text>
+              <text x="100" y="404" class="mono sm">image: postgres:${TAG}</text>
+              <text x="100" y="428" class="mono sm">env_file: .env.db</text>
+              <rect x="96" y="440" width="212" height="26" rx="4" class="box-open dash" />
+              <text x="202" y="458" text-anchor="middle" class="sm dim">no ports: line here</text>
+              <text x="100" y="488" class="mono sm dim">volumes:</text>
+              <text x="118" y="512" class="mono sm">- pgdata:/var/lib/postgresql/data</text>
+              <text x="100" y="536" class="mono sm">healthcheck:</text>
+              <text x="118" y="560" class="mono sm dim">test: ["CMD-SHELL", "pg_isready &hellip;"]</text>
+              <text x="100" y="584" class="mono sm">restart: always</text>
 
-              <rect x="366" y="96" width="230" height="150" rx="6" class="tint-a" />
-              <text x="481" y="140" text-anchor="middle" class="lg b mono t-accent">web</text>
-              <text x="481" y="172" text-anchor="middle" class="sm">your Python app</text>
-              <text x="481" y="198" text-anchor="middle" class="sm">listening on 8000</text>
+              <text x="64" y="632" class="mono sm dim">volumes:</text>
+              <text x="82" y="656" class="mono sm">pgdata:</text>
 
-              <rect x="650" y="96" width="224" height="150" rx="6" class="tint-b" />
-              <text x="762" y="140" text-anchor="middle" class="lg b mono t-hue2">db</text>
-              <text x="762" y="172" text-anchor="middle" class="sm">postgres:16</text>
-              <text x="762" y="198" text-anchor="middle" class="sm">no door outside</text>
+              <line x1="60" y1="682" x2="440" y2="682" class="ln-dim dash" />
+              <text x="64" y="708" class="sm dim">.env, sitting beside the file</text>
+              <text x="64" y="732" class="mono sm">WEB_PORT=3000 &middot; TAG=16</text>
 
-              <path d="M 481 246 L 481 288 L 762 288 L 762 254" class="ln-dim" />
-              <polygon points="762,246 755,259 769,259" class="head-dim" />
-              <text x="621" y="280" text-anchor="middle" class="mono sm b">db:5432</text>
+              <!-- ---- gutter chips ---- -->
+              <circle cx="34" cy="87" r="11" class="chip" />
+              <text x="34" y="92" text-anchor="middle" class="mono sm b t-inv">5</text>
+              <circle cx="34" cy="135" r="11" class="chip" />
+              <text x="34" y="140" text-anchor="middle" class="mono sm b t-inv">2</text>
+              <circle cx="34" cy="183" r="11" class="chip" />
+              <text x="34" y="188" text-anchor="middle" class="mono sm b t-inv">3</text>
+              <circle cx="34" cy="231" r="11" class="chip" />
+              <text x="34" y="236" text-anchor="middle" class="mono sm b t-inv">6</text>
+              <circle cx="34" cy="303" r="11" class="chip" />
+              <text x="34" y="308" text-anchor="middle" class="mono sm b t-inv">4</text>
+              <circle cx="34" cy="327" r="11" class="chip" />
+              <text x="34" y="332" text-anchor="middle" class="mono sm b t-inv">8</text>
+
+              <circle cx="34" cy="399" r="11" class="chip" />
+              <text x="34" y="404" text-anchor="middle" class="mono sm b t-inv">7</text>
+              <circle cx="34" cy="423" r="11" class="chip" />
+              <text x="34" y="428" text-anchor="middle" class="mono sm b t-inv">7</text>
+              <circle cx="34" cy="453" r="11" class="chip" />
+              <text x="34" y="458" text-anchor="middle" class="mono sm b t-inv">3</text>
+              <circle cx="22" cy="507" r="11" class="chip" />
+              <text x="22" y="512" text-anchor="middle" class="mono sm b t-inv">1</text>
+              <circle cx="48" cy="507" r="11" class="chip" />
+              <text x="48" y="512" text-anchor="middle" class="mono sm b t-inv">6</text>
+              <circle cx="34" cy="531" r="11" class="chip" />
+              <text x="34" y="536" text-anchor="middle" class="mono sm b t-inv">4</text>
+              <circle cx="34" cy="579" r="11" class="chip" />
+              <text x="34" y="584" text-anchor="middle" class="mono sm b t-inv">8</text>
+
+              <circle cx="34" cy="651" r="11" class="chip" />
+              <text x="34" y="656" text-anchor="middle" class="mono sm b t-inv">1</text>
+
+              <circle cx="22" cy="727" r="11" class="chip" />
+              <text x="22" y="732" text-anchor="middle" class="mono sm b t-inv">2</text>
+              <circle cx="48" cy="727" r="11" class="chip" />
+              <text x="48" y="732" text-anchor="middle" class="mono sm b t-inv">7</text>
+
+              <!-- ---- key ---- -->
+              <text x="506" y="40" class="sm b">WHAT EACH ONE IS TESTING</text>
+
+              <circle cx="518" cy="84" r="12" class="chip" />
+              <text x="518" y="89" text-anchor="middle" class="mono sm b t-inv">1</text>
+              <text x="546" y="82" class="sm b">Mount it, and declare it</text>
+              <text x="546" y="102" class="sm dim">the same name, written twice</text>
+
+              <circle cx="518" cy="164" r="12" class="chip" />
+              <text x="518" y="169" text-anchor="middle" class="mono sm b t-inv">2</text>
+              <text x="546" y="162" class="sm b">Which half is your laptop</text>
+              <text x="546" y="182" class="sm dim">reversed, it still starts</text>
+
+              <circle cx="518" cy="244" r="12" class="chip" />
+              <text x="518" y="249" text-anchor="middle" class="mono sm b t-inv">3</text>
+              <text x="546" y="242" class="sm b">A service with no open port</text>
+              <text x="546" y="262" class="sm dim">still reachable from inside</text>
+
+              <circle cx="518" cy="324" r="12" class="chip" />
+              <text x="518" y="329" text-anchor="middle" class="mono sm b t-inv">4</text>
+              <text x="546" y="322" class="sm b">What depends_on skips</text>
+              <text x="546" y="342" class="sm dim">the process, not the socket</text>
+
+              <circle cx="518" cy="404" r="12" class="chip" />
+              <text x="518" y="409" text-anchor="middle" class="mono sm b t-inv">5</text>
+              <text x="546" y="402" class="sm b">When a rebuild happens</text>
+              <text x="546" y="422" class="sm dim">never on its own</text>
+
+              <circle cx="518" cy="484" r="12" class="chip" />
+              <text x="518" y="489" text-anchor="middle" class="mono sm b t-inv">6</text>
+              <text x="546" y="482" class="sm b">How far down -v reaches</text>
+              <text x="546" y="502" class="sm dim">one of these two survives</text>
+
+              <circle cx="518" cy="564" r="12" class="chip" />
+              <text x="518" y="569" text-anchor="middle" class="mono sm b t-inv">7</text>
+              <text x="546" y="562" class="sm b">Which settings get inside</text>
+              <text x="546" y="582" class="sm dim">one of the three does not</text>
+
+              <circle cx="518" cy="644" r="12" class="chip" />
+              <text x="518" y="649" text-anchor="middle" class="mono sm b t-inv">8</text>
+              <text x="546" y="642" class="sm b">A policy that overrules you</text>
+              <text x="546" y="662" class="sm dim">the two restart lines differ</text>
             </svg>
           </div>
           <figcaption>
-            Inside the dashed boundary <strong>the service name is the hostname</strong>, so
-            <code>web</code> connects to <code>db:5432</code> and never needs an IP address. Nothing
-            outside can reach either container until you publish a port, which is the next key but
-            one.
+            <strong>Five of the eight numbers appear twice.</strong> That is the shape of the whole
+            stage: a compose file is full of pairs of lines that have to agree, and nothing in the
+            file marks them as a pair. The gutter here does what YAML will not do for you.
           </figcaption>
         </figure>
       </section>
 
-      <!-- ========================= 2 ========================= -->
-      <section>
-        <div class="sec-head">
-          <span class="sec-kicker">Key 1 &middot; where it comes from</span>
-          <h2><code>image</code> or <code>build</code>, never both</h2>
-        </div>
+      <!-- ===================== Q1 ===================== -->
+      <section class="q" id="q1" data-q="1">
+        <p class="qnum">01</p>
+        <div class="qbody">
+          <p class="qtest">Reference and declaration</p>
+          <p class="qstem">You delete the last two lines. What happens on the next <code>up -d</code>?</p>
 
-        <p class="lead">Every service needs a filesystem to start from. There are two ways to get one.</p>
-
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg"
-              viewBox="0 0 920 300"
-              role="img"
-              aria-label="image pulls a finished image from a registry; build makes an image from your Dockerfile and source. Both paths end at the same container."
-            >
-              <!-- lane 1 -->
-              <text x="16" y="44" class="mono b t-hue2">image: postgres:16</text>
-              <rect x="16" y="58" width="210" height="86" rx="6" class="tint-b" />
-              <text x="121" y="94" text-anchor="middle" class="b">Docker Hub</text>
-              <text x="121" y="120" text-anchor="middle" class="sm">someone else built it</text>
-              <line x1="238" y1="101" x2="296" y2="101" class="ln" />
-              <polygon points="304,101 290,94 290,108" class="head" />
-              <text x="271" y="88" text-anchor="middle" class="sm">pull</text>
-              <rect x="312" y="58" width="170" height="86" rx="6" class="surface" />
-              <text x="397" y="94" text-anchor="middle" class="b">image</text>
-              <text x="397" y="120" text-anchor="middle" class="mono sm dim">postgres:16</text>
-
-              <!-- lane 2 -->
-              <text x="16" y="182" class="mono b t-accent">build: .</text>
-              <rect x="16" y="196" width="210" height="86" rx="6" class="tint-a" />
-              <text x="121" y="232" text-anchor="middle" class="b">Dockerfile</text>
-              <text x="121" y="258" text-anchor="middle" class="sm">plus your source</text>
-              <line x1="238" y1="239" x2="296" y2="239" class="ln" />
-              <polygon points="304,239 290,232 290,246" class="head" />
-              <text x="271" y="226" text-anchor="middle" class="sm">build</text>
-              <rect x="312" y="196" width="170" height="86" rx="6" class="surface" />
-              <text x="397" y="232" text-anchor="middle" class="b">image</text>
-              <text x="397" y="258" text-anchor="middle" class="mono sm dim">myapp-web</text>
-
-              <!-- merge -->
-              <path d="M 482 101 L 546 101 L 546 170" class="ln-dim" />
-              <path d="M 482 239 L 546 239 L 546 170" class="ln-dim" />
-              <line x1="546" y1="170" x2="620" y2="170" class="ln-dim" />
-              <polygon points="628,170 614,163 614,177" class="head-dim" />
-
-              <rect x="640" y="120" width="240" height="100" rx="6" class="surface" />
-              <text x="760" y="162" text-anchor="middle" class="lg b">container</text>
-              <text x="760" y="190" text-anchor="middle" class="sm dim">a running copy of an image</text>
-            </svg>
-          </div>
-          <figcaption>
-            Same destination, different source. Off-the-shelf things &mdash; databases, caches,
-            proxies &mdash; use <code>image</code>. Code you wrote uses <code>build</code>, where the
-            dot means <em>the Dockerfile is in this folder</em>.
-          </figcaption>
-        </figure>
-
-        <div class="callout warn">
-          <span class="tag">Build runs once</span>
-          <p>
-            Edit your <code>Dockerfile</code> or <code>requirements.txt</code>, run
-            <code>up -d</code> again, and Compose silently reuses the old image. You get no warning
-            and no error &mdash; just old code. Ask for the rebuild:
-            <code>docker compose up -d --build</code>.
-          </p>
-        </div>
-      </section>
-
-      <!-- ========================= 3 ========================= -->
-      <section>
-        <div class="sec-head">
-          <span class="sec-kicker">Key 2 &middot; reaching in</span>
-          <h2>Ports: a door in the wall</h2>
-        </div>
-
-        <p class="lead">
-          A container is sealed. <code>ports</code> cuts exactly one door so your browser can get
-          through.
-        </p>
-
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg"
-              viewBox="0 0 920 300"
-              role="img"
-              aria-label="A browser on the host reaches an app listening inside the container through a published port; the left number is the host port and the right number is the container port"
-            >
-              <text x="16" y="38" class="sm dim">YOUR LAPTOP</text>
-              <rect x="16" y="54" width="200" height="96" rx="6" class="surface" />
-              <text x="116" y="94" text-anchor="middle" class="b">browser</text>
-              <text x="116" y="122" text-anchor="middle" class="mono sm t-accent">localhost:8000</text>
-
-              <!-- wall -->
-              <rect x="330" y="24" width="20" height="160" class="slab" />
-              <rect x="330" y="80" width="20" height="46" class="tint-a" />
-              <text x="340" y="204" text-anchor="middle" class="sm dim">the wall</text>
-
-              <line x1="228" y1="103" x2="322" y2="103" class="ln-acc" />
-              <line x1="358" y1="103" x2="418" y2="103" class="ln-acc" />
-              <polygon points="426,103 412,96 412,110" class="head-acc" />
-
-              <text x="440" y="38" class="sm dim">INSIDE THE CONTAINER</text>
-              <rect x="440" y="54" width="464" height="96" rx="6" class="tint-a" />
-              <text x="672" y="94" text-anchor="middle" class="b">your app is listening</text>
-              <text x="672" y="122" text-anchor="middle" class="mono sm">0.0.0.0:8000</text>
-
-              <!-- mapping -->
-              <text x="460" y="248" text-anchor="middle" class="xl b mono">"8000:8000"</text>
-              <line x1="418" y1="260" x2="418" y2="274" class="ln-dim" />
-              <line x1="502" y1="260" x2="502" y2="274" class="ln-dim" />
-              <text x="400" y="292" text-anchor="middle" class="sm dim">laptop side</text>
-              <text x="540" y="292" text-anchor="middle" class="sm dim">container side</text>
-            </svg>
-          </div>
-          <figcaption>
-            <strong>Left is your laptop, right is inside.</strong> Reversed, it still starts:
-            <code>"3000:8000"</code> is a working file that puts the app on
-            <code>localhost:3000</code>. The quotes are not decoration &mdash; YAML reads a bare
-            <code>5432:5432</code> as a sexagesimal number.
-          </figcaption>
-        </figure>
-
-        <div class="callout warn">
-          <span class="tag">Our db has no ports at all</span>
-          <p>
-            It does not need one: <code>web</code> reaches it across the private network. Publishing
-            <code>"5432:5432"</code> exposes Postgres to everything that can see your machine. If
-            you really want a GUI client on it, bind it to yourself only:
-            <code>"127.0.0.1:5432:5432"</code>.
-          </p>
-        </div>
-      </section>
-
-      <!-- ========================= 4 ========================= -->
-      <section>
-        <div class="sec-head">
-          <span class="sec-kicker">Key 3 &middot; settings</span>
-          <h2>Three files, read at two different moments</h2>
-        </div>
-
-        <p class="lead">
-          A container starts knowing nothing about your machine. Configuration arrives as environment
-          variables.
-        </p>
-
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg"
-              viewBox="0 0 920 380"
-              role="img"
-              aria-label="Two moments. First, .env is substituted into the text of compose.yaml and stops at the container wall. Second, environment and env_file cross the wall into the running process's environment."
-            >
-              <text x="16" y="26" class="sm dim">ON YOUR MACHINE</text>
-              <text x="684" y="26" class="sm dim">INSIDE THE CONTAINER</text>
-
-              <!-- the wall, with a gap wherever something actually crosses -->
-              <rect x="596" y="36" width="20" height="214" class="slab" />
-              <rect x="596" y="276" width="20" height="38" class="slab" />
-              <rect x="596" y="340" width="20" height="30" class="slab" />
-              <rect x="596" y="250" width="20" height="26" class="tint-a" />
-              <rect x="596" y="314" width="20" height="26" class="tint-b" />
-
-              <!-- moment 1 -->
-              <text x="16" y="64" class="sm b">MOMENT 1 &mdash; compose reads the file</text>
-              <rect x="16" y="76" width="160" height="88" rx="6" class="tint-warn" />
-              <text x="96" y="110" text-anchor="middle" class="mono b t-warn">.env</text>
-              <text x="96" y="138" text-anchor="middle" class="mono sm dim">TAG=16</text>
-
-              <line x1="184" y1="120" x2="254" y2="120" class="ln-warn" />
-              <polygon points="262,120 248,113 248,127" class="head" />
-              <text x="219" y="108" text-anchor="middle" class="sm dim">fills</text>
-
-              <rect x="272" y="68" width="290" height="104" rx="6" class="surface" />
-              <text x="417" y="94" text-anchor="middle" class="mono sm b">compose.yaml</text>
-              <text x="417" y="124" text-anchor="middle" class="mono sm dim">image: postgres:${TAG}</text>
-              <text x="417" y="150" text-anchor="middle" class="mono sm">image: postgres:<tspan class="b t-warn">16</tspan></text>
-
-              <line x1="566" y1="120" x2="576" y2="120" class="ln-bad" />
-              <line x1="579" y1="113" x2="593" y2="127" class="ln-bad" />
-              <line x1="593" y1="113" x2="579" y2="127" class="ln-bad" />
-              <text x="586" y="152" text-anchor="middle" class="sm b t-bad">stops here</text>
-
-              <line x1="16" y1="192" x2="904" y2="192" class="ln-dim dash" />
-
-              <!-- moment 2 -->
-              <text x="16" y="222" class="sm b">MOMENT 2 &mdash; the container starts</text>
-              <rect x="16" y="236" width="200" height="54" rx="6" class="tint-a" />
-              <text x="116" y="269" text-anchor="middle" class="mono sm b t-accent">environment:</text>
-              <rect x="16" y="300" width="200" height="54" rx="6" class="tint-b" />
-              <text x="116" y="333" text-anchor="middle" class="mono sm b t-hue2">env_file: .env.db</text>
-
-              <line x1="224" y1="263" x2="588" y2="263" class="ln-acc" />
-              <line x1="624" y1="263" x2="664" y2="263" class="ln-acc" />
-              <polygon points="672,263 658,256 658,270" class="head-acc" />
-              <line x1="224" y1="327" x2="588" y2="327" class="ln" />
-              <line x1="624" y1="327" x2="664" y2="327" class="ln" />
-              <polygon points="672,327 658,320 658,334" class="head" />
-
-              <rect x="684" y="250" width="220" height="104" rx="6" class="tint-good" />
-              <text x="794" y="284" text-anchor="middle" class="b">the process's env</text>
-              <text x="794" y="312" text-anchor="middle" class="mono sm">POSTGRES_USER=app</text>
-              <text x="794" y="336" text-anchor="middle" class="mono sm">DATABASE_URL=&hellip;</text>
-            </svg>
-          </div>
-          <figcaption>
-            <strong>Only the bottom two arrows reach the container.</strong> A plain <code>.env</code>
-            is read while Compose is still parsing text, so it can change an image tag or a port
-            number and then its job is over &mdash; run <code>docker compose exec web env</code> and
-            you will not find <code>TAG</code> in there. <code>environment:</code> is for values you
-            do not mind reading in the file; <code>env_file:</code> is for the ones that stay out of
-            git. Two files one character apart, doing unrelated jobs.
-          </figcaption>
-        </figure>
-
-        <pre><span class="c"># .env.db  — gitignored</span>
-POSTGRES_USER=app
-POSTGRES_PASSWORD=s3cret
-POSTGRES_DB=appdb
-
-<span class="c"># compose.yaml</span>
-  <span class="k">db:</span>
-    <span class="k">image:</span> <span class="v">postgres:16</span>
-    <span class="k">env_file:</span> <span class="v">.env.db</span>
-
-  <span class="k">web:</span>
-    <span class="k">environment:</span>
-      <span class="k">DATABASE_URL:</span> <span class="v">postgresql://app:s3cret@<span class="m">db</span>:5432/appdb</span></pre>
-
-        <p class="measure">
-          Read the last line slowly. The host in that URL is <code>db</code> &mdash; the service
-          name from figure one, doing its job.
-        </p>
-      </section>
-
-      <!-- ========================= 5 ========================= -->
-      <section>
-        <div class="sec-head">
-          <span class="sec-kicker">Key 4 &middot; keeping things</span>
-          <h2>Volumes: the two kinds of storage</h2>
-        </div>
-
-        <p class="lead">
-          Everything a container writes vanishes when the container is removed. A volume is how
-          bytes escape that.
-        </p>
-
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg"
-              viewBox="0 0 920 310"
-              role="img"
-              aria-label="A named volume stores data in an area Docker manages and outlives the container; a bind mount is a two-way live link to a folder in your project"
-            >
-              <!-- named volume -->
-              <text x="16" y="36" class="mono b t-good">pgdata:/var/lib/postgresql/data</text>
-              <rect x="16" y="50" width="196" height="88" rx="6" class="surface" />
-              <text x="114" y="88" text-anchor="middle" class="b mono">db</text>
-              <text x="114" y="116" text-anchor="middle" class="sm dim">writes rows here</text>
-              <line x1="224" y1="94" x2="286" y2="94" class="ln-good" />
-              <polygon points="294,94 280,87 280,101" class="head-good" />
-              <text x="259" y="80" text-anchor="middle" class="sm dim">stores in</text>
-              <rect x="302" y="50" width="240" height="88" rx="6" class="tint-good" />
-              <text x="422" y="88" text-anchor="middle" class="b">named volume</text>
-              <text x="422" y="116" text-anchor="middle" class="mono sm">myapp_pgdata</text>
-              <text x="566" y="88" class="sm">Docker picks the location.</text>
-              <text x="566" y="116" class="sm">Outlives the container.</text>
-
-              <!-- bind mount -->
-              <text x="16" y="204" class="mono b t-warn">./app:/app</text>
-              <rect x="16" y="218" width="196" height="88" rx="6" class="surface" />
-              <text x="114" y="256" text-anchor="middle" class="b mono">web</text>
-              <text x="114" y="284" text-anchor="middle" class="mono sm dim">/app</text>
-              <line x1="224" y1="252" x2="286" y2="252" class="ln" />
-              <polygon points="294,252 280,245 280,259" class="head" />
-              <line x1="294" y1="278" x2="232" y2="278" class="ln" />
-              <polygon points="224,278 238,271 238,285" class="head" />
-              <text x="259" y="238" text-anchor="middle" class="sm dim">both ways</text>
-              <rect x="302" y="218" width="240" height="88" rx="6" class="tint-warn" />
-              <text x="422" y="256" text-anchor="middle" class="b">your project folder</text>
-              <text x="422" y="284" text-anchor="middle" class="mono sm">./app</text>
-              <text x="566" y="256" class="sm">You pick the location.</text>
-              <text x="566" y="284" class="sm">Your editor writes it live.</text>
-            </svg>
-          </div>
-          <figcaption>
-            Tell them apart by the first character:
-            <strong
-              >a source starting with <code>.</code> or <code>/</code> is a bind mount</strong
-            >, anything else is a named volume. The bind mount is why you save a file and the running
-            app picks it up without a rebuild.
-          </figcaption>
-        </figure>
-
-        <h3>The name you write twice</h3>
-
-        <pre><span class="k">services:</span>
+          <pre class="tight"><span class="k">services:</span>
   <span class="k">db:</span>
     <span class="k">volumes:</span>
-      - <span class="m">pgdata</span>:/var/lib/postgresql/data   <span class="c"># 1. use it</span>
+      - <span class="m">pgdata</span>:/var/lib/postgresql/data
 
-<span class="k">volumes:</span>                                   <span class="c"># 2. declare it</span>
+<span class="k">volumes:</span>          <span class="c">&lt;- these two</span>
   <span class="m">pgdata:</span></pre>
 
-        <div class="callout warn">
-          <span class="tag">If you skip the second one</span>
-          <p>
-            Compose refuses to start:
-            <code>service "db" refers to undefined volume pgdata</code>. The service line says
-            <em>mount this</em>; the top-level block says <em>this exists</em>. Requiring both turns
-            a typo into an error rather than a silently empty database.
+          <ul class="opts">
+          <li><button class="opt" data-q="1" data-opt="a"><span class="ltr">A</span><span>Nothing changes. The line under <code>db</code> already creates the volume.</span></button></li>
+          <li><button class="opt" data-q="1" data-opt="b"><span class="ltr">B</span><span>It starts, but <code>pgdata</code> becomes a folder in your project directory.</span></button></li>
+          <li><button class="opt" data-q="1" data-opt="c"><span class="ltr">C</span><span>Compose refuses to start: <code>service "db" refers to undefined volume pgdata</code>.</span></button></li>
+          <li><button class="opt" data-q="1" data-opt="d"><span class="ltr">D</span><span>It starts, and the volume is thrown away on every <code>down</code>.</span></button></li>
+          </ul>
+
+          <div class="verdict" id="exp1" hidden>
+            <span class="tag"></span>
+            <p>
+              The two lines say different things. The one under <code>db</code> says
+              <strong>mount this</strong>. The top-level block says <strong>this exists</strong>.
+              Compose will not invent the second from the first, and that refusal is a feature: a
+              typo in the mount path turns into an error on startup instead of a database quietly
+              writing into an empty anonymous volume you never find again.
+            </p>
+            <figure>
+              <div class="plate">
+                <svg
+                  class="dg"
+                  viewBox="0 0 640 208"
+                  role="img"
+                  aria-label="The volume line under the db service is a reference that must find a matching declaration in the top-level volumes block. Without the declaration Compose refuses to start."
+                >
+                  <text x="16" y="30" class="sm dim">INSIDE THE SERVICE</text>
+                  <rect x="16" y="42" width="250" height="72" rx="6" class="tint-a" />
+                  <text x="141" y="72" text-anchor="middle" class="mono sm">- pgdata:/var/lib/&hellip;</text>
+                  <text x="141" y="98" text-anchor="middle" class="sm b t-accent">mount this</text>
+
+                  <line x1="276" y1="78" x2="348" y2="78" class="ln" />
+                  <polygon points="356,78 342,71 342,85" class="head" />
+                  <text x="316" y="64" text-anchor="middle" class="sm dim">looks for</text>
+
+                  <text x="366" y="30" class="sm dim">AT THE TOP LEVEL</text>
+                  <rect x="366" y="42" width="250" height="72" rx="6" class="tint-b" />
+                  <text x="491" y="72" text-anchor="middle" class="mono sm">volumes: pgdata:</text>
+                  <text x="491" y="98" text-anchor="middle" class="sm b t-hue2">this exists</text>
+
+                  <line x1="16" y1="140" x2="616" y2="140" class="ln-dim dash" />
+
+                  <text x="16" y="168" class="sm b t-good">both present</text>
+                  <text x="150" y="168" class="mono sm dim">db starts, rows land in myapp_pgdata</text>
+                  <text x="16" y="194" class="sm b t-bad">second one gone</text>
+                  <text x="150" y="194" class="mono sm t-bad">refers to undefined volume pgdata</text>
+                </svg>
+              </div>
+              <figcaption>
+                Nothing is created at either end on its own. <strong>The arrow is a lookup, and a
+                failed lookup stops the whole project</strong>, not just that one service.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== Q2 ===================== -->
+      <section class="q" id="q2" data-q="2">
+        <p class="qnum">02</p>
+        <div class="qbody">
+          <p class="qtest">Port order</p>
+          <p class="qstem">
+            <code>.env</code> sets <code>WEB_PORT=3000</code>. The service line is
+            <code>- "${WEB_PORT}:8000"</code>, and the app inside the container listens on 8000.
+            Which address opens it?
           </p>
+
+          <ul class="opts">
+          <li><button class="opt" data-q="2" data-opt="a"><span class="ltr">A</span><span><code>localhost:3000</code></span></button></li>
+          <li><button class="opt" data-q="2" data-opt="b"><span class="ltr">B</span><span><code>localhost:8000</code></span></button></li>
+          <li><button class="opt" data-q="2" data-opt="c"><span class="ltr">C</span><span>Either one. Compose opens both ends.</span></button></li>
+          <li><button class="opt" data-q="2" data-opt="d"><span class="ltr">D</span><span>Neither. Compose rejects a mapping whose two numbers differ.</span></button></li>
+          </ul>
+
+          <div class="verdict" id="exp2" hidden>
+            <span class="tag"></span>
+            <p>
+              Left is your side, right is inside. You type the left number into the browser; the
+              right one has to match whatever the app actually binds to. Get them backwards and
+              <code>"8000:3000"</code> is still a valid file that starts without a word of
+              complaint. It just forwards to a port nothing is listening on, and you get an empty
+              reply instead of an error.
+            </p>
+            <figure>
+              <div class="plate">
+                <svg
+                  class="dg"
+                  viewBox="0 0 640 214"
+                  role="img"
+                  aria-label="The left number of a port mapping is the port on your laptop; the right number is the port the app binds to inside the container."
+                >
+                  <text x="16" y="30" class="sm dim">YOUR LAPTOP</text>
+                  <rect x="16" y="42" width="248" height="72" rx="6" class="surface" />
+                  <text x="140" y="74" text-anchor="middle" class="b">browser</text>
+                  <text x="140" y="100" text-anchor="middle" class="mono sm t-accent">localhost:3000</text>
+
+                  <rect x="300" y="26" width="18" height="112" class="slab" />
+                  <rect x="300" y="62" width="18" height="34" class="gap" />
+                  <text x="309" y="156" text-anchor="middle" class="sm dim">the door</text>
+
+                  <line x1="272" y1="78" x2="294" y2="78" class="ln-acc" />
+                  <line x1="324" y1="78" x2="358" y2="78" class="ln-acc" />
+                  <polygon points="366,78 352,71 352,85" class="head-acc" />
+
+                  <text x="376" y="30" class="sm dim">INSIDE THE CONTAINER</text>
+                  <rect x="376" y="42" width="248" height="72" rx="6" class="tint-a" />
+                  <text x="500" y="74" text-anchor="middle" class="b">uvicorn is bound to</text>
+                  <text x="500" y="100" text-anchor="middle" class="mono sm">0.0.0.0:8000</text>
+
+                  <text x="320" y="186" text-anchor="middle" class="lg b mono">"3000<tspan class="dim">:</tspan>8000"</text>
+                  <line x1="278" y1="194" x2="278" y2="204" class="ln-dim" />
+                  <line x1="362" y1="194" x2="362" y2="204" class="ln-dim" />
+                  <text x="262" y="212" text-anchor="end" class="sm dim">you type this</text>
+                  <text x="378" y="212" class="sm dim">the app chose this</text>
+                </svg>
+              </div>
+              <figcaption>
+                The quotes matter for a reason unrelated to all this:
+                <strong>YAML reads a bare <code>5432:5432</code> as a sexagesimal number</strong>,
+                not a pair. Quote every mapping and the question never comes up.
+              </figcaption>
+            </figure>
+          </div>
         </div>
       </section>
 
-      <!-- ========================= 6 ========================= -->
-      <section>
-        <div class="sec-head">
-          <span class="sec-kicker">Key 5 &middot; after a crash</span>
-          <h2>What <code>restart</code> actually promises</h2>
-        </div>
+      <!-- ===================== Q3 ===================== -->
+      <section class="q" id="q3" data-q="3">
+        <p class="qnum">03</p>
+        <div class="qbody">
+          <p class="qtest">Publishing versus reaching</p>
+          <p class="qstem">
+            <code>db</code> has no <code>ports:</code> line at all, yet <code>web</code> talks to it
+            on 5432 all day. What is actually going on?
+          </p>
 
-        <p class="lead">Containers exit. This is your standing instruction for when they do.</p>
+          <ul class="opts">
+          <li><button class="opt" data-q="3" data-opt="a"><span class="ltr">A</span><span>Compose publishes 5432 for you, because the postgres image declares <code>EXPOSE 5432</code>.</span></button></li>
+          <li><button class="opt" data-q="3" data-opt="b"><span class="ltr">B</span><span><code>depends_on: db</code> opens the port for <code>web</code>.</span></button></li>
+          <li><button class="opt" data-q="3" data-opt="c"><span class="ltr">C</span><span><code>web</code> reaches it through the Docker socket rather than the network.</span></button></li>
+          <li><button class="opt" data-q="3" data-opt="d"><span class="ltr">D</span><span><code>ports</code> only cuts a door from your laptop inwards. On the project network every port is already reachable, so <code>db</code> needs no line.</span></button></li>
+          </ul>
 
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg"
-              viewBox="0 0 920 340"
-              role="img"
-              aria-label="Four restart policies as timelines across three events. no stays down after a crash; on-failure comes back from a crash but not a reboot; unless-stopped comes back from both but stays down after you stop it; always comes back even then."
-            >
-              <rect x="752" y="56" width="156" height="232" class="band-bad" />
+          <div class="verdict" id="exp3" hidden>
+            <span class="tag"></span>
+            <p>
+              <code>EXPOSE</code> in a Dockerfile is a comment with syntax highlighting. It
+              publishes nothing. The only thing <code>ports:</code> does is punch a hole from the
+              host into the container, which is exactly what a database on your laptop does not
+              need. Adding <code>"5432:5432"</code> out of habit puts Postgres in front of anything
+              that can see your machine, on a coffee shop network included. If you want a GUI client
+              on it, bind it to yourself: <code>"127.0.0.1:5432:5432"</code>.
+            </p>
+            <figure>
+              <div class="plate">
+                <svg
+                  class="dg"
+                  viewBox="0 0 660 244"
+                  role="img"
+                  aria-label="Inside the project network web reaches db on port 5432 with no ports line. From the host, the same port is unreachable, because nothing published it."
+                >
+                  <text x="16" y="44" class="sm dim">YOUR LAPTOP</text>
+                  <rect x="16" y="58" width="110" height="72" rx="6" class="surface" />
+                  <text x="71" y="90" text-anchor="middle" class="b">psql</text>
+                  <text x="71" y="114" text-anchor="middle" class="sm dim">on the host</text>
 
-              <text x="330" y="28" text-anchor="middle" class="sm">app crashes</text>
-              <text x="540" y="28" text-anchor="middle" class="sm">you reboot</text>
-              <text x="750" y="28" text-anchor="middle" class="sm b t-bad">you run stop</text>
+                  <rect x="150" y="26" width="494" height="152" rx="8" class="box-open dash" />
+                  <text x="397" y="18" text-anchor="middle" class="sm dim">one project network</text>
 
-              <line x1="330" y1="40" x2="330" y2="292" class="ln-dim dash" />
-              <line x1="540" y1="40" x2="540" y2="292" class="ln-dim dash" />
-              <line x1="750" y1="40" x2="750" y2="292" class="ln-dim dash" />
+                  <rect x="176" y="54" width="180" height="96" rx="6" class="tint-a" />
+                  <text x="266" y="92" text-anchor="middle" class="lg b mono t-accent">web</text>
+                  <text x="266" y="120" text-anchor="middle" class="mono sm">ports: "3000:8000"</text>
 
-              <text x="16" y="96" class="mono sm b">no</text>
-              <rect x="140" y="76" width="186" height="30" rx="4" class="tint-good" />
-              <rect x="334" y="76" width="202" height="30" rx="4" class="box-open dash" />
-              <rect x="548" y="76" width="198" height="30" rx="4" class="box-open dash" />
-              <rect x="758" y="76" width="146" height="30" rx="4" class="box-open dash" />
-              <text x="16" y="154" class="mono sm b">on-failure</text>
-              <rect x="140" y="134" width="186" height="30" rx="4" class="tint-good" />
-              <rect x="334" y="134" width="202" height="30" rx="4" class="tint-good" />
-              <rect x="548" y="134" width="198" height="30" rx="4" class="box-open dash" />
-              <rect x="758" y="134" width="146" height="30" rx="4" class="box-open dash" />
-              <text x="16" y="212" class="mono sm b">unless-stopped</text>
-              <rect x="140" y="192" width="186" height="30" rx="4" class="tint-good" />
-              <rect x="334" y="192" width="202" height="30" rx="4" class="tint-good" />
-              <rect x="548" y="192" width="198" height="30" rx="4" class="tint-good" />
-              <rect x="758" y="192" width="146" height="30" rx="4" class="box-open dash" />
-              <text x="16" y="270" class="mono sm b">always</text>
-              <rect x="140" y="250" width="186" height="30" rx="4" class="tint-good" />
-              <rect x="334" y="250" width="202" height="30" rx="4" class="tint-good" />
-              <rect x="548" y="250" width="198" height="30" rx="4" class="tint-good" />
-              <rect x="758" y="250" width="146" height="30" rx="4" class="tint-good" />
+                  <rect x="440" y="54" width="180" height="96" rx="6" class="tint-b" />
+                  <text x="530" y="92" text-anchor="middle" class="lg b mono t-hue2">db</text>
+                  <text x="530" y="120" text-anchor="middle" class="sm dim">no ports: line</text>
 
-              <rect x="140" y="298" width="40" height="18" rx="3" class="tint-good" />
-              <text x="190" y="312" class="sm dim">running</text>
-              <rect x="286" y="298" width="40" height="18" rx="3" class="box-open dash" />
-              <text x="336" y="312" class="sm dim">stays down</text>
-            </svg>
+                  <line x1="360" y1="102" x2="424" y2="102" class="ln-good" />
+                  <polygon points="432,102 418,95 418,109" class="head-good" />
+                  <text x="392" y="90" text-anchor="middle" class="mono sm b t-good">db:5432</text>
+
+                  <path d="M 71 130 L 71 208 L 530 208 L 530 176" class="ln-bad dash" />
+                  <line x1="523" y1="185" x2="537" y2="199" class="ln-bad" />
+                  <line x1="537" y1="185" x2="523" y2="199" class="ln-bad" />
+                  <text x="290" y="230" text-anchor="middle" class="sm b t-bad">localhost:5432 &rarr; connection refused, and that is the correct answer</text>
+                </svg>
+              </div>
+              <figcaption>
+                The green arrow and the red one aim at the same port on the same container.
+                <strong>The difference is which side of the dashed line you start from.</strong>
+                Everything inside can already talk; <code>ports</code> exists only for what is
+                outside.
+              </figcaption>
+            </figure>
           </div>
-          <figcaption>
-            Read down the last column, inside the shaded band. <strong>That one segment is the
-            entire difference between the two policies you would actually pick.</strong> Under
-            <code>unless-stopped</code> a container you stopped on purpose stays stopped through the
-            next reboot; under <code>always</code> it is running again when you log back in, because
-            the policy outranks your decision. The first three columns are identical, which is why
-            the two get confused.
-          </figcaption>
-        </figure>
-
-        <div class="tablewrap">
-          <table>
-            <thead>
-              <tr>
-                <th>You write</th>
-                <th>App crashes</th>
-                <th>You reboot the laptop</th>
-                <th>You ran <code>stop</code></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>no</code></td>
-                <td class="no">stays down</td>
-                <td class="no">stays down</td>
-                <td class="no">stays down</td>
-              </tr>
-              <tr>
-                <td><code>on-failure</code></td>
-                <td class="yes">restarts</td>
-                <td class="no">stays down</td>
-                <td class="no">stays down</td>
-              </tr>
-              <tr>
-                <td><code>unless-stopped</code></td>
-                <td class="yes">restarts</td>
-                <td class="yes">comes back</td>
-                <td class="no">stays down</td>
-              </tr>
-              <tr>
-                <td><code>always</code></td>
-                <td class="yes">restarts</td>
-                <td class="yes">comes back</td>
-                <td class="yes">comes back anyway</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
-
-        <p class="measure">
-          The last column is the entire difference between the bottom two.
-          <code>always</code> overrules you: it starts again on the next boot even though you
-          deliberately stopped it. <strong><code>unless-stopped</code> is the one you want.</strong>
-        </p>
       </section>
 
-      <!-- ========================= 7 ========================= -->
-      <section>
-        <div class="sec-head">
-          <span class="sec-kicker">Key 6 &middot; the trap</span>
-          <h2>The line that lies to you</h2>
-        </div>
+      <!-- ===================== Q4 ===================== -->
+      <section class="q" id="q4" data-q="4">
+        <p class="qnum">04</p>
+        <div class="qbody">
+          <p class="qtest">What depends_on does not wait for</p>
+          <p class="qstem">
+            A colleague's <code>web</code> dies on a cold laptop with
+            <code>[Errno 111] Connection refused</code>. Their file already has
+            <code>depends_on: [db]</code>. What actually fixes it?
+          </p>
 
-        <p class="lead">
-          <code>depends_on: [db]</code> reads like <em>wait for the database</em>. It means
-          <strong>start db first</strong>, and then it stops caring.
-        </p>
+          <ul class="opts">
+          <li><button class="opt" data-q="4" data-opt="a"><span class="ltr">A</span><span><code>restart: unless-stopped</code> on <code>web</code>, so it keeps retrying until <code>db</code> answers.</span></button></li>
+          <li><button class="opt" data-q="4" data-opt="b"><span class="ltr">B</span><span><code>condition: service_healthy</code> on its own. <code>depends_on</code> knows how to poll.</span></button></li>
+          <li><button class="opt" data-q="4" data-opt="c"><span class="ltr">C</span><span>A <code>healthcheck:</code> block on <code>db</code> <em>and</em> <code>condition: service_healthy</code> under web's <code>depends_on</code>.</span></button></li>
+          <li><button class="opt" data-q="4" data-opt="d"><span class="ltr">D</span><span>Move <code>db</code> above <code>web</code> in the file so it starts first.</span></button></li>
+          </ul>
 
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg"
-              viewBox="0 0 920 380"
-              role="img"
-              aria-label="Two timelines. With depends_on alone, web connects while Postgres is still booting and is refused. With a healthcheck and condition service_healthy, Compose polls until Postgres accepts connections and only then starts web."
-            >
-              <!-- lane A -->
-              <text x="16" y="34" class="mono b t-bad">depends_on: [db]</text>
-              <text x="186" y="34" class="sm dim">&mdash; waits for the process, nothing more</text>
+          <div class="verdict" id="exp4" hidden>
+            <span class="tag"></span>
+            <p>
+              Two halves, and neither works alone. The healthcheck is what gives <code>db</code> a
+              state other than "running"; the condition is what makes <code>web</code> read that
+              state before it starts. Ask for <code>service_healthy</code> against a service with no
+              healthcheck and Compose rejects the file, because there is nothing to poll.
+            </p>
+            <p>
+              Answer A is the one worth arguing about. It does eventually get you a working stack,
+              and plenty of production apps retry their own database connection on purpose. But on
+              its own it turns a startup ordering bug into a crash loop you have to read the logs to
+              notice, and it makes every cold start slower by the length of the restart backoff.
+              Retrying is a fine belt. It is not the braces.
+            </p>
+            <figure>
+              <div class="plate">
+                <svg
+                  class="dg"
+                  viewBox="0 0 660 224"
+                  role="img"
+                  aria-label="The healthcheck on db produces a healthy state; the condition on web consumes it. Remove either one and the chain that makes web wait is broken."
+                >
+                  <text x="16" y="26" class="sm b t-bad">drop the healthcheck</text>
+                  <text x="16" y="46" class="sm dim">nothing ever turns healthy</text>
+                  <text x="472" y="26" class="sm b t-bad">drop the condition</text>
+                  <text x="472" y="46" class="sm dim">web never looks</text>
 
-              <rect x="180" y="70" width="420" height="54" rx="4" class="band-bad" />
-              <text x="390" y="60" text-anchor="middle" class="sm dim">postgres still booting</text>
+                  <rect x="16" y="66" width="192" height="96" rx="6" class="tint-b" />
+                  <text x="112" y="102" text-anchor="middle" class="lg b mono t-hue2">db</text>
+                  <text x="112" y="130" text-anchor="middle" class="mono sm">healthcheck:</text>
+                  <path d="M 40 162 L 40 186 L 184 186 L 184 178" class="ln-hue2" />
+                  <polygon points="184,166 177,179 191,179" class="head-hue2" />
+                  <text x="112" y="210" text-anchor="middle" class="sm dim">pg_isready every 2s</text>
 
-              <line x1="100" y1="124" x2="866" y2="124" class="ln" />
-              <polygon points="878,124 862,117 862,131" class="head" />
+                  <line x1="216" y1="114" x2="266" y2="114" class="ln" />
+                  <polygon points="274,114 260,107 260,121" class="head" />
+                  <text x="245" y="100" text-anchor="middle" class="sm dim">sets</text>
 
-              <line x1="180" y1="112" x2="180" y2="136" class="ln" />
-              <text x="180" y="158" text-anchor="middle" class="sm">db starts</text>
+                  <rect x="284" y="88" width="112" height="52" rx="26" class="tint-good" />
+                  <text x="340" y="120" text-anchor="middle" class="b t-good">healthy</text>
 
-              <line x1="390" y1="70" x2="390" y2="140" class="ln-bad" />
-              <text x="390" y="184" text-anchor="middle" class="sm b t-bad">web connects</text>
-              <text x="390" y="206" text-anchor="middle" class="sm t-bad">Errno 111 refused</text>
+                  <line x1="404" y1="114" x2="454" y2="114" class="ln" />
+                  <polygon points="462,114 448,107 448,121" class="head" />
+                  <text x="433" y="100" text-anchor="middle" class="sm dim">reads</text>
 
-              <line x1="600" y1="112" x2="600" y2="136" class="ln" />
-              <text x="600" y="158" text-anchor="middle" class="sm">postgres ready</text>
-
-              <!-- divider -->
-              <line x1="16" y1="228" x2="904" y2="228" class="ln-dim dash" />
-
-              <!-- lane B -->
-              <text x="16" y="262" class="mono b t-good">condition: service_healthy</text>
-              <text x="266" y="262" class="sm dim">&mdash; waits for the answer</text>
-
-              <rect x="180" y="290" width="420" height="46" rx="4" class="band-good" />
-              <text x="390" y="282" text-anchor="middle" class="sm dim">pg_isready every 2s</text>
-
-              <line x1="100" y1="336" x2="866" y2="336" class="ln" />
-              <polygon points="878,336 862,329 862,343" class="head" />
-
-              <line x1="180" y1="324" x2="180" y2="348" class="ln" />
-              <text x="180" y="370" text-anchor="middle" class="sm">db starts</text>
-
-              <line x1="600" y1="290" x2="600" y2="348" class="ln-good" />
-              <text x="600" y="370" text-anchor="middle" class="sm b t-good">healthy</text>
-
-              <line x1="740" y1="324" x2="740" y2="348" class="ln-good" />
-              <text x="740" y="370" text-anchor="middle" class="sm b t-good">web connects</text>
-            </svg>
+                  <rect x="472" y="66" width="172" height="96" rx="6" class="tint-a" />
+                  <text x="558" y="102" text-anchor="middle" class="lg b mono t-accent">web</text>
+                  <text x="558" y="130" text-anchor="middle" class="mono sm">condition:</text>
+                  <text x="558" y="210" text-anchor="middle" class="sm dim">holds until then</text>
+                </svg>
+              </div>
+              <figcaption>
+                One side produces a fact, the other side reads it.
+                <strong><code>pg_isready</code> already ships inside the postgres image</strong>, so
+                the healthcheck costs you four lines and nothing to install.
+              </figcaption>
+            </figure>
           </div>
-          <figcaption>
-            The bug is the position of one tick. In the top timeline <code>web</code> connects
-            <strong>inside</strong> the shaded window, when the process exists but the socket is not
-            open yet. On a warm laptop the image is cached and <code>web</code> is slow enough to
-            win; on a cold one it loses. That is the bug that "only happens sometimes".
-          </figcaption>
-        </figure>
-
-        <h3>Make db prove it is ready</h3>
-
-        <pre>  <span class="k">db:</span>
-    <span class="k">image:</span> <span class="v">postgres:16</span>
-    <span class="k">healthcheck:</span>
-      <span class="k">test:</span> <span class="v">["CMD-SHELL", "pg_isready -U app -d appdb"]</span>
-      <span class="k">interval:</span> <span class="v">2s</span>
-      <span class="k">retries:</span> <span class="v">15</span>
-      <span class="k">start_period:</span> <span class="v">5s</span>
-
-  <span class="k">web:</span>
-    <span class="k">depends_on:</span>
-      <span class="k">db:</span>
-        <span class="k">condition:</span> <span class="ok">service_healthy</span></pre>
-
-        <p class="measure">
-          <code>pg_isready</code> already ships inside the Postgres image, so there is nothing to
-          install. You need <strong>both</strong> halves: the healthcheck is what makes
-          <code>db</code> healthy rather than merely running, and the condition is what makes
-          <code>web</code> wait for it. Either one alone changes nothing.
-        </p>
+        </div>
       </section>
 
-      <!-- ========================= 8 ========================= -->
-      <section>
-        <div class="sec-head">
-          <span class="sec-kicker">Key 7 &middot; identity</span>
-          <h2>Whose containers are these?</h2>
-        </div>
+      <!-- ===================== Q5 ===================== -->
+      <section class="q" id="q5" data-q="5">
+        <p class="qnum">05</p>
+        <div class="qbody">
+          <p class="qtest">When a rebuild happens</p>
+          <p class="qstem">
+            You added <code>httpx</code> to <code>requirements.txt</code> and ran
+            <code>docker compose up -d</code>. <code>web</code> still dies with
+            <code>ModuleNotFoundError: No module named 'httpx'</code>. Why?
+          </p>
 
-        <p class="lead">
-          Compose stamps a project name on everything it creates, and by default that name is just
-          the folder you happen to be standing in.
-        </p>
+          <ul class="opts">
+          <li><button class="opt" data-q="5" data-opt="a"><span class="ltr">A</span><span>Compose reused the image it built last time. Changing a file does not trigger a rebuild. Run <code>up -d --build</code>.</span></button></li>
+          <li><button class="opt" data-q="5" data-opt="b"><span class="ltr">B</span><span>The <code>./app:/app</code> bind mount hid the installed packages.</span></button></li>
+          <li><button class="opt" data-q="5" data-opt="c"><span class="ltr">C</span><span>The old container is still up. <code>up -d</code> never replaces a container that is running.</span></button></li>
+          <li><button class="opt" data-q="5" data-opt="d"><span class="ltr">D</span><span><code>pip install</code> ran before the volume was mounted, so it wrote into a layer that was discarded.</span></button></li>
+          </ul>
 
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg"
-              viewBox="0 0 920 360"
-              role="img"
-              aria-label="The folder name becomes the prefix on every container, network and volume Compose creates. Rename the folder and a second empty stack appears, while the original volume holding your rows is left outside it."
-            >
-              <rect x="16" y="60" width="190" height="80" rx="6" class="tint-a" />
-              <text x="111" y="94" text-anchor="middle" class="mono sm dim">/home/you/</text>
-              <text x="111" y="120" text-anchor="middle" class="mono b t-accent">myapp</text>
-              <line x1="214" y1="100" x2="268" y2="100" class="ln" />
-              <polygon points="276,100 262,93 262,107" class="head" />
-              <text x="245" y="88" text-anchor="middle" class="sm dim">stamps</text>
+          <div class="verdict" id="exp5" hidden>
+            <span class="tag"></span>
+            <p>
+              This is the quietest failure in the whole stage. There is no warning, no rebuild
+              notice, no line in the output saying it skipped anything. <code>up</code> builds an
+              image only when one does not exist yet; after that it is your job to ask.
+              <code>--build</code> is the ask. Once you have been bitten twice you start typing it
+              by reflex, which is fine.
+            </p>
+            <figure>
+              <div class="plate">
+                <svg
+                  class="dg"
+                  viewBox="0 0 720 236"
+                  role="img"
+                  aria-label="Running up -d skips the build step entirely and starts the old image, so the new dependency is missing. Running up -d --build goes through the build and produces an image that has it."
+                >
+                  <text x="96" y="30" text-anchor="middle" class="sm dim">YOU RUN</text>
+                  <text x="286" y="30" text-anchor="middle" class="sm dim">BUILD STEP</text>
+                  <text x="456" y="30" text-anchor="middle" class="sm dim">IMAGE USED</text>
+                  <text x="630" y="30" text-anchor="middle" class="sm dim">RESULT</text>
 
-              <rect x="290" y="44" width="614" height="112" rx="8" class="box-open dash" />
-              <rect x="310" y="72" width="180" height="64" rx="6" class="surface" />
-              <text x="400" y="102" text-anchor="middle" class="mono sm"><tspan class="b t-accent">myapp</tspan>-web-1</text>
-              <text x="400" y="124" text-anchor="middle" class="sm dim">container</text>
-              <rect x="506" y="72" width="180" height="64" rx="6" class="surface" />
-              <text x="596" y="102" text-anchor="middle" class="mono sm"><tspan class="b t-accent">myapp</tspan>-db-1</text>
-              <text x="596" y="124" text-anchor="middle" class="sm dim">container</text>
-              <rect x="702" y="72" width="182" height="64" rx="6" class="tint-good" />
-              <text x="793" y="102" text-anchor="middle" class="mono sm"><tspan class="b t-accent">myapp</tspan>_pgdata</text>
-              <text x="793" y="124" text-anchor="middle" class="sm dim">your rows live here</text>
+                  <rect x="16" y="44" width="160" height="56" rx="6" class="surface" />
+                  <text x="96" y="78" text-anchor="middle" class="mono sm b">up -d</text>
+                  <line x1="184" y1="72" x2="204" y2="72" class="ln-dim" />
+                  <polygon points="212,72 198,65 198,79" class="head-dim" />
+                  <rect x="220" y="44" width="132" height="56" rx="6" class="box-open dash" />
+                  <text x="286" y="78" text-anchor="middle" class="sm dim">skipped</text>
+                  <line x1="360" y1="72" x2="380" y2="72" class="ln-dim" />
+                  <polygon points="388,72 374,65 374,79" class="head-dim" />
+                  <rect x="396" y="44" width="120" height="56" rx="6" class="surface" />
+                  <text x="456" y="78" text-anchor="middle" class="sm">the old one</text>
+                  <line x1="524" y1="72" x2="544" y2="72" class="ln-dim" />
+                  <polygon points="552,72 538,65 538,79" class="head-dim" />
+                  <rect x="560" y="44" width="144" height="56" rx="6" class="tint-bad" />
+                  <text x="632" y="78" text-anchor="middle" class="sm b t-bad">no httpx</text>
 
-              <line x1="16" y1="180" x2="904" y2="180" class="ln-dim dash" />
-              <text x="16" y="206" class="sm b t-bad">you rename the folder</text>
+                  <rect x="16" y="144" width="160" height="56" rx="6" class="surface" />
+                  <text x="96" y="178" text-anchor="middle" class="mono sm b">up -d --build</text>
+                  <line x1="184" y1="172" x2="204" y2="172" class="ln-acc" />
+                  <polygon points="212,172 198,165 198,179" class="head-acc" />
+                  <rect x="220" y="144" width="132" height="56" rx="6" class="tint-a" />
+                  <text x="286" y="178" text-anchor="middle" class="sm b t-accent">docker build</text>
+                  <line x1="360" y1="172" x2="380" y2="172" class="ln-acc" />
+                  <polygon points="388,172 374,165 374,179" class="head-acc" />
+                  <rect x="396" y="144" width="120" height="56" rx="6" class="surface" />
+                  <text x="456" y="178" text-anchor="middle" class="sm">a fresh one</text>
+                  <line x1="524" y1="172" x2="544" y2="172" class="ln-acc" />
+                  <polygon points="552,172 538,165 538,179" class="head-acc" />
+                  <rect x="560" y="144" width="144" height="56" rx="6" class="tint-good" />
+                  <text x="632" y="178" text-anchor="middle" class="sm b t-good">httpx present</text>
 
-              <rect x="16" y="228" width="190" height="80" rx="6" class="tint-warn" />
-              <text x="111" y="262" text-anchor="middle" class="mono sm dim">/home/you/</text>
-              <text x="111" y="288" text-anchor="middle" class="mono b t-warn">shop</text>
-              <line x1="214" y1="268" x2="268" y2="268" class="ln" />
-              <polygon points="276,268 262,261 262,275" class="head" />
-
-              <rect x="290" y="222" width="400" height="112" rx="8" class="box-open dash" />
-              <text x="490" y="214" text-anchor="middle" class="sm dim">a second, empty stack</text>
-              <rect x="308" y="250" width="180" height="64" rx="6" class="surface" />
-              <text x="398" y="280" text-anchor="middle" class="mono sm"><tspan class="b t-warn">shop</tspan>-web-1</text>
-              <text x="398" y="302" text-anchor="middle" class="sm dim">container</text>
-              <rect x="500" y="250" width="172" height="64" rx="6" class="surface" />
-              <text x="586" y="280" text-anchor="middle" class="mono sm"><tspan class="b t-warn">shop</tspan>_pgdata</text>
-              <text x="586" y="302" text-anchor="middle" class="sm b t-bad">empty</text>
-
-              <line x1="694" y1="282" x2="701" y2="282" class="ln-bad" />
-              <line x1="703" y1="275" x2="717" y2="289" class="ln-bad" />
-              <line x1="717" y1="275" x2="703" y2="289" class="ln-bad" />
-              <line x1="719" y1="282" x2="726" y2="282" class="ln-bad" />
-
-              <rect x="730" y="250" width="174" height="64" rx="6" class="tint-good" />
-              <text x="817" y="280" text-anchor="middle" class="mono sm b t-good">myapp_pgdata</text>
-              <text x="817" y="302" text-anchor="middle" class="sm dim">still has your rows</text>
-            </svg>
+                  <text x="16" y="126" class="sm dim">requirements.txt changed on disk in both rows. Only the second row reads it.</text>
+                </svg>
+              </div>
+              <figcaption>
+                Answer A is a real bug that exists, just not this one:
+                <strong>a bind mount over <code>/app</code> does hide anything the image put
+                there</strong>, which is why installed packages belong in
+                <code>/usr/local/lib/python*</code> and your code belongs in <code>/app</code>.
+              </figcaption>
+            </figure>
           </div>
-          <figcaption>
-            <strong>The volume on the bottom right is outside the new dashed boundary.</strong> It
-            was never deleted and nothing warns you &mdash; Compose matches its own objects by the
-            <code>com.docker.compose.project</code> label, so the renamed project simply cannot see
-            it and builds a fresh empty one beside it. Your database looks wiped and is not. Recover
-            by renaming the folder back, or pin a top-level <code>name: myapp</code> so the prefix
-            stops depending on where the folder lives.
-          </figcaption>
-        </figure>
-
-        <pre>$ pwd
-/home/you/<span class="m">myapp</span>
-
-$ docker compose ps
-NAME              SERVICE   STATUS
-<span class="m">myapp</span>-web-1       web       running
-<span class="m">myapp</span>-db-1        db        running
-
-$ docker volume ls
-<span class="m">myapp</span>_pgdata</pre>
-
-        <p class="measure">
-          Rename the folder and Compose stops recognising the containers it started; you quietly get
-          a second set, and the old volume keeps your data hostage under the old name. Pin it with a
-          top-level <code>name: myapp</code> and it no longer depends on where the folder lives.
-        </p>
-
-        <h3>Filling blanks with <code>.env</code></h3>
-
-        <pre><span class="c"># .env — next to compose.yaml</span>
-TAG=16
-WEB_PORT=8000
-
-<span class="c"># compose.yaml</span>
-  <span class="k">db:</span>
-    <span class="k">image:</span> <span class="v">postgres:${TAG}</span>
-  <span class="k">web:</span>
-    <span class="k">ports:</span>
-      - <span class="v">"${WEB_PORT}:8000"</span></pre>
-
-        <p class="measure">
-          Before debugging anything else, look at what Compose actually read:
-          <code>docker compose config</code> prints the file with every blank filled in and every
-          default made explicit.
-        </p>
+        </div>
       </section>
 
-      <!-- ========================= 9 ========================= -->
-      <section>
-        <div class="sec-head">
-          <span class="sec-kicker">Every day</span>
-          <h2>Five commands and one loop</h2>
-        </div>
+      <!-- ===================== Q6 ===================== -->
+      <section class="q" id="q6" data-q="6">
+        <p class="qnum">06</p>
+        <div class="qbody">
+          <p class="qtest">How far down reaches</p>
+          <p class="qstem">
+            <code>db</code> keeps its rows in the named volume <code>pgdata</code>;
+            <code>web</code> has the bind mount <code>./app:/app</code>. Which command deletes the
+            rows, and what happens to <code>./app</code>?
+          </p>
 
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg"
-              viewBox="0 0 920 210"
-              role="img"
-              aria-label="The daily loop: up -d, then ps, then logs -f web, then exec web sh, and back to up -d with --build after editing the Dockerfile"
-            >
-              <rect x="16" y="40" width="196" height="80" rx="6" class="tint-a" />
-              <text x="114" y="74" text-anchor="middle" class="mono b">up -d</text>
-              <text x="114" y="100" text-anchor="middle" class="sm">start everything</text>
+          <ul class="opts">
+          <li><button class="opt" data-q="6" data-opt="a"><span class="ltr">A</span><span><code>down</code> deletes the rows. <code>./app</code> survives.</span></button></li>
+          <li><button class="opt" data-q="6" data-opt="b"><span class="ltr">B</span><span><code>down -v</code> deletes the rows. <code>./app</code> survives.</span></button></li>
+          <li><button class="opt" data-q="6" data-opt="c"><span class="ltr">C</span><span><code>down -v</code> deletes both.</span></button></li>
+          <li><button class="opt" data-q="6" data-opt="d"><span class="ltr">D</span><span><code>stop</code> deletes the rows. <code>./app</code> survives.</span></button></li>
+          </ul>
 
-              <line x1="220" y1="80" x2="242" y2="80" class="ln" />
-              <polygon points="250,80 236,73 236,87" class="head" />
+          <div class="verdict" id="exp6" hidden>
+            <span class="tag"></span>
+            <p>
+              Draw the line by ownership rather than by command. Docker made the containers, the
+              network and the named volume, so Docker can remove all three;
+              <code>./app</code> is a folder you made, and no Compose flag reaches across into your
+              filesystem. <code>stop</code> touches nothing but the running processes,
+              <code>down</code> removes the containers and the network, and <code>-v</code> is the
+              four keystrokes that add the volume to that list.
+            </p>
+            <figure>
+              <div class="plate">
+                <svg
+                  class="dg"
+                  viewBox="0 0 660 246"
+                  role="img"
+                  aria-label="Containers, the network and the named volume sit on Docker's side of a boundary and can all be removed by down -v. The bind-mounted project folder sits on your side and no Compose command reaches it."
+                >
+                  <text x="16" y="40" class="sm dim">DOCKER MADE THESE</text>
+                  <rect x="16" y="52" width="392" height="150" rx="8" class="box-open dash" />
+                  <rect x="36" y="80" width="160" height="48" rx="6" class="surface" />
+                  <text x="116" y="110" text-anchor="middle" class="sm b">containers</text>
+                  <text x="116" y="150" text-anchor="middle" class="sm dim">gone on down</text>
+                  <rect x="216" y="80" width="172" height="48" rx="6" class="tint-good" />
+                  <text x="302" y="110" text-anchor="middle" class="mono sm b t-good">pgdata</text>
+                  <text x="302" y="150" text-anchor="middle" class="sm dim">gone only on down -v</text>
 
-              <rect x="258" y="40" width="196" height="80" rx="6" class="surface" />
-              <text x="356" y="74" text-anchor="middle" class="mono b">ps</text>
-              <text x="356" y="100" text-anchor="middle" class="sm">what is running</text>
+                  <line x1="36" y1="176" x2="382" y2="176" class="ln-bad" />
+                  <polygon points="390,176 376,169 376,183" class="head-bad" />
+                  <text x="120" y="194" class="sm b t-bad">down -v sweeps to here, and stops</text>
 
-              <line x1="462" y1="80" x2="484" y2="80" class="ln" />
-              <polygon points="492,80 478,73 478,87" class="head" />
+                  <rect x="418" y="42" width="16" height="170" class="slab" />
+                  <line x1="422" y1="168" x2="436" y2="182" class="ln-bad" />
+                  <line x1="436" y1="168" x2="422" y2="182" class="ln-bad" />
 
-              <rect x="500" y="40" width="196" height="80" rx="6" class="surface" />
-              <text x="598" y="74" text-anchor="middle" class="mono b">logs -f web</text>
-              <text x="598" y="100" text-anchor="middle" class="sm">why it is not</text>
-
-              <line x1="704" y1="80" x2="726" y2="80" class="ln" />
-              <polygon points="734,80 720,73 720,87" class="head" />
-
-              <rect x="742" y="40" width="162" height="80" rx="6" class="surface" />
-              <text x="823" y="74" text-anchor="middle" class="mono b">exec web sh</text>
-              <text x="823" y="100" text-anchor="middle" class="sm">look inside</text>
-
-              <path d="M 823 120 L 823 166 L 114 166 L 114 128" class="ln-dim dash" />
-              <polygon points="114,120 107,133 121,133" class="head-dim" />
-              <text x="468" y="158" text-anchor="middle" class="sm dim">
-                add --build after editing the Dockerfile
-              </text>
-            </svg>
+                  <text x="452" y="40" class="sm dim">YOU MADE THIS</text>
+                  <rect x="452" y="80" width="192" height="48" rx="6" class="tint-warn" />
+                  <text x="548" y="110" text-anchor="middle" class="mono sm b t-warn">./app</text>
+                  <text x="548" y="150" text-anchor="middle" class="sm dim">no flag reaches it</text>
+                  <text x="548" y="194" text-anchor="middle" class="sm dim">delete it with rm, like</text>
+                  <text x="548" y="214" text-anchor="middle" class="sm dim">any other folder</text>
+                </svg>
+              </div>
+              <figcaption>
+                <strong>The wall is not a security boundary, it is an ownership one.</strong> That
+                is also why a bind mount is the right tool for source code you edit and the wrong
+                one for database files: you want Docker to own the second, so that
+                <code>down -v</code> can genuinely reset it.
+              </figcaption>
+            </figure>
           </div>
-          <figcaption>
-            <code>-d</code> gives you the terminal back. <code>logs -f</code> follows output as it
-            appears; drop the service name to interleave every container, which is how you spot one
-            of them restarting in a loop.
-          </figcaption>
-        </figure>
-
-        <h3>Stopping, and the difference that costs you data</h3>
-
-        <div class="tablewrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Command</th>
-                <th>Containers</th>
-                <th>Named volume <code>pgdata</code></th>
-                <th>Bind mount <code>./app</code></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>stop</code></td>
-                <td>stopped, still there</td>
-                <td class="yes">kept</td>
-                <td class="yes">kept</td>
-              </tr>
-              <tr>
-                <td><code>down</code></td>
-                <td>removed</td>
-                <td class="yes">kept</td>
-                <td class="yes">kept</td>
-              </tr>
-              <tr>
-                <td><code>down -v</code></td>
-                <td>removed</td>
-                <td class="no">deleted</td>
-                <td class="yes">kept</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
-
-        <p class="measure">
-          The last column never changes: <code>./app</code> is your folder, not Docker's, so no
-          Compose command can remove it. The middle column is where your rows live, and
-          <code>-v</code> is four keystrokes away from deleting them.
-        </p>
       </section>
 
-      <!-- ========================= 10 ========================= -->
-      <section>
-        <div class="sec-head">
-          <span class="sec-kicker">All together</span>
-          <h2>The finished file</h2>
+      <!-- ===================== Q7 ===================== -->
+      <section class="q" id="q7" data-q="7">
+        <p class="qnum">07</p>
+        <div class="qbody">
+          <p class="qtest">Which settings get inside</p>
+          <p class="qstem">
+            <code>.env</code> sits beside <code>compose.yaml</code> and contains
+            <code>TAG=16</code>. You run <code>docker compose exec web env | grep TAG</code>.
+            What comes back?
+          </p>
+
+          <ul class="opts">
+          <li><button class="opt" data-q="7" data-opt="a"><span class="ltr">A</span><span><code>TAG=16</code></span></button></li>
+          <li><button class="opt" data-q="7" data-opt="b"><span class="ltr">B</span><span><code>TAG=</code>, with an empty value.</span></button></li>
+          <li><button class="opt" data-q="7" data-opt="c"><span class="ltr">C</span><span>Nothing at all.</span></button></li>
+          <li><button class="opt" data-q="7" data-opt="d"><span class="ltr">D</span><span>An error. <code>.env</code> is only read when you pass <code>--env-file</code>.</span></button></li>
+          </ul>
+
+          <div class="verdict" id="exp7" hidden>
+            <span class="tag"></span>
+            <p>
+              <code>.env</code> is read before any container exists. Compose uses it to fill in
+              <code>${&hellip;}</code> blanks in the text of the file, and then it is finished: it
+              can set an image tag or a published port, and it can never set a variable your
+              application reads. For that you want <code>environment:</code> for values you do not
+              mind having in git, or <code>env_file:</code> for the ones that stay out of it. Two
+              filenames one character apart, doing unrelated jobs.
+            </p>
+            <figure>
+              <div class="plate">
+                <svg
+                  class="dg"
+                  viewBox="0 0 700 246"
+                  role="img"
+                  aria-label="The .env file is substituted into the text of compose.yaml and stops at the container wall. Only environment and env_file cross into the running process's environment."
+                >
+                  <rect x="452" y="20" width="16" height="192" class="slab" />
+                  <rect x="452" y="112" width="16" height="36" class="gap" />
+                  <rect x="452" y="180" width="16" height="36" class="gap" />
+
+                  <rect x="16" y="32" width="150" height="52" rx="6" class="tint-warn" />
+                  <text x="91" y="54" text-anchor="middle" class="mono sm b t-warn">.env</text>
+                  <text x="91" y="74" text-anchor="middle" class="mono sm dim">TAG=16</text>
+                  <line x1="174" y1="58" x2="214" y2="58" class="ln-warn" />
+                  <polygon points="222,58 208,51 208,65" class="head-warn" />
+                  <rect x="230" y="32" width="196" height="52" rx="6" class="surface" />
+                  <text x="328" y="54" text-anchor="middle" class="mono sm b">compose.yaml</text>
+                  <text x="328" y="74" text-anchor="middle" class="mono sm dim">image: postgres:16</text>
+                  <line x1="434" y1="58" x2="444" y2="58" class="ln-bad" />
+                  <line x1="453" y1="51" x2="467" y2="65" class="ln-bad" />
+                  <line x1="467" y1="51" x2="453" y2="65" class="ln-bad" />
+                  <text x="486" y="63" class="sm b t-bad">the job is over here</text>
+
+                  <rect x="16" y="104" width="150" height="52" rx="6" class="tint-a" />
+                  <text x="91" y="136" text-anchor="middle" class="mono sm b t-accent">environment:</text>
+                  <line x1="174" y1="130" x2="446" y2="130" class="ln-acc" />
+                  <line x1="474" y1="130" x2="500" y2="130" class="ln-acc" />
+                  <polygon points="508,130 494,123 494,137" class="head-acc" />
+
+                  <rect x="16" y="172" width="190" height="52" rx="6" class="tint-b" />
+                  <text x="111" y="204" text-anchor="middle" class="mono sm b t-hue2">env_file: .env.db</text>
+                  <line x1="214" y1="198" x2="446" y2="198" class="ln-hue2" />
+                  <line x1="474" y1="198" x2="500" y2="198" class="ln-hue2" />
+                  <polygon points="508,198 494,191 494,205" class="head-hue2" />
+
+                  <rect x="520" y="104" width="164" height="120" rx="6" class="tint-good" />
+                  <text x="602" y="140" text-anchor="middle" class="sm b">the process's env</text>
+                  <text x="602" y="168" text-anchor="middle" class="mono sm">POSTGRES_USER</text>
+                  <text x="602" y="192" text-anchor="middle" class="mono sm">DATABASE_URL</text>
+                  <text x="602" y="212" text-anchor="middle" class="sm dim">no TAG in here</text>
+                </svg>
+              </div>
+              <figcaption>
+                <strong>Only the bottom two arrows get through the wall.</strong> The useful habit:
+                run <code>docker compose config</code> to see the file after every
+                <code>${&hellip;}</code> has been filled in, and <code>exec &lt;svc&gt; env</code> to
+                see what the process actually got. They answer two different questions.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== Q8 ===================== -->
+      <section class="q" id="q8" data-q="8">
+        <p class="qnum">08</p>
+        <div class="qbody">
+          <p class="qtest">A policy that overrules you</p>
+          <p class="qstem">
+            <code>web</code> has <code>restart: unless-stopped</code>. <code>db</code> has
+            <code>restart: always</code>. You run <code>docker compose stop</code>, shut the laptop
+            down, and boot it again in the morning. What is running?
+          </p>
+
+          <ul class="opts">
+          <li><button class="opt" data-q="8" data-opt="a"><span class="ltr">A</span><span>Neither. You stopped them on purpose.</span></button></li>
+          <li><button class="opt" data-q="8" data-opt="b"><span class="ltr">B</span><span>Only <code>web</code>.</span></button></li>
+          <li><button class="opt" data-q="8" data-opt="c"><span class="ltr">C</span><span>Both. A reboot clears the stopped state either way.</span></button></li>
+          <li><button class="opt" data-q="8" data-opt="d"><span class="ltr">D</span><span>Only <code>db</code>.</span></button></li>
+          </ul>
+
+          <div class="verdict" id="exp8" hidden>
+            <span class="tag"></span>
+            <p>
+              The two policies behave identically on a crash and identically on a plain reboot,
+              which is exactly why people mix them up. They part company on one event: a container
+              you stopped deliberately. <code>unless-stopped</code> remembers that you stopped it.
+              <code>always</code> does not, and starts it again as soon as the Docker daemon comes
+              back. Pick <code>unless-stopped</code> and a stop stays a stop.
+            </p>
+            <figure>
+              <div class="plate">
+                <svg
+                  class="dg"
+                  viewBox="0 0 660 218"
+                  role="img"
+                  aria-label="Two timelines across a stop and a reboot. The container with unless-stopped stays down after the reboot; the one with always is running again."
+                >
+                  <text x="290" y="26" text-anchor="middle" class="sm">you run stop</text>
+                  <text x="460" y="26" text-anchor="middle" class="sm">you boot it again</text>
+                  <line x1="290" y1="36" x2="290" y2="164" class="ln-dim dash" />
+                  <line x1="460" y1="36" x2="460" y2="164" class="ln-dim dash" />
+                  <rect x="290" y="46" width="170" height="112" class="slab" opacity="0.35" />
+                  <text x="375" y="180" text-anchor="middle" class="sm dim">laptop off</text>
+
+                  <text x="16" y="72" class="mono sm b">web</text>
+                  <text x="16" y="90" class="sm dim">unless-stopped</text>
+                  <rect x="160" y="54" width="126" height="30" rx="4" class="tint-good" />
+                  <rect x="294" y="54" width="162" height="30" rx="4" class="box-open dash" />
+                  <rect x="464" y="54" width="180" height="30" rx="4" class="box-open dash" />
+
+                  <text x="16" y="132" class="mono sm b">db</text>
+                  <text x="16" y="150" class="sm dim">always</text>
+                  <rect x="160" y="114" width="126" height="30" rx="4" class="tint-good" />
+                  <rect x="294" y="114" width="162" height="30" rx="4" class="box-open dash" />
+                  <rect x="464" y="114" width="180" height="30" rx="4" class="tint-good" />
+                  <text x="554" y="164" text-anchor="middle" class="sm b t-bad">back up without asking</text>
+
+                  <rect x="160" y="192" width="34" height="16" rx="3" class="tint-good" />
+                  <text x="204" y="206" class="sm dim">running</text>
+                  <rect x="286" y="192" width="34" height="16" rx="3" class="box-open dash" />
+                  <text x="330" y="206" class="sm dim">stays down</text>
+                </svg>
+              </div>
+              <figcaption>
+                <strong>The last column is the entire difference between the two.</strong>
+                <code>always</code> is right for something that must be up whenever the machine is
+                up. For a database on your own laptop that is usually not what you meant.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== score ===================== -->
+      <section class="scorecard" id="score">
+        <div>
+          <span class="sec-kicker">Result</span>
+          <h2>What your score changes</h2>
         </div>
 
-        <pre><span class="k">name:</span> <span class="v">myapp</span>
+        <div class="score-top">
+          <p class="score-num" id="scoreNum">0/8</p>
+          <p class="score-say" id="scoreSay">Answer the eight above and this fills in.</p>
+        </div>
 
-<span class="k">services:</span>
-  <span class="k">web:</span>
-    <span class="k">build:</span> <span class="v">.</span>
-    <span class="k">ports:</span>
-      - <span class="v">"${WEB_PORT}:8000"</span>
-    <span class="k">environment:</span>
-      <span class="k">DATABASE_URL:</span> <span class="v">postgresql://app:s3cret@db:5432/appdb</span>
-    <span class="k">volumes:</span>
-      - <span class="v">./app:/app</span>
-    <span class="k">depends_on:</span>
-      <span class="k">db:</span>
-        <span class="k">condition:</span> <span class="v">service_healthy</span>
-    <span class="k">restart:</span> <span class="v">unless-stopped</span>
+        <p class="qtest" id="missedLabel" hidden>Worth a second pass</p>
+        <ul class="missed" id="missedList" hidden></ul>
 
-  <span class="k">db:</span>
-    <span class="k">image:</span> <span class="v">postgres:${TAG}</span>
-    <span class="k">env_file:</span> <span class="v">.env.db</span>
-    <span class="k">volumes:</span>
-      - <span class="v">pgdata:/var/lib/postgresql/data</span>
-    <span class="k">healthcheck:</span>
-      <span class="k">test:</span> <span class="v">["CMD-SHELL", "pg_isready -U app -d appdb"]</span>
-      <span class="k">interval:</span> <span class="v">2s</span>
-      <span class="k">retries:</span> <span class="v">15</span>
-      <span class="k">start_period:</span> <span class="v">5s</span>
-    <span class="k">restart:</span> <span class="v">unless-stopped</span>
-
-<span class="k">volumes:</span>
-  <span class="k">pgdata:</span></pre>
-
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg"
-              viewBox="0 0 920 520"
-              role="img"
-              aria-label="The finished compose file with four links drawn in the margin, joining the pairs of lines that must agree: the port blank and the .env file, the hostname and the service key, service_healthy and the healthcheck block, and the volume mount and its top-level declaration."
-            >
-              <text x="40" y="60" class="mono sm">name: myapp</text>
-              <text x="40" y="84" class="mono sm">services:</text>
-              <text x="56" y="108" class="mono sm">web:</text>
-              <text x="72" y="132" class="mono sm dim">build: .</text>
-              <text x="72" y="156" class="mono sm dim">ports:</text>
-              <text x="88" y="180" class="mono sm">- "<tspan class="b t-warn">${WEB_PORT}</tspan>:8000"</text>
-              <text x="72" y="204" class="mono sm dim">environment:</text>
-              <text x="88" y="228" class="mono sm">DATABASE_URL: &hellip;@<tspan class="b t-accent">db</tspan>:5432/appdb</text>
-              <text x="72" y="252" class="mono sm dim">depends_on:</text>
-              <text x="88" y="276" class="mono sm dim">db:</text>
-              <text x="104" y="300" class="mono sm">condition: <tspan class="b t-good">service_healthy</tspan></text>
-              <text x="56" y="324" class="mono sm"><tspan class="b t-accent">db</tspan>:</text>
-              <text x="72" y="348" class="mono sm dim">image: postgres:16</text>
-              <text x="72" y="372" class="mono sm dim">volumes:</text>
-              <text x="88" y="396" class="mono sm">- <tspan class="b t-hue2">pgdata</tspan>:/var/lib/postgresql/data</text>
-              <text x="72" y="420" class="mono sm"><tspan class="b t-good">healthcheck:</tspan></text>
-              <text x="88" y="444" class="mono sm dim">test: ["CMD-SHELL", "pg_isready &hellip;"]</text>
-              <text x="40" y="468" class="mono sm">volumes:</text>
-              <text x="56" y="492" class="mono sm"><tspan class="b t-hue2">pgdata</tspan>:</text>
-
-              <line x1="400" y1="180" x2="762" y2="180" class="ln-warn" />
-              <text x="585" y="170" text-anchor="middle" class="sm dim">fills the blank</text>
-              <rect x="770" y="152" width="134" height="56" rx="6" class="tint-warn" />
-              <text x="837" y="176" text-anchor="middle" class="mono sm b t-warn">.env</text>
-              <text x="837" y="198" text-anchor="middle" class="mono sm dim">WEB_PORT=8000</text>
-
-              <path d="M 400 228 H 448 V 324 H 400" class="ln-acc" />
-              <circle cx="400" cy="228" r="4" class="head-acc" />
-              <circle cx="400" cy="324" r="4" class="head-acc" />
-              <text x="458" y="281" class="sm dim">same name</text>
-
-              <path d="M 400 300 H 560 V 420 H 400" class="ln-good" />
-              <circle cx="400" cy="300" r="4" class="head-good" />
-              <circle cx="400" cy="420" r="4" class="head-good" />
-              <text x="570" y="365" class="sm dim">one is useless without the other</text>
-
-              <path d="M 400 396 H 448 V 492 H 400" class="ln-hue2" />
-              <circle cx="400" cy="396" r="4" class="head-hue2" />
-              <circle cx="400" cy="492" r="4" class="head-hue2" />
-              <text x="458" y="449" class="sm dim">declare it as well</text>
-            </svg>
-          </div>
-          <figcaption>
-            <strong>Four pairs of lines have to agree, and nothing in the file marks them.</strong>
-            Three of the four fail loudly &mdash; a missing top-level <code>pgdata:</code> refuses to
-            start, a <code>${WEB_PORT}</code> with no <code>.env</code> resolves to an empty string,
-            and <code>service_healthy</code> without a <code>healthcheck</code> block is rejected
-            outright. The blue one is the quiet one: rename the service and the hostname in
-            <code>DATABASE_URL</code> still parses fine, then fails at runtime with
-            <code>could not translate host name</code>. <code>docker compose config</code> prints the
-            file with all four resolved, which is the fastest way to check them.
-          </figcaption>
-        </figure>
-
-        <h3>Read it back to yourself</h3>
-
-        <ol class="check">
-          <li>
-            Point at the two places <code>pgdata</code> appears and say what each one is doing.
-          </li>
-          <li>Which half of <code>"${WEB_PORT}:8000"</code> is your laptop?</li>
-          <li>Why does <code>db</code> work with no <code>ports</code> line at all?</li>
-          <li>
-            A colleague's <code>web</code> crashes on a cold laptop with
-            <code>depends_on: [db]</code> already present. Name the two keys that fix it.
-          </li>
-          <li>You edited <code>requirements.txt</code> and ran <code>up -d</code>. Why is nothing different?</li>
-          <li>Which stop command destroys your rows, and which one keeps them?</li>
-        </ol>
+        <p class="measure" id="scoreNext" hidden>
+          Tell me the number and I will write it into <code>CURRICULUM.md</code>. Anything you
+          missed gets re-taught as its own page before this track closes; a clean sweep closes it
+          now, and the next thing worth learning is layering a second <code>-f</code> file so dev
+          and prod share one base.
+        </p>
       </section>
 
       <footer>
         <p>
-          Left out on purpose, roughly in the order you will need them: <code>profiles:</code> for
-          services only some people run, several <code>-f</code> files layered for dev against prod,
-          and a top-level <code>networks:</code> block for when one network stops being enough.
+          Deliberately not asked about, because Stage 2 never taught them:
+          <code>profiles:</code>, multiple <code>-f</code> files, <code>deploy:</code> and
+          <code>replicas</code>, and a top-level <code>networks:</code> block. If a question here
+          felt like it needed one of those, that is a gap in the page and worth telling me about.
         </p>
       </footer>
     </div>
+
+    <script>
+      (function () {
+        var ANSWER = { 1: "c", 2: "a", 3: "d", 4: "c", 5: "a", 6: "b", 7: "c", 8: "d" };
+
+        var TRAP = {
+          1: "A named volume is mounted in one place and declared in another. Same name, two lines.",
+          2: "Left number is your laptop, right number is what the app bound to inside.",
+          3: "ports only opens a door from the host. Inside the network everything is already reachable.",
+          4: "healthcheck and condition are two halves of one fix. Neither does anything alone.",
+          5: "up -d never rebuilds on its own. --build is the ask.",
+          6: "down -v deletes the named volume. A bind mount is your folder and is never touched.",
+          7: ".env fills blanks in the compose file and reaches no container.",
+          8: "always restarts a container you deliberately stopped. unless-stopped remembers."
+        };
+
+        var SAY = [
+          "Stage 2 did not land. I would rather rebuild that page than push on.",
+          "Stage 2 did not land. I would rather rebuild that page than push on.",
+          "Stage 2 did not land. I would rather rebuild that page than push on.",
+          "Stage 2 did not land. I would rather rebuild that page than push on.",
+          "Half. The ones below are worth a proper second pass before we close the track.",
+          "Half. The ones below are worth a proper second pass before we close the track.",
+          "Solid. One short page each on what you missed, then the track closes.",
+          "Solid. One short page each on what you missed, then the track closes.",
+          "Clean sweep. Nothing here needs re-teaching and the track closes."
+        ];
+
+        var answered = {};
+        var right = 0;
+
+        var dots = document.querySelectorAll(".rail-dots .dot");
+        var tally = document.getElementById("tally");
+        var scoreNum = document.getElementById("scoreNum");
+        var scoreSay = document.getElementById("scoreSay");
+        var missedList = document.getElementById("missedList");
+        var scoreNext = document.getElementById("scoreNext");
+
+        function paint() {
+          var n = Object.keys(answered).length;
+          tally.textContent = n + " of 8 answered" + (n ? "  ·  " + right + " right" : "");
+          scoreNum.textContent = right + "/8";
+          if (n < 8) return;
+
+          scoreSay.textContent = SAY[right];
+
+          var missed = [];
+          for (var q = 1; q <= 8; q++) {
+            if (!answered[q].ok) missed.push(q);
+          }
+
+          if (missed.length) {
+            missedList.innerHTML = "";
+            for (var i = 0; i < missed.length; i++) {
+              var li = document.createElement("li");
+              var b = document.createElement("b");
+              b.textContent = "0" + missed[i];
+              var s = document.createElement("span");
+              s.textContent = TRAP[missed[i]];
+              li.appendChild(b);
+              li.appendChild(s);
+              missedList.appendChild(li);
+            }
+            missedList.hidden = false;
+            document.getElementById("missedLabel").hidden = false;
+          }
+          scoreNext.hidden = false;
+        }
+
+        function answer(btn) {
+          var q = btn.getAttribute("data-q");
+          if (answered[q]) return;
+
+          var picked = btn.getAttribute("data-opt");
+          var ok = picked === ANSWER[q];
+          answered[q] = { ok: ok };
+          if (ok) right++;
+
+          var card = document.getElementById("q" + q);
+          card.classList.add("answered");
+
+          var opts = card.querySelectorAll(".opt");
+          for (var i = 0; i < opts.length; i++) {
+            var o = opts[i];
+            o.disabled = true;
+            var letter = o.getAttribute("data-opt");
+            if (letter === ANSWER[q]) {
+              o.classList.add("key");
+              o.querySelector("span:last-child").insertAdjacentHTML(
+                "beforeend",
+                '<span class="mark">correct</span>'
+              );
+            }
+            if (o === btn) {
+              o.classList.add("picked");
+              if (!ok) {
+                o.classList.add("wrong");
+                o.querySelector("span:last-child").insertAdjacentHTML(
+                  "beforeend",
+                  '<span class="mark">you picked this</span>'
+                );
+              }
+            }
+          }
+
+          var exp = document.getElementById("exp" + q);
+          exp.hidden = false;
+          exp.setAttribute("data-open", "");
+          if (!ok) exp.classList.add("was-wrong");
+          exp.querySelector(".tag").textContent = ok ? "Right" : "Not this one";
+
+          var dot = dots[q - 1];
+          dot.classList.add(ok ? "hit" : "miss");
+
+          paint();
+        }
+
+        document.addEventListener("click", function (e) {
+          var btn = e.target.closest ? e.target.closest(".opt") : null;
+          if (btn && !btn.disabled) answer(btn);
+        });
+
+        paint();
+      })();
+    </script>
   </body>
 </html>

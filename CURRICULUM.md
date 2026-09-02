@@ -20,10 +20,10 @@ web + database stack without copying a template.
 | --- | --- | --- | --- |
 | 1 — Why the file exists | ✅ 2026-08-26 | ✅ 2026-08-27 | **8/8** |
 | 1F — Engine, networks, ports, file lookup | ✅ 2026-08-27 | folded into the Stage 1 MCQ | — |
-| 2 — Writing one yourself | ✅ 2026-08-30 · live at `localhost:5173/` | ⏳ **pending** | — |
+| 2 — Writing one yourself | ✅ 2026-08-30 | ✅ 2026-09-02 · live at `localhost:5173/` | ⏳ **awaiting score** |
 
-**Where we are now:** user is working through the Stage 2 page. The Stage 2 MCQ is the next
-deliverable — build it when the user says they are through the page, not before.
+**Where we are now:** user finished the Stage 2 page and the Stage 2 MCQ is live. Waiting on the
+score. Record it in the table above the moment they report it.
 
 **Track is not complete.** It closes when the Stage 2 MCQ is scored and any gaps it exposes
 are re-taught.
@@ -82,26 +82,35 @@ healthcheck and `condition: service_healthy`. The `depends_on` race was reproduc
 
 Page carries 6 hand-authored inline SVG figures, 2 tables, and a closing 6-question self-check.
 
-## Stage 2 MCQ ⏳ pending
+## Stage 2 MCQ ✅ delivered 2026-09-02 — score pending
 
-**Not yet delivered.** Build it when the user signals they are through the Stage 2 page.
+Live at `localhost:5173/`, titled *Eight traps in a compose file*. The six open-ended self-check
+questions from the Stage 2 page became MCQs 1–6; 7 and 8 are new.
 
-The page already ends with six open-ended self-check questions. Convert these to MCQ form and
-extend to eight — they map 1:1 onto the traps Stage 2 teaches:
+| # | Tests | Trap it catches | Key |
+| --- | --- | --- | --- |
+| 1 | the two places `pgdata` appears | reference vs declaration | C |
+| 2 | which half of `"${WEB_PORT}:8000"` is the host | port order reversed silently works | A |
+| 3 | why `db` needs no `ports` | publishing a database by reflex; `EXPOSE` publishes nothing | D |
+| 4 | the two keys that fix a cold-laptop crash | `healthcheck` **and** `condition`, not either alone | C |
+| 5 | why `up -d` shows no new dependency | build cache — `--build` is never automatic | A |
+| 6 | which stop command destroys rows | `down` vs `down -v`, and the bind mount nothing can touch | B |
+| 7 | `environment` vs `env_file` vs `.env` | `.env` fills blanks in the file and reaches no container | C |
+| 8 | `unless-stopped` vs `always` | `always` overrules a deliberate `stop` across a reboot | D |
 
-| # | Tests | Trap it catches |
-| --- | --- | --- |
-| 1 | the two places `pgdata` appears | reference vs declaration |
-| 2 | which half of `"${WEB_PORT}:8000"` is the host | port order reversed silently works |
-| 3 | why `db` needs no `ports` | publishing a database by reflex |
-| 4 | the two keys that fix a cold-laptop crash | `healthcheck` **and** `condition`, not either alone |
-| 5 | why `up -d` shows no new dependency | build cache — `--build` is never automatic |
-| 6 | which stop command destroys rows | `down` vs `down -v` |
-| 7 | *to add* — `environment` vs `env_file` vs `.env` | `.env` reaches no container |
-| 8 | *to add* — `unless-stopped` vs `always` | `always` overrules a deliberate `stop` |
+Structure: one hero figure mapping every question onto the line of the finished file it stands on
+(five of the eight numbers appear twice, which is the "pairs of lines that must agree" idea made
+visible), then eight question cards, each with an inline-SVG figure in the explanation that only
+appears once the question is answered. One shot per question, no retry.
 
-**After scoring:** record the result here, and re-teach anything missed before calling the track
-complete. Per `CLAUDE.md`, the MCQ exists to adjust the curriculum, not just to grade it.
+The scorecard at the foot fills in live, names the traps missed by number, and says what happens
+next at each score band. Distractors were written to be arguable rather than filler — Q4 A
+(`restart:` as a retry loop) and Q5 B (a bind mount hiding installed packages) are both real
+behaviour, just not the answer to that question, and the explanations say so.
+
+**After scoring:** record the result in the status table, and re-teach anything missed as its own
+page before calling the track complete. Per `CLAUDE.md`, the MCQ exists to adjust the curriculum,
+not just to grade it.
 
 ---
 
@@ -115,6 +124,11 @@ losing builds and their config are deleted.
 | Built from | `eli5` + artifact skills + `CLAUDE.md` + `design.md` | `eli5` + artifact skills | codex + `.agents/` skills |
 | Diagrams | 6 Mermaid | **6 hand-authored inline SVG** | 6 inline SVG, decorative |
 | Verdict | auto-layout; every flowchart looks alike | geometry carries the argument | illustration where explanation belongs |
+
+**Standing decision on file layout:** one self-contained `index.html`, inline `<style>` and
+`<script>`, no `style.css` or `script.js`. A split was tried once from `prompt.txt` on 2026-09-02
+and reverted the same day at the user's word. `prompt.txt` on disk still holds that retired
+experimental prompt; treat `CURRICULUM.md` as the source of truth, not that file.
 
 **Decision:** B is now `index.html`. `design.md` deleted — its "Mermaid first, drawn last" rule
 inverted `artifact-diagramming`'s own hand-SVG guidance and produced the weakest of the three.

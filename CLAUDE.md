@@ -1,4 +1,5 @@
 > **No Edit to CLAUDE.md only project owner is allowed. If you have any suggestion mention in the bottom of the document.**
+> **totally ignore the skills-copy folder, its just there for my understanding**
 
 # Learning with Claude
 
@@ -31,7 +32,6 @@ efficiency and accurate complexity based on prompt.
 
   Check `prompt.txt` for what user want explained. Response will be categorized in 2 sections.
   Judge the prompt the categorize it:
-
   1. **Learning** — Ask user about how much he want the topic to be explored and other important
      questions for creating an curriculum for that topic and update the `CURRICULUM.md` file to
      keep track of stages. Curriculum will be divided into part (Number of parts will be based on
