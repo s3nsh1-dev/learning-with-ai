@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Address, folder, moment</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314231f'/%3E%3Cpath d='M15 43V21h6v16h10v6zm22 0V21h12v6h-6v4h5v6h-5v6z' fill='%2372bd91'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -605,18 +606,801 @@ td code {
     font-size: 18px;
   }
 }
+
+/* ============================================================
+   Systems field guide — the page's second visual language
+   ============================================================ */
+:root {
+  --ground: #f0eee6;
+  --surface: #fffdf7;
+  --surface-2: #f5f3ea;
+  --ink: #17211c;
+  --muted: #647068;
+  --rule: #d5d5c9;
+  --accent: #096b70;
+  --hue2: #7251a2;
+  --good: #28754e;
+  --bad: #a64035;
+  --warn: #a96513;
+  --tint-a: #e1f0ed;
+  --tint-b: #eee8f6;
+  --tint-good: #e2f0e5;
+  --tint-bad: #f7e5e2;
+  --tint-warn: #f7ecd8;
+  --code-bg: #14231f;
+  --code-ink: #e8eee9;
+  --code-key: #8bd3cd;
+  --code-val: #f2c46f;
+  --code-dim: #91a29a;
+  --code-mark: #294039;
+  --orange: #ad4326;
+  --orange-soft: #f8e6df;
+  --violet: #7251a2;
+  --violet-soft: #eee8f6;
+  --forest: #28754e;
+  --forest-soft: #e2f0e5;
+  --night: #14231f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #101613;
+    --surface: #17201c;
+    --surface-2: #1c2923;
+    --ink: #edf2ec;
+    --muted: #a4b0a8;
+    --rule: #344139;
+    --accent: #73c8c4;
+    --hue2: #bea6df;
+    --good: #7fca9e;
+    --bad: #ef9a90;
+    --warn: #e4b86f;
+    --tint-a: #173532;
+    --tint-b: #2c2538;
+    --tint-good: #1d3828;
+    --tint-bad: #3b2421;
+    --tint-warn: #3b301e;
+    --orange: #f18a6c;
+    --orange-soft: #3b2822;
+    --violet: #bea6df;
+    --violet-soft: #2c2538;
+    --forest: #7fca9e;
+    --forest-soft: #1d3828;
+    --night: #09110e;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground: #101613;
+  --surface: #17201c;
+  --surface-2: #1c2923;
+  --ink: #edf2ec;
+  --muted: #a4b0a8;
+  --rule: #344139;
+  --accent: #73c8c4;
+  --hue2: #bea6df;
+  --good: #7fca9e;
+  --bad: #ef9a90;
+  --warn: #e4b86f;
+  --tint-a: #173532;
+  --tint-b: #2c2538;
+  --tint-good: #1d3828;
+  --tint-bad: #3b2421;
+  --tint-warn: #3b301e;
+  --orange: #f18a6c;
+  --orange-soft: #3b2822;
+  --violet: #bea6df;
+  --violet-soft: #2c2538;
+  --forest: #7fca9e;
+  --forest-soft: #1d3828;
+  --night: #09110e;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--ground);
+  font-size: 18px;
+  line-height: 1.68;
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: 5px;
+  background: linear-gradient(90deg, var(--orange) 0 33.333%, var(--forest) 33.333% 66.666%, var(--violet) 66.666% 100%);
+  z-index: 10;
+}
+
+::selection {
+  color: var(--surface);
+  background: var(--accent);
+}
+
+.wrap {
+  width: min(100% - 40px, 1160px);
+  max-width: none;
+  padding: 0 0 128px;
+}
+
+.masthead {
+  padding: clamp(72px, 10vw, 124px) 0 46px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(440px, 1.14fr);
+  gap: clamp(42px, 7vw, 88px);
+  align-items: center;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 2px;
+  background: var(--orange);
+}
+
+.eyebrow span {
+  color: var(--orange);
+}
+
+h1 {
+  max-width: none;
+  margin-bottom: 30px;
+  font-size: clamp(58px, 7.6vw, 104px);
+  line-height: 0.84;
+  letter-spacing: -0.065em;
+  font-weight: 700;
+}
+
+.standfirst {
+  max-width: 31em;
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.58;
+}
+
+.proof-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  font-family: var(--mono);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.proof-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--forest);
+  box-shadow: 0 0 0 5px var(--forest-soft);
+  flex: none;
+}
+
+.hero-figure {
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+}
+
+.hero-plate {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #345147;
+  border-radius: 18px;
+  background: var(--night);
+  box-shadow: 0 28px 70px rgb(17 35 29 / 18%);
+}
+
+.hero-plate::before,
+.hero-plate::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.hero-plate::before {
+  inset: 0;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgb(127 202 158 / 14%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(127 202 158 / 14%) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.hero-plate::after {
+  inset: 14px;
+  border: 1px solid rgb(232 238 233 / 10%);
+  border-radius: 11px;
+}
+
+.hero-map {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.hero-map text {
+  font-family: var(--sans);
+  fill: #edf3ee;
+}
+
+.hero-map .hero-overline,
+.hero-map .hero-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.hero-map .hero-number {
+  font-family: var(--mono);
+  font-size: 11px;
+  fill: #aabbb2;
+}
+
+.hero-map .hero-code {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.hero-map .hero-code.strong {
+  font-weight: 600;
+}
+
+.hero-map .hero-code.quiet,
+.hero-map .hero-tiny {
+  fill: #9fb0a7;
+}
+
+.hero-map .hero-tiny {
+  font-family: var(--mono);
+  font-size: 9.5px;
+}
+
+.hero-core {
+  fill: #1e332b;
+  stroke: #75b899;
+  stroke-width: 2;
+}
+
+.hero-node {
+  fill: #192822;
+  stroke-width: 2;
+}
+
+.hero-node.purple { stroke: #a88bd0; }
+.hero-node.orange { stroke: #ef8565; }
+.hero-node.green { stroke: #72bd91; }
+.hero-led { fill: #72bd91; }
+.hero-led.dim { fill: #53685f; }
+
+.hero-path,
+.hero-share {
+  fill: none;
+  stroke-width: 2;
+}
+
+.hero-path.purple { stroke: #a88bd0; }
+.hero-path.orange { stroke: #ef8565; }
+.hero-path.green,
+.hero-share { stroke: #72bd91; }
+.hero-arrowhead { fill: #72bd91; }
+.hero-arrowhead.hot { fill: #ef8565; }
+
+.hero-service {
+  fill: #23362f;
+  stroke: #53685f;
+}
+
+.hero-folder {
+  fill: #37674f;
+  stroke: #72bd91;
+}
+
+.hero-figure > figcaption {
+  max-width: 48em;
+  margin: 0;
+  padding-left: 14px;
+  border-left: 2px solid var(--forest);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.jump {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: none;
+  margin-top: clamp(54px, 8vw, 92px);
+  border: 0;
+}
+
+.jump a {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 10px 12px;
+  min-height: 142px;
+  padding: 22px 22px 20px;
+  border: 1px solid var(--rule);
+  border-top: 4px solid var(--orange);
+  border-radius: 3px 3px 12px 12px;
+  background: var(--surface);
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.45;
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+
+.jump a:nth-child(2) { border-top-color: var(--forest); }
+.jump a:nth-child(3) { border-top-color: var(--violet); }
+
+.jump a:hover {
+  background: var(--surface);
+  border-color: var(--ink);
+  transform: translateY(-3px);
+}
+
+.jump .n {
+  grid-row: 1 / 3;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--orange);
+}
+
+.jump a:nth-child(2) .n { color: var(--forest); }
+.jump a:nth-child(3) .n { color: var(--violet); }
+
+.jump .word {
+  grid-column: 2;
+  grid-row: 1;
+  order: -1;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.jump a > span:nth-child(2) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+section {
+  --chapter-accent: var(--accent);
+  --chapter-soft: var(--tint-a);
+  position: relative;
+  display: flex;
+  gap: 24px;
+  margin: 24px 0 0;
+  padding: clamp(42px, 6vw, 72px) clamp(24px, 6vw, 72px) clamp(56px, 8vw, 96px);
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 18px 52px rgb(20 35 30 / 6%);
+}
+
+#one {
+  --chapter-accent: var(--orange);
+  --chapter-soft: var(--orange-soft);
+}
+
+#two {
+  --chapter-accent: var(--forest);
+  --chapter-soft: var(--forest-soft);
+}
+
+#three {
+  --chapter-accent: var(--violet);
+  --chapter-soft: var(--violet-soft);
+}
+
+section::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  border-radius: 18px 0 0 18px;
+  background: var(--chapter-accent);
+}
+
+section > div:first-child {
+  display: grid;
+  grid-template-columns: 184px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.sec-kicker {
+  padding-top: 9px;
+  color: var(--chapter-accent);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+h2 {
+  max-width: 24em;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+section > .asked,
+section > .lead,
+section > .measure,
+section > h3,
+section > pre,
+section > .takeaway {
+  width: min(calc(100% - 212px), 720px);
+  max-width: none;
+  margin-left: 212px;
+}
+
+h3 {
+  margin-top: 32px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+  font-size: 23px;
+  line-height: 1.25;
+}
+
+.lead {
+  font-size: clamp(21px, 2.3vw, 27px);
+  line-height: 1.48;
+  letter-spacing: -0.012em;
+}
+
+.asked {
+  position: relative;
+  gap: 7px;
+  padding: 18px 22px 18px 54px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--chapter-soft);
+}
+
+.asked::before {
+  content: "?";
+  position: absolute;
+  top: 13px;
+  left: 18px;
+  font-family: var(--sans);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--chapter-accent);
+}
+
+.asked .who {
+  color: var(--chapter-accent);
+  font-size: 10px;
+}
+
+.asked p {
+  color: var(--ink);
+  font-size: 16px;
+  font-style: normal;
+}
+
+figure:not(.hero-figure) {
+  gap: 16px;
+  margin: 14px 0 18px;
+}
+
+figure:not(.hero-figure) .plate {
+  padding: clamp(18px, 3vw, 34px);
+  border-color: var(--rule);
+  border-radius: 12px;
+  background-color: var(--surface-2);
+  background-image:
+    linear-gradient(rgb(86 105 96 / 7%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(86 105 96 / 7%) 1px, transparent 1px);
+  background-size: 24px 24px;
+  box-shadow: inset 0 0 0 6px var(--surface);
+}
+
+figure:not(.hero-figure) figcaption {
+  width: min(calc(100% - 212px), 760px);
+  max-width: none;
+  margin-left: 212px;
+  padding-left: 18px;
+  border-left: 3px solid var(--chapter-accent);
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.62;
+}
+
+figure:not(.hero-figure) figcaption strong {
+  color: var(--ink);
+}
+
+.dg .surface {
+  stroke-width: 1.5;
+}
+
+pre {
+  border: 1px solid #31473f;
+  border-radius: 10px;
+  box-shadow: 0 16px 34px rgb(15 28 23 / 13%);
+}
+
+.takeaway {
+  position: relative;
+  gap: 10px;
+  padding: 24px 26px 24px 30px;
+  border: 0;
+  border-radius: 2px 12px 12px 2px;
+  background: var(--chapter-soft);
+}
+
+.takeaway::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--chapter-accent);
+}
+
+.takeaway .tag {
+  color: var(--chapter-accent);
+  font-size: 10px;
+}
+
+.takeaway p {
+  font-size: 17px;
+}
+
+.tablewrap {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+
+th,
+td {
+  padding: 15px 16px;
+}
+
+thead th {
+  background: var(--surface-2);
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+section:last-child {
+  margin-top: 24px;
+  padding-bottom: clamp(48px, 6vw, 72px);
+}
+
+section:last-child::after {
+  background: linear-gradient(var(--orange) 0 33.333%, var(--forest) 33.333% 66.666%, var(--violet) 66.666% 100%);
+}
+
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-copy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
+    gap: 24px 44px;
+    align-items: end;
+  }
+
+  .hero-copy .eyebrow,
+  .hero-copy .proof-note {
+    grid-column: 1 / -1;
+  }
+
+  .hero-copy h1,
+  .hero-copy .standfirst {
+    margin: 0;
+  }
+
+  .hero-figure {
+    max-width: 680px;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .wrap {
+    width: min(100% - 28px, 680px);
+  }
+
+  .hero-copy {
+    display: block;
+  }
+
+  .hero-copy h1 {
+    margin-bottom: 26px;
+  }
+
+  .jump {
+    grid-template-columns: 1fr;
+  }
+
+  .jump a {
+    min-height: 0;
+  }
+
+  section {
+    border-radius: 13px;
+  }
+
+  section > div:first-child {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .sec-kicker {
+    padding-top: 0;
+  }
+
+  section > .asked,
+  section > .lead,
+  section > .measure,
+  section > h3,
+  section > pre,
+  section > .takeaway,
+  figure:not(.hero-figure) figcaption {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .masthead {
+    padding-top: 64px;
+  }
+
+  h1 {
+    font-size: clamp(52px, 18vw, 74px);
+  }
+
+  .hero-plate {
+    border-radius: 12px;
+    overflow-x: auto;
+  }
+
+  .hero-map {
+    min-width: 500px;
+  }
+
+  section {
+    padding: 34px 20px 52px 24px;
+  }
+
+  .asked {
+    padding-left: 48px;
+  }
+
+  figure:not(.hero-figure) .plate {
+    margin-inline: -8px;
+    padding: 16px 12px;
+    box-shadow: inset 0 0 0 4px var(--surface);
+  }
+
+  figure:not(.hero-figure) figcaption {
+    padding-left: 14px;
+  }
+
+  pre {
+    padding: 18px;
+    font-size: 12.5px;
+  }
+}
     </style>
   </head>
 
   <body>
     <div class="wrap">
       <header class="masthead">
-        <p class="eyebrow">Docker Compose &middot; three follow-ups</p>
-        <h1>Address, folder, moment</h1>
-        <p class="standfirst">
-          Three questions about the Rainfall file, and the three mechanisms behind them. Every
-          number on this page was measured on your laptop before it was written down.
-        </p>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Rainfall field guide <span>03 hidden defaults</span></p>
+            <h1>Address,<br />folder,<br />moment.</h1>
+            <p class="standfirst">
+              Docker Compose feels mysterious when it makes a decision before you know there was
+              one to make. These are the three decisions hiding in your file—and how to expose each
+              one on your own machine.
+            </p>
+            <div class="proof-note">
+              <span class="proof-dot" aria-hidden="true"></span>
+              <span>Grounded in commands run against your Rainfall setup</span>
+            </div>
+          </div>
+
+          <figure class="hero-figure">
+            <div class="hero-plate">
+              <svg
+                class="hero-map"
+                viewBox="0 0 620 520"
+                role="img"
+                aria-label="A Docker Compose file sits at the centre of three decisions. Before parsing, dot env supplies values. During startup, a published port chooses which network wires can reach it. While running, the API and collector meet through one shared frames folder."
+              >
+                <defs>
+                  <marker id="hero-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" class="hero-arrowhead" />
+                  </marker>
+                  <marker id="hero-arrow-hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" class="hero-arrowhead hot" />
+                  </marker>
+                </defs>
+
+                <text x="30" y="34" class="hero-overline">ONE FILE · THREE DECISIONS</text>
+
+                <rect x="212" y="194" width="196" height="126" rx="12" class="hero-core" />
+                <circle cx="238" cy="220" r="5" class="hero-led" />
+                <circle cx="256" cy="220" r="5" class="hero-led dim" />
+                <circle cx="274" cy="220" r="5" class="hero-led dim" />
+                <text x="310" y="260" text-anchor="middle" class="hero-code strong">compose.yaml</text>
+                <text x="310" y="287" text-anchor="middle" class="hero-code quiet">the visible file</text>
+
+                <rect x="30" y="72" width="174" height="98" rx="10" class="hero-node purple" />
+                <text x="48" y="100" class="hero-number">03</text>
+                <text x="48" y="128" class="hero-label">MOMENT</text>
+                <text x="48" y="151" class="hero-code quiet">.env → ${...}</text>
+                <path d="M170,170 C188,190 196,208 215,225" class="hero-path purple" marker-end="url(#hero-arrow)" />
+                <text x="200" y="183" class="hero-tiny" text-anchor="middle">before parse</text>
+
+                <rect x="416" y="72" width="174" height="98" rx="10" class="hero-node orange" />
+                <text x="434" y="100" class="hero-number">01</text>
+                <text x="434" y="128" class="hero-label">ADDRESS</text>
+                <text x="434" y="151" class="hero-code quiet">0.0.0.0 → every wire</text>
+                <path d="M450,170 C432,190 424,208 405,225" class="hero-path orange" marker-end="url(#hero-arrow-hot)" />
+                <text x="420" y="183" class="hero-tiny" text-anchor="middle">at bind</text>
+
+                <path d="M310,320 L310,364" class="hero-path green" marker-end="url(#hero-arrow)" />
+                <text x="326" y="349" class="hero-tiny">while running</text>
+
+                <rect x="96" y="388" width="428" height="100" rx="10" class="hero-node green" />
+                <text x="116" y="417" class="hero-number">02</text>
+                <text x="116" y="447" class="hero-label">FOLDER</text>
+
+                <rect x="232" y="410" width="88" height="45" rx="7" class="hero-service" />
+                <text x="276" y="438" text-anchor="middle" class="hero-code strong">collector</text>
+                <rect x="416" y="410" width="68" height="45" rx="7" class="hero-service" />
+                <text x="450" y="438" text-anchor="middle" class="hero-code strong">api</text>
+                <path d="M276,455 L276,472 L450,472 L450,455" class="hero-share" />
+                <rect x="334" y="453" width="58" height="36" rx="18" class="hero-folder" />
+                <text x="363" y="476" text-anchor="middle" class="hero-code strong">files</text>
+              </svg>
+            </div>
+            <figcaption>
+              Read toward the centre, then down. Values arrive before the file is parsed; an address
+              is chosen when a socket opens; shared bytes connect two processes after both are alive.
+            </figcaption>
+          </figure>
+        </div>
 
         <nav class="jump">
           <a href="#one"><span class="n">1</span><span>Your phone can&rsquo;t reach Vite. So what is <code>127.0.0.1:</code> protecting?</span><span class="word">address</span></a>
