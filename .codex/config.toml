@@ -1,0 +1,10 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+[marketplaces.personal]
+source_type = "local"
+source = "/home/user228/Local_Storage/development/WebDev/intentional-projects/learning-with-ai"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest"]
+startup_timeout_sec = 30
