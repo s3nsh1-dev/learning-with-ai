@@ -1,5 +1,8 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
+sandbox_mode = "workspace-write"
+model_verbosity = "low"
+model_reasoning_summary = "concise"
 [mcp_servers.playwright]
 command = "npx"
 args = ["-y", "@playwright/mcp@latest"]

@@ -3,6 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <title>Address, folder, moment</title>
+    <meta
+      name="description"
+      content="A visual field guide to Docker Compose ports, shared volumes, and .env interpolation."
+    />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314231f'/%3E%3Cpath d='M15 43V21h6v16h10v6zm22 0V21h12v6h-6v4h5v6h-5v6z' fill='%2372bd91'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -110,6 +114,28 @@ body {
   font-family: var(--serif);
   font-size: 19px;
   line-height: 1.7;
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 16px;
+  z-index: 20;
+  transform: translateY(-180%);
+  padding: 9px 13px;
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 140ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 .wrap {
@@ -1318,10 +1344,25 @@ section:last-child::after {
     font-size: 12.5px;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
     </style>
   </head>
 
   <body>
+    <a class="skip-link" href="#main-content">Skip to the explanation</a>
     <div class="wrap">
       <header class="masthead">
         <div class="hero-grid">
@@ -1402,12 +1443,14 @@ section:last-child::after {
           </figure>
         </div>
 
-        <nav class="jump">
+        <nav class="jump" aria-label="Jump to a question">
           <a href="#one"><span class="n">1</span><span>Your phone can&rsquo;t reach Vite. So what is <code>127.0.0.1:</code> protecting?</span><span class="word">address</span></a>
           <a href="#two"><span class="n">2</span><span>What a collector is, and why it mounts the same folders as the api</span><span class="word">folder</span></a>
           <a href="#three"><span class="n">3</span><span>Where <code>${WEB_PORT}</code> comes from with no <code>env_file</code> anywhere</span><span class="word">moment</span></a>
         </nav>
       </header>
+
+      <main id="main-content">
 
       <!-- ========================= 1 ========================= -->
       <section id="one">
@@ -2320,6 +2363,7 @@ $ docker exec api cat /var/lib/rainfall/frames/frame-1.png
           load. That is the difference the prefix removes.
         </p>
       </section>
+      </main>
     </div>
   </body>
 </html>
