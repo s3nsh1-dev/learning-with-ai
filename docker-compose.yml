@@ -1,0 +1,84 @@
+name: rainfall
+
+services:
+  api:
+    build: ./api
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT}:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      REDIS_URL: redis://cache:6379/0
+    volumes:
+      - ./api:/app
+      - ./frames:/var/lib/rainfall/frames
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+
+  collector:
+    build: ./api
+    command: python -m rainfall.collector
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      REDIS_URL: redis://cache:6379/0
+    volumes:
+      - ./api:/app
+      - ./frames:/var/lib/rainfall/frames
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+
+  db:
+    image: postgres:${PG_TAG}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
+
+  cache:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  db_data:
+
+# ==========================
+# FOR LEARNING PURPOSES ONLY
+# ==========================
+
+# # before the services
+#   should the folder name decide the project name?   name:
+
+# # then, for every service, in this order
+#   1  where does its filesystem come from?           build: or image:
+#   2  does anything outside need to reach it?        ports:   host on the left
+#   3  would losing its files hurt, and who reads?    volumes: ./ means your disk
+#   4  what does the process need to know?            environment: env_file:
+#   5  must something else be answering first?        depends_on: + healthcheck:
+#   6  what should happen when it dies?               restart: unless-stopped
+
+# # then, before you trust it
+#   docker compose config          # every blank filled, no errors
+#   docker compose up -d --build   # cold, from nothing

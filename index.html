@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Eight Traps in a Compose File</title>
+    <title>Address, folder, moment</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -181,58 +181,44 @@ h1 {
   max-width: 32em;
 }
 
-/* ============ sticky progress rail ============ */
-.rail {
-  position: sticky;
-  top: 0;
-  z-index: 5;
+/* ============ jump list ============ */
+.jump {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  padding: 11px 0;
-  margin-bottom: 22px;
-  background: var(--ground);
+  flex-direction: column;
+  gap: 0;
+  margin: 30px 0 0;
+  border-top: 1px solid var(--rule);
+  max-width: 40em;
+}
+
+.jump a {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 13px 2px;
   border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 17.5px;
 }
 
-.rail-dots {
-  display: flex;
-  gap: 7px;
+.jump a:hover {
+  background: var(--surface-2);
 }
 
-.dot {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 2px solid var(--rule);
-  background: var(--surface);
-  color: var(--muted);
+.jump .n {
   font-family: var(--mono);
   font-size: 13px;
   font-weight: 600;
-  display: grid;
-  place-items: center;
-  text-decoration: none;
+  color: var(--accent);
 }
 
-.dot.hit {
-  background: var(--good);
-  border-color: var(--good);
-  color: var(--surface);
-}
-
-.dot.miss {
-  background: var(--bad);
-  border-color: var(--bad);
-  color: var(--surface);
-}
-
-.rail-tally {
+.jump .word {
   font-family: var(--sans);
-  font-size: 13.5px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -246,15 +232,16 @@ section {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
+  scroll-margin-top: 20px;
 }
 
 /* flex children default to min-width:auto, which lets a wide <pre>
    push the whole page sideways on a narrow screen */
 section > *,
 figure > *,
-.qbody > *,
-.verdict > * {
+.asked > *,
+.takeaway > * {
   margin: 0;
   min-width: 0;
 }
@@ -278,198 +265,44 @@ h2 {
   text-wrap: balance;
 }
 
+h3 {
+  font-family: var(--sans);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 10px 0 0;
+  letter-spacing: -0.01em;
+}
+
 .lead {
   font-size: 21px;
   line-height: 1.55;
-  max-width: 30em;
-}
-
-/* ============ question card ============ */
-.q {
-  scroll-margin-top: 72px;
-  display: grid;
-  grid-template-columns: 62px 1fr;
-  gap: 0 22px;
-}
-
-.qnum {
-  font-family: var(--mono);
-  font-size: 34px;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--rule);
-  padding-top: 6px;
-  font-variant-numeric: tabular-nums;
-}
-
-.q.answered .qnum {
-  color: var(--accent);
-}
-
-.qbody {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.qtest {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.qstem {
-  font-size: 21px;
-  line-height: 1.5;
   max-width: 31em;
 }
 
-/* ============ options ============ */
-.opts {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* ============ the question as asked ============ */
+.asked {
+  border-left: 3px solid var(--rule);
+  padding: 4px 0 4px 20px;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
   max-width: 40em;
 }
 
-.opt {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 26px 1fr;
-  gap: 14px;
-  align-items: start;
-  text-align: left;
-  font-family: var(--serif);
-  font-size: 17.5px;
-  line-height: 1.5;
-  color: var(--ink);
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
-  border-radius: 4px;
-  padding: 13px 16px;
-  cursor: pointer;
-}
-
-.opt .ltr {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  border: 1px solid var(--rule);
-  border-radius: 3px;
-  background: var(--surface);
-  text-align: center;
-  line-height: 22px;
-  height: 24px;
-}
-
-.opt code {
-  font-size: 0.82em;
-}
-
-.opt:hover:not(:disabled) {
-  border-color: var(--accent);
-}
-
-.opt:disabled {
-  cursor: default;
-}
-
-.q.answered .opt:not(.picked):not(.key) {
-  opacity: 0.62;
-}
-
-.opt.key {
-  background: var(--tint-good);
-  border-color: var(--good);
-}
-
-.opt.key .ltr {
-  color: var(--good);
-  border-color: var(--good);
-}
-
-.opt.picked.wrong {
-  background: var(--tint-bad);
-  border-color: var(--bad);
-}
-
-.opt.picked.wrong .ltr {
-  color: var(--bad);
-  border-color: var(--bad);
-}
-
-.mark {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  display: block;
-  margin-top: 4px;
-}
-
-.opt.key .mark {
-  color: var(--good);
-}
-
-.opt.picked.wrong .mark {
-  color: var(--bad);
-}
-
-/* ============ verdict panel ============ */
-.verdict {
-  border-left: 3px solid var(--good);
-  padding: 2px 0 2px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 40em;
-}
-
-.verdict.was-wrong {
-  border-left-color: var(--bad);
-}
-
-.verdict .tag {
+.asked .who {
   font-family: var(--sans);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--good);
-}
-
-.verdict.was-wrong .tag {
-  color: var(--bad);
-}
-
-.verdict p {
-  font-size: 17.5px;
-  line-height: 1.62;
   color: var(--muted);
 }
 
-.verdict p strong {
-  color: var(--ink);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .verdict[data-open] {
-    animation: rise 0.22s ease-out;
-  }
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(-4px);
-    }
-  }
+.asked p {
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--muted);
+  font-style: italic;
 }
 
 /* ============ figures ============ */
@@ -509,7 +342,7 @@ figcaption strong {
 }
 
 .dg.wide {
-  min-width: 620px;
+  min-width: 640px;
 }
 
 .dg text {
@@ -524,8 +357,11 @@ figcaption strong {
 .dg .sm {
   font-size: 13px;
 }
+.dg .xs {
+  font-size: 11.5px;
+}
 .dg .lg {
-  font-size: 20px;
+  font-size: 21px;
 }
 .dg .b {
   font-weight: 600;
@@ -564,24 +400,24 @@ figcaption strong {
   stroke: var(--warn);
   stroke-width: 2;
 }
-.dg .band-bad {
-  fill: var(--tint-bad);
-  stroke: none;
-}
-.dg .band-good {
-  fill: var(--tint-good);
-  stroke: none;
-}
 .dg .slab {
   fill: var(--rule);
   stroke: none;
 }
-.dg .gap {
-  fill: var(--surface-2);
-  stroke: none;
-}
 .dg .chip {
   fill: var(--accent);
+  stroke: none;
+}
+.dg .chip-bad {
+  fill: var(--bad);
+  stroke: none;
+}
+.dg .chip-good {
+  fill: var(--good);
+  stroke: none;
+}
+.dg .chip-hue2 {
+  fill: var(--hue2);
   stroke: none;
 }
 
@@ -611,20 +447,10 @@ figcaption strong {
 }
 .dg .ln-dim {
   stroke: var(--muted);
-  stroke-width: 2;
+  stroke-width: 1.5;
   fill: none;
 }
-.dg .ln-bad {
-  stroke: var(--bad);
-  stroke-width: 2.5;
-  fill: none;
-}
-.dg .ln-good {
-  stroke: var(--good);
-  stroke-width: 2.5;
-  fill: none;
-}
-.dg .ln-acc {
+.dg .ln-accent {
   stroke: var(--accent);
   stroke-width: 2.5;
   fill: none;
@@ -634,43 +460,18 @@ figcaption strong {
   stroke-width: 2.5;
   fill: none;
 }
-.dg .ln-warn {
-  stroke: var(--warn);
+.dg .ln-good {
+  stroke: var(--good);
   stroke-width: 2.5;
   fill: none;
 }
-.dg .dash {
-  stroke-dasharray: 7 6;
-}
-.dg .box-open {
-  fill: none;
-  stroke: var(--muted);
+.dg .ln-bad {
+  stroke: var(--bad);
   stroke-width: 2;
+  fill: none;
 }
-
-.dg .head {
-  fill: currentColor;
-  stroke: none;
-}
-.dg .head-dim {
-  fill: var(--muted);
-  stroke: none;
-}
-.dg .head-bad {
-  fill: var(--bad);
-  stroke: none;
-}
-.dg .head-good {
-  fill: var(--good);
-  stroke: none;
-}
-.dg .head-acc {
-  fill: var(--accent);
-  stroke: none;
-}
-.dg .head-warn {
-  fill: var(--warn);
-  stroke: none;
+.dg .dash {
+  stroke-dasharray: 6 5;
 }
 
 /* ============ code ============ */
@@ -689,7 +490,8 @@ pre {
 }
 
 pre.tight {
-  font-size: 14px;
+  font-size: 13.5px;
+  line-height: 1.65;
 }
 
 pre .k {
@@ -713,108 +515,94 @@ pre .ok {
   color: #90d9ad;
 }
 
-/* ============ scorecard ============ */
-.scorecard {
-  border-color: var(--accent);
-}
-
-.score-top {
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-
-.score-num {
-  font-family: var(--mono);
-  font-size: 62px;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-
-.score-say {
-  font-size: 20px;
-  line-height: 1.45;
-  color: var(--muted);
-  max-width: 24em;
-}
-
-.missed {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* ============ takeaway strip ============ */
+.takeaway {
+  background: var(--tint-a);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 38em;
+  gap: 8px;
+  max-width: 40em;
 }
 
-.missed li {
-  display: grid;
-  grid-template-columns: 30px 1fr;
-  gap: 14px;
-  align-items: baseline;
-  font-size: 17.5px;
-  line-height: 1.5;
+.takeaway .tag {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.takeaway p {
+  font-size: 18.5px;
+  line-height: 1.55;
+}
+
+/* ============ table ============ */
+.tablewrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 10px 13px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+thead th {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
   color: var(--muted);
-  border-top: 1px solid var(--rule);
-  padding-top: 10px;
+  border-bottom: 2px solid var(--rule);
 }
 
-.missed li b {
+td:first-child {
   font-family: var(--mono);
-  font-size: 14px;
-  color: var(--bad);
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
 }
 
-.missed li span {
-  color: var(--ink);
+td code {
+  font-size: 0.82em;
 }
 
-footer {
-  padding: 40px 4px 0;
-  color: var(--muted);
-  font-size: 17.5px;
-  line-height: 1.65;
-  max-width: 38em;
-}
-
-@media (max-width: 760px) {
+/* ============ narrow ============ */
+@media (max-width: 640px) {
+  /* nowrap keeps `docker compose up -d` intact on a wide screen, but a long
+     inline code span is what pushes the whole page sideways at 390px */
   code {
     white-space: normal;
     overflow-wrap: anywhere;
   }
+  .wrap {
+    padding: 0 16px 80px;
+  }
+  section {
+    padding: 26px 20px 30px;
+  }
   h1 {
-    font-size: 34px;
+    font-size: 36px;
   }
   h2 {
     font-size: 25px;
   }
   body {
     font-size: 18px;
-  }
-  section {
-    padding: 26px 20px 30px;
-  }
-  .q {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-  .qnum {
-    font-size: 26px;
-    padding-top: 0;
-  }
-  .qstem {
-    font-size: 19px;
-  }
-  .lead {
-    font-size: 19px;
-  }
-  .score-num {
-    font-size: 48px;
   }
 }
     </style>
@@ -823,929 +611,931 @@ footer {
   <body>
     <div class="wrap">
       <header class="masthead">
-        <p class="eyebrow">Docker Compose &middot; Stage 2 MCQ</p>
-        <h1>Eight traps in a compose file</h1>
+        <p class="eyebrow">Docker Compose &middot; three follow-ups</p>
+        <h1>Address, folder, moment</h1>
         <p class="standfirst">
-          Every question here is a mistake that starts cleanly and fails later. Pick one answer,
-          read what it costs you, move on. One shot each.
+          Three questions about the Rainfall file, and the three mechanisms behind them. Every
+          number on this page was measured on your laptop before it was written down.
         </p>
+
+        <nav class="jump">
+          <a href="#one"><span class="n">1</span><span>Your phone can&rsquo;t reach Vite. So what is <code>127.0.0.1:</code> protecting?</span><span class="word">address</span></a>
+          <a href="#two"><span class="n">2</span><span>What a collector is, and why it mounts the same folders as the api</span><span class="word">folder</span></a>
+          <a href="#three"><span class="n">3</span><span>Where <code>${WEB_PORT}</code> comes from with no <code>env_file</code> anywhere</span><span class="word">moment</span></a>
+        </nav>
       </header>
 
-      <nav class="rail" aria-label="Progress">
-        <div class="rail-dots">
-          <a class="dot" href="#q1">1</a>
-          <a class="dot" href="#q2">2</a>
-          <a class="dot" href="#q3">3</a>
-          <a class="dot" href="#q4">4</a>
-          <a class="dot" href="#q5">5</a>
-          <a class="dot" href="#q6">6</a>
-          <a class="dot" href="#q7">7</a>
-          <a class="dot" href="#q8">8</a>
-        </div>
-        <p class="rail-tally" id="tally" aria-live="polite">0 of 8 answered</p>
-      </nav>
-
-      <!-- ===================== map ===================== -->
-      <section>
+      <!-- ========================= 1 ========================= -->
+      <section id="one">
         <div>
-          <span class="sec-kicker">Before you start</span>
-          <h2>Where the eight questions live</h2>
+          <span class="sec-kicker">Question one &middot; address</span>
+          <h2>The phone test proved something about Vite, not about laptops</h2>
+        </div>
+
+        <div class="asked">
+          <span class="who">You asked</span>
+          <p>
+            How does a laptop&rsquo;s localhost make the port available at network level? When I try
+            to open the Vite server on my phone on the same wifi, nothing happens. So why the
+            concern, why the protection?
+          </p>
         </div>
 
         <p class="lead">
-          This is the file you finished in Stage 2. Each question stands on a real line of it.
+          Your phone failed because <strong>Vite chose to be unreachable.</strong> Docker chooses the
+          opposite. Same laptop, same wifi, two different defaults &mdash; and the choice is one
+          number, written down when the program opens its socket.
+        </p>
+
+        <p class="measure">
+          A program that wants to accept connections has to name an address to accept them
+          <em>on</em>. Your laptop has more than one. Right now it has a loopback wire that only it
+          can talk to, and a wifi wire with the address <code>192.168.1.12</code> that your router
+          gave it. Choosing <code>127.0.0.1</code> means &ldquo;only the loopback wire.&rdquo;
+          Choosing <code>0.0.0.0</code> means &ldquo;every wire I have, including the ones I join
+          later.&rdquo;
         </p>
 
         <figure>
           <div class="plate">
             <svg
               class="dg wide"
-              viewBox="0 0 920 760"
+              viewBox="0 0 900 380"
               role="img"
-              aria-label="The finished compose file with a question number in the left gutter beside each line the quiz asks about. Five of the eight numbers appear on two separate lines, because those questions are about pairs of lines that have to agree."
+              aria-label="Your laptop has two network wires: loopback at 127.0.0.1 and wifi at 192.168.1.12. The Vite socket and a socket published as 127.0.0.1:8082 attach only to the loopback wire, so a packet arriving on the wifi wire finds nothing to answer it. A socket published as 8081, meaning 0.0.0.0, attaches to both wires, so the phone's packet reaches it and gets HTTP 200."
             >
-              <line x1="478" y1="18" x2="478" y2="742" class="ln-dim dash" />
+              <defs>
+                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+                </marker>
+                <marker id="ar-good" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--good)" />
+                </marker>
+              </defs>
 
-              <!-- ---- file listing ---- -->
-              <text x="64" y="44" class="mono sm">services:</text>
-              <text x="82" y="68" class="mono sm b t-accent">web:</text>
-              <text x="100" y="92" class="mono sm dim">build: .</text>
-              <text x="100" y="116" class="mono sm dim">ports:</text>
-              <text x="118" y="140" class="mono sm">- "${WEB_PORT}:8000"</text>
-              <text x="100" y="164" class="mono sm dim">environment:</text>
-              <text x="118" y="188" class="mono sm">DATABASE_URL: &hellip;@db:5432/appdb</text>
-              <text x="100" y="212" class="mono sm dim">volumes:</text>
-              <text x="118" y="236" class="mono sm">- ./app:/app</text>
-              <text x="100" y="260" class="mono sm dim">depends_on:</text>
-              <text x="118" y="284" class="mono sm dim">db:</text>
-              <text x="136" y="308" class="mono sm">condition: service_healthy</text>
-              <text x="100" y="332" class="mono sm">restart: unless-stopped</text>
+              <rect x="40" y="56" width="580" height="290" rx="6" class="surface" />
+              <text x="58" y="334" class="sm dim b">your laptop</text>
 
-              <text x="82" y="380" class="mono sm b t-hue2">db:</text>
-              <text x="100" y="404" class="mono sm">image: postgres:${TAG}</text>
-              <text x="100" y="428" class="mono sm">env_file: .env.db</text>
-              <rect x="96" y="440" width="212" height="26" rx="4" class="box-open dash" />
-              <text x="202" y="458" text-anchor="middle" class="sm dim">no ports: line here</text>
-              <text x="100" y="488" class="mono sm dim">volumes:</text>
-              <text x="118" y="512" class="mono sm">- pgdata:/var/lib/postgresql/data</text>
-              <text x="100" y="536" class="mono sm">healthcheck:</text>
-              <text x="118" y="560" class="mono sm dim">test: ["CMD-SHELL", "pg_isready &hellip;"]</text>
-              <text x="100" y="584" class="mono sm">restart: always</text>
+              <!-- sockets -->
+              <rect x="96" y="90" width="140" height="42" rx="4" class="surface" />
+              <text x="166" y="107" class="sm b" text-anchor="middle">Vite dev server</text>
+              <text x="166" y="124" class="sm mono dim" text-anchor="middle">[::1]:5173</text>
 
-              <text x="64" y="632" class="mono sm dim">volumes:</text>
-              <text x="82" y="656" class="mono sm">pgdata:</text>
+              <rect x="264" y="90" width="140" height="42" rx="4" class="surface" />
+              <text x="334" y="107" class="sm b" text-anchor="middle">db, closed</text>
+              <text x="334" y="124" class="sm mono dim" text-anchor="middle">127.0.0.1:8082</text>
 
-              <line x1="60" y1="682" x2="440" y2="682" class="ln-dim dash" />
-              <text x="64" y="708" class="sm dim">.env, sitting beside the file</text>
-              <text x="64" y="732" class="mono sm">WEB_PORT=3000 &middot; TAG=16</text>
+              <rect x="432" y="90" width="160" height="42" rx="4" class="tint-good" />
+              <text x="512" y="107" class="sm b" text-anchor="middle">db, published</text>
+              <text x="512" y="124" class="sm mono dim" text-anchor="middle">0.0.0.0:8081</text>
 
-              <!-- ---- gutter chips ---- -->
-              <circle cx="34" cy="87" r="11" class="chip" />
-              <text x="34" y="92" text-anchor="middle" class="mono sm b t-inv">5</text>
-              <circle cx="34" cy="135" r="11" class="chip" />
-              <text x="34" y="140" text-anchor="middle" class="mono sm b t-inv">2</text>
-              <circle cx="34" cy="183" r="11" class="chip" />
-              <text x="34" y="188" text-anchor="middle" class="mono sm b t-inv">3</text>
-              <circle cx="34" cy="231" r="11" class="chip" />
-              <text x="34" y="236" text-anchor="middle" class="mono sm b t-inv">6</text>
-              <circle cx="34" cy="303" r="11" class="chip" />
-              <text x="34" y="308" text-anchor="middle" class="mono sm b t-inv">4</text>
-              <circle cx="34" cy="327" r="11" class="chip" />
-              <text x="34" y="332" text-anchor="middle" class="mono sm b t-inv">8</text>
+              <!-- rails -->
+              <text x="96" y="160" class="sm mono dim">lo &middot; 127.0.0.1 &mdash; only this machine</text>
+              <line x1="96" y1="172" x2="596" y2="172" class="ln" />
 
-              <circle cx="34" cy="399" r="11" class="chip" />
-              <text x="34" y="404" text-anchor="middle" class="mono sm b t-inv">7</text>
-              <circle cx="34" cy="423" r="11" class="chip" />
-              <text x="34" y="428" text-anchor="middle" class="mono sm b t-inv">7</text>
-              <circle cx="34" cy="453" r="11" class="chip" />
-              <text x="34" y="458" text-anchor="middle" class="mono sm b t-inv">3</text>
-              <circle cx="22" cy="507" r="11" class="chip" />
-              <text x="22" y="512" text-anchor="middle" class="mono sm b t-inv">1</text>
-              <circle cx="48" cy="507" r="11" class="chip" />
-              <text x="48" y="512" text-anchor="middle" class="mono sm b t-inv">6</text>
-              <circle cx="34" cy="531" r="11" class="chip" />
-              <text x="34" y="536" text-anchor="middle" class="mono sm b t-inv">4</text>
-              <circle cx="34" cy="579" r="11" class="chip" />
-              <text x="34" y="584" text-anchor="middle" class="mono sm b t-inv">8</text>
+              <text x="96" y="280" class="sm mono dim">wlp3s0 &middot; 192.168.1.12 &mdash; the wifi</text>
+              <line x1="96" y1="292" x2="806" y2="292" class="ln" />
 
-              <circle cx="34" cy="651" r="11" class="chip" />
-              <text x="34" y="656" text-anchor="middle" class="mono sm b t-inv">1</text>
+              <!-- stems -->
+              <line x1="166" y1="132" x2="166" y2="172" class="ln" />
+              <circle cx="166" cy="172" r="5" class="chip" />
+              <line x1="334" y1="132" x2="334" y2="172" class="ln" />
+              <circle cx="334" cy="172" r="5" class="chip" />
 
-              <circle cx="22" cy="727" r="11" class="chip" />
-              <text x="22" y="732" text-anchor="middle" class="mono sm b t-inv">2</text>
-              <circle cx="48" cy="727" r="11" class="chip" />
-              <text x="48" y="732" text-anchor="middle" class="mono sm b t-inv">7</text>
+              <line x1="512" y1="132" x2="512" y2="292" class="ln-good" />
+              <circle cx="512" cy="172" r="5" class="chip-good" />
+              <circle cx="512" cy="292" r="5" class="chip-good" />
 
-              <!-- ---- key ---- -->
-              <text x="506" y="40" class="sm b">WHAT EACH ONE IS TESTING</text>
+              <!-- stubs that stop -->
+              <line x1="166" y1="172" x2="166" y2="222" class="ln-dim dash" />
+              <line x1="334" y1="172" x2="334" y2="222" class="ln-dim dash" />
+              <path d="M158,228 l16,16 M174,228 l-16,16" class="ln-bad" />
+              <path d="M326,228 l16,16 M342,228 l-16,16" class="ln-bad" />
+              <text x="250" y="262" class="sm dim" text-anchor="middle">not attached to the wifi wire</text>
 
-              <circle cx="518" cy="84" r="12" class="chip" />
-              <text x="518" y="89" text-anchor="middle" class="mono sm b t-inv">1</text>
-              <text x="546" y="82" class="sm b">Mount it, and declare it</text>
-              <text x="546" y="102" class="sm dim">the same name, written twice</text>
+              <!-- phone -->
+              <rect x="812" y="252" width="58" height="82" rx="7" class="surface" />
+              <rect x="820" y="262" width="42" height="56" rx="2" class="slab" />
+              <text x="841" y="352" class="sm dim" text-anchor="middle">your phone</text>
 
-              <circle cx="518" cy="164" r="12" class="chip" />
-              <text x="518" y="169" text-anchor="middle" class="mono sm b t-inv">2</text>
-              <text x="546" y="162" class="sm b">Which half is your laptop</text>
-              <text x="546" y="182" class="sm dim">reversed, it still starts</text>
+              <line x1="806" y1="292" x2="524" y2="292" class="ln-good" marker-end="url(#ar-good)" />
+              <text x="665" y="280" class="sm dim" text-anchor="middle">packet arrives on the wifi wire</text>
 
-              <circle cx="518" cy="244" r="12" class="chip" />
-              <text x="518" y="249" text-anchor="middle" class="mono sm b t-inv">3</text>
-              <text x="546" y="242" class="sm b">A service with no open port</text>
-              <text x="546" y="262" class="sm dim">still reachable from inside</text>
-
-              <circle cx="518" cy="324" r="12" class="chip" />
-              <text x="518" y="329" text-anchor="middle" class="mono sm b t-inv">4</text>
-              <text x="546" y="322" class="sm b">What depends_on skips</text>
-              <text x="546" y="342" class="sm dim">the process, not the socket</text>
-
-              <circle cx="518" cy="404" r="12" class="chip" />
-              <text x="518" y="409" text-anchor="middle" class="mono sm b t-inv">5</text>
-              <text x="546" y="402" class="sm b">When a rebuild happens</text>
-              <text x="546" y="422" class="sm dim">never on its own</text>
-
-              <circle cx="518" cy="484" r="12" class="chip" />
-              <text x="518" y="489" text-anchor="middle" class="mono sm b t-inv">6</text>
-              <text x="546" y="482" class="sm b">How far down -v reaches</text>
-              <text x="546" y="502" class="sm dim">one of these two survives</text>
-
-              <circle cx="518" cy="564" r="12" class="chip" />
-              <text x="518" y="569" text-anchor="middle" class="mono sm b t-inv">7</text>
-              <text x="546" y="562" class="sm b">Which settings get inside</text>
-              <text x="546" y="582" class="sm dim">one of the three does not</text>
-
-              <circle cx="518" cy="644" r="12" class="chip" />
-              <text x="518" y="649" text-anchor="middle" class="mono sm b t-inv">8</text>
-              <text x="546" y="642" class="sm b">A policy that overrules you</text>
-              <text x="546" y="662" class="sm dim">the two restart lines differ</text>
+              <text x="512" y="80" class="sm b t-good" text-anchor="middle">HTTP 200</text>
             </svg>
           </div>
           <figcaption>
-            <strong>Five of the eight numbers appear twice.</strong> That is the shape of the whole
-            stage: a compose file is full of pairs of lines that have to agree, and nothing in the
-            file marks them as a pair. The gutter here does what YAML will not do for you.
+            <strong>Where a stem touches is the entire answer.</strong> Nothing about the laptop
+            changes between the three sockets &mdash; the wifi wire is live the whole time. What
+            changes is whether anything is attached to it. Vite binds loopback only, which is why
+            your phone got nothing; that is a Vite setting, not a law. Run
+            <code>npm run dev -- --host</code> and the same server grows a stem down to the wifi
+            wire, and the phone loads the page. Docker starts on the far right by default.
           </figcaption>
         </figure>
-      </section>
 
-      <!-- ===================== Q1 ===================== -->
-      <section class="q" id="q1" data-q="1">
-        <p class="qnum">01</p>
-        <div class="qbody">
-          <p class="qtest">Reference and declaration</p>
-          <p class="qstem">You delete the last two lines. What happens on the next <code>up -d</code>?</p>
+        <h3>The same three sockets, measured on your machine just now</h3>
 
-          <pre class="tight"><span class="k">services:</span>
-  <span class="k">db:</span>
-    <span class="k">volumes:</span>
-      - <span class="m">pgdata</span>:/var/lib/postgresql/data
+        <pre class="tight"><span class="c">$ ss -ltn                       # every socket listening, and the address it took</span>
+LISTEN  <span class="ok">[::1]:5173</span>        <span class="c">&larr; vite, default settings</span>
+LISTEN  <span class="ok">127.0.0.1:8082</span>    <span class="c">&larr; docker run -p 127.0.0.1:8082:80</span>
+LISTEN  <span class="v">0.0.0.0:8081</span>      <span class="c">&larr; docker run -p 8081:80        (no prefix)</span>
 
-<span class="k">volumes:</span>          <span class="c">&lt;- these two</span>
-  <span class="m">pgdata:</span></pre>
+<span class="c">$ curl 192.168.1.12:8081        # the laptop's wifi address, not localhost</span>
+<span class="v">HTTP 200</span>
 
-          <ul class="opts">
-          <li><button class="opt" data-q="1" data-opt="a"><span class="ltr">A</span><span>Nothing changes. The line under <code>db</code> already creates the volume.</span></button></li>
-          <li><button class="opt" data-q="1" data-opt="b"><span class="ltr">B</span><span>It starts, but <code>pgdata</code> becomes a folder in your project directory.</span></button></li>
-          <li><button class="opt" data-q="1" data-opt="c"><span class="ltr">C</span><span>Compose refuses to start: <code>service "db" refers to undefined volume pgdata</code>.</span></button></li>
-          <li><button class="opt" data-q="1" data-opt="d"><span class="ltr">D</span><span>It starts, and the volume is thrown away on every <code>down</code>.</span></button></li>
-          </ul>
+<span class="c">$ curl 192.168.1.12:8082</span>
+<span class="bad">connection refused</span>
 
-          <div class="verdict" id="exp1" hidden>
-            <span class="tag"></span>
-            <p>
-              The two lines say different things. The one under <code>db</code> says
-              <strong>mount this</strong>. The top-level block says <strong>this exists</strong>.
-              Compose will not invent the second from the first, and that refusal is a feature: a
-              typo in the mount path turns into an error on startup instead of a database quietly
-              writing into an empty anonymous volume you never find again.
-            </p>
-            <figure>
-              <div class="plate">
-                <svg
-                  class="dg"
-                  viewBox="0 0 640 208"
-                  role="img"
-                  aria-label="The volume line under the db service is a reference that must find a matching declaration in the top-level volumes block. Without the declaration Compose refuses to start."
-                >
-                  <text x="16" y="30" class="sm dim">INSIDE THE SERVICE</text>
-                  <rect x="16" y="42" width="250" height="72" rx="6" class="tint-a" />
-                  <text x="141" y="72" text-anchor="middle" class="mono sm">- pgdata:/var/lib/&hellip;</text>
-                  <text x="141" y="98" text-anchor="middle" class="sm b t-accent">mount this</text>
+<span class="c">$ curl 192.168.1.12:5173        # what your phone was doing</span>
+<span class="bad">connection refused</span></pre>
 
-                  <line x1="276" y1="78" x2="348" y2="78" class="ln" />
-                  <polygon points="356,78 342,71 342,85" class="head" />
-                  <text x="316" y="64" text-anchor="middle" class="sm dim">looks for</text>
+        <p class="measure">
+          Three containers, one flag of difference, three different answers. The one without the
+          prefix answered on the address your phone would have dialled. Note that
+          <code>-p 8081:80</code> and <code>-p 0.0.0.0:8081:80</code> are the same instruction
+          &mdash; leaving the address off does not mean &ldquo;no address,&rdquo; it means
+          &ldquo;all of them.&rdquo;
+        </p>
 
-                  <text x="366" y="30" class="sm dim">AT THE TOP LEVEL</text>
-                  <rect x="366" y="42" width="250" height="72" rx="6" class="tint-b" />
-                  <text x="491" y="72" text-anchor="middle" class="mono sm">volumes: pgdata:</text>
-                  <text x="491" y="98" text-anchor="middle" class="sm b t-hue2">this exists</text>
+        <h3>So why care, when it&rsquo;s only your flat?</h3>
 
-                  <line x1="16" y1="140" x2="616" y2="140" class="ln-dim dash" />
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg wide"
+              viewBox="0 0 900 320"
+              role="img"
+              aria-label="The same compose file run on three different wifi networks: home with around five other devices, a cafe with around forty, a coworking space with around two hundred. The line ports 5432 colon 5432 is identical in all three cases, so the number of machines that can open a connection to the database changes without the file changing."
+            >
+              <rect x="20" y="40" width="272" height="184" rx="5" class="surface" />
+              <text x="156" y="76" class="b" text-anchor="middle">home wifi</text>
+              <text x="156" y="130" class="lg mono t-good" text-anchor="middle">~5</text>
+              <text x="156" y="158" class="sm dim" text-anchor="middle">other devices on the wire</text>
+              <text x="156" y="192" class="sm dim" text-anchor="middle">all of them yours</text>
 
-                  <text x="16" y="168" class="sm b t-good">both present</text>
-                  <text x="150" y="168" class="mono sm dim">db starts, rows land in myapp_pgdata</text>
-                  <text x="16" y="194" class="sm b t-bad">second one gone</text>
-                  <text x="150" y="194" class="mono sm t-bad">refers to undefined volume pgdata</text>
-                </svg>
-              </div>
-              <figcaption>
-                Nothing is created at either end on its own. <strong>The arrow is a lookup, and a
-                failed lookup stops the whole project</strong>, not just that one service.
-              </figcaption>
-            </figure>
+              <rect x="314" y="40" width="272" height="184" rx="5" class="surface" />
+              <text x="450" y="76" class="b" text-anchor="middle">caf&eacute; wifi</text>
+              <text x="450" y="130" class="lg mono t-warn" text-anchor="middle">~40</text>
+              <text x="450" y="158" class="sm dim" text-anchor="middle">other devices on the wire</text>
+              <text x="450" y="192" class="sm dim" text-anchor="middle">none of them yours</text>
+
+              <rect x="608" y="40" width="272" height="184" rx="5" class="surface" />
+              <text x="744" y="76" class="b" text-anchor="middle">coworking wifi</text>
+              <text x="744" y="130" class="lg mono t-bad" text-anchor="middle">~200</text>
+              <text x="744" y="158" class="sm dim" text-anchor="middle">other devices on the wire</text>
+              <text x="744" y="192" class="sm dim" text-anchor="middle">and it changes daily</text>
+
+              <rect x="20" y="252" width="860" height="52" rx="4" class="tint-warn" />
+              <text x="450" y="275" class="mono sm b" text-anchor="middle">ports: [ "5432:5432" ]</text>
+              <text x="450" y="294" class="sm dim" text-anchor="middle">one line, unchanged, in all three places &mdash; it never asks which wifi you joined</text>
+            </svg>
           </div>
-        </div>
-      </section>
+          <figcaption>
+            <strong>The file has no idea where the laptop is.</strong> You write it at home and it
+            keeps its promise everywhere. Some public networks isolate clients from each other and
+            some do not, and there is no way to tell from the laptop which kind you joined
+            &mdash; so &ldquo;it&rsquo;s only my flat&rdquo; is a fact about today, not about the
+            file. The <code>127.0.0.1:</code> prefix is the version of the promise that stays true
+            on every wifi you will ever join.
+          </figcaption>
+        </figure>
 
-      <!-- ===================== Q2 ===================== -->
-      <section class="q" id="q2" data-q="2">
-        <p class="qnum">02</p>
-        <div class="qbody">
-          <p class="qtest">Port order</p>
-          <p class="qstem">
-            <code>.env</code> sets <code>WEB_PORT=3000</code>. The service line is
-            <code>- "${WEB_PORT}:8000"</code>, and the app inside the container listens on 8000.
-            Which address opens it?
+        <p class="measure">
+          There is also a difference in what is behind the door. A stranger reaching Vite reads the
+          HTML you were going to publish anyway. A stranger reaching <code>5432</code> gets a
+          Postgres login prompt, and the password it wants is sitting in your <code>.env</code>
+          &mdash; the same one you probably used on two other projects. That is why the brief
+          singled out the database and not the api.
+        </p>
+
+        <h3>The part that surprises people: your firewall is not covering this</h3>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg wide"
+              viewBox="0 0 900 320"
+              role="img"
+              aria-label="A packet arriving for a published container port goes through the nat PREROUTING chain, where Docker's DNAT rule rewrites its destination to the container's address, and is then forwarded to the container. Because its destination is no longer the host, it is judged in the FORWARD chain and never reaches the filter INPUT chain, which is where ufw's rules live."
+            >
+              <defs>
+                <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+                </marker>
+                <marker id="ar2-dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)" />
+                </marker>
+              </defs>
+
+              <text x="20" y="42" class="sm mono dim">packet from 192.168.1.99 &rarr; 192.168.1.12:5432</text>
+
+              <line x1="20" y1="100" x2="112" y2="100" class="ln" marker-end="url(#ar2)" />
+
+              <rect x="120" y="72" width="150" height="56" rx="4" class="surface" />
+              <text x="195" y="96" class="sm mono b" text-anchor="middle">nat PREROUTING</text>
+              <text x="195" y="115" class="xs dim" text-anchor="middle">first thing that runs</text>
+
+              <line x1="270" y1="100" x2="292" y2="100" class="ln" marker-end="url(#ar2)" />
+
+              <rect x="300" y="72" width="230" height="56" rx="4" class="tint-warn" />
+              <text x="415" y="96" class="sm mono b" text-anchor="middle">DOCKER chain &mdash; DNAT</text>
+              <text x="415" y="115" class="xs dim" text-anchor="middle">destination rewritten to 172.18.0.3:5432</text>
+
+              <line x1="530" y1="100" x2="592" y2="100" class="ln" marker-end="url(#ar2)" />
+
+              <rect x="600" y="72" width="120" height="56" rx="4" class="surface" />
+              <text x="660" y="96" class="sm mono b" text-anchor="middle">FORWARD</text>
+              <text x="660" y="115" class="xs dim" text-anchor="middle">docker allows it</text>
+
+              <line x1="720" y1="100" x2="762" y2="100" class="ln" marker-end="url(#ar2)" />
+
+              <rect x="770" y="72" width="110" height="56" rx="4" class="tint-bad" />
+              <text x="825" y="105" class="sm mono b" text-anchor="middle">postgres</text>
+
+              <!-- the branch not taken -->
+              <path d="M415,128 L415,178 L360,178 L360,206" class="ln-dim dash" marker-end="url(#ar2-dim)" />
+              <text x="430" y="168" class="sm dim">the packet is no longer addressed to the host,</text>
+              <text x="430" y="186" class="sm dim">so this branch is never taken</text>
+
+              <rect x="250" y="212" width="220" height="56" rx="4" class="surface" />
+              <text x="360" y="236" class="sm mono b dim" text-anchor="middle">filter INPUT</text>
+              <text x="360" y="255" class="xs dim" text-anchor="middle">every ufw deny rule lives here</text>
+
+              <path d="M344,178 l14,14 M358,178 l-14,14" class="ln-bad" />
+            </svg>
+          </div>
+          <figcaption>
+            <strong>This is documented Docker behaviour, not something I measured here</strong>
+            &mdash; proving it needs a second machine on your wifi. Your <code>ufw</code> is active
+            right now, and a rule like <code>ufw deny 5432</code> would still not close a published
+            port, because the packet is on its way <em>through</em> the host to the container and is
+            judged in <code>FORWARD</code>, while ufw writes its rules in <code>INPUT</code>. Check
+            it yourself with <code>sudo iptables -t nat -S DOCKER</code>. The consequence is the
+            whole point: <strong>the prefix in the compose file is the control that actually
+            works,</strong> and the firewall you assumed was behind it is not.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="tag">Answer to question one</span>
+          <p>
+            Localhost is not a property of the laptop, it is a choice each program makes when it
+            starts listening. Vite chose loopback, which is why your phone saw nothing. Docker
+            chooses every wire unless the line says otherwise. <code>"127.0.0.1:5432:5432"</code>
+            is you making Docker's choice for it.
           </p>
-
-          <ul class="opts">
-          <li><button class="opt" data-q="2" data-opt="a"><span class="ltr">A</span><span><code>localhost:3000</code></span></button></li>
-          <li><button class="opt" data-q="2" data-opt="b"><span class="ltr">B</span><span><code>localhost:8000</code></span></button></li>
-          <li><button class="opt" data-q="2" data-opt="c"><span class="ltr">C</span><span>Either one. Compose opens both ends.</span></button></li>
-          <li><button class="opt" data-q="2" data-opt="d"><span class="ltr">D</span><span>Neither. Compose rejects a mapping whose two numbers differ.</span></button></li>
-          </ul>
-
-          <div class="verdict" id="exp2" hidden>
-            <span class="tag"></span>
-            <p>
-              Left is your side, right is inside. You type the left number into the browser; the
-              right one has to match whatever the app actually binds to. Get them backwards and
-              <code>"8000:3000"</code> is still a valid file that starts without a word of
-              complaint. It just forwards to a port nothing is listening on, and you get an empty
-              reply instead of an error.
-            </p>
-            <figure>
-              <div class="plate">
-                <svg
-                  class="dg"
-                  viewBox="0 0 640 214"
-                  role="img"
-                  aria-label="The left number of a port mapping is the port on your laptop; the right number is the port the app binds to inside the container."
-                >
-                  <text x="16" y="30" class="sm dim">YOUR LAPTOP</text>
-                  <rect x="16" y="42" width="248" height="72" rx="6" class="surface" />
-                  <text x="140" y="74" text-anchor="middle" class="b">browser</text>
-                  <text x="140" y="100" text-anchor="middle" class="mono sm t-accent">localhost:3000</text>
-
-                  <rect x="300" y="26" width="18" height="112" class="slab" />
-                  <rect x="300" y="62" width="18" height="34" class="gap" />
-                  <text x="309" y="156" text-anchor="middle" class="sm dim">the door</text>
-
-                  <line x1="272" y1="78" x2="294" y2="78" class="ln-acc" />
-                  <line x1="324" y1="78" x2="358" y2="78" class="ln-acc" />
-                  <polygon points="366,78 352,71 352,85" class="head-acc" />
-
-                  <text x="376" y="30" class="sm dim">INSIDE THE CONTAINER</text>
-                  <rect x="376" y="42" width="248" height="72" rx="6" class="tint-a" />
-                  <text x="500" y="74" text-anchor="middle" class="b">uvicorn is bound to</text>
-                  <text x="500" y="100" text-anchor="middle" class="mono sm">0.0.0.0:8000</text>
-
-                  <text x="320" y="186" text-anchor="middle" class="lg b mono">"3000<tspan class="dim">:</tspan>8000"</text>
-                  <line x1="278" y1="194" x2="278" y2="204" class="ln-dim" />
-                  <line x1="362" y1="194" x2="362" y2="204" class="ln-dim" />
-                  <text x="262" y="212" text-anchor="end" class="sm dim">you type this</text>
-                  <text x="378" y="212" class="sm dim">the app chose this</text>
-                </svg>
-              </div>
-              <figcaption>
-                The quotes matter for a reason unrelated to all this:
-                <strong>YAML reads a bare <code>5432:5432</code> as a sexagesimal number</strong>,
-                not a pair. Quote every mapping and the question never comes up.
-              </figcaption>
-            </figure>
-          </div>
         </div>
       </section>
 
-      <!-- ===================== Q3 ===================== -->
-      <section class="q" id="q3" data-q="3">
-        <p class="qnum">03</p>
-        <div class="qbody">
-          <p class="qtest">Publishing versus reaching</p>
-          <p class="qstem">
-            <code>db</code> has no <code>ports:</code> line at all, yet <code>web</code> talks to it
-            on 5432 all day. What is actually going on?
-          </p>
-
-          <ul class="opts">
-          <li><button class="opt" data-q="3" data-opt="a"><span class="ltr">A</span><span>Compose publishes 5432 for you, because the postgres image declares <code>EXPOSE 5432</code>.</span></button></li>
-          <li><button class="opt" data-q="3" data-opt="b"><span class="ltr">B</span><span><code>depends_on: db</code> opens the port for <code>web</code>.</span></button></li>
-          <li><button class="opt" data-q="3" data-opt="c"><span class="ltr">C</span><span><code>web</code> reaches it through the Docker socket rather than the network.</span></button></li>
-          <li><button class="opt" data-q="3" data-opt="d"><span class="ltr">D</span><span><code>ports</code> only cuts a door from your laptop inwards. On the project network every port is already reachable, so <code>db</code> needs no line.</span></button></li>
-          </ul>
-
-          <div class="verdict" id="exp3" hidden>
-            <span class="tag"></span>
-            <p>
-              <code>EXPOSE</code> in a Dockerfile is a comment with syntax highlighting. It
-              publishes nothing. The only thing <code>ports:</code> does is punch a hole from the
-              host into the container, which is exactly what a database on your laptop does not
-              need. Adding <code>"5432:5432"</code> out of habit puts Postgres in front of anything
-              that can see your machine, on a coffee shop network included. If you want a GUI client
-              on it, bind it to yourself: <code>"127.0.0.1:5432:5432"</code>.
-            </p>
-            <figure>
-              <div class="plate">
-                <svg
-                  class="dg"
-                  viewBox="0 0 660 244"
-                  role="img"
-                  aria-label="Inside the project network web reaches db on port 5432 with no ports line. From the host, the same port is unreachable, because nothing published it."
-                >
-                  <text x="16" y="44" class="sm dim">YOUR LAPTOP</text>
-                  <rect x="16" y="58" width="110" height="72" rx="6" class="surface" />
-                  <text x="71" y="90" text-anchor="middle" class="b">psql</text>
-                  <text x="71" y="114" text-anchor="middle" class="sm dim">on the host</text>
-
-                  <rect x="150" y="26" width="494" height="152" rx="8" class="box-open dash" />
-                  <text x="397" y="18" text-anchor="middle" class="sm dim">one project network</text>
-
-                  <rect x="176" y="54" width="180" height="96" rx="6" class="tint-a" />
-                  <text x="266" y="92" text-anchor="middle" class="lg b mono t-accent">web</text>
-                  <text x="266" y="120" text-anchor="middle" class="mono sm">ports: "3000:8000"</text>
-
-                  <rect x="440" y="54" width="180" height="96" rx="6" class="tint-b" />
-                  <text x="530" y="92" text-anchor="middle" class="lg b mono t-hue2">db</text>
-                  <text x="530" y="120" text-anchor="middle" class="sm dim">no ports: line</text>
-
-                  <line x1="360" y1="102" x2="424" y2="102" class="ln-good" />
-                  <polygon points="432,102 418,95 418,109" class="head-good" />
-                  <text x="392" y="90" text-anchor="middle" class="mono sm b t-good">db:5432</text>
-
-                  <path d="M 71 130 L 71 208 L 530 208 L 530 176" class="ln-bad dash" />
-                  <line x1="523" y1="185" x2="537" y2="199" class="ln-bad" />
-                  <line x1="537" y1="185" x2="523" y2="199" class="ln-bad" />
-                  <text x="290" y="230" text-anchor="middle" class="sm b t-bad">localhost:5432 &rarr; connection refused, and that is the correct answer</text>
-                </svg>
-              </div>
-              <figcaption>
-                The green arrow and the red one aim at the same port on the same container.
-                <strong>The difference is which side of the dashed line you start from.</strong>
-                Everything inside can already talk; <code>ports</code> exists only for what is
-                outside.
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== Q4 ===================== -->
-      <section class="q" id="q4" data-q="4">
-        <p class="qnum">04</p>
-        <div class="qbody">
-          <p class="qtest">What depends_on does not wait for</p>
-          <p class="qstem">
-            A colleague's <code>web</code> dies on a cold laptop with
-            <code>[Errno 111] Connection refused</code>. Their file already has
-            <code>depends_on: [db]</code>. What actually fixes it?
-          </p>
-
-          <ul class="opts">
-          <li><button class="opt" data-q="4" data-opt="a"><span class="ltr">A</span><span><code>restart: unless-stopped</code> on <code>web</code>, so it keeps retrying until <code>db</code> answers.</span></button></li>
-          <li><button class="opt" data-q="4" data-opt="b"><span class="ltr">B</span><span><code>condition: service_healthy</code> on its own. <code>depends_on</code> knows how to poll.</span></button></li>
-          <li><button class="opt" data-q="4" data-opt="c"><span class="ltr">C</span><span>A <code>healthcheck:</code> block on <code>db</code> <em>and</em> <code>condition: service_healthy</code> under web's <code>depends_on</code>.</span></button></li>
-          <li><button class="opt" data-q="4" data-opt="d"><span class="ltr">D</span><span>Move <code>db</code> above <code>web</code> in the file so it starts first.</span></button></li>
-          </ul>
-
-          <div class="verdict" id="exp4" hidden>
-            <span class="tag"></span>
-            <p>
-              Two halves, and neither works alone. The healthcheck is what gives <code>db</code> a
-              state other than "running"; the condition is what makes <code>web</code> read that
-              state before it starts. Ask for <code>service_healthy</code> against a service with no
-              healthcheck and Compose rejects the file, because there is nothing to poll.
-            </p>
-            <p>
-              Answer A is the one worth arguing about. It does eventually get you a working stack,
-              and plenty of production apps retry their own database connection on purpose. But on
-              its own it turns a startup ordering bug into a crash loop you have to read the logs to
-              notice, and it makes every cold start slower by the length of the restart backoff.
-              Retrying is a fine belt. It is not the braces.
-            </p>
-            <figure>
-              <div class="plate">
-                <svg
-                  class="dg"
-                  viewBox="0 0 660 224"
-                  role="img"
-                  aria-label="The healthcheck on db produces a healthy state; the condition on web consumes it. Remove either one and the chain that makes web wait is broken."
-                >
-                  <text x="16" y="26" class="sm b t-bad">drop the healthcheck</text>
-                  <text x="16" y="46" class="sm dim">nothing ever turns healthy</text>
-                  <text x="472" y="26" class="sm b t-bad">drop the condition</text>
-                  <text x="472" y="46" class="sm dim">web never looks</text>
-
-                  <rect x="16" y="66" width="192" height="96" rx="6" class="tint-b" />
-                  <text x="112" y="102" text-anchor="middle" class="lg b mono t-hue2">db</text>
-                  <text x="112" y="130" text-anchor="middle" class="mono sm">healthcheck:</text>
-                  <path d="M 40 162 L 40 186 L 184 186 L 184 178" class="ln-hue2" />
-                  <polygon points="184,166 177,179 191,179" class="head-hue2" />
-                  <text x="112" y="210" text-anchor="middle" class="sm dim">pg_isready every 2s</text>
-
-                  <line x1="216" y1="114" x2="266" y2="114" class="ln" />
-                  <polygon points="274,114 260,107 260,121" class="head" />
-                  <text x="245" y="100" text-anchor="middle" class="sm dim">sets</text>
-
-                  <rect x="284" y="88" width="112" height="52" rx="26" class="tint-good" />
-                  <text x="340" y="120" text-anchor="middle" class="b t-good">healthy</text>
-
-                  <line x1="404" y1="114" x2="454" y2="114" class="ln" />
-                  <polygon points="462,114 448,107 448,121" class="head" />
-                  <text x="433" y="100" text-anchor="middle" class="sm dim">reads</text>
-
-                  <rect x="472" y="66" width="172" height="96" rx="6" class="tint-a" />
-                  <text x="558" y="102" text-anchor="middle" class="lg b mono t-accent">web</text>
-                  <text x="558" y="130" text-anchor="middle" class="mono sm">condition:</text>
-                  <text x="558" y="210" text-anchor="middle" class="sm dim">holds until then</text>
-                </svg>
-              </div>
-              <figcaption>
-                One side produces a fact, the other side reads it.
-                <strong><code>pg_isready</code> already ships inside the postgres image</strong>, so
-                the healthcheck costs you four lines and nothing to install.
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== Q5 ===================== -->
-      <section class="q" id="q5" data-q="5">
-        <p class="qnum">05</p>
-        <div class="qbody">
-          <p class="qtest">When a rebuild happens</p>
-          <p class="qstem">
-            You added <code>httpx</code> to <code>requirements.txt</code> and ran
-            <code>docker compose up -d</code>. <code>web</code> still dies with
-            <code>ModuleNotFoundError: No module named 'httpx'</code>. Why?
-          </p>
-
-          <ul class="opts">
-          <li><button class="opt" data-q="5" data-opt="a"><span class="ltr">A</span><span>Compose reused the image it built last time. Changing a file does not trigger a rebuild. Run <code>up -d --build</code>.</span></button></li>
-          <li><button class="opt" data-q="5" data-opt="b"><span class="ltr">B</span><span>The <code>./app:/app</code> bind mount hid the installed packages.</span></button></li>
-          <li><button class="opt" data-q="5" data-opt="c"><span class="ltr">C</span><span>The old container is still up. <code>up -d</code> never replaces a container that is running.</span></button></li>
-          <li><button class="opt" data-q="5" data-opt="d"><span class="ltr">D</span><span><code>pip install</code> ran before the volume was mounted, so it wrote into a layer that was discarded.</span></button></li>
-          </ul>
-
-          <div class="verdict" id="exp5" hidden>
-            <span class="tag"></span>
-            <p>
-              This is the quietest failure in the whole stage. There is no warning, no rebuild
-              notice, no line in the output saying it skipped anything. <code>up</code> builds an
-              image only when one does not exist yet; after that it is your job to ask.
-              <code>--build</code> is the ask. Once you have been bitten twice you start typing it
-              by reflex, which is fine.
-            </p>
-            <figure>
-              <div class="plate">
-                <svg
-                  class="dg"
-                  viewBox="0 0 720 236"
-                  role="img"
-                  aria-label="Running up -d skips the build step entirely and starts the old image, so the new dependency is missing. Running up -d --build goes through the build and produces an image that has it."
-                >
-                  <text x="96" y="30" text-anchor="middle" class="sm dim">YOU RUN</text>
-                  <text x="286" y="30" text-anchor="middle" class="sm dim">BUILD STEP</text>
-                  <text x="456" y="30" text-anchor="middle" class="sm dim">IMAGE USED</text>
-                  <text x="630" y="30" text-anchor="middle" class="sm dim">RESULT</text>
-
-                  <rect x="16" y="44" width="160" height="56" rx="6" class="surface" />
-                  <text x="96" y="78" text-anchor="middle" class="mono sm b">up -d</text>
-                  <line x1="184" y1="72" x2="204" y2="72" class="ln-dim" />
-                  <polygon points="212,72 198,65 198,79" class="head-dim" />
-                  <rect x="220" y="44" width="132" height="56" rx="6" class="box-open dash" />
-                  <text x="286" y="78" text-anchor="middle" class="sm dim">skipped</text>
-                  <line x1="360" y1="72" x2="380" y2="72" class="ln-dim" />
-                  <polygon points="388,72 374,65 374,79" class="head-dim" />
-                  <rect x="396" y="44" width="120" height="56" rx="6" class="surface" />
-                  <text x="456" y="78" text-anchor="middle" class="sm">the old one</text>
-                  <line x1="524" y1="72" x2="544" y2="72" class="ln-dim" />
-                  <polygon points="552,72 538,65 538,79" class="head-dim" />
-                  <rect x="560" y="44" width="144" height="56" rx="6" class="tint-bad" />
-                  <text x="632" y="78" text-anchor="middle" class="sm b t-bad">no httpx</text>
-
-                  <rect x="16" y="144" width="160" height="56" rx="6" class="surface" />
-                  <text x="96" y="178" text-anchor="middle" class="mono sm b">up -d --build</text>
-                  <line x1="184" y1="172" x2="204" y2="172" class="ln-acc" />
-                  <polygon points="212,172 198,165 198,179" class="head-acc" />
-                  <rect x="220" y="144" width="132" height="56" rx="6" class="tint-a" />
-                  <text x="286" y="178" text-anchor="middle" class="sm b t-accent">docker build</text>
-                  <line x1="360" y1="172" x2="380" y2="172" class="ln-acc" />
-                  <polygon points="388,172 374,165 374,179" class="head-acc" />
-                  <rect x="396" y="144" width="120" height="56" rx="6" class="surface" />
-                  <text x="456" y="178" text-anchor="middle" class="sm">a fresh one</text>
-                  <line x1="524" y1="172" x2="544" y2="172" class="ln-acc" />
-                  <polygon points="552,172 538,165 538,179" class="head-acc" />
-                  <rect x="560" y="144" width="144" height="56" rx="6" class="tint-good" />
-                  <text x="632" y="178" text-anchor="middle" class="sm b t-good">httpx present</text>
-
-                  <text x="16" y="126" class="sm dim">requirements.txt changed on disk in both rows. Only the second row reads it.</text>
-                </svg>
-              </div>
-              <figcaption>
-                Answer A is a real bug that exists, just not this one:
-                <strong>a bind mount over <code>/app</code> does hide anything the image put
-                there</strong>, which is why installed packages belong in
-                <code>/usr/local/lib/python*</code> and your code belongs in <code>/app</code>.
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== Q6 ===================== -->
-      <section class="q" id="q6" data-q="6">
-        <p class="qnum">06</p>
-        <div class="qbody">
-          <p class="qtest">How far down reaches</p>
-          <p class="qstem">
-            <code>db</code> keeps its rows in the named volume <code>pgdata</code>;
-            <code>web</code> has the bind mount <code>./app:/app</code>. Which command deletes the
-            rows, and what happens to <code>./app</code>?
-          </p>
-
-          <ul class="opts">
-          <li><button class="opt" data-q="6" data-opt="a"><span class="ltr">A</span><span><code>down</code> deletes the rows. <code>./app</code> survives.</span></button></li>
-          <li><button class="opt" data-q="6" data-opt="b"><span class="ltr">B</span><span><code>down -v</code> deletes the rows. <code>./app</code> survives.</span></button></li>
-          <li><button class="opt" data-q="6" data-opt="c"><span class="ltr">C</span><span><code>down -v</code> deletes both.</span></button></li>
-          <li><button class="opt" data-q="6" data-opt="d"><span class="ltr">D</span><span><code>stop</code> deletes the rows. <code>./app</code> survives.</span></button></li>
-          </ul>
-
-          <div class="verdict" id="exp6" hidden>
-            <span class="tag"></span>
-            <p>
-              Draw the line by ownership rather than by command. Docker made the containers, the
-              network and the named volume, so Docker can remove all three;
-              <code>./app</code> is a folder you made, and no Compose flag reaches across into your
-              filesystem. <code>stop</code> touches nothing but the running processes,
-              <code>down</code> removes the containers and the network, and <code>-v</code> is the
-              four keystrokes that add the volume to that list.
-            </p>
-            <figure>
-              <div class="plate">
-                <svg
-                  class="dg"
-                  viewBox="0 0 660 246"
-                  role="img"
-                  aria-label="Containers, the network and the named volume sit on Docker's side of a boundary and can all be removed by down -v. The bind-mounted project folder sits on your side and no Compose command reaches it."
-                >
-                  <text x="16" y="40" class="sm dim">DOCKER MADE THESE</text>
-                  <rect x="16" y="52" width="392" height="150" rx="8" class="box-open dash" />
-                  <rect x="36" y="80" width="160" height="48" rx="6" class="surface" />
-                  <text x="116" y="110" text-anchor="middle" class="sm b">containers</text>
-                  <text x="116" y="150" text-anchor="middle" class="sm dim">gone on down</text>
-                  <rect x="216" y="80" width="172" height="48" rx="6" class="tint-good" />
-                  <text x="302" y="110" text-anchor="middle" class="mono sm b t-good">pgdata</text>
-                  <text x="302" y="150" text-anchor="middle" class="sm dim">gone only on down -v</text>
-
-                  <line x1="36" y1="176" x2="382" y2="176" class="ln-bad" />
-                  <polygon points="390,176 376,169 376,183" class="head-bad" />
-                  <text x="120" y="194" class="sm b t-bad">down -v sweeps to here, and stops</text>
-
-                  <rect x="418" y="42" width="16" height="170" class="slab" />
-                  <line x1="422" y1="168" x2="436" y2="182" class="ln-bad" />
-                  <line x1="436" y1="168" x2="422" y2="182" class="ln-bad" />
-
-                  <text x="452" y="40" class="sm dim">YOU MADE THIS</text>
-                  <rect x="452" y="80" width="192" height="48" rx="6" class="tint-warn" />
-                  <text x="548" y="110" text-anchor="middle" class="mono sm b t-warn">./app</text>
-                  <text x="548" y="150" text-anchor="middle" class="sm dim">no flag reaches it</text>
-                  <text x="548" y="194" text-anchor="middle" class="sm dim">delete it with rm, like</text>
-                  <text x="548" y="214" text-anchor="middle" class="sm dim">any other folder</text>
-                </svg>
-              </div>
-              <figcaption>
-                <strong>The wall is not a security boundary, it is an ownership one.</strong> That
-                is also why a bind mount is the right tool for source code you edit and the wrong
-                one for database files: you want Docker to own the second, so that
-                <code>down -v</code> can genuinely reset it.
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== Q7 ===================== -->
-      <section class="q" id="q7" data-q="7">
-        <p class="qnum">07</p>
-        <div class="qbody">
-          <p class="qtest">Which settings get inside</p>
-          <p class="qstem">
-            <code>.env</code> sits beside <code>compose.yaml</code> and contains
-            <code>TAG=16</code>. You run <code>docker compose exec web env | grep TAG</code>.
-            What comes back?
-          </p>
-
-          <ul class="opts">
-          <li><button class="opt" data-q="7" data-opt="a"><span class="ltr">A</span><span><code>TAG=16</code></span></button></li>
-          <li><button class="opt" data-q="7" data-opt="b"><span class="ltr">B</span><span><code>TAG=</code>, with an empty value.</span></button></li>
-          <li><button class="opt" data-q="7" data-opt="c"><span class="ltr">C</span><span>Nothing at all.</span></button></li>
-          <li><button class="opt" data-q="7" data-opt="d"><span class="ltr">D</span><span>An error. <code>.env</code> is only read when you pass <code>--env-file</code>.</span></button></li>
-          </ul>
-
-          <div class="verdict" id="exp7" hidden>
-            <span class="tag"></span>
-            <p>
-              <code>.env</code> is read before any container exists. Compose uses it to fill in
-              <code>${&hellip;}</code> blanks in the text of the file, and then it is finished: it
-              can set an image tag or a published port, and it can never set a variable your
-              application reads. For that you want <code>environment:</code> for values you do not
-              mind having in git, or <code>env_file:</code> for the ones that stay out of it. Two
-              filenames one character apart, doing unrelated jobs.
-            </p>
-            <figure>
-              <div class="plate">
-                <svg
-                  class="dg"
-                  viewBox="0 0 700 246"
-                  role="img"
-                  aria-label="The .env file is substituted into the text of compose.yaml and stops at the container wall. Only environment and env_file cross into the running process's environment."
-                >
-                  <rect x="452" y="20" width="16" height="192" class="slab" />
-                  <rect x="452" y="112" width="16" height="36" class="gap" />
-                  <rect x="452" y="180" width="16" height="36" class="gap" />
-
-                  <rect x="16" y="32" width="150" height="52" rx="6" class="tint-warn" />
-                  <text x="91" y="54" text-anchor="middle" class="mono sm b t-warn">.env</text>
-                  <text x="91" y="74" text-anchor="middle" class="mono sm dim">TAG=16</text>
-                  <line x1="174" y1="58" x2="214" y2="58" class="ln-warn" />
-                  <polygon points="222,58 208,51 208,65" class="head-warn" />
-                  <rect x="230" y="32" width="196" height="52" rx="6" class="surface" />
-                  <text x="328" y="54" text-anchor="middle" class="mono sm b">compose.yaml</text>
-                  <text x="328" y="74" text-anchor="middle" class="mono sm dim">image: postgres:16</text>
-                  <line x1="434" y1="58" x2="444" y2="58" class="ln-bad" />
-                  <line x1="453" y1="51" x2="467" y2="65" class="ln-bad" />
-                  <line x1="467" y1="51" x2="453" y2="65" class="ln-bad" />
-                  <text x="486" y="63" class="sm b t-bad">the job is over here</text>
-
-                  <rect x="16" y="104" width="150" height="52" rx="6" class="tint-a" />
-                  <text x="91" y="136" text-anchor="middle" class="mono sm b t-accent">environment:</text>
-                  <line x1="174" y1="130" x2="446" y2="130" class="ln-acc" />
-                  <line x1="474" y1="130" x2="500" y2="130" class="ln-acc" />
-                  <polygon points="508,130 494,123 494,137" class="head-acc" />
-
-                  <rect x="16" y="172" width="190" height="52" rx="6" class="tint-b" />
-                  <text x="111" y="204" text-anchor="middle" class="mono sm b t-hue2">env_file: .env.db</text>
-                  <line x1="214" y1="198" x2="446" y2="198" class="ln-hue2" />
-                  <line x1="474" y1="198" x2="500" y2="198" class="ln-hue2" />
-                  <polygon points="508,198 494,191 494,205" class="head-hue2" />
-
-                  <rect x="520" y="104" width="164" height="120" rx="6" class="tint-good" />
-                  <text x="602" y="140" text-anchor="middle" class="sm b">the process's env</text>
-                  <text x="602" y="168" text-anchor="middle" class="mono sm">POSTGRES_USER</text>
-                  <text x="602" y="192" text-anchor="middle" class="mono sm">DATABASE_URL</text>
-                  <text x="602" y="212" text-anchor="middle" class="sm dim">no TAG in here</text>
-                </svg>
-              </div>
-              <figcaption>
-                <strong>Only the bottom two arrows get through the wall.</strong> The useful habit:
-                run <code>docker compose config</code> to see the file after every
-                <code>${&hellip;}</code> has been filled in, and <code>exec &lt;svc&gt; env</code> to
-                see what the process actually got. They answer two different questions.
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== Q8 ===================== -->
-      <section class="q" id="q8" data-q="8">
-        <p class="qnum">08</p>
-        <div class="qbody">
-          <p class="qtest">A policy that overrules you</p>
-          <p class="qstem">
-            <code>web</code> has <code>restart: unless-stopped</code>. <code>db</code> has
-            <code>restart: always</code>. You run <code>docker compose stop</code>, shut the laptop
-            down, and boot it again in the morning. What is running?
-          </p>
-
-          <ul class="opts">
-          <li><button class="opt" data-q="8" data-opt="a"><span class="ltr">A</span><span>Neither. You stopped them on purpose.</span></button></li>
-          <li><button class="opt" data-q="8" data-opt="b"><span class="ltr">B</span><span>Only <code>web</code>.</span></button></li>
-          <li><button class="opt" data-q="8" data-opt="c"><span class="ltr">C</span><span>Both. A reboot clears the stopped state either way.</span></button></li>
-          <li><button class="opt" data-q="8" data-opt="d"><span class="ltr">D</span><span>Only <code>db</code>.</span></button></li>
-          </ul>
-
-          <div class="verdict" id="exp8" hidden>
-            <span class="tag"></span>
-            <p>
-              The two policies behave identically on a crash and identically on a plain reboot,
-              which is exactly why people mix them up. They part company on one event: a container
-              you stopped deliberately. <code>unless-stopped</code> remembers that you stopped it.
-              <code>always</code> does not, and starts it again as soon as the Docker daemon comes
-              back. Pick <code>unless-stopped</code> and a stop stays a stop.
-            </p>
-            <figure>
-              <div class="plate">
-                <svg
-                  class="dg"
-                  viewBox="0 0 660 218"
-                  role="img"
-                  aria-label="Two timelines across a stop and a reboot. The container with unless-stopped stays down after the reboot; the one with always is running again."
-                >
-                  <text x="290" y="26" text-anchor="middle" class="sm">you run stop</text>
-                  <text x="460" y="26" text-anchor="middle" class="sm">you boot it again</text>
-                  <line x1="290" y1="36" x2="290" y2="164" class="ln-dim dash" />
-                  <line x1="460" y1="36" x2="460" y2="164" class="ln-dim dash" />
-                  <rect x="290" y="46" width="170" height="112" class="slab" opacity="0.35" />
-                  <text x="375" y="180" text-anchor="middle" class="sm dim">laptop off</text>
-
-                  <text x="16" y="72" class="mono sm b">web</text>
-                  <text x="16" y="90" class="sm dim">unless-stopped</text>
-                  <rect x="160" y="54" width="126" height="30" rx="4" class="tint-good" />
-                  <rect x="294" y="54" width="162" height="30" rx="4" class="box-open dash" />
-                  <rect x="464" y="54" width="180" height="30" rx="4" class="box-open dash" />
-
-                  <text x="16" y="132" class="mono sm b">db</text>
-                  <text x="16" y="150" class="sm dim">always</text>
-                  <rect x="160" y="114" width="126" height="30" rx="4" class="tint-good" />
-                  <rect x="294" y="114" width="162" height="30" rx="4" class="box-open dash" />
-                  <rect x="464" y="114" width="180" height="30" rx="4" class="tint-good" />
-                  <text x="554" y="164" text-anchor="middle" class="sm b t-bad">back up without asking</text>
-
-                  <rect x="160" y="192" width="34" height="16" rx="3" class="tint-good" />
-                  <text x="204" y="206" class="sm dim">running</text>
-                  <rect x="286" y="192" width="34" height="16" rx="3" class="box-open dash" />
-                  <text x="330" y="206" class="sm dim">stays down</text>
-                </svg>
-              </div>
-              <figcaption>
-                <strong>The last column is the entire difference between the two.</strong>
-                <code>always</code> is right for something that must be up whenever the machine is
-                up. For a database on your own laptop that is usually not what you meant.
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================== score ===================== -->
-      <section class="scorecard" id="score">
+      <!-- ========================= 2 ========================= -->
+      <section id="two">
         <div>
-          <span class="sec-kicker">Result</span>
-          <h2>What your score changes</h2>
+          <span class="sec-kicker">Question two &middot; folder</span>
+          <h2>The collector is your app again, woken by a clock instead of a visitor</h2>
         </div>
 
-        <div class="score-top">
-          <p class="score-num" id="scoreNum">0/8</p>
-          <p class="score-say" id="scoreSay">Answer the eight above and this fills in.</p>
+        <div class="asked">
+          <span class="who">You asked</span>
+          <p>
+            I do not understand this concept of collector. And why does the collector have the same
+            volumes as the api, especially <code>./frames:/var/lib/rainfall/frames</code>? I have
+            read compose files online and none of them have this pattern on volumes.
+          </p>
         </div>
 
-        <p class="qtest" id="missedLabel" hidden>Worth a second pass</p>
-        <ul class="missed" id="missedList" hidden></ul>
-
-        <p class="measure" id="scoreNext" hidden>
-          Tell me the number and I will write it into <code>CURRICULUM.md</code>. Anything you
-          missed gets re-taught as its own page before this track closes; a clean sweep closes it
-          now, and the next thing worth learning is layering a second <code>-f</code> file so dev
-          and prod share one base.
+        <p class="lead">
+          There are two ways a program gets work. Somebody asks it, or a clock tells it. The api is
+          the first kind. The collector is the second kind. They are the same codebase; the only
+          difference is who wakes them up.
         </p>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg wide"
+              viewBox="0 0 900 350"
+              role="img"
+              aria-label="Two rows. In the first, a visitor's browser opens a connection to the api, and requests arrive at irregular times. In the second, the collector opens a connection outward to the upstream radar feed, on an even five minute rhythm. The api is connected to from outside, the collector only connects outward."
+            >
+              <defs>
+                <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+                </marker>
+              </defs>
+
+              <text x="20" y="34" class="sm b t-accent">API &mdash; reacts</text>
+              <rect x="20" y="52" width="160" height="60" rx="4" class="surface" />
+              <text x="100" y="78" class="sm b" text-anchor="middle">a club member</text>
+              <text x="100" y="97" class="xs dim" text-anchor="middle">opens the site</text>
+
+              <line x1="180" y1="82" x2="222" y2="82" class="ln" marker-end="url(#ar3)" />
+              <text x="201" y="70" class="xs dim" text-anchor="middle">1</text>
+
+              <rect x="230" y="52" width="170" height="60" rx="4" class="tint-a" />
+              <text x="315" y="78" class="sm b" text-anchor="middle">api</text>
+              <text x="315" y="97" class="xs mono dim" text-anchor="middle">listening on :8000</text>
+
+              <line x1="440" y1="20" x2="440" y2="320" class="ln-dim dash" />
+
+              <line x1="470" y1="82" x2="870" y2="82" class="ln-dim" />
+              <rect x="486" y="66" width="5" height="16" class="chip" />
+              <rect x="494" y="60" width="5" height="22" class="chip" />
+              <rect x="502" y="70" width="5" height="12" class="chip" />
+              <rect x="578" y="64" width="5" height="18" class="chip" />
+              <rect x="655" y="58" width="5" height="24" class="chip" />
+              <rect x="663" y="68" width="5" height="14" class="chip" />
+              <rect x="770" y="62" width="5" height="20" class="chip" />
+              <rect x="820" y="70" width="5" height="12" class="chip" />
+              <text x="670" y="112" class="sm dim" text-anchor="middle">requests arrive when they arrive &mdash; often none</text>
+
+              <text x="20" y="196" class="sm b t-hue2">COLLECTOR &mdash; initiates</text>
+              <rect x="20" y="214" width="160" height="60" rx="4" class="tint-b" />
+              <text x="100" y="240" class="sm b" text-anchor="middle">collector</text>
+              <text x="100" y="259" class="xs mono dim" text-anchor="middle">no port, nothing listens</text>
+
+              <line x1="180" y1="244" x2="222" y2="244" class="ln" marker-end="url(#ar3)" />
+              <text x="201" y="232" class="xs dim" text-anchor="middle">1</text>
+
+              <rect x="230" y="214" width="170" height="60" rx="4" class="surface" />
+              <text x="315" y="240" class="sm b" text-anchor="middle">upstream radar feed</text>
+              <text x="315" y="259" class="xs dim" text-anchor="middle">out on the internet</text>
+
+              <line x1="470" y1="244" x2="870" y2="244" class="ln-dim" />
+              <rect x="486" y="226" width="30" height="18" rx="2" class="chip-hue2" />
+              <rect x="586" y="226" width="30" height="18" rx="2" class="chip-hue2" />
+              <rect x="686" y="226" width="30" height="18" rx="2" class="chip-hue2" />
+              <rect x="786" y="226" width="30" height="18" rx="2" class="chip-hue2" />
+              <text x="670" y="274" class="sm dim" text-anchor="middle">one fetch every five minutes, whether or not anyone is watching</text>
+
+              <text x="670" y="308" class="sm dim" text-anchor="middle">same fifteen minutes of wall clock, both rows</text>
+            </svg>
+          </div>
+          <figcaption>
+            <strong>The little <span class="mono">1</span> on each arrow is which side opens the
+            connection, and it decides the whole service.</strong> Something outside opens a
+            connection to the api, so the api needs a door in the wall &mdash; that is its
+            <code>ports:</code> line. Nothing ever opens a connection to the collector; it only
+            reaches out. That is why the collector has no <code>ports:</code> line at all, and why
+            it needs nothing added to make its outbound fetch work. The general name for this shape
+            is a <strong>worker</strong>, and almost every app grows one: send the emails, expire
+            the sessions, poll the feed.
+          </figcaption>
+        </figure>
+
+        <h3>Why not just do the fetching inside the api?</h3>
+
+        <p class="measure">
+          Because a web server that stops to download a three-megabyte radar frame is a web server
+          answering nobody for the length of that download. Because if you ever run two copies of
+          the api to handle load, you get two collectors, two copies of every frame and two rows per
+          timestamp. And because when the upstream feed goes down, you want the thing that crash-loops
+          to be the collector while the archive keeps serving. Splitting them costs you one extra
+          service and buys all three.
+        </p>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg wide"
+              viewBox="0 0 900 470"
+              role="img"
+              aria-label="One folder, ./api, is built once into one set of layers, and two containers start from it. Listing the two services key by key, six keys are identical and only two differ: the api publishes a port and the collector does not, and the collector sets a command while the api uses the image default."
+            >
+              <defs>
+                <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+                </marker>
+              </defs>
+
+              <rect x="20" y="30" width="160" height="60" rx="4" class="surface" />
+              <text x="100" y="56" class="sm mono b" text-anchor="middle">./api</text>
+              <text x="100" y="75" class="xs dim" text-anchor="middle">Dockerfile + your code</text>
+
+              <line x1="180" y1="60" x2="232" y2="60" class="ln" marker-end="url(#ar4)" />
+              <text x="206" y="48" class="xs dim" text-anchor="middle">build</text>
+
+              <rect x="240" y="30" width="230" height="60" rx="4" class="tint-good" />
+              <text x="355" y="56" class="sm b" text-anchor="middle">one set of layers</text>
+              <text x="355" y="75" class="xs dim" text-anchor="middle">second build measured at 0.0s &mdash; cache hit</text>
+
+              <path d="M355,90 L355,118 L230,118 L230,148" class="ln" marker-end="url(#ar4)" />
+              <path d="M355,90 L355,118 L670,118 L670,148" class="ln" marker-end="url(#ar4)" />
+
+              <rect x="20" y="150" width="420" height="292" rx="5" class="tint-a" />
+              <text x="36" y="182" class="b">api</text>
+              <text x="424" y="182" class="xs mono dim" text-anchor="end">container 1</text>
+
+              <text x="36" y="218" class="sm mono">build: ./api</text>
+              <text x="36" y="252" class="sm mono">restart: unless-stopped</text>
+              <text x="36" y="286" class="sm mono">environment: DATABASE_URL, REDIS_URL</text>
+              <text x="36" y="320" class="sm mono">volumes: ./api, ./frames</text>
+              <text x="36" y="354" class="sm mono">depends_on: db, cache</text>
+
+              <rect x="28" y="371" width="404" height="26" rx="3" class="tint-warn" />
+              <text x="36" y="389" class="sm mono b">ports: "${WEB_PORT}:8000"</text>
+
+              <rect x="28" y="405" width="404" height="26" rx="3" class="tint-warn" />
+              <text x="36" y="423" class="sm mono dim">command: (none &mdash; image default)</text>
+
+              <rect x="460" y="150" width="420" height="292" rx="5" class="tint-b" />
+              <text x="476" y="182" class="b">collector</text>
+              <text x="864" y="182" class="xs mono dim" text-anchor="end">container 2</text>
+
+              <text x="476" y="218" class="sm mono">build: ./api</text>
+              <text x="476" y="252" class="sm mono">restart: unless-stopped</text>
+              <text x="476" y="286" class="sm mono">environment: DATABASE_URL, REDIS_URL</text>
+              <text x="476" y="320" class="sm mono">volumes: ./api, ./frames</text>
+              <text x="476" y="354" class="sm mono">depends_on: db, cache</text>
+
+              <rect x="468" y="371" width="404" height="26" rx="3" class="tint-warn" />
+              <text x="476" y="389" class="sm mono dim">ports: (none &mdash; nothing dials in)</text>
+
+              <rect x="468" y="405" width="404" height="26" rx="3" class="tint-warn" />
+              <text x="476" y="423" class="sm mono b">command: python -m rainfall.collector</text>
+            </svg>
+          </div>
+          <figcaption>
+            <strong>Five keys match on purpose and two do not.</strong> The repetition is not
+            copy-paste sloppiness &mdash; it is the point. Both containers must run the same code,
+            reach the same database, survive the same restarts and wait for the same two services,
+            so those five lines have to be identical or they are not the same app any more. Compose
+            tags the two builds separately as <code>rainfall-api</code> and
+            <code>rainfall-collector</code>, but the second build does no work; on this laptop it
+            reported <code>0.0s</code>. The one key the brief said to look up is
+            <code>command:</code>, and it is the whole reason a second service exists.
+          </figcaption>
+        </figure>
+
+        <h3>Now the volume: they are not two copies, they are one folder</h3>
+
+        <p class="measure">
+          <code>./frames</code> is a bind mount, so it is a real folder in your repository that
+          appears inside both containers at <code>/var/lib/rainfall/frames</code>. Not a copy in
+          each. The same bytes on the same disk, seen through two doors. The collector writes a
+          <code>.png</code> into it; the api reads that same <code>.png</code> out of it. That
+          handover is the entire architecture, and the shared line is what makes it possible.
+        </p>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg wide"
+              viewBox="0 0 900 390"
+              role="img"
+              aria-label="On the left, the collector and the api both mount the same host folder ./frames, so a file the collector writes is a file the api can read. On the right, the alternative where each service gets its own named volume: the collector's volume fills up with eighteen files and the api's stays empty, so every request returns 404 and nothing reports an error."
+            >
+              <defs>
+                <marker id="ar5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+                </marker>
+              </defs>
+
+              <text x="20" y="28" class="sm b t-good">WHAT YOUR FILE DOES &mdash; one folder</text>
+
+              <rect x="20" y="52" width="150" height="56" rx="4" class="tint-b" />
+              <text x="95" y="86" class="sm b" text-anchor="middle">collector</text>
+
+              <rect x="250" y="52" width="150" height="56" rx="4" class="tint-a" />
+              <text x="325" y="86" class="sm b" text-anchor="middle">api</text>
+
+              <line x1="95" y1="108" x2="95" y2="248" class="ln" marker-end="url(#ar5)" />
+              <text x="108" y="152" class="sm">writes</text>
+              <text x="108" y="171" class="sm mono dim">frame-0912.png</text>
+
+              <line x1="325" y1="248" x2="325" y2="116" class="ln" marker-end="url(#ar5)" />
+              <text x="312" y="212" class="sm" text-anchor="end">reads, serves it</text>
+              <text x="312" y="231" class="sm mono dim" text-anchor="end">GET /frames/0912</text>
+
+              <rect x="20" y="256" width="380" height="70" rx="4" class="tint-good" />
+              <text x="210" y="284" class="sm mono b" text-anchor="middle">./frames</text>
+              <text x="210" y="305" class="xs dim" text-anchor="middle">a real folder in your repo, on your own disk</text>
+              <text x="210" y="356" class="sm dim" text-anchor="middle">you can open these in an image viewer</text>
+
+              <line x1="430" y1="14" x2="430" y2="376" class="ln-dim dash" />
+
+              <text x="460" y="28" class="sm b t-bad">IF EACH GOT ITS OWN VOLUME</text>
+
+              <rect x="460" y="52" width="150" height="56" rx="4" class="tint-b" />
+              <text x="535" y="86" class="sm b" text-anchor="middle">collector</text>
+
+              <rect x="700" y="52" width="150" height="56" rx="4" class="tint-a" />
+              <text x="775" y="86" class="sm b" text-anchor="middle">api</text>
+              <text x="775" y="38" class="sm mono b t-bad" text-anchor="middle">404</text>
+
+              <line x1="535" y1="108" x2="535" y2="248" class="ln" marker-end="url(#ar5)" />
+              <line x1="775" y1="248" x2="775" y2="116" class="ln" marker-end="url(#ar5)" />
+              <text x="775" y="180" class="sm dim" text-anchor="middle">reads</text>
+              <text x="775" y="199" class="sm dim" text-anchor="middle">nothing</text>
+
+              <rect x="460" y="256" width="150" height="70" rx="4" class="surface" />
+              <text x="535" y="282" class="xs mono b" text-anchor="middle">collector_frames</text>
+              <text x="535" y="304" class="sm mono t-good" text-anchor="middle">18 files</text>
+
+              <rect x="700" y="256" width="150" height="70" rx="4" class="tint-bad" />
+              <text x="775" y="282" class="xs mono b" text-anchor="middle">api_frames</text>
+              <text x="775" y="304" class="sm mono t-bad" text-anchor="middle">0 files</text>
+
+              <line x1="616" y1="291" x2="694" y2="291" class="ln-dim dash" />
+              <path d="M648,283 l14,16 M662,283 l-14,16" class="ln-bad" />
+              <text x="655" y="356" class="sm dim" text-anchor="middle">no error, anywhere, ever</text>
+            </svg>
+          </div>
+          <figcaption>
+            <strong>The right-hand version starts cleanly and works forever without working.</strong>
+            Both containers boot, both healthchecks pass, <code>docker compose ps</code> shows four
+            services up, the collector logs a successful fetch every five minutes &mdash; and every
+            page on the site is empty. Nothing in Docker can warn you, because you asked for two
+            volumes and you got two volumes. That is the failure the shared line prevents, and it is
+            why <code>./frames</code> is written twice rather than once.
+          </figcaption>
+        </figure>
+
+        <p class="measure">
+          Here is that shared folder actually working, run just now: a container writing frames on a
+          loop, a second container listing the same path, and your own shell listing the folder on
+          disk. Three viewpoints, one set of files.
+        </p>
+
+        <pre class="tight"><span class="c"># what the api container sees at /var/lib/rainfall/frames</span>
+frame-1.png  frame-2.png  frame-3.png  frame-4.png  frame-5.png
+
+<span class="c"># what you see in ./frames on the laptop, the same instant</span>
+frame-1.png  frame-2.png  frame-3.png  frame-4.png  frame-5.png
+
+<span class="c"># and the contents, read from the api container, written by the collector</span>
+$ docker exec api cat /var/lib/rainfall/frames/frame-1.png
+<span class="ok">radar frame 1</span></pre>
+
+        <p class="measure">
+          The other shared mount, <code>./api:/app</code>, is there for the same reason at a
+          different level. Both services run your source from your folder, so editing one file
+          changes both. Drop it from the collector and the collector runs whatever code was baked
+          into the image at build time, silently drifting from the api it is supposed to match.
+        </p>
+
+        <h3>Why you have never seen this online</h3>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg wide"
+              viewBox="0 0 900 300"
+              role="img"
+              aria-label="The typical tutorial stack is two services, a web server and a database, with nothing to share between them. A real stack adds a second process running the same code, and that is the moment a shared folder appears."
+            >
+              <defs>
+                <marker id="ar6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+                </marker>
+              </defs>
+
+              <text x="20" y="30" class="sm b dim">ALMOST EVERY TUTORIAL</text>
+              <rect x="20" y="48" width="130" height="52" rx="4" class="surface" />
+              <text x="85" y="79" class="sm b" text-anchor="middle">web</text>
+              <line x1="150" y1="74" x2="196" y2="74" class="ln" marker-end="url(#ar6)" />
+              <rect x="204" y="48" width="130" height="52" rx="4" class="surface" />
+              <text x="269" y="79" class="sm b" text-anchor="middle">db</text>
+              <text x="360" y="70" class="sm dim">two services, and only one of them</text>
+              <text x="360" y="89" class="sm dim">owns any files &mdash; so nothing is ever shared</text>
+
+              <line x1="20" y1="130" x2="880" y2="130" class="ln-dim" />
+
+              <text x="20" y="166" class="sm b t-accent">THE MOMENT YOU HAVE A SECOND PROCESS ON THE SAME CODE</text>
+
+              <rect x="20" y="186" width="130" height="52" rx="4" class="tint-a" />
+              <text x="85" y="217" class="sm b" text-anchor="middle">api</text>
+
+              <rect x="204" y="186" width="130" height="52" rx="4" class="tint-b" />
+              <text x="269" y="217" class="sm b" text-anchor="middle">collector</text>
+
+              <rect x="388" y="186" width="110" height="52" rx="4" class="surface" />
+              <text x="443" y="217" class="sm b" text-anchor="middle">db</text>
+
+              <rect x="530" y="186" width="110" height="52" rx="4" class="surface" />
+              <text x="585" y="217" class="sm b" text-anchor="middle">cache</text>
+
+              <path d="M85,238 L85,266 L269,266 L269,238" class="ln-good" />
+              <circle cx="177" cy="266" r="5" class="chip-good" />
+              <text x="290" y="272" class="sm">./frames &mdash; the shared folder appears here</text>
+            </svg>
+          </div>
+          <figcaption>
+            <strong>The examples you read were not hiding this; they never needed it.</strong> A
+            tutorial stack has one process that owns files, so &ldquo;one volume, one service&rdquo;
+            is all it can demonstrate, and the reader quietly generalises that into a rule. The real
+            rule is narrower: <strong>share a directory when two processes must see the same files.</strong>
+            The exception worth naming is a database's own data directory &mdash; two Postgres
+            containers pointed at one volume will corrupt it, because each believes it is the only
+            writer. Your api and collector are safe precisely because only one of them writes.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="tag">Answer to question two</span>
+          <p>
+            A collector is your app started with a different <code>command:</code>, doing the work
+            nobody asks for. It repeats the api's volumes because it is the same app &mdash;
+            <code>./api</code> so it runs the same code, <code>./frames</code> so the file it writes
+            is the file the api serves. Take that second line away and both services keep running
+            perfectly while the site stays empty.
+          </p>
+        </div>
       </section>
 
-      <footer>
-        <p>
-          Deliberately not asked about, because Stage 2 never taught them:
-          <code>profiles:</code>, multiple <code>-f</code> files, <code>deploy:</code> and
-          <code>replicas</code>, and a top-level <code>networks:</code> block. If a question here
-          felt like it needed one of those, that is a gap in the page and worth telling me about.
+      <!-- ========================= 3 ========================= -->
+      <section id="three">
+        <div>
+          <span class="sec-kicker">Question three &middot; moment</span>
+          <h2><code>.env</code> is the one file Compose opens without being told</h2>
+        </div>
+
+        <div class="asked">
+          <span class="who">You asked</span>
+          <p>
+            How are we getting <code>WEB_PORT</code> when we are not declaring the
+            <code>env_file</code>?
+          </p>
+        </div>
+
+        <p class="lead">
+          Because <code>env_file:</code> was never going to supply it. Those are two different
+          machines that happen to share a word. One fills in blanks in the text of your compose
+          file; the other puts variables inside a running container. They happen at different times
+          and neither can do the other's job.
         </p>
-      </footer>
+
+        <p class="measure">
+          Compose does two separate things when you type <code>up</code>. First it reads
+          <code>compose.yaml</code> as plain text and replaces every <code>${...}</code> &mdash; no
+          container exists yet, the daemon has not been asked for anything. For that step it looks
+          in your shell's environment, and in a file called <code>.env</code> sitting next to the
+          compose file. It opens that file <strong>automatically</strong>. There is no line to write,
+          which is exactly why you could not find one.
+        </p>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg wide"
+              viewBox="0 0 900 380"
+              role="img"
+              aria-label="Two moments separated by a wall. In the first, the compose CLI reads .env and shell variables and substitutes them into the text of compose.yaml, producing a fully substituted document. Only that document crosses to the second moment, where the daemon creates containers and opens the file named by env_file, putting its values inside the container."
+            >
+              <defs>
+                <marker id="ar7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+                </marker>
+              </defs>
+
+              <text x="20" y="50" class="sm b t-accent">MOMENT 1 &mdash; the CLI reads a text file</text>
+              <text x="470" y="50" class="sm b t-hue2">MOMENT 2 &mdash; the daemon creates containers</text>
+
+              <rect x="20" y="90" width="150" height="56" rx="4" class="tint-a" />
+              <text x="95" y="114" class="sm mono b" text-anchor="middle">.env</text>
+              <text x="95" y="134" class="xs mono dim" text-anchor="middle">WEB_PORT=4000</text>
+
+              <rect x="20" y="166" width="150" height="56" rx="4" class="surface" />
+              <text x="95" y="190" class="sm b" text-anchor="middle">shell variables</text>
+              <text x="95" y="210" class="xs dim" text-anchor="middle">outrank .env</text>
+
+              <line x1="170" y1="118" x2="212" y2="118" class="ln" marker-end="url(#ar7)" />
+              <line x1="170" y1="194" x2="212" y2="194" class="ln" marker-end="url(#ar7)" />
+
+              <rect x="220" y="84" width="190" height="144" rx="4" class="surface" />
+              <text x="315" y="110" class="sm b" text-anchor="middle">compose.yaml as text</text>
+              <text x="234" y="146" class="xs mono dim">ports:</text>
+              <text x="234" y="166" class="xs mono">- "${WEB_PORT}:8000"</text>
+              <text x="234" y="196" class="xs mono dim">env_file: .env.web</text>
+              <text x="234" y="214" class="xs dim">left alone, just text</text>
+
+              <line x1="315" y1="228" x2="315" y2="250" class="ln" marker-end="url(#ar7)" />
+
+              <rect x="220" y="258" width="190" height="60" rx="4" class="tint-good" />
+              <text x="315" y="282" class="sm b" text-anchor="middle">substituted document</text>
+              <text x="315" y="303" class="xs mono" text-anchor="middle">published: "4000"</text>
+
+              <rect x="430" y="70" width="20" height="192" class="slab" />
+              <rect x="430" y="320" width="20" height="26" class="slab" />
+              <text x="440" y="368" class="sm dim" text-anchor="middle">one crossing</text>
+
+              <line x1="410" y1="288" x2="684" y2="288" class="ln-good" marker-end="url(#ar7)" />
+              <text x="560" y="310" class="sm dim" text-anchor="middle">the substituted text, and nothing else</text>
+
+              <rect x="470" y="120" width="150" height="56" rx="4" class="tint-b" />
+              <text x="545" y="144" class="sm mono b" text-anchor="middle">.env.web</text>
+              <text x="545" y="164" class="xs mono dim" text-anchor="middle">WEB_PORT=9999</text>
+
+              <line x1="620" y1="148" x2="684" y2="148" class="ln" marker-end="url(#ar7)" />
+              <text x="652" y="136" class="xs dim" text-anchor="middle">opened now</text>
+
+              <rect x="690" y="110" width="190" height="220" rx="4" class="surface" />
+              <text x="785" y="138" class="sm b" text-anchor="middle">the running container</text>
+              <line x1="704" y1="152" x2="866" y2="152" class="ln-dim" />
+              <text x="704" y="180" class="xs dim">its environment holds:</text>
+              <text x="704" y="206" class="sm mono">WEB_PORT=9999</text>
+              <text x="704" y="230" class="sm mono dim">DATABASE_URL=...</text>
+              <line x1="704" y1="254" x2="866" y2="254" class="ln-dim" />
+              <text x="704" y="282" class="xs dim">4000 is not in here,</text>
+              <text x="704" y="302" class="xs dim">and never was</text>
+            </svg>
+          </div>
+          <figcaption>
+            <strong>The wall is time, not place.</strong> Both files sit in the same folder; what
+            separates them is which moment reads them. <code>.env</code> is consumed while the file
+            is still text, so its values can end up anywhere in the file &mdash; a port, an image
+            tag, a service name. <code>env_file:</code> is consumed after the text is finished, so
+            its values can only ever end up inside a container. That is why no amount of
+            <code>env_file:</code> will ever fill a <code>${...}</code>, and why the file that fills
+            them needs no declaration: Compose looks for <code>.env</code> whether you meant it to
+            or not.
+          </figcaption>
+        </figure>
+
+        <h3>The proof: one variable name, two values, one file</h3>
+
+        <p class="measure">
+          Here is a compose file that uses both mechanisms on the same name at the same time. The
+          port asks for <code>${WEB_PORT}</code>; the service also loads <code>.env.web</code>, which
+          sets <code>WEB_PORT</code> to something else entirely.
+        </p>
+
+        <pre><span class="k">services:</span>
+  <span class="k">web:</span>
+    <span class="k">image:</span> <span class="v">nginx:alpine</span>
+    <span class="k">env_file:</span> <span class="v">.env.web</span>          <span class="c"># this file says WEB_PORT=9999</span>
+    <span class="k">ports:</span> [<span class="v">"${WEB_PORT}:8000"</span>]   <span class="c"># .env says WEB_PORT=4000</span></pre>
+
+        <figure>
+          <div class="plate">
+            <svg
+              class="dg wide"
+              viewBox="0 0 900 280"
+              role="img"
+              aria-label="The dot env file, holding WEB_PORT equals 4000, feeds the published port line in the rendered output. The dot env dot web file, holding WEB_PORT equals 9999, feeds the environment block inside the container. The two paths cross without ever meeting."
+            >
+              <defs>
+                <marker id="ar8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)" />
+                </marker>
+                <marker id="ar8b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--hue2)" />
+                </marker>
+              </defs>
+
+              <rect x="20" y="40" width="230" height="70" rx="4" class="tint-a" />
+              <text x="135" y="70" class="sm mono b" text-anchor="middle">.env</text>
+              <text x="135" y="94" class="sm mono" text-anchor="middle">WEB_PORT=4000</text>
+
+              <rect x="20" y="150" width="230" height="70" rx="4" class="tint-b" />
+              <text x="135" y="180" class="sm mono b" text-anchor="middle">.env.web</text>
+              <text x="135" y="204" class="sm mono" text-anchor="middle">WEB_PORT=9999</text>
+
+              <rect x="420" y="26" width="460" height="230" rx="4" class="surface" />
+
+              <rect x="428" y="145" width="444" height="26" rx="3" class="tint-b" />
+              <rect x="428" y="205" width="444" height="26" rx="3" class="tint-a" />
+
+              <text x="436" y="54" class="xs mono dim">$ docker compose config</text>
+              <text x="436" y="86" class="sm mono">services:</text>
+              <text x="436" y="112" class="sm mono">  web:</text>
+              <text x="436" y="138" class="sm mono">    environment:</text>
+              <text x="436" y="163" class="sm mono b">      WEB_PORT: "9999"</text>
+              <text x="436" y="196" class="sm mono">    ports:</text>
+              <text x="436" y="223" class="sm mono b">      - published: "4000"</text>
+
+              <path d="M250,75 L335,75 L335,218 L412,218" class="ln-accent" marker-end="url(#ar8)" />
+              <path d="M250,185 L375,185 L375,158 L412,158" class="ln-hue2" marker-end="url(#ar8b)" />
+            </svg>
+          </div>
+          <figcaption>
+            <strong>The same name resolves to two different numbers in one rendered file, and
+            Compose reports no conflict &mdash; because there isn't one.</strong> The value that
+            chose the host port came from <code>.env</code> at moment one. The value living inside
+            the container came from <code>env_file</code> at moment two. The paths cross on the way
+            past each other and never touch. This is the real output of
+            <code>docker compose config</code>, run here before this page was written.
+          </figcaption>
+        </figure>
+
+        <h3>What happens when <code>.env</code> is missing</h3>
+
+        <p class="measure">
+          Delete <code>.env</code> and keep everything else. The container still gets its
+          <code>WEB_PORT=9999</code> from <code>env_file</code>, so nothing about the container
+          changes. The published port simply disappears from the rendered file, and Compose says so
+          in a warning rather than an error &mdash; <code>up</code> carries on and starts the stack.
+        </p>
+
+        <pre class="tight"><span class="c">$ rm .env &amp;&amp; docker compose config</span>
+<span class="bad">warning  The "WEB_PORT" variable is not set. Defaulting to a blank string.</span>
+
+<span class="k">services:</span>
+  <span class="k">web:</span>
+    <span class="k">environment:</span>
+      <span class="k">WEB_PORT:</span> <span class="v">"9999"</span>      <span class="c">&larr; still here, env_file did its job</span>
+    <span class="k">ports:</span>
+      - <span class="k">target:</span> <span class="v">8000</span>
+        <span class="k">protocol:</span> <span class="v">tcp</span>     <span class="bad">&larr; published: is gone. no port. no error.</span></pre>
+
+        <p class="measure">
+          That warning is the whole failure mode: your site is unreachable on
+          <code>localhost:4000</code>, the container is healthy, the logs are clean, and the only
+          hint scrolled past during <code>up</code>. It is also why the drill at the bottom of your
+          own compose file says to run <code>docker compose config</code> first &mdash; that command
+          is how you see what moment one decided, before moment two acts on it.
+        </p>
+
+        <h3>Your own file, rendered right now</h3>
+
+        <p class="measure">
+          There is no <code>.env</code> in this repository &mdash; it is in
+          <code>.gitignore</code> and was never created. So moment one has nothing to substitute,
+          and running <code>docker compose config</code> against your
+          <code>docker-compose.yml</code> this minute produces thirteen warnings and a document
+          that is already broken in three places, before a single container exists.
+        </p>
+
+        <pre class="tight"><span class="c">$ docker compose config</span>
+<span class="bad">warning  The "WEB_PORT" variable is not set. Defaulting to a blank string.</span>
+<span class="bad">warning  The "POSTGRES_PASSWORD" variable is not set. Defaulting to a blank string.</span>
+<span class="c">          ... eleven more like it ...</span>
+
+  <span class="k">api:</span>
+    <span class="k">environment:</span>
+      <span class="k">DATABASE_URL:</span> <span class="bad">postgresql://:@db:5432/</span>   <span class="c">&larr; no user, no password, no database name</span>
+    <span class="k">ports:</span>
+      - <span class="k">target:</span> <span class="v">8000</span>                        <span class="c">&larr; published: absent. the site has no port.</span>
+
+  <span class="k">db:</span>
+    <span class="k">image:</span> <span class="bad">'postgres:'</span>                     <span class="c">&larr; a tag that cannot be pulled</span>
+    <span class="k">ports:</span>
+      - <span class="k">host_ip:</span> <span class="ok">127.0.0.1</span>                 <span class="c">&larr; survives: it was typed, not interpolated</span>
+        <span class="k">published:</span> <span class="ok">"5432"</span></pre>
+
+        <p class="measure">
+          Nothing here is wrong with the YAML you wrote. The file is fine; the value source is
+          absent. Notice which line survived: <code>127.0.0.1</code> is literal text, so moment one
+          had nothing to do to it. Everything that came from <code>${...}</code> is now an empty
+          string. Write a <code>.env</code> beside the compose file with the five names it asks for
+          and every one of those lines fills in.
+        </p>
+
+        <div class="takeaway">
+          <span class="tag">Answer to question three</span>
+          <p>
+            You are getting <code>WEB_PORT</code> from <code>.env</code>, which Compose opens by
+            itself because of where it sits, not because anything points at it. That is also why
+            <code>POSTGRES_PASSWORD</code> in your file can be both interpolated into
+            <code>DATABASE_URL</code> and handed to <code>db</code> as an environment variable
+            &mdash; two mechanisms, one source file, written once.
+          </p>
+        </div>
+      </section>
+
+      <!-- ========================= recap ========================= -->
+      <section>
+        <div>
+          <span class="sec-kicker">All three at once</span>
+          <h2>Same shape, three times: something is decided before you get to look</h2>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>The default nobody shows you</th>
+                <th>How to see it for yourself</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Leaving the address off <code>ports:</code> means every wire, not none. Vite made the opposite choice, which is what your phone measured.</td>
+                <td><code>ss -ltn</code> &mdash; read the address column, not the port</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Two services with separate volumes never fail; they just never meet. The shared line is what turns two processes into one app.</td>
+                <td><code>docker compose config --volumes</code>, then check what each service mounts</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><code>.env</code> is read with no declaration; <code>env_file:</code> is declared but cannot fill a <code>${...}</code>.</td>
+                <td><code>docker compose config</code> &mdash; every blank already filled in</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="measure">
+          If you want to close the loop on the first one yourself, it takes two commands and your
+          phone. Run <code>docker run --rm -p 8081:80 nginx:alpine</code>, then open
+          <code>http://192.168.1.12:8081</code> on the phone that could not reach Vite. It will
+          load. That is the difference the prefix removes.
+        </p>
+      </section>
     </div>
-
-    <script>
-      (function () {
-        var ANSWER = { 1: "c", 2: "a", 3: "d", 4: "c", 5: "a", 6: "b", 7: "c", 8: "d" };
-
-        var TRAP = {
-          1: "A named volume is mounted in one place and declared in another. Same name, two lines.",
-          2: "Left number is your laptop, right number is what the app bound to inside.",
-          3: "ports only opens a door from the host. Inside the network everything is already reachable.",
-          4: "healthcheck and condition are two halves of one fix. Neither does anything alone.",
-          5: "up -d never rebuilds on its own. --build is the ask.",
-          6: "down -v deletes the named volume. A bind mount is your folder and is never touched.",
-          7: ".env fills blanks in the compose file and reaches no container.",
-          8: "always restarts a container you deliberately stopped. unless-stopped remembers."
-        };
-
-        var SAY = [
-          "Stage 2 did not land. I would rather rebuild that page than push on.",
-          "Stage 2 did not land. I would rather rebuild that page than push on.",
-          "Stage 2 did not land. I would rather rebuild that page than push on.",
-          "Stage 2 did not land. I would rather rebuild that page than push on.",
-          "Half. The ones below are worth a proper second pass before we close the track.",
-          "Half. The ones below are worth a proper second pass before we close the track.",
-          "Solid. One short page each on what you missed, then the track closes.",
-          "Solid. One short page each on what you missed, then the track closes.",
-          "Clean sweep. Nothing here needs re-teaching and the track closes."
-        ];
-
-        var answered = {};
-        var right = 0;
-
-        var dots = document.querySelectorAll(".rail-dots .dot");
-        var tally = document.getElementById("tally");
-        var scoreNum = document.getElementById("scoreNum");
-        var scoreSay = document.getElementById("scoreSay");
-        var missedList = document.getElementById("missedList");
-        var scoreNext = document.getElementById("scoreNext");
-
-        function paint() {
-          var n = Object.keys(answered).length;
-          tally.textContent = n + " of 8 answered" + (n ? "  ·  " + right + " right" : "");
-          scoreNum.textContent = right + "/8";
-          if (n < 8) return;
-
-          scoreSay.textContent = SAY[right];
-
-          var missed = [];
-          for (var q = 1; q <= 8; q++) {
-            if (!answered[q].ok) missed.push(q);
-          }
-
-          if (missed.length) {
-            missedList.innerHTML = "";
-            for (var i = 0; i < missed.length; i++) {
-              var li = document.createElement("li");
-              var b = document.createElement("b");
-              b.textContent = "0" + missed[i];
-              var s = document.createElement("span");
-              s.textContent = TRAP[missed[i]];
-              li.appendChild(b);
-              li.appendChild(s);
-              missedList.appendChild(li);
-            }
-            missedList.hidden = false;
-            document.getElementById("missedLabel").hidden = false;
-          }
-          scoreNext.hidden = false;
-        }
-
-        function answer(btn) {
-          var q = btn.getAttribute("data-q");
-          if (answered[q]) return;
-
-          var picked = btn.getAttribute("data-opt");
-          var ok = picked === ANSWER[q];
-          answered[q] = { ok: ok };
-          if (ok) right++;
-
-          var card = document.getElementById("q" + q);
-          card.classList.add("answered");
-
-          var opts = card.querySelectorAll(".opt");
-          for (var i = 0; i < opts.length; i++) {
-            var o = opts[i];
-            o.disabled = true;
-            var letter = o.getAttribute("data-opt");
-            if (letter === ANSWER[q]) {
-              o.classList.add("key");
-              o.querySelector("span:last-child").insertAdjacentHTML(
-                "beforeend",
-                '<span class="mark">correct</span>'
-              );
-            }
-            if (o === btn) {
-              o.classList.add("picked");
-              if (!ok) {
-                o.classList.add("wrong");
-                o.querySelector("span:last-child").insertAdjacentHTML(
-                  "beforeend",
-                  '<span class="mark">you picked this</span>'
-                );
-              }
-            }
-          }
-
-          var exp = document.getElementById("exp" + q);
-          exp.hidden = false;
-          exp.setAttribute("data-open", "");
-          if (!ok) exp.classList.add("was-wrong");
-          exp.querySelector(".tag").textContent = ok ? "Right" : "Not this one";
-
-          var dot = dots[q - 1];
-          dot.classList.add(ok ? "hit" : "miss");
-
-          paint();
-        }
-
-        document.addEventListener("click", function (e) {
-          var btn = e.target.closest ? e.target.closest(".opt") : null;
-          if (btn && !btn.disabled) answer(btn);
-        });
-
-        paint();
-      })();
-    </script>
   </body>
 </html>
