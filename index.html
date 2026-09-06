@@ -1,365 +1,79 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Address, folder, moment</title>
-    <meta
-      name="description"
-      content="A visual field guide to Docker Compose ports, shared volumes, and .env interpolation."
-    />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314231f'/%3E%3Cpath d='M15 43V21h6v16h10v6zm22 0V21h12v6h-6v4h5v6h-5v6z' fill='%2372bd91'/%3E%3C/svg%3E" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
-    />
-    <style>
-/* ============ tokens: light ============ */
-:root {
-  color-scheme: light dark;
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Following a radar image</title><meta name="description" content="An illustrated lesson about listening addresses, shared folders, and environment variables in Docker Compose."><link rel="icon" href="data:,"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet"><style>
 
-  --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
-  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
-  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-
-  --ground: #eaeef1;
-  --surface: #ffffff;
-  --surface-2: #f4f7f9;
-  --ink: #101a22;
-  --muted: #566976;
-  --rule: #ccd6dd;
-
-  --accent: #15537d;
-  --hue2: #6a3d86;
-  --good: #1c6b41;
-  --bad: #9d2b2b;
-  --warn: #8a5410;
-
-  --tint-a: #dfeaf3;
-  --tint-b: #ece3f4;
-  --tint-good: #dcecdf;
-  --tint-bad: #f6dfdf;
-  --tint-warn: #f7e9d3;
-
-  --code-bg: #0f1c25;
-  --code-ink: #d6e3ec;
-  --code-key: #8fc3e8;
-  --code-val: #e8c48a;
-  --code-dim: #7f95a4;
-  --code-mark: #2b4152;
-}
-
-/* ============ tokens: dark ============ */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ground: #0d161d;
-    --surface: #15222b;
-    --surface-2: #1a2833;
-    --ink: #e3ecf2;
-    --muted: #93a8b6;
-    --rule: #2a3b47;
-
-    --accent: #7cb4dd;
-    --hue2: #bb99d8;
-    --good: #66c48d;
-    --bad: #ef8f8f;
-    --warn: #d8ac63;
-
-    --tint-a: #1a2f3e;
-    --tint-b: #2b2338;
-    --tint-good: #17301f;
-    --tint-bad: #351c1c;
-    --tint-warn: #33291a;
-
-    --code-bg: #0a1218;
-    --code-mark: #22323f;
-  }
-}
-
-:root[data-theme="dark"] {
-  --ground: #0d161d;
-  --surface: #15222b;
-  --surface-2: #1a2833;
-  --ink: #e3ecf2;
-  --muted: #93a8b6;
-  --rule: #2a3b47;
-
-  --accent: #7cb4dd;
-  --hue2: #bb99d8;
-  --good: #66c48d;
-  --bad: #ef8f8f;
-  --warn: #d8ac63;
-
-  --tint-a: #1a2f3e;
-  --tint-b: #2b2338;
-  --tint-good: #17301f;
-  --tint-bad: #351c1c;
-  --tint-warn: #33291a;
-
-  --code-bg: #0a1218;
-  --code-mark: #22323f;
-}
-
-/* ============ base ============ */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: var(--ground);
-  color: var(--ink);
-  font-family: var(--serif);
-  font-size: 19px;
-  line-height: 1.7;
-}
-
-.skip-link {
-  position: fixed;
-  top: 12px;
-  left: 16px;
-  z-index: 20;
-  transform: translateY(-180%);
-  padding: 9px 13px;
-  border: 1px solid var(--accent);
-  border-radius: 5px;
-  background: var(--surface);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: transform 140ms ease;
-}
-
-.skip-link:focus {
-  transform: translateY(0);
-}
-
-.wrap {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 0 28px 120px;
-}
-
-.measure {
-  max-width: 34em;
-}
-
-p {
-  margin: 0;
-}
-
-strong {
-  font-weight: 600;
-}
-
-a {
-  color: var(--accent);
-}
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-code {
-  font-family: var(--mono);
-  font-size: 0.85em;
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
-  padding: 1px 5px;
-  border-radius: 3px;
-  white-space: nowrap;
-}
-
-/* ============ masthead ============ */
-.masthead {
-  padding: 76px 0 34px;
-}
-
-.eyebrow {
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin: 0 0 18px;
-}
-
-h1 {
-  font-family: var(--sans);
-  font-size: 52px;
-  line-height: 1.08;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin: 0 0 20px;
-  text-wrap: balance;
-  max-width: 14em;
-}
-
-.standfirst {
-  font-size: 21px;
-  line-height: 1.6;
-  color: var(--muted);
-  max-width: 32em;
-}
-
-/* ============ jump list ============ */
-.jump {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin: 30px 0 0;
-  border-top: 1px solid var(--rule);
-  max-width: 40em;
-}
-
-.jump a {
-  display: grid;
-  grid-template-columns: 34px 1fr auto;
-  gap: 16px;
-  align-items: baseline;
-  padding: 13px 2px;
-  border-bottom: 1px solid var(--rule);
-  text-decoration: none;
-  color: var(--ink);
-  font-size: 17.5px;
-}
-
-.jump a:hover {
-  background: var(--surface-2);
-}
-
-.jump .n {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.jump .word {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-/* ============ sections ============ */
-section {
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 4px;
-  padding: 36px 40px 40px;
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  scroll-margin-top: 20px;
-}
-
-/* flex children default to min-width:auto, which lets a wide <pre>
-   push the whole page sideways on a narrow screen */
-section > *,
-figure > *,
-.asked > *,
-.takeaway > * {
-  margin: 0;
-  min-width: 0;
-}
-
-.sec-kicker {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-h2 {
-  font-family: var(--sans);
-  font-size: 30px;
-  line-height: 1.2;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  margin: 0;
-  text-wrap: balance;
-}
-
-h3 {
-  font-family: var(--sans);
-  font-size: 20px;
-  font-weight: 600;
-  margin: 10px 0 0;
-  letter-spacing: -0.01em;
-}
-
-.lead {
-  font-size: 21px;
-  line-height: 1.55;
-  max-width: 31em;
-}
-
-/* ============ the question as asked ============ */
-.asked {
-  border-left: 3px solid var(--rule);
-  padding: 4px 0 4px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-width: 40em;
-}
-
-.asked .who {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.asked p {
-  font-size: 18px;
-  line-height: 1.55;
-  color: var(--muted);
-  font-style: italic;
-}
-
-/* ============ figures ============ */
-figure {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.plate {
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
-  border-radius: 4px;
-  padding: 22px 20px;
-  overflow-x: auto;
-}
-
-figcaption {
-  font-size: 16.5px;
-  line-height: 1.58;
-  color: var(--muted);
-  max-width: 36em;
-}
-
-figcaption strong {
-  color: var(--ink);
-}
-
-/* ============ diagram svg ============ */
+:root { color-scheme:light; --sans:"Source Sans 3","Segoe UI",sans-serif; --serif:"Source Serif 4",Georgia,serif; --mono:"IBM Plex Mono",monospace;
+--ground:#f6f9fa; --surface:#ffffff; --surface-2:#eaf2f5; --ink:#233c49; --muted:#536f7c; --rule:#ccdce3; --accent:#17647c; --hue2:#76558f; --good:#267451; --bad:#a24942; --warn:#896221; --tint-a:#deeff5; --tint-b:#eee8f5; --tint-good:#e0f1e8; --tint-bad:#f6e7e4; --tint-warn:#f6eedc; }
+@media(prefers-color-scheme:dark) { :root:not([data-theme="light"]) { color-scheme:dark; --ground:#17252d; --surface:#1c2d37; --surface-2:#223843; --ink:#e0edf2; --muted:#abc0cb; --rule:#405966; --accent:#83cce1; --hue2:#c5b0e3; --good:#89d0ae; --bad:#f1aba6; --warn:#e4c28a; --tint-a:#244450; --tint-b:#39334b; --tint-good:#254739; --tint-bad:#493539; --tint-warn:#463e2c; } }
+:root[data-theme="dark"] { color-scheme:dark; --ground:#17252d; --surface:#1c2d37; --surface-2:#223843; --ink:#e0edf2; --muted:#abc0cb; --rule:#405966; --accent:#83cce1; --hue2:#c5b0e3; --good:#89d0ae; --bad:#f1aba6; --warn:#e4c28a; --tint-a:#244450; --tint-b:#39334b; --tint-good:#254739; --tint-bad:#493539; --tint-warn:#463e2c; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--ground); color:var(--ink); font:19px/1.65 var(--sans); }
+a { color:var(--accent); text-underline-offset:4px; }
+:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+.skip-link { position:absolute; top:8px; left:8px; transform:translateY(-160%); background:var(--surface); }
+.skip-link:focus { transform:none; }
+.wrap { max-width:1110px; margin:auto; padding:0 30px 64px; }
+header, section > :not(figure), footer { max-width:700px; margin-inline:auto; }
+header { padding:35px 0 0; }
+.publication { font-size:14px; color:var(--muted); margin:0 0 18px; }
+h1,h2 { font-family:var(--serif); font-weight:400; text-wrap:balance; }
+h1 { font-size:39px; letter-spacing:-.035em; line-height:1.16; margin:0 0 17px; }
+h2 { font-size:30px; line-height:1.25; letter-spacing:-.02em; margin:0; }
+h3 { font-size:23px; font-weight:600; line-height:1.4; margin:0; }
+p { margin:0; }
+strong { font-weight:600; }
+.intro { font-size:20px; line-height:1.55; }
+nav { display:flex; flex-wrap:wrap; gap:8px 22px; padding:20px 0 0; font-size:15px; }
+nav a { text-decoration:none; border-bottom:1px solid var(--rule); }
+section { display:flex; flex-direction:column; gap:20px; padding-top:43px; scroll-margin-top:24px; }
+section > :not(figure) { width:100%; }
+figure { margin:8px 0 12px; min-width:0; }
+.plate { background:var(--surface-2); padding:24px; overflow-x:auto; border-radius:4px; }
+figcaption { max-width:700px; margin:14px auto 0; font:17px/1.55 var(--sans); color:var(--muted); }
+figcaption strong { color:var(--ink); }
+code { font:.76em/1.6 var(--mono); background:var(--surface-2); padding:2px 4px; border-radius:3px; overflow-wrap:anywhere; }
+pre { margin:0; background:var(--surface-2); padding:18px 20px; font:14px/1.85 var(--mono); overflow-x:auto; }
+pre code { font:inherit; padding:0; background:none; }
+details { margin:0; padding:15px 0; border-block:1px solid var(--rule); font-size:18px; }
+summary { cursor:pointer; font-size:17px; font-weight:600; line-height:1.5; }
+details > p { margin-top:16px; }
+details figure { margin:24px 0; }
+.check { padding-block:12px; }
+.check > p { font-size:18px; }
+.check details { border:0; padding:0; margin:9px 0 0; }
+.check summary { font-size:16px; color:var(--accent); font-weight:400; }
+.bridge { color:var(--muted); font-family:var(--serif); font-style:italic; padding-top:12px; }
+.hero-figure { max-width:620px; margin-inline:auto; }
+.hero-plate { background:var(--surface-2); border-radius:4px; overflow-x:auto; }
+.hero-map { min-width:500px; }
+footer { margin-top:42px; padding-top:18px; border-top:1px solid var(--rule); font-size:14px; color:var(--muted); }
+.experiment { margin-block:2px 12px; }
+.experiment-body { display:grid; grid-template-columns:minmax(0,1fr) 265px; gap:26px; align-items:center; background:var(--surface); border:1px solid var(--rule); padding:24px; }
+.drawing { min-width:0; overflow-x:auto; }
+.lab-svg { display:block; width:100%; min-width:330px; height:auto; color:var(--ink); }
+.lab-svg text { fill:currentColor; font:18px var(--sans); }
+.lab-svg .small { font-size:15px; fill:var(--muted); }
+.lab-svg .code { font:15px var(--mono); }
+.lab-svg .paper { fill:var(--surface); stroke:var(--rule); stroke-width:1.5; }
+.lab-svg .area { fill:var(--surface-2); stroke:var(--rule); stroke-width:1.5; }
+.lab-svg .green { fill:var(--tint-good); stroke:var(--good); stroke-width:1.5; }
+.lab-svg .purple { fill:var(--tint-b); stroke:var(--hue2); stroke-width:1.5; }
+.lab-svg .blue { fill:var(--tint-a); stroke:var(--accent); stroke-width:1.5; }
+.lab-svg .route { fill:none; stroke:var(--accent); stroke-width:3; }
+.lab-svg .route.green-route { stroke:var(--good); }
+.lab-svg .route.purple-route { stroke:var(--hue2); }
+.lab-svg .broken { stroke:var(--bad); stroke-dasharray:5 6; }
+.lab-svg .blocked { stroke:var(--bad); stroke-width:3; }
+.controls { display:flex; flex-direction:column; gap:14px; font-size:16px; }
+.controls label { display:flex; flex-direction:column; gap:6px; font-weight:600; }
+.controls select { max-width:100%; width:100%; background:var(--surface); color:var(--ink); border:1px solid var(--muted); padding:9px; font:16px var(--sans); border-radius:3px; }
+.controls .hint { color:var(--muted); font-size:14px; line-height:1.5; }
+.controls output { display:block; font:15px/1.6 var(--sans); }
+.controls output strong { display:block; margin-bottom:4px; color:var(--accent); }
+.controls code { font-size:12px; }
+.experiment-note { font-size:13px; color:var(--muted); margin-bottom:7px; }
+@media(max-width:800px) { .experiment-body { grid-template-columns:1fr; gap:16px; padding:18px; } .controls { display:grid; grid-template-columns:1fr 1fr; gap:14px 20px; } .controls output,.controls .hint { grid-column:1/-1; } .controls label:only-of-type { grid-column:1/-1; } }
+@media(max-width:520px) { .lab-svg { min-width:480px; } .experiment-note::after { content:" · swipe diagram to see both ends"; } .wrap { padding-inline:20px; } body { font-size:18px; } header { padding-top:24px; } h1 { font-size:32px; } h2 { font-size:27px; } .intro { font-size:19px; } nav { gap:7px 15px; } section { padding-top:32px; gap:17px; } .plate { padding:12px; } figcaption { font-size:16px; } .experiment-body { padding:12px; margin-inline:-8px; } .controls { grid-template-columns:1fr; } .controls label { grid-column:1/-1; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; } }
 .dg {
   display: block;
   width: 100%;
@@ -501,990 +215,25 @@ figcaption strong {
   stroke-dasharray: 6 5;
 }
 
-/* ============ code ============ */
-pre {
-  font-family: var(--mono);
-  font-size: 15px;
-  line-height: 1.7;
-  background: var(--code-bg);
-  color: var(--code-ink);
-  border-radius: 4px;
-  padding: 20px 22px;
-  overflow-x: auto;
-  margin: 0;
-  tab-size: 2;
-  max-width: 100%;
-}
-
-pre.tight {
-  font-size: 13.5px;
-  line-height: 1.65;
-}
-
-pre .k {
-  color: var(--code-key);
-}
-pre .v {
-  color: var(--code-val);
-}
-pre .c {
-  color: var(--code-dim);
-}
-pre .m {
-  background: var(--code-mark);
-  border-radius: 3px;
-  padding: 1px 4px;
-}
-pre .bad {
-  color: #f2a0a0;
-}
-pre .ok {
-  color: #90d9ad;
-}
-
-/* ============ takeaway strip ============ */
-.takeaway {
-  background: var(--tint-a);
-  border: 1px solid var(--accent);
-  border-radius: 4px;
-  padding: 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-width: 40em;
-}
-
-.takeaway .tag {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.takeaway p {
-  font-size: 18.5px;
-  line-height: 1.55;
-}
-
-/* ============ table ============ */
-.tablewrap {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 16px;
-}
-
-th,
-td {
-  text-align: left;
-  padding: 10px 13px;
-  border-bottom: 1px solid var(--rule);
-  vertical-align: top;
-}
-
-thead th {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: var(--muted);
-  border-bottom: 2px solid var(--rule);
-}
-
-td:first-child {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--accent);
-  font-weight: 600;
-}
-
-td code {
-  font-size: 0.82em;
-}
-
-/* ============ narrow ============ */
-@media (max-width: 640px) {
-  /* nowrap keeps `docker compose up -d` intact on a wide screen, but a long
-     inline code span is what pushes the whole page sideways at 390px */
-  code {
-    white-space: normal;
-    overflow-wrap: anywhere;
-  }
-  .wrap {
-    padding: 0 16px 80px;
-  }
-  section {
-    padding: 26px 20px 30px;
-  }
-  h1 {
-    font-size: 36px;
-  }
-  h2 {
-    font-size: 25px;
-  }
-  body {
-    font-size: 18px;
-  }
-}
-
-/* ============================================================
-   Systems field guide — the page's second visual language
-   ============================================================ */
-:root {
-  --ground: #f0eee6;
-  --surface: #fffdf7;
-  --surface-2: #f5f3ea;
-  --ink: #17211c;
-  --muted: #647068;
-  --rule: #d5d5c9;
-  --accent: #096b70;
-  --hue2: #7251a2;
-  --good: #28754e;
-  --bad: #a64035;
-  --warn: #a96513;
-  --tint-a: #e1f0ed;
-  --tint-b: #eee8f6;
-  --tint-good: #e2f0e5;
-  --tint-bad: #f7e5e2;
-  --tint-warn: #f7ecd8;
-  --code-bg: #14231f;
-  --code-ink: #e8eee9;
-  --code-key: #8bd3cd;
-  --code-val: #f2c46f;
-  --code-dim: #91a29a;
-  --code-mark: #294039;
-  --orange: #ad4326;
-  --orange-soft: #f8e6df;
-  --violet: #7251a2;
-  --violet-soft: #eee8f6;
-  --forest: #28754e;
-  --forest-soft: #e2f0e5;
-  --night: #14231f;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ground: #101613;
-    --surface: #17201c;
-    --surface-2: #1c2923;
-    --ink: #edf2ec;
-    --muted: #a4b0a8;
-    --rule: #344139;
-    --accent: #73c8c4;
-    --hue2: #bea6df;
-    --good: #7fca9e;
-    --bad: #ef9a90;
-    --warn: #e4b86f;
-    --tint-a: #173532;
-    --tint-b: #2c2538;
-    --tint-good: #1d3828;
-    --tint-bad: #3b2421;
-    --tint-warn: #3b301e;
-    --orange: #f18a6c;
-    --orange-soft: #3b2822;
-    --violet: #bea6df;
-    --violet-soft: #2c2538;
-    --forest: #7fca9e;
-    --forest-soft: #1d3828;
-    --night: #09110e;
-  }
-}
-
-:root[data-theme="dark"] {
-  --ground: #101613;
-  --surface: #17201c;
-  --surface-2: #1c2923;
-  --ink: #edf2ec;
-  --muted: #a4b0a8;
-  --rule: #344139;
-  --accent: #73c8c4;
-  --hue2: #bea6df;
-  --good: #7fca9e;
-  --bad: #ef9a90;
-  --warn: #e4b86f;
-  --tint-a: #173532;
-  --tint-b: #2c2538;
-  --tint-good: #1d3828;
-  --tint-bad: #3b2421;
-  --tint-warn: #3b301e;
-  --orange: #f18a6c;
-  --orange-soft: #3b2822;
-  --violet: #bea6df;
-  --violet-soft: #2c2538;
-  --forest: #7fca9e;
-  --forest-soft: #1d3828;
-  --night: #09110e;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background: var(--ground);
-  font-size: 18px;
-  line-height: 1.68;
-  text-rendering: optimizeLegibility;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0 0 auto;
-  height: 5px;
-  background: linear-gradient(90deg, var(--orange) 0 33.333%, var(--forest) 33.333% 66.666%, var(--violet) 66.666% 100%);
-  z-index: 10;
-}
-
-::selection {
-  color: var(--surface);
-  background: var(--accent);
-}
-
-.wrap {
-  width: min(100% - 40px, 1160px);
-  max-width: none;
-  padding: 0 0 128px;
-}
-
-.masthead {
-  padding: clamp(72px, 10vw, 124px) 0 46px;
-}
-
-.hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 0.86fr) minmax(440px, 1.14fr);
-  gap: clamp(42px, 7vw, 88px);
-  align-items: center;
-}
-
-.hero-copy {
-  min-width: 0;
-}
-
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 28px;
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-}
-
-.eyebrow::before {
-  content: "";
-  width: 28px;
-  height: 2px;
-  background: var(--orange);
-}
-
-.eyebrow span {
-  color: var(--orange);
-}
-
-h1 {
-  max-width: none;
-  margin-bottom: 30px;
-  font-size: clamp(58px, 7.6vw, 104px);
-  line-height: 0.84;
-  letter-spacing: -0.065em;
-  font-weight: 700;
-}
-
-.standfirst {
-  max-width: 31em;
-  color: var(--ink);
-  font-size: 19px;
-  line-height: 1.58;
-}
-
-.proof-note {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 28px;
-  font-family: var(--mono);
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.4;
-}
-
-.proof-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--forest);
-  box-shadow: 0 0 0 5px var(--forest-soft);
-  flex: none;
-}
-
-.hero-figure {
-  gap: 14px;
-  width: 100%;
-  min-width: 0;
-}
-
-.hero-plate {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid #345147;
-  border-radius: 18px;
-  background: var(--night);
-  box-shadow: 0 28px 70px rgb(17 35 29 / 18%);
-}
-
-.hero-plate::before,
-.hero-plate::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-}
-
-.hero-plate::before {
-  inset: 0;
-  opacity: 0.28;
-  background-image:
-    linear-gradient(rgb(127 202 158 / 14%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(127 202 158 / 14%) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.hero-plate::after {
-  inset: 14px;
-  border: 1px solid rgb(232 238 233 / 10%);
-  border-radius: 11px;
-}
-
-.hero-map {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.hero-map text {
-  font-family: var(--sans);
-  fill: #edf3ee;
-}
-
-.hero-map .hero-overline,
-.hero-map .hero-label {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-}
-
-.hero-map .hero-number {
-  font-family: var(--mono);
-  font-size: 11px;
-  fill: #aabbb2;
-}
-
-.hero-map .hero-code {
-  font-family: var(--mono);
-  font-size: 12px;
-}
-
-.hero-map .hero-code.strong {
-  font-weight: 600;
-}
-
-.hero-map .hero-code.quiet,
-.hero-map .hero-tiny {
-  fill: #9fb0a7;
-}
-
-.hero-map .hero-tiny {
-  font-family: var(--mono);
-  font-size: 9.5px;
-}
-
-.hero-core {
-  fill: #1e332b;
-  stroke: #75b899;
-  stroke-width: 2;
-}
-
-.hero-node {
-  fill: #192822;
-  stroke-width: 2;
-}
-
-.hero-node.purple { stroke: #a88bd0; }
-.hero-node.orange { stroke: #ef8565; }
-.hero-node.green { stroke: #72bd91; }
-.hero-led { fill: #72bd91; }
-.hero-led.dim { fill: #53685f; }
-
-.hero-path,
-.hero-share {
-  fill: none;
-  stroke-width: 2;
-}
-
-.hero-path.purple { stroke: #a88bd0; }
-.hero-path.orange { stroke: #ef8565; }
-.hero-path.green,
-.hero-share { stroke: #72bd91; }
-.hero-arrowhead { fill: #72bd91; }
-.hero-arrowhead.hot { fill: #ef8565; }
-
-.hero-service {
-  fill: #23362f;
-  stroke: #53685f;
-}
-
-.hero-folder {
-  fill: #37674f;
-  stroke: #72bd91;
-}
-
-.hero-figure > figcaption {
-  max-width: 48em;
-  margin: 0;
-  padding-left: 14px;
-  border-left: 2px solid var(--forest);
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-.jump {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  max-width: none;
-  margin-top: clamp(54px, 8vw, 92px);
-  border: 0;
-}
-
-.jump a {
-  position: relative;
-  display: grid;
-  grid-template-columns: 42px 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 10px 12px;
-  min-height: 142px;
-  padding: 22px 22px 20px;
-  border: 1px solid var(--rule);
-  border-top: 4px solid var(--orange);
-  border-radius: 3px 3px 12px 12px;
-  background: var(--surface);
-  font-family: var(--serif);
-  font-size: 15px;
-  line-height: 1.45;
-  transition: transform 160ms ease, border-color 160ms ease;
-}
-
-.jump a:nth-child(2) { border-top-color: var(--forest); }
-.jump a:nth-child(3) { border-top-color: var(--violet); }
-
-.jump a:hover {
-  background: var(--surface);
-  border-color: var(--ink);
-  transform: translateY(-3px);
-}
-
-.jump .n {
-  grid-row: 1 / 3;
-  font-size: 28px;
-  line-height: 1;
-  color: var(--orange);
-}
-
-.jump a:nth-child(2) .n { color: var(--forest); }
-.jump a:nth-child(3) .n { color: var(--violet); }
-
-.jump .word {
-  grid-column: 2;
-  grid-row: 1;
-  order: -1;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.jump a > span:nth-child(2) {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-section {
-  --chapter-accent: var(--accent);
-  --chapter-soft: var(--tint-a);
-  position: relative;
-  display: flex;
-  gap: 24px;
-  margin: 24px 0 0;
-  padding: clamp(42px, 6vw, 72px) clamp(24px, 6vw, 72px) clamp(56px, 8vw, 96px);
-  border: 1px solid var(--rule);
-  border-radius: 18px;
-  background: var(--surface);
-  box-shadow: 0 18px 52px rgb(20 35 30 / 6%);
-}
-
-#one {
-  --chapter-accent: var(--orange);
-  --chapter-soft: var(--orange-soft);
-}
-
-#two {
-  --chapter-accent: var(--forest);
-  --chapter-soft: var(--forest-soft);
-}
-
-#three {
-  --chapter-accent: var(--violet);
-  --chapter-soft: var(--violet-soft);
-}
-
-section::after {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 6px;
-  border-radius: 18px 0 0 18px;
-  background: var(--chapter-accent);
-}
-
-section > div:first-child {
-  display: grid;
-  grid-template-columns: 184px minmax(0, 1fr);
-  gap: 28px;
-  align-items: start;
-  margin-bottom: 10px;
-}
-
-.sec-kicker {
-  padding-top: 9px;
-  color: var(--chapter-accent);
-  font-size: 10px;
-  line-height: 1.4;
-}
-
-h2 {
-  max-width: 24em;
-  font-size: clamp(30px, 4vw, 46px);
-  line-height: 1.08;
-  letter-spacing: -0.035em;
-}
-
-section > .asked,
-section > .lead,
-section > .measure,
-section > h3,
-section > pre,
-section > .takeaway {
-  width: min(calc(100% - 212px), 720px);
-  max-width: none;
-  margin-left: 212px;
-}
-
-h3 {
-  margin-top: 32px;
-  padding-top: 22px;
-  border-top: 1px solid var(--rule);
-  font-size: 23px;
-  line-height: 1.25;
-}
-
-.lead {
-  font-size: clamp(21px, 2.3vw, 27px);
-  line-height: 1.48;
-  letter-spacing: -0.012em;
-}
-
-.asked {
-  position: relative;
-  gap: 7px;
-  padding: 18px 22px 18px 54px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--chapter-soft);
-}
-
-.asked::before {
-  content: "?";
-  position: absolute;
-  top: 13px;
-  left: 18px;
-  font-family: var(--sans);
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--chapter-accent);
-}
-
-.asked .who {
-  color: var(--chapter-accent);
-  font-size: 10px;
-}
-
-.asked p {
-  color: var(--ink);
-  font-size: 16px;
-  font-style: normal;
-}
-
-figure:not(.hero-figure) {
-  gap: 16px;
-  margin: 14px 0 18px;
-}
-
-figure:not(.hero-figure) .plate {
-  padding: clamp(18px, 3vw, 34px);
-  border-color: var(--rule);
-  border-radius: 12px;
-  background-color: var(--surface-2);
-  background-image:
-    linear-gradient(rgb(86 105 96 / 7%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(86 105 96 / 7%) 1px, transparent 1px);
-  background-size: 24px 24px;
-  box-shadow: inset 0 0 0 6px var(--surface);
-}
-
-figure:not(.hero-figure) figcaption {
-  width: min(calc(100% - 212px), 760px);
-  max-width: none;
-  margin-left: 212px;
-  padding-left: 18px;
-  border-left: 3px solid var(--chapter-accent);
-  color: var(--muted);
-  font-size: 15px;
-  line-height: 1.62;
-}
-
-figure:not(.hero-figure) figcaption strong {
-  color: var(--ink);
-}
-
-.dg .surface {
-  stroke-width: 1.5;
-}
-
-pre {
-  border: 1px solid #31473f;
-  border-radius: 10px;
-  box-shadow: 0 16px 34px rgb(15 28 23 / 13%);
-}
-
-.takeaway {
-  position: relative;
-  gap: 10px;
-  padding: 24px 26px 24px 30px;
-  border: 0;
-  border-radius: 2px 12px 12px 2px;
-  background: var(--chapter-soft);
-}
-
-.takeaway::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 5px;
-  background: var(--chapter-accent);
-}
-
-.takeaway .tag {
-  color: var(--chapter-accent);
-  font-size: 10px;
-}
-
-.takeaway p {
-  font-size: 17px;
-}
-
-.tablewrap {
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-}
-
-th,
-td {
-  padding: 15px 16px;
-}
-
-thead th {
-  background: var(--surface-2);
-}
-
-tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-section:last-child {
-  margin-top: 24px;
-  padding-bottom: clamp(48px, 6vw, 72px);
-}
-
-section:last-child::after {
-  background: linear-gradient(var(--orange) 0 33.333%, var(--forest) 33.333% 66.666%, var(--violet) 66.666% 100%);
-}
-
-@media (max-width: 900px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-copy {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
-    gap: 24px 44px;
-    align-items: end;
-  }
-
-  .hero-copy .eyebrow,
-  .hero-copy .proof-note {
-    grid-column: 1 / -1;
-  }
-
-  .hero-copy h1,
-  .hero-copy .standfirst {
-    margin: 0;
-  }
-
-  .hero-figure {
-    max-width: 680px;
-    margin-inline: auto;
-  }
-}
-
-@media (max-width: 760px) {
-  .wrap {
-    width: min(100% - 28px, 680px);
-  }
-
-  .hero-copy {
-    display: block;
-  }
-
-  .hero-copy h1 {
-    margin-bottom: 26px;
-  }
-
-  .jump {
-    grid-template-columns: 1fr;
-  }
-
-  .jump a {
-    min-height: 0;
-  }
-
-  section {
-    border-radius: 13px;
-  }
-
-  section > div:first-child {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .sec-kicker {
-    padding-top: 0;
-  }
-
-  section > .asked,
-  section > .lead,
-  section > .measure,
-  section > h3,
-  section > pre,
-  section > .takeaway,
-  figure:not(.hero-figure) figcaption {
-    width: 100%;
-    margin-left: 0;
-  }
-}
-
-@media (max-width: 520px) {
-  .masthead {
-    padding-top: 64px;
-  }
-
-  h1 {
-    font-size: clamp(52px, 18vw, 74px);
-  }
-
-  .hero-plate {
-    border-radius: 12px;
-    overflow-x: auto;
-  }
-
-  .hero-map {
-    min-width: 500px;
-  }
-
-  section {
-    padding: 34px 20px 52px 24px;
-  }
-
-  .asked {
-    padding-left: 48px;
-  }
-
-  figure:not(.hero-figure) .plate {
-    margin-inline: -8px;
-    padding: 16px 12px;
-    box-shadow: inset 0 0 0 4px var(--surface);
-  }
-
-  figure:not(.hero-figure) figcaption {
-    padding-left: 14px;
-  }
-
-  pre {
-    padding: 18px;
-    font-size: 12.5px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-    </style>
-  </head>
-
-  <body>
-    <a class="skip-link" href="#main-content">Skip to the explanation</a>
-    <div class="wrap">
-      <header class="masthead">
-        <div class="hero-grid">
-          <div class="hero-copy">
-            <p class="eyebrow">Rainfall field guide <span>03 hidden defaults</span></p>
-            <h1>Address,<br />folder,<br />moment.</h1>
-            <p class="standfirst">
-              Docker Compose feels mysterious when it makes a decision before you know there was
-              one to make. These are the three decisions hiding in your file—and how to expose each
-              one on your own machine.
-            </p>
-            <div class="proof-note">
-              <span class="proof-dot" aria-hidden="true"></span>
-              <span>Grounded in commands run against your Rainfall setup</span>
-            </div>
-          </div>
-
-          <figure class="hero-figure">
-            <div class="hero-plate">
-              <svg
-                class="hero-map"
-                viewBox="0 0 620 520"
-                role="img"
-                aria-label="A Docker Compose file sits at the centre of three decisions. Before parsing, dot env supplies values. During startup, a published port chooses which network wires can reach it. While running, the API and collector meet through one shared frames folder."
-              >
-                <defs>
-                  <marker id="hero-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                    <path d="M0,0 L10,5 L0,10 z" class="hero-arrowhead" />
-                  </marker>
-                  <marker id="hero-arrow-hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                    <path d="M0,0 L10,5 L0,10 z" class="hero-arrowhead hot" />
-                  </marker>
-                </defs>
-
-                <text x="30" y="34" class="hero-overline">ONE FILE · THREE DECISIONS</text>
-
-                <rect x="212" y="194" width="196" height="126" rx="12" class="hero-core" />
-                <circle cx="238" cy="220" r="5" class="hero-led" />
-                <circle cx="256" cy="220" r="5" class="hero-led dim" />
-                <circle cx="274" cy="220" r="5" class="hero-led dim" />
-                <text x="310" y="260" text-anchor="middle" class="hero-code strong">compose.yaml</text>
-                <text x="310" y="287" text-anchor="middle" class="hero-code quiet">the visible file</text>
-
-                <rect x="30" y="72" width="174" height="98" rx="10" class="hero-node purple" />
-                <text x="48" y="100" class="hero-number">03</text>
-                <text x="48" y="128" class="hero-label">MOMENT</text>
-                <text x="48" y="151" class="hero-code quiet">.env → ${...}</text>
-                <path d="M170,170 C188,190 196,208 215,225" class="hero-path purple" marker-end="url(#hero-arrow)" />
-                <text x="200" y="183" class="hero-tiny" text-anchor="middle">before parse</text>
-
-                <rect x="416" y="72" width="174" height="98" rx="10" class="hero-node orange" />
-                <text x="434" y="100" class="hero-number">01</text>
-                <text x="434" y="128" class="hero-label">ADDRESS</text>
-                <text x="434" y="151" class="hero-code quiet">0.0.0.0 → every wire</text>
-                <path d="M450,170 C432,190 424,208 405,225" class="hero-path orange" marker-end="url(#hero-arrow-hot)" />
-                <text x="420" y="183" class="hero-tiny" text-anchor="middle">at bind</text>
-
-                <path d="M310,320 L310,364" class="hero-path green" marker-end="url(#hero-arrow)" />
-                <text x="326" y="349" class="hero-tiny">while running</text>
-
-                <rect x="96" y="388" width="428" height="100" rx="10" class="hero-node green" />
-                <text x="116" y="417" class="hero-number">02</text>
-                <text x="116" y="447" class="hero-label">FOLDER</text>
-
-                <rect x="232" y="410" width="88" height="45" rx="7" class="hero-service" />
-                <text x="276" y="438" text-anchor="middle" class="hero-code strong">collector</text>
-                <rect x="416" y="410" width="68" height="45" rx="7" class="hero-service" />
-                <text x="450" y="438" text-anchor="middle" class="hero-code strong">api</text>
-                <path d="M276,455 L276,472 L450,472 L450,455" class="hero-share" />
-                <rect x="334" y="453" width="58" height="36" rx="18" class="hero-folder" />
-                <text x="363" y="476" text-anchor="middle" class="hero-code strong">files</text>
-              </svg>
-            </div>
-            <figcaption>
-              Read toward the centre, then down. Values arrive before the file is parsed; an address
-              is chosen when a socket opens; shared bytes connect two processes after both are alive.
-            </figcaption>
-          </figure>
-        </div>
-
-        <nav class="jump" aria-label="Jump to a question">
-          <a href="#one"><span class="n">1</span><span>Your phone can&rsquo;t reach Vite. So what is <code>127.0.0.1:</code> protecting?</span><span class="word">address</span></a>
-          <a href="#two"><span class="n">2</span><span>What a collector is, and why it mounts the same folders as the api</span><span class="word">folder</span></a>
-          <a href="#three"><span class="n">3</span><span>Where <code>${WEB_PORT}</code> comes from with no <code>env_file</code> anywhere</span><span class="word">moment</span></a>
-        </nav>
-      </header>
-
-      <main id="main-content">
-
-      <!-- ========================= 1 ========================= -->
-      <section id="one">
-        <div>
-          <span class="sec-kicker">Question one &middot; address</span>
-          <h2>The phone test proved something about Vite, not about laptops</h2>
-        </div>
-
-        <div class="asked">
-          <span class="who">You asked</span>
-          <p>
-            How does a laptop&rsquo;s localhost make the port available at network level? When I try
-            to open the Vite server on my phone on the same wifi, nothing happens. So why the
-            concern, why the protection?
-          </p>
-        </div>
-
-        <p class="lead">
-          Your phone failed because <strong>Vite chose to be unreachable.</strong> Docker chooses the
-          opposite. Same laptop, same wifi, two different defaults &mdash; and the choice is one
-          number, written down when the program opens its socket.
-        </p>
-
-        <p class="measure">
-          A program that wants to accept connections has to name an address to accept them
-          <em>on</em>. Your laptop has more than one. Right now it has a loopback wire that only it
-          can talk to, and a wifi wire with the address <code>192.168.1.12</code> that your router
-          gave it. Choosing <code>127.0.0.1</code> means &ldquo;only the loopback wire.&rdquo;
-          Choosing <code>0.0.0.0</code> means &ldquo;every wire I have, including the ones I join
-          later.&rdquo;
-        </p>
-
-        <figure>
-          <div class="plate">
+.hero-map { display:block; width:100%; height:auto; }
+.hero-map text { font-family:var(--sans); fill:var(--ink); }
+.hero-map .hero-overline,.hero-map .hero-label { font-size:12px; font-weight:600; }
+.hero-map .hero-number { font:11px var(--mono); fill:var(--muted); }
+.hero-map .hero-code { font:12px var(--mono); }
+.hero-map .hero-code.strong { font-weight:600; }
+.hero-map .hero-code.quiet,.hero-map .hero-tiny { fill:var(--muted); }
+.hero-map .hero-tiny { font:9.5px var(--mono); }
+.hero-core,.hero-node,.hero-service { fill:var(--surface); stroke:var(--rule); stroke-width:2; }
+.hero-node.purple { stroke:var(--hue2); } .hero-node.orange { stroke:var(--accent); } .hero-node.green { stroke:var(--good); }
+.hero-led { fill:var(--good); } .hero-led.dim { fill:var(--rule); }
+.hero-path,.hero-share { fill:none; stroke-width:2; }
+.hero-path.purple { stroke:var(--hue2); } .hero-path.orange { stroke:var(--accent); } .hero-path.green,.hero-share { stroke:var(--good); }
+.hero-arrowhead { fill:var(--good); } .hero-arrowhead.hot { fill:var(--accent); }
+.hero-folder { fill:var(--tint-good); stroke:var(--good); }
+</style></head><body><a class="skip-link" href="#main-content">Skip to explanation</a><div class="wrap">
+<header><p class="publication">Learning with AI · Docker Compose</p><h1>Follow a radar image through your app.</h1><p class="intro">The collector fetches it. A shared folder holds it. The API serves it. Explore the connections that make those three actions work.</p><nav aria-label="In this explanation"><a href="#one">Requests → addresses</a><a href="#two">Images → folders</a><a href="#three">Values → configuration</a></nav></header><main id="main-content">
+<section id="one"><h2>First, can the request get in?</h2><p>Your laptop opens the page, but your phone cannot. Change where the port is published and watch the connection.</p><figure class="experiment" id="port-experiment"><div class="experiment-note">Try it · change one setting and follow the request</div><div class="experiment-body"><div class="drawing" tabindex="0" role="region" aria-label="Interactive port diagram"><svg class="lab-svg" viewBox="0 0 600 275" role="img" aria-label="A phone request stops at the laptop boundary when the port is published only to loopback."><defs><marker id="lab-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--accent)"/></marker></defs><rect x="242" y="25" width="338" height="230" rx="6" class="area"/><text x="261" y="53">Your laptop</text><text x="261" y="77" class="small">Wi-Fi address: 192.168.1.12</text><rect x="22" y="94" width="72" height="112" rx="9" class="paper"/><line x1="46" y1="192" x2="70" y2="192" stroke="var(--rule)" stroke-width="3"/><text x="58" y="141" text-anchor="middle">Phone</text><text x="58" y="165" text-anchor="middle" class="small">Wi-Fi</text><path d="M100 151 H224" class="route" marker-end="url(#lab-arrow)"/><text x="169" y="132" text-anchor="middle" class="small">request</text><path id="port-route" d="M249 151 H374" class="route broken"/><g id="port-stop" class="blocked"><path d="M229 141 L249 161 M249 141 L229 161"/></g><rect x="384" y="110" width="169" height="85" rx="5" class="blue"/><text x="468" y="145" text-anchor="middle">API</text><text x="468" y="171" text-anchor="middle" class="code">port 8000</text><text id="port-label" x="400" y="230" text-anchor="middle" class="code">127.0.0.1:4000</text></svg></div><div class="controls"><label for="bind-address">Publish the port on<select id="bind-address"><option value="local">This laptop only</option><option value="network">Network interfaces</option></select></label><code id="port-config">127.0.0.1:4000:8000</code><output id="port-result" for="bind-address" aria-live="polite"><strong>The phone has no route in.</strong>The mapping accepts loopback traffic. The phone arrives over Wi-Fi.</output><p class="hint">A simplified Docker bridge example. Assume routing and firewall rules allow the network connection.</p></div></div><figcaption><strong>The address changes who can reach the mapping.</strong> The API still listens on port 8000 in both cases. A published port joins a host address and port to that container port.</figcaption></figure><p>Being on the same Wi-Fi does not guarantee that a phone can reach a server. The server also needs to listen on an address reachable from that network.</p><p><code>127.0.0.1</code> is IPv4 loopback: it leads back to the device using it. <code>::1</code> does the same for IPv6. Your phone’s localhost is your phone, not your laptop. A laptop’s Wi-Fi address, such as <code>192.168.1.12</code>, is a different way in.</p><details><summary>Compare the listening addresses side by side</summary><figure>
+          <div class="plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
             <svg
               class="dg wide"
               viewBox="0 0 900 380"
@@ -1509,11 +258,11 @@ section:last-child::after {
               <text x="166" y="124" class="sm mono dim" text-anchor="middle">[::1]:5173</text>
 
               <rect x="264" y="90" width="140" height="42" rx="4" class="surface" />
-              <text x="334" y="107" class="sm b" text-anchor="middle">db, closed</text>
+              <text x="334" y="107" class="sm b" text-anchor="middle">local mapping</text>
               <text x="334" y="124" class="sm mono dim" text-anchor="middle">127.0.0.1:8082</text>
 
               <rect x="432" y="90" width="160" height="42" rx="4" class="tint-good" />
-              <text x="512" y="107" class="sm b" text-anchor="middle">db, published</text>
+              <text x="512" y="107" class="sm b" text-anchor="middle">public mapping</text>
               <text x="512" y="124" class="sm mono dim" text-anchor="middle">0.0.0.0:8081</text>
 
               <!-- rails -->
@@ -1551,44 +300,9 @@ section:last-child::after {
               <text x="512" y="80" class="sm b t-good" text-anchor="middle">HTTP 200</text>
             </svg>
           </div>
-          <figcaption>
-            <strong>Where a stem touches is the entire answer.</strong> Nothing about the laptop
-            changes between the three sockets &mdash; the wifi wire is live the whole time. What
-            changes is whether anything is attached to it. Vite binds loopback only, which is why
-            your phone got nothing; that is a Vite setting, not a law. Run
-            <code>npm run dev -- --host</code> and the same server grows a stem down to the wifi
-            wire, and the phone loads the page. Docker starts on the far right by default.
-          </figcaption>
-        </figure>
-
-        <h3>The same three sockets, measured on your machine just now</h3>
-
-        <pre class="tight"><span class="c">$ ss -ltn                       # every socket listening, and the address it took</span>
-LISTEN  <span class="ok">[::1]:5173</span>        <span class="c">&larr; vite, default settings</span>
-LISTEN  <span class="ok">127.0.0.1:8082</span>    <span class="c">&larr; docker run -p 127.0.0.1:8082:80</span>
-LISTEN  <span class="v">0.0.0.0:8081</span>      <span class="c">&larr; docker run -p 8081:80        (no prefix)</span>
-
-<span class="c">$ curl 192.168.1.12:8081        # the laptop's wifi address, not localhost</span>
-<span class="v">HTTP 200</span>
-
-<span class="c">$ curl 192.168.1.12:8082</span>
-<span class="bad">connection refused</span>
-
-<span class="c">$ curl 192.168.1.12:5173        # what your phone was doing</span>
-<span class="bad">connection refused</span></pre>
-
-        <p class="measure">
-          Three containers, one flag of difference, three different answers. The one without the
-          prefix answered on the address your phone would have dialled. Note that
-          <code>-p 8081:80</code> and <code>-p 0.0.0.0:8081:80</code> are the same instruction
-          &mdash; leaving the address off does not mean &ldquo;no address,&rdquo; it means
-          &ldquo;all of them.&rdquo;
-        </p>
-
-        <h3>So why care, when it&rsquo;s only your flat?</h3>
-
-        <figure>
-          <div class="plate">
+          <figcaption><strong>Follow the vertical connections.</strong> A loopback listener has no connection to the Wi-Fi route. An IPv4 listener on <code>0.0.0.0</code> accepts traffic on all local IPv4 addresses. The rails simplify IPv4 and IPv6 loopback into one local route; the IP addresses are examples. Docker publishing is a forwarding rule, represented here by the same connection idea.</figcaption>
+        </figure></details><p>In this project, Vite listens on <code>[::1]:5173</code>. For a normal Docker bridge network, publishing <code>8081:80</code> uses all host addresses by default. Publishing <code>127.0.0.1:8082:80</code> limits that mapping to IPv4 loopback. The two services can therefore behave differently on the same laptop.</p><p>A reachable bind address is only one requirement: routing, Wi-Fi client isolation, and firewall settings still affect access. See Docker’s <a href="https://docs.docker.com/engine/network/port-publishing/">port publishing reference</a> for configurable defaults and networking exceptions.</p><div class="check"><p>Suppose the laptop opens a service at <code>127.0.0.1:8082</code>. Would using the laptop’s Wi-Fi address on your phone reach that same mapping?</p><details><summary>Reveal the reasoning</summary><p>No. Changing the address in the browser does not change where Docker publishes the port. The mapping must include a reachable host address.</p></details></div><details><summary>Why specify loopback in the Compose file?</summary><p>Your laptop can move between networks while its Compose settings stay the same. A loopback mapping expresses that a service is intended for access from this host.</p><figure>
+          <div class="plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
             <svg
               class="dg wide"
               viewBox="0 0 900 320"
@@ -1618,28 +332,9 @@ LISTEN  <span class="v">0.0.0.0:8081</span>      <span class="c">&larr; docker r
               <text x="450" y="294" class="sm dim" text-anchor="middle">one line, unchanged, in all three places &mdash; it never asks which wifi you joined</text>
             </svg>
           </div>
-          <figcaption>
-            <strong>The file has no idea where the laptop is.</strong> You write it at home and it
-            keeps its promise everywhere. Some public networks isolate clients from each other and
-            some do not, and there is no way to tell from the laptop which kind you joined
-            &mdash; so &ldquo;it&rsquo;s only my flat&rdquo; is a fact about today, not about the
-            file. The <code>127.0.0.1:</code> prefix is the version of the promise that stays true
-            on every wifi you will ever join.
-          </figcaption>
-        </figure>
-
-        <p class="measure">
-          There is also a difference in what is behind the door. A stranger reaching Vite reads the
-          HTML you were going to publish anyway. A stranger reaching <code>5432</code> gets a
-          Postgres login prompt, and the password it wants is sitting in your <code>.env</code>
-          &mdash; the same one you probably used on two other projects. That is why the brief
-          singled out the database and not the api.
-        </p>
-
-        <h3>The part that surprises people: your firewall is not covering this</h3>
-
-        <figure>
-          <div class="plate">
+          <figcaption><strong>The configuration stays the same as the network changes.</strong> Device counts are illustrative; they do not prove that those devices can reach you. Publishing broadly creates a possible route that network controls may or may not block.</figcaption>
+        </figure></details><details><summary>A Linux detail: why a UFW rule may not block Docker</summary><figure>
+          <div class="plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
             <svg
               class="dg wide"
               viewBox="0 0 900 320"
@@ -1687,58 +382,14 @@ LISTEN  <span class="v">0.0.0.0:8081</span>      <span class="c">&larr; docker r
 
               <rect x="250" y="212" width="220" height="56" rx="4" class="surface" />
               <text x="360" y="236" class="sm mono b dim" text-anchor="middle">filter INPUT</text>
-              <text x="360" y="255" class="xs dim" text-anchor="middle">every ufw deny rule lives here</text>
+              <text x="360" y="255" class="xs dim" text-anchor="middle">host input rules checked here</text>
 
               <path d="M344,178 l14,14 M358,178 l-14,14" class="ln-bad" />
             </svg>
           </div>
-          <figcaption>
-            <strong>This is documented Docker behaviour, not something I measured here</strong>
-            &mdash; proving it needs a second machine on your wifi. Your <code>ufw</code> is active
-            right now, and a rule like <code>ufw deny 5432</code> would still not close a published
-            port, because the packet is on its way <em>through</em> the host to the container and is
-            judged in <code>FORWARD</code>, while ufw writes its rules in <code>INPUT</code>. Check
-            it yourself with <code>sudo iptables -t nat -S DOCKER</code>. The consequence is the
-            whole point: <strong>the prefix in the compose file is the control that actually
-            works,</strong> and the firewall you assumed was behind it is not.
-          </figcaption>
-        </figure>
-
-        <div class="takeaway">
-          <span class="tag">Answer to question one</span>
-          <p>
-            Localhost is not a property of the laptop, it is a choice each program makes when it
-            starts listening. Vite chose loopback, which is why your phone saw nothing. Docker
-            chooses every wire unless the line says otherwise. <code>"127.0.0.1:5432:5432"</code>
-            is you making Docker's choice for it.
-          </p>
-        </div>
-      </section>
-
-      <!-- ========================= 2 ========================= -->
-      <section id="two">
-        <div>
-          <span class="sec-kicker">Question two &middot; folder</span>
-          <h2>The collector is your app again, woken by a clock instead of a visitor</h2>
-        </div>
-
-        <div class="asked">
-          <span class="who">You asked</span>
-          <p>
-            I do not understand this concept of collector. And why does the collector have the same
-            volumes as the api, especially <code>./frames:/var/lib/rainfall/frames</code>? I have
-            read compose files online and none of them have this pattern on volumes.
-          </p>
-        </div>
-
-        <p class="lead">
-          There are two ways a program gets work. Somebody asks it, or a clock tells it. The api is
-          the first kind. The collector is the second kind. They are the same codebase; the only
-          difference is who wakes them up.
-        </p>
-
-        <figure>
-          <div class="plate">
+          <figcaption><strong>Forwarded traffic takes a different route from traffic delivered to the host.</strong> This drawing shows the common Linux iptables bridge path. Docker documents that published traffic can bypass the UFW rules people expect to protect it; the exact rules depend on the backend. See <a href="https://docs.docker.com/engine/network/packet-filtering-firewalls/">Docker and firewalls</a>.</figcaption>
+        </figure></details><p class="bridge">That explains how requests enter the app. Next, follow the image the API needs to serve.</p></section><section id="two"><h2>Then, where does the image go?</h2><p>The API waits for requests. The collector runs a different command from the same codebase: it periodically asks the upstream feed for new radar images. This kind of background process is often called a worker.</p><figure>
+          <div class="plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
             <svg
               class="dg wide"
               viewBox="0 0 900 350"
@@ -1798,114 +449,11 @@ LISTEN  <span class="v">0.0.0.0:8081</span>      <span class="c">&larr; docker r
               <text x="670" y="308" class="sm dim" text-anchor="middle">same fifteen minutes of wall clock, both rows</text>
             </svg>
           </div>
-          <figcaption>
-            <strong>The little <span class="mono">1</span> on each arrow is which side opens the
-            connection, and it decides the whole service.</strong> Something outside opens a
-            connection to the api, so the api needs a door in the wall &mdash; that is its
-            <code>ports:</code> line. Nothing ever opens a connection to the collector; it only
-            reaches out. That is why the collector has no <code>ports:</code> line at all, and why
-            it needs nothing added to make its outbound fetch work. The general name for this shape
-            is a <strong>worker</strong>, and almost every app grows one: send the emails, expire
-            the sessions, poll the feed.
-          </figcaption>
-        </figure>
-
-        <h3>Why not just do the fetching inside the api?</h3>
-
-        <p class="measure">
-          Because a web server that stops to download a three-megabyte radar frame is a web server
-          answering nobody for the length of that download. Because if you ever run two copies of
-          the api to handle load, you get two collectors, two copies of every frame and two rows per
-          timestamp. And because when the upstream feed goes down, you want the thing that crash-loops
-          to be the collector while the archive keeps serving. Splitting them costs you one extra
-          service and buys all three.
-        </p>
-
-        <figure>
-          <div class="plate">
-            <svg
-              class="dg wide"
-              viewBox="0 0 900 470"
-              role="img"
-              aria-label="One folder, ./api, is built once into one set of layers, and two containers start from it. Listing the two services key by key, six keys are identical and only two differ: the api publishes a port and the collector does not, and the collector sets a command while the api uses the image default."
-            >
-              <defs>
-                <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
-                </marker>
-              </defs>
-
-              <rect x="20" y="30" width="160" height="60" rx="4" class="surface" />
-              <text x="100" y="56" class="sm mono b" text-anchor="middle">./api</text>
-              <text x="100" y="75" class="xs dim" text-anchor="middle">Dockerfile + your code</text>
-
-              <line x1="180" y1="60" x2="232" y2="60" class="ln" marker-end="url(#ar4)" />
-              <text x="206" y="48" class="xs dim" text-anchor="middle">build</text>
-
-              <rect x="240" y="30" width="230" height="60" rx="4" class="tint-good" />
-              <text x="355" y="56" class="sm b" text-anchor="middle">one set of layers</text>
-              <text x="355" y="75" class="xs dim" text-anchor="middle">second build measured at 0.0s &mdash; cache hit</text>
-
-              <path d="M355,90 L355,118 L230,118 L230,148" class="ln" marker-end="url(#ar4)" />
-              <path d="M355,90 L355,118 L670,118 L670,148" class="ln" marker-end="url(#ar4)" />
-
-              <rect x="20" y="150" width="420" height="292" rx="5" class="tint-a" />
-              <text x="36" y="182" class="b">api</text>
-              <text x="424" y="182" class="xs mono dim" text-anchor="end">container 1</text>
-
-              <text x="36" y="218" class="sm mono">build: ./api</text>
-              <text x="36" y="252" class="sm mono">restart: unless-stopped</text>
-              <text x="36" y="286" class="sm mono">environment: DATABASE_URL, REDIS_URL</text>
-              <text x="36" y="320" class="sm mono">volumes: ./api, ./frames</text>
-              <text x="36" y="354" class="sm mono">depends_on: db, cache</text>
-
-              <rect x="28" y="371" width="404" height="26" rx="3" class="tint-warn" />
-              <text x="36" y="389" class="sm mono b">ports: "${WEB_PORT}:8000"</text>
-
-              <rect x="28" y="405" width="404" height="26" rx="3" class="tint-warn" />
-              <text x="36" y="423" class="sm mono dim">command: (none &mdash; image default)</text>
-
-              <rect x="460" y="150" width="420" height="292" rx="5" class="tint-b" />
-              <text x="476" y="182" class="b">collector</text>
-              <text x="864" y="182" class="xs mono dim" text-anchor="end">container 2</text>
-
-              <text x="476" y="218" class="sm mono">build: ./api</text>
-              <text x="476" y="252" class="sm mono">restart: unless-stopped</text>
-              <text x="476" y="286" class="sm mono">environment: DATABASE_URL, REDIS_URL</text>
-              <text x="476" y="320" class="sm mono">volumes: ./api, ./frames</text>
-              <text x="476" y="354" class="sm mono">depends_on: db, cache</text>
-
-              <rect x="468" y="371" width="404" height="26" rx="3" class="tint-warn" />
-              <text x="476" y="389" class="sm mono dim">ports: (none &mdash; nothing dials in)</text>
-
-              <rect x="468" y="405" width="404" height="26" rx="3" class="tint-warn" />
-              <text x="476" y="423" class="sm mono b">command: python -m rainfall.collector</text>
-            </svg>
-          </div>
-          <figcaption>
-            <strong>Five keys match on purpose and two do not.</strong> The repetition is not
-            copy-paste sloppiness &mdash; it is the point. Both containers must run the same code,
-            reach the same database, survive the same restarts and wait for the same two services,
-            so those five lines have to be identical or they are not the same app any more. Compose
-            tags the two builds separately as <code>rainfall-api</code> and
-            <code>rainfall-collector</code>, but the second build does no work; on this laptop it
-            reported <code>0.0s</code>. The one key the brief said to look up is
-            <code>command:</code>, and it is the whole reason a second service exists.
-          </figcaption>
-        </figure>
-
-        <h3>Now the volume: they are not two copies, they are one folder</h3>
-
-        <p class="measure">
-          <code>./frames</code> is a bind mount, so it is a real folder in your repository that
-          appears inside both containers at <code>/var/lib/rainfall/frames</code>. Not a copy in
-          each. The same bytes on the same disk, seen through two doors. The collector writes a
-          <code>.png</code> into it; the api reads that same <code>.png</code> out of it. That
-          handover is the entire architecture, and the shared line is what makes it possible.
-        </p>
-
-        <figure>
-          <div class="plate">
+          <figcaption><strong>Look at which side starts each connection.</strong> The API handles incoming requests; this collector initiates outgoing fetches. It does not need a published port for those fetches. Separating the processes lets collection and serving restart independently.</figcaption>
+        </figure><p>They are separate containers, so their private filesystems are separate too. Writing a file inside the collector does not automatically make it appear inside the API.</p><figure class="experiment" id="folder-experiment"><div class="experiment-note">Try it · give the API a different source folder</div><div class="experiment-body"><div class="drawing" tabindex="0" role="region" aria-label="Interactive shared folder diagram"><svg class="lab-svg" viewBox="0 0 600 300" role="img" aria-label="The collector writes radar.png into a host folder that the API also reads."><defs><marker id="folder-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--good)"/></marker></defs><rect x="20" y="24" width="190" height="65" rx="5" class="paper"/><text x="115" y="64" text-anchor="middle">Collector</text><rect x="385" y="24" width="190" height="65" rx="5" class="paper"/><text x="480" y="64" text-anchor="middle">API</text><path d="M115 89 V164" class="route green-route" marker-end="url(#folder-arrow)"/><text x="130" y="127" class="small">writes</text><path id="folder-route" d="M210 215 H480 V97" class="route green-route" marker-end="url(#folder-arrow)"/><text x="491" y="127" class="small">reads</text><path d="M20 174 H82 L94 189 H210 V270 H20Z" class="green"/><text x="115" y="216" class="code" text-anchor="middle">./frames</text><text x="115" y="247" text-anchor="middle">radar.png</text><g id="other-folder" hidden><path d="M385 174 H447 L459 189 H575 V270 H385Z" class="area"/><text x="480" y="216" class="code" text-anchor="middle">./other-frames</text><text x="480" y="247" text-anchor="middle" class="small">empty</text></g></svg></div><div class="controls"><label for="folder-source">The API mounts<select id="folder-source"><option value="shared">./frames — same source</option><option value="separate">./other-frames — different source</option></select></label><output id="folder-result" for="folder-source" aria-live="polite"><strong>The API sees radar.png.</strong>Both containers point to the same host directory.</output><p class="hint">Both destination paths stay <code>/var/lib/rainfall/frames</code>. Only the source directory changes.</p></div></div><figcaption><strong>Identical paths inside containers do not guarantee identical files.</strong> Sharing comes from mounting the same source storage. With separate folders, the collector can write successfully while the API has nothing to serve.</figcaption></figure><p>The shared bind mount supplies the handover:</p><pre><code># Under both api and collector:
+volumes:
+  - ./frames:/var/lib/rainfall/frames</code></pre><p>The left side names one host directory. The right side is where each container sees it. Repeating the same source directory gives both processes access to the same files.</p><details><summary>Compare shared and separate storage</summary><figure>
+          <div class="plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
             <svg
               class="dg wide"
               viewBox="0 0 900 390"
@@ -1968,43 +516,71 @@ LISTEN  <span class="v">0.0.0.0:8081</span>      <span class="c">&larr; docker r
               <text x="655" y="356" class="sm dim" text-anchor="middle">no error, anywhere, ever</text>
             </svg>
           </div>
-          <figcaption>
-            <strong>The right-hand version starts cleanly and works forever without working.</strong>
-            Both containers boot, both healthchecks pass, <code>docker compose ps</code> shows four
-            services up, the collector logs a successful fetch every five minutes &mdash; and every
-            page on the site is empty. Nothing in Docker can warn you, because you asked for two
-            volumes and you got two volumes. That is the failure the shared line prevents, and it is
-            why <code>./frames</code> is written twice rather than once.
-          </figcaption>
-        </figure>
+          <figcaption><strong>One source folder is the connection.</strong> On the left, the API sees the file the collector writes. On the right, separate storage leaves the API without that file even if both processes are healthy. Matching destination paths alone do not make storage shared.</figcaption>
+        </figure></details><div class="check"><p>Both containers use <code>/var/lib/rainfall/frames</code>, but one mounts <code>./frames-a</code> and the other mounts <code>./frames-b</code>. Do they share images?</p><details><summary>Reveal the reasoning</summary><p>No. The paths inside the containers match, but the host directories differ. Sharing depends on the source storage.</p></details></div><p>Sharing a directory also needs a file-writing agreement. For example, the collector can finish a download in a temporary file, then rename it into place on the same filesystem. That prevents the API from reading a half-written image.</p><details><summary>Why repeat the code mount and other service settings?</summary><figure>
+          <div class="plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
+            <svg
+              class="dg wide"
+              viewBox="0 0 900 470"
+              role="img"
+              aria-label="One folder, ./api, is built once into one set of layers, and two containers start from it. Listing the two services key by key, six keys are identical and only two differ: the api publishes a port and the collector does not, and the collector sets a command while the api uses the image default."
+            >
+              <defs>
+                <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+                </marker>
+              </defs>
 
-        <p class="measure">
-          Here is that shared folder actually working, run just now: a container writing frames on a
-          loop, a second container listing the same path, and your own shell listing the folder on
-          disk. Three viewpoints, one set of files.
-        </p>
+              <rect x="20" y="30" width="160" height="60" rx="4" class="surface" />
+              <text x="100" y="56" class="sm mono b" text-anchor="middle">./api</text>
+              <text x="100" y="75" class="xs dim" text-anchor="middle">Dockerfile + your code</text>
 
-        <pre class="tight"><span class="c"># what the api container sees at /var/lib/rainfall/frames</span>
-frame-1.png  frame-2.png  frame-3.png  frame-4.png  frame-5.png
+              <line x1="180" y1="60" x2="232" y2="60" class="ln" marker-end="url(#ar4)" />
+              <text x="206" y="48" class="xs dim" text-anchor="middle">build</text>
 
-<span class="c"># what you see in ./frames on the laptop, the same instant</span>
-frame-1.png  frame-2.png  frame-3.png  frame-4.png  frame-5.png
+              <rect x="240" y="30" width="230" height="60" rx="4" class="tint-good" />
+              <text x="355" y="56" class="sm b" text-anchor="middle">one set of layers</text>
+              <text x="355" y="75" class="xs dim" text-anchor="middle">second build measured at 0.0s &mdash; cache hit</text>
 
-<span class="c"># and the contents, read from the api container, written by the collector</span>
-$ docker exec api cat /var/lib/rainfall/frames/frame-1.png
-<span class="ok">radar frame 1</span></pre>
+              <path d="M355,90 L355,118 L230,118 L230,148" class="ln" marker-end="url(#ar4)" />
+              <path d="M355,90 L355,118 L670,118 L670,148" class="ln" marker-end="url(#ar4)" />
 
-        <p class="measure">
-          The other shared mount, <code>./api:/app</code>, is there for the same reason at a
-          different level. Both services run your source from your folder, so editing one file
-          changes both. Drop it from the collector and the collector runs whatever code was baked
-          into the image at build time, silently drifting from the api it is supposed to match.
-        </p>
+              <rect x="20" y="150" width="420" height="292" rx="5" class="tint-a" />
+              <text x="36" y="182" class="b">api</text>
+              <text x="424" y="182" class="xs mono dim" text-anchor="end">container 1</text>
 
-        <h3>Why you have never seen this online</h3>
+              <text x="36" y="218" class="sm mono">build: ./api</text>
+              <text x="36" y="252" class="sm mono">restart: unless-stopped</text>
+              <text x="36" y="286" class="sm mono">environment: DATABASE_URL, REDIS_URL</text>
+              <text x="36" y="320" class="sm mono">volumes: ./api, ./frames</text>
+              <text x="36" y="354" class="sm mono">depends_on: db, cache</text>
 
-        <figure>
-          <div class="plate">
+              <rect x="28" y="371" width="404" height="26" rx="3" class="tint-warn" />
+              <text x="36" y="389" class="sm mono b">ports: "${WEB_PORT}:8000"</text>
+
+              <rect x="28" y="405" width="404" height="26" rx="3" class="tint-warn" />
+              <text x="36" y="423" class="sm mono dim">command: (none &mdash; image default)</text>
+
+              <rect x="460" y="150" width="420" height="292" rx="5" class="tint-b" />
+              <text x="476" y="182" class="b">collector</text>
+              <text x="864" y="182" class="xs mono dim" text-anchor="end">container 2</text>
+
+              <text x="476" y="218" class="sm mono">build: ./api</text>
+              <text x="476" y="252" class="sm mono">restart: unless-stopped</text>
+              <text x="476" y="286" class="sm mono">environment: DATABASE_URL, REDIS_URL</text>
+              <text x="476" y="320" class="sm mono">volumes: ./api, ./frames</text>
+              <text x="476" y="354" class="sm mono">depends_on: db, cache</text>
+
+              <rect x="468" y="371" width="404" height="26" rx="3" class="tint-warn" />
+              <text x="476" y="389" class="sm mono dim">ports: (none &mdash; nothing dials in)</text>
+
+              <rect x="468" y="405" width="404" height="26" rx="3" class="tint-warn" />
+              <text x="476" y="423" class="sm mono b">command: python -m rainfall.collector</text>
+            </svg>
+          </div>
+          <figcaption><strong>Shared code does not mean one running process.</strong> The services reuse a codebase but start different commands. <code>./api:/app</code> exposes development source changes to both; the frames mount shares output. Build cache can reuse layers, but identical settings are a choice of this app, not a Compose requirement.</figcaption>
+        </figure><p>A separate worker can prevent slow collection work from occupying request handlers and avoids automatically starting another collector for every API replica. A web server can also run background tasks; separation is an architectural choice, not a requirement.</p></details><details><summary>Why do simpler tutorials often use separate volumes?</summary><figure>
+          <div class="plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
             <svg
               class="dg wide"
               viewBox="0 0 900 300"
@@ -2047,67 +623,14 @@ $ docker exec api cat /var/lib/rainfall/frames/frame-1.png
               <text x="290" y="272" class="sm">./frames &mdash; the shared folder appears here</text>
             </svg>
           </div>
-          <figcaption>
-            <strong>The examples you read were not hiding this; they never needed it.</strong> A
-            tutorial stack has one process that owns files, so &ldquo;one volume, one service&rdquo;
-            is all it can demonstrate, and the reader quietly generalises that into a rule. The real
-            rule is narrower: <strong>share a directory when two processes must see the same files.</strong>
-            The exception worth naming is a database's own data directory &mdash; two Postgres
-            containers pointed at one volume will corrupt it, because each believes it is the only
-            writer. Your api and collector are safe precisely because only one of them writes.
-          </figcaption>
-        </figure>
-
-        <div class="takeaway">
-          <span class="tag">Answer to question two</span>
-          <p>
-            A collector is your app started with a different <code>command:</code>, doing the work
-            nobody asks for. It repeats the api's volumes because it is the same app &mdash;
-            <code>./api</code> so it runs the same code, <code>./frames</code> so the file it writes
-            is the file the api serves. Take that second line away and both services keep running
-            perfectly while the site stays empty.
-          </p>
-        </div>
-      </section>
-
-      <!-- ========================= 3 ========================= -->
-      <section id="three">
-        <div>
-          <span class="sec-kicker">Question three &middot; moment</span>
-          <h2><code>.env</code> is the one file Compose opens without being told</h2>
-        </div>
-
-        <div class="asked">
-          <span class="who">You asked</span>
-          <p>
-            How are we getting <code>WEB_PORT</code> when we are not declaring the
-            <code>env_file</code>?
-          </p>
-        </div>
-
-        <p class="lead">
-          Because <code>env_file:</code> was never going to supply it. Those are two different
-          machines that happen to share a word. One fills in blanks in the text of your compose
-          file; the other puts variables inside a running container. They happen at different times
-          and neither can do the other's job.
-        </p>
-
-        <p class="measure">
-          Compose does two separate things when you type <code>up</code>. First it reads
-          <code>compose.yaml</code> as plain text and replaces every <code>${...}</code> &mdash; no
-          container exists yet, the daemon has not been asked for anything. For that step it looks
-          in your shell's environment, and in a file called <code>.env</code> sitting next to the
-          compose file. It opens that file <strong>automatically</strong>. There is no line to write,
-          which is exactly why you could not find one.
-        </p>
-
-        <figure>
-          <div class="plate">
+          <figcaption><strong>Storage follows who needs the data.</strong> A web server usually talks to a database through its protocol, rather than reading its data directory. Here, two processes intentionally exchange image files. Do not generalize that into sharing one database data directory between independent database servers.</figcaption>
+        </figure></details><p class="bridge">Requests and files now have a route. But before either process starts, Compose must resolve the values in its configuration.</p></section><section id="three"><h2>Before startup, where do the values go?</h2><p>Your question was: how can <code>${WEB_PORT}</code> work without an <code>env_file:</code> entry? The answer is that Compose configuration and a container’s environment have separate sources.</p><p>For a typical command run in the project directory, Compose automatically reads <code>.env</code> for substitution. Shell variables take precedence; <code>--env-file</code> can select a different file. A service’s <code>env_file:</code> instead supplies variables for its container.</p><figure>
+          <div class="plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
             <svg
               class="dg wide"
               viewBox="0 0 900 380"
               role="img"
-              aria-label="Two moments separated by a wall. In the first, the compose CLI reads .env and shell variables and substitutes them into the text of compose.yaml, producing a fully substituted document. Only that document crosses to the second moment, where the daemon creates containers and opens the file named by env_file, putting its values inside the container."
+              aria-label="Two value destinations: shell and dot env values fill Compose configuration; dot env dot web supplies container environment values. Compose resolves both before container creation."
             >
               <defs>
                 <marker id="ar7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -2115,8 +638,8 @@ $ docker exec api cat /var/lib/rainfall/frames/frame-1.png
                 </marker>
               </defs>
 
-              <text x="20" y="50" class="sm b t-accent">MOMENT 1 &mdash; the CLI reads a text file</text>
-              <text x="470" y="50" class="sm b t-hue2">MOMENT 2 &mdash; the daemon creates containers</text>
+              <text x="20" y="50" class="sm b t-accent">JOB 1 &mdash; fill Compose values</text>
+              <text x="470" y="50" class="sm b t-hue2">JOB 2 &mdash; set container environment</text>
 
               <rect x="20" y="90" width="150" height="56" rx="4" class="tint-a" />
               <text x="95" y="114" class="sm mono b" text-anchor="middle">.env</text>
@@ -2134,7 +657,7 @@ $ docker exec api cat /var/lib/rainfall/frames/frame-1.png
               <text x="234" y="146" class="xs mono dim">ports:</text>
               <text x="234" y="166" class="xs mono">- "${WEB_PORT}:8000"</text>
               <text x="234" y="196" class="xs mono dim">env_file: .env.web</text>
-              <text x="234" y="214" class="xs dim">left alone, just text</text>
+              <text x="234" y="214" class="xs dim">service env source</text>
 
               <line x1="315" y1="228" x2="315" y2="250" class="ln" marker-end="url(#ar7)" />
 
@@ -2144,17 +667,17 @@ $ docker exec api cat /var/lib/rainfall/frames/frame-1.png
 
               <rect x="430" y="70" width="20" height="192" class="slab" />
               <rect x="430" y="320" width="20" height="26" class="slab" />
-              <text x="440" y="368" class="sm dim" text-anchor="middle">one crossing</text>
+              <text x="440" y="368" class="sm dim" text-anchor="middle">different destinations</text>
 
               <line x1="410" y1="288" x2="684" y2="288" class="ln-good" marker-end="url(#ar7)" />
-              <text x="560" y="310" class="sm dim" text-anchor="middle">the substituted text, and nothing else</text>
+              <text x="560" y="310" class="sm dim" text-anchor="middle">resolved configuration to engine</text>
 
               <rect x="470" y="120" width="150" height="56" rx="4" class="tint-b" />
               <text x="545" y="144" class="sm mono b" text-anchor="middle">.env.web</text>
               <text x="545" y="164" class="xs mono dim" text-anchor="middle">WEB_PORT=9999</text>
 
               <line x1="620" y1="148" x2="684" y2="148" class="ln" marker-end="url(#ar7)" />
-              <text x="652" y="136" class="xs dim" text-anchor="middle">opened now</text>
+              <text x="652" y="136" class="xs dim" text-anchor="middle">via Compose</text>
 
               <rect x="690" y="110" width="190" height="220" rx="4" class="surface" />
               <text x="785" y="138" class="sm b" text-anchor="middle">the running container</text>
@@ -2167,34 +690,20 @@ $ docker exec api cat /var/lib/rainfall/frames/frame-1.png
               <text x="704" y="302" class="xs dim">and never was</text>
             </svg>
           </div>
-          <figcaption>
-            <strong>The wall is time, not place.</strong> Both files sit in the same folder; what
-            separates them is which moment reads them. <code>.env</code> is consumed while the file
-            is still text, so its values can end up anywhere in the file &mdash; a port, an image
-            tag, a service name. <code>env_file:</code> is consumed after the text is finished, so
-            its values can only ever end up inside a container. That is why no amount of
-            <code>env_file:</code> will ever fill a <code>${...}</code>, and why the file that fills
-            them needs no declaration: Compose looks for <code>.env</code> whether you meant it to
-            or not.
-          </figcaption>
-        </figure>
+          <figcaption><strong>Follow the destination of each value.</strong> One path fills a Compose value; the other supplies the container’s environment. These are logical stages, not two separate file-reading machines: Compose resolves <code>env_file</code> too, before asking the engine to create the container.</figcaption>
+        </figure><figure class="experiment" id="env-experiment"><div class="experiment-note">Try it · change each value independently</div><div class="experiment-body"><div class="drawing" tabindex="0" role="region" aria-label="Interactive environment values diagram"><svg class="lab-svg" viewBox="0 0 600 300" role="img" aria-label="The dot env value supplies host port 4000; the service env file separately supplies container variable 9999."><defs><marker id="env-host-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--accent)"/></marker><marker id="env-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="var(--hue2)"/></marker></defs><text x="20" y="33">Value source</text><text x="353" y="33">Where the value goes</text><rect x="20" y="58" width="220" height="86" rx="5" class="blue"/><text x="38" y="88" class="code">.env</text><text id="env-host-source" x="38" y="119" class="code">WEB_PORT=4000</text><path d="M242 102 H333" class="route" marker-end="url(#env-host-arrow)"/><text x="287" y="85" text-anchor="middle" class="small">fills</text><rect x="343" y="58" width="237" height="86" rx="5" class="blue"/><text x="361" y="88">Host port</text><text id="env-host-dest" x="361" y="120" class="code">4000 → container:8000</text><rect x="20" y="180" width="220" height="86" rx="5" class="purple"/><text x="38" y="210" class="code">.env.web</text><text id="env-app-source" x="38" y="241" class="code">WEB_PORT=9999</text><path d="M242 224 H333" class="route purple-route" marker-end="url(#env-arrow)"/><text x="287" y="207" text-anchor="middle" class="small">sets</text><rect x="343" y="180" width="237" height="86" rx="5" class="purple"/><text x="361" y="210">Container environment</text><text id="env-app-dest" x="361" y="242" class="code">WEB_PORT=9999</text></svg></div><div class="controls"><label for="env-host">WEB_PORT in .env<select id="env-host"><option>4000</option><option>5000</option><option>8080</option></select></label><label for="env-app">WEB_PORT in .env.web<select id="env-app"><option>9999</option><option>7000</option><option>3000</option></select></label><output id="env-result" for="env-host env-app" aria-live="polite">Host port: 4000. Container variable: 9999.</output><p class="hint">Assume no shell override and an app that listens on 8000 independently of WEB_PORT.</p></div></div><figcaption><strong>Changing one source leaves the other destination alone.</strong> <code>${WEB_PORT}</code> uses the interpolation source. <code>env_file: .env.web</code> supplies the container environment. A variable affects the app only if its code uses it.</figcaption></figure><p>Give the same name two different values and the distinction becomes visible. Assume the shell does not override <code>WEB_PORT</code>:</p><pre><code># .env
+WEB_PORT=4000
 
-        <h3>The proof: one variable name, two values, one file</h3>
+# .env.web
+WEB_PORT=9999
 
-        <p class="measure">
-          Here is a compose file that uses both mechanisms on the same name at the same time. The
-          port asks for <code>${WEB_PORT}</code>; the service also loads <code>.env.web</code>, which
-          sets <code>WEB_PORT</code> to something else entirely.
-        </p>
-
-        <pre><span class="k">services:</span>
-  <span class="k">web:</span>
-    <span class="k">image:</span> <span class="v">nginx:alpine</span>
-    <span class="k">env_file:</span> <span class="v">.env.web</span>          <span class="c"># this file says WEB_PORT=9999</span>
-    <span class="k">ports:</span> [<span class="v">"${WEB_PORT}:8000"</span>]   <span class="c"># .env says WEB_PORT=4000</span></pre>
-
-        <figure>
-          <div class="plate">
+# compose.yaml (app listens on port 8000)
+services:
+  web:
+    image: your-web-image
+    env_file: .env.web
+    ports: ["${WEB_PORT}:8000"]</code></pre><div class="check"><p>Predict the result: is the host port 4000 or 9999?</p><details><summary>Reveal the reasoning</summary><p>4000. Compose substitutes <code>${WEB_PORT}</code> from <code>.env</code>. Inside the container, <code>WEB_PORT</code> is 9999. That variable only affects the app if its code reads it.</p></details></div><details><summary>See the two values in the resolved Compose output</summary><figure>
+          <div class="plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
             <svg
               class="dg wide"
               viewBox="0 0 900 280"
@@ -2235,135 +744,100 @@ $ docker exec api cat /var/lib/rainfall/frames/frame-1.png
               <path d="M250,185 L375,185 L375,158 L412,158" class="ln-hue2" marker-end="url(#ar8b)" />
             </svg>
           </div>
-          <figcaption>
-            <strong>The same name resolves to two different numbers in one rendered file, and
-            Compose reports no conflict &mdash; because there isn't one.</strong> The value that
-            chose the host port came from <code>.env</code> at moment one. The value living inside
-            the container came from <code>env_file</code> at moment two. The paths cross on the way
-            past each other and never touch. This is the real output of
-            <code>docker compose config</code>, run here before this page was written.
-          </figcaption>
-        </figure>
+          <figcaption><strong>The two values appear in different places.</strong> This is an illustrative excerpt of <code>docker compose config</code>: the published port is 4000 and the container environment contains 9999. Using the same name does not connect those jobs.</figcaption>
+        </figure></details><details><summary>What if the interpolation variable is missing?</summary><p>Without a shell value, file value, or default, Compose warns and substitutes an empty string. What happens next depends on where the blank lands. In a port mapping it can leave the host port unassigned, allowing Docker to allocate one dynamically; other fields may become invalid.</p><p>For a required value, write <code>${WEB_PORT:?Set WEB_PORT}</code> so configuration fails with a useful message. Use <code>docker compose config</code> to inspect the resolved model before starting the app.</p></details><p>The distinction to keep is <em>where the value goes</em>. <code>.env</code> can supply values used in your Compose file. It does not automatically put every variable into a container. <code>env_file:</code> supplies the service’s environment. Docker documents <a href="https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/">interpolation sources</a> and <a href="https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/">container environment settings</a> separately.</p></section><section><h2>Read the file by following a connection</h2><p>When a line feels mysterious, point to its two ends. A published port connects a host address to a container port. A bind mount connects a host directory to a container path. A variable source supplies a particular configuration value.</p><p>Then ask what would break if that connection changed. That question tells you why the line exists.</p><details><summary>See all three connections together</summary><figure class="hero-figure">
+            <div class="hero-plate" tabindex="0" role="region" aria-label="Diagram; scroll horizontally on small screens">
+              <svg
+                class="hero-map"
+                viewBox="0 0 620 520"
+                role="img"
+                aria-label="A Docker Compose file sits at the centre of three decisions. Before startup, dot env supplies values. During startup, a published port chooses which network wires can reach it. While running, the API and collector meet through one shared frames folder."
+              >
+                <defs>
+                  <marker id="hero-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" class="hero-arrowhead" />
+                  </marker>
+                  <marker id="hero-arrow-hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" class="hero-arrowhead hot" />
+                  </marker>
+                </defs>
 
-        <h3>What happens when <code>.env</code> is missing</h3>
+                <text x="30" y="34" class="hero-overline">ONE FILE · THREE DECISIONS</text>
 
-        <p class="measure">
-          Delete <code>.env</code> and keep everything else. The container still gets its
-          <code>WEB_PORT=9999</code> from <code>env_file</code>, so nothing about the container
-          changes. The published port simply disappears from the rendered file, and Compose says so
-          in a warning rather than an error &mdash; <code>up</code> carries on and starts the stack.
-        </p>
+                <rect x="212" y="194" width="196" height="126" rx="12" class="hero-core" />
+                <circle cx="238" cy="220" r="5" class="hero-led" />
+                <circle cx="256" cy="220" r="5" class="hero-led dim" />
+                <circle cx="274" cy="220" r="5" class="hero-led dim" />
+                <text x="310" y="260" text-anchor="middle" class="hero-code strong">compose.yaml</text>
+                <text x="310" y="287" text-anchor="middle" class="hero-code quiet">the visible file</text>
 
-        <pre class="tight"><span class="c">$ rm .env &amp;&amp; docker compose config</span>
-<span class="bad">warning  The "WEB_PORT" variable is not set. Defaulting to a blank string.</span>
+                <rect x="30" y="72" width="174" height="98" rx="10" class="hero-node purple" />
+                <text x="48" y="100" class="hero-number">03</text>
+                <text x="48" y="128" class="hero-label">MOMENT</text>
+                <text x="48" y="151" class="hero-code quiet">.env → ${...}</text>
+                <path d="M170,170 C188,190 196,208 215,225" class="hero-path purple" marker-end="url(#hero-arrow)" />
+                <text x="200" y="183" class="hero-tiny" text-anchor="middle">before parse</text>
 
-<span class="k">services:</span>
-  <span class="k">web:</span>
-    <span class="k">environment:</span>
-      <span class="k">WEB_PORT:</span> <span class="v">"9999"</span>      <span class="c">&larr; still here, env_file did its job</span>
-    <span class="k">ports:</span>
-      - <span class="k">target:</span> <span class="v">8000</span>
-        <span class="k">protocol:</span> <span class="v">tcp</span>     <span class="bad">&larr; published: is gone. no port. no error.</span></pre>
+                <rect x="416" y="72" width="174" height="98" rx="10" class="hero-node orange" />
+                <text x="434" y="100" class="hero-number">01</text>
+                <text x="434" y="128" class="hero-label">ADDRESS</text>
+                <text x="434" y="151" class="hero-code quiet">0.0.0.0 → every wire</text>
+                <path d="M450,170 C432,190 424,208 405,225" class="hero-path orange" marker-end="url(#hero-arrow-hot)" />
+                <text x="420" y="183" class="hero-tiny" text-anchor="middle">at bind</text>
 
-        <p class="measure">
-          That warning is the whole failure mode: your site is unreachable on
-          <code>localhost:4000</code>, the container is healthy, the logs are clean, and the only
-          hint scrolled past during <code>up</code>. It is also why the drill at the bottom of your
-          own compose file says to run <code>docker compose config</code> first &mdash; that command
-          is how you see what moment one decided, before moment two acts on it.
-        </p>
+                <path d="M310,320 L310,364" class="hero-path green" marker-end="url(#hero-arrow)" />
+                <text x="326" y="349" class="hero-tiny">while running</text>
 
-        <h3>Your own file, rendered right now</h3>
+                <rect x="96" y="388" width="428" height="100" rx="10" class="hero-node green" />
+                <text x="116" y="417" class="hero-number">02</text>
+                <text x="116" y="447" class="hero-label">FOLDER</text>
 
-        <p class="measure">
-          There is no <code>.env</code> in this repository &mdash; it is in
-          <code>.gitignore</code> and was never created. So moment one has nothing to substitute,
-          and running <code>docker compose config</code> against your
-          <code>docker-compose.yml</code> this minute produces thirteen warnings and a document
-          that is already broken in three places, before a single container exists.
-        </p>
-
-        <pre class="tight"><span class="c">$ docker compose config</span>
-<span class="bad">warning  The "WEB_PORT" variable is not set. Defaulting to a blank string.</span>
-<span class="bad">warning  The "POSTGRES_PASSWORD" variable is not set. Defaulting to a blank string.</span>
-<span class="c">          ... eleven more like it ...</span>
-
-  <span class="k">api:</span>
-    <span class="k">environment:</span>
-      <span class="k">DATABASE_URL:</span> <span class="bad">postgresql://:@db:5432/</span>   <span class="c">&larr; no user, no password, no database name</span>
-    <span class="k">ports:</span>
-      - <span class="k">target:</span> <span class="v">8000</span>                        <span class="c">&larr; published: absent. the site has no port.</span>
-
-  <span class="k">db:</span>
-    <span class="k">image:</span> <span class="bad">'postgres:'</span>                     <span class="c">&larr; a tag that cannot be pulled</span>
-    <span class="k">ports:</span>
-      - <span class="k">host_ip:</span> <span class="ok">127.0.0.1</span>                 <span class="c">&larr; survives: it was typed, not interpolated</span>
-        <span class="k">published:</span> <span class="ok">"5432"</span></pre>
-
-        <p class="measure">
-          Nothing here is wrong with the YAML you wrote. The file is fine; the value source is
-          absent. Notice which line survived: <code>127.0.0.1</code> is literal text, so moment one
-          had nothing to do to it. Everything that came from <code>${...}</code> is now an empty
-          string. Write a <code>.env</code> beside the compose file with the five names it asks for
-          and every one of those lines fills in.
-        </p>
-
-        <div class="takeaway">
-          <span class="tag">Answer to question three</span>
-          <p>
-            You are getting <code>WEB_PORT</code> from <code>.env</code>, which Compose opens by
-            itself because of where it sits, not because anything points at it. That is also why
-            <code>POSTGRES_PASSWORD</code> in your file can be both interpolated into
-            <code>DATABASE_URL</code> and handed to <code>db</code> as an environment variable
-            &mdash; two mechanisms, one source file, written once.
-          </p>
-        </div>
-      </section>
-
-      <!-- ========================= recap ========================= -->
-      <section>
-        <div>
-          <span class="sec-kicker">All three at once</span>
-          <h2>Same shape, three times: something is decided before you get to look</h2>
-        </div>
-
-        <div class="tablewrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Question</th>
-                <th>The default nobody shows you</th>
-                <th>How to see it for yourself</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Leaving the address off <code>ports:</code> means every wire, not none. Vite made the opposite choice, which is what your phone measured.</td>
-                <td><code>ss -ltn</code> &mdash; read the address column, not the port</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Two services with separate volumes never fail; they just never meet. The shared line is what turns two processes into one app.</td>
-                <td><code>docker compose config --volumes</code>, then check what each service mounts</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td><code>.env</code> is read with no declaration; <code>env_file:</code> is declared but cannot fill a <code>${...}</code>.</td>
-                <td><code>docker compose config</code> &mdash; every blank already filled in</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p class="measure">
-          If you want to close the loop on the first one yourself, it takes two commands and your
-          phone. Run <code>docker run --rm -p 8081:80 nginx:alpine</code>, then open
-          <code>http://192.168.1.12:8081</code> on the phone that could not reach Vite. It will
-          load. That is the difference the prefix removes.
-        </p>
-      </section>
-      </main>
-    </div>
-  </body>
-</html>
+                <rect x="232" y="410" width="88" height="45" rx="7" class="hero-service" />
+                <text x="276" y="438" text-anchor="middle" class="hero-code strong">collector</text>
+                <rect x="416" y="410" width="68" height="45" rx="7" class="hero-service" />
+                <text x="450" y="438" text-anchor="middle" class="hero-code strong">api</text>
+                <path d="M276,455 L276,472 L450,472 L450,455" class="hero-share" />
+                <rect x="334" y="453" width="58" height="36" rx="18" class="hero-folder" />
+                <text x="363" y="476" text-anchor="middle" class="hero-code strong">files</text>
+              </svg>
+            </div>
+            <figcaption><strong>Three routes through one app.</strong> Configuration supplies values before startup, the published address controls an incoming route, and shared storage carries images from collector to API. Each route solves a different problem.</figcaption>
+          </figure></details></section></main><footer>These are explanatory models of the Rainfall app. The controls change the illustrations, not your Docker configuration. Addresses and command output are examples. On a small screen, focus or swipe a diagram to explore its full width.</footer></div><script>
+const byId = id => document.getElementById(id);
+function updatePort() {
+  const network = byId('bind-address').value === 'network';
+  byId('port-route').classList.toggle('broken', !network);
+  byId('port-route').setAttribute('marker-end', network ? 'url(#lab-arrow)' : '');
+  byId('port-stop').style.display = network ? 'none' : '';
+  byId('port-label').textContent = network ? '0.0.0.0:4000 (IPv4)' : '127.0.0.1:4000';
+  byId('port-config').textContent = network ? '4000:8000' : '127.0.0.1:4000:8000';
+  byId('port-result').innerHTML = network
+    ? '<strong>The request reaches the API.</strong>The host mapping includes the Wi-Fi address. The request is forwarded to container port 8000.'
+    : '<strong>The phone has no route in.</strong>The mapping accepts loopback traffic. The phone arrives over Wi-Fi.';
+  document.querySelector('#port-experiment svg').setAttribute('aria-label', network ? 'The phone request crosses the laptop boundary and reaches API port 8000.' : 'The phone request stops at the laptop boundary because the port is published only to loopback.');
+}
+function updateFolder() {
+  const shared = byId('folder-source').value === 'shared';
+  byId('other-folder').style.display = shared ? 'none' : '';
+  byId('other-folder').removeAttribute('hidden');
+  byId('folder-route').setAttribute('d', shared ? 'M210 215 H480 V97' : 'M480 173 V97');
+  byId('folder-result').innerHTML = shared
+    ? '<strong>The API sees radar.png.</strong>Both containers point to the same host directory.'
+    : '<strong>The API sees an empty folder.</strong>The collector still writes radar.png, but into a different directory.';
+  document.querySelector('#folder-experiment svg').setAttribute('aria-label', shared ? 'The collector writes radar.png to the shared host folder and the API reads that same folder.' : 'The collector writes radar.png to frames while the API reads a separate empty other-frames folder.');
+}
+function updateEnv() {
+  const host = byId('env-host').value;
+  const app = byId('env-app').value;
+  byId('env-host-source').textContent = 'WEB_PORT=' + host;
+  byId('env-host-dest').textContent = host + ' → container:8000';
+  byId('env-app-source').textContent = byId('env-app-dest').textContent = 'WEB_PORT=' + app;
+  byId('env-result').textContent = 'Host port: ' + host + '. Container variable: ' + app + '.';
+  document.querySelector('#env-experiment svg').setAttribute('aria-label', 'Dot env supplies host port ' + host + '. The service env file separately supplies container variable ' + app + '.');
+}
+byId('bind-address').addEventListener('change', updatePort);
+byId('folder-source').addEventListener('change', updateFolder);
+byId('env-host').addEventListener('change', updateEnv);
+byId('env-app').addEventListener('change', updateEnv);
+updatePort(); updateFolder(); updateEnv();
+</script></body></html>
