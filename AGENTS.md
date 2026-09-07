@@ -20,10 +20,35 @@
 - Use the local [eli5 skill](.agents/skills/eli5/SKILL.md) for HTML explanations. Do not invoke it
   for ordinary chat questions.
 
+## Design decisions for every model
+
+- Read the local eli5 skill and its linked artifact-design, artifact-diagramming, and
+  frontend-design instructions before creating a lesson. The written instructions are the
+  source of the design approach; an earlier page or conversation is not required context.
+- Before implementation, make a concise design plan that connects the lesson's concepts to
+  palette roles, typography, layout, and the claims its diagrams will show. Explain what each
+  accent color helps the reader identify. A list of hex values alone is not a color plan.
+- Use consistent colors for recurring concepts across diagrams and related examples. Use
+  labels, shapes, and line styles alongside color. Choose the number of semantic colors needed
+  by the explanation; the diagram skill's single-accent guidance does not limit this choice.
+- In the rendered review, verify both appearance and explanatory purpose: hierarchy is clear,
+  diagram labels are readable, colors retain their meanings, and related examples use the same
+  visual cues. Also verify mobile layout, both themes, and changed interactions. Successful
+  rendering or theme switching alone does not establish that the design serves the lesson.
+
 ## Page location and server
 
 - When creating an HTML explanation, replace the root `index.html`. Do not create additional
   lesson pages or archives.
+- A new topic or replacement lesson is a fresh creation, even though it uses the same
+  `index.html` path. Remove all existing HTML, CSS, and JavaScript and build from an empty file.
+  Do not reuse the previous lesson as a template or treat its styling as an established design
+  system. Follow the local eli5 and design skills afresh, including a deliberate palette,
+  typography, layout, and diagram plan suited to the new content.
+- Corrections, additions, and refinements to the current lesson are updates. Edit the existing
+  page and preserve its design unless the user requests a redesign or a fresh rebuild.
+  The instruction to preserve design for content updates applies only to these same-lesson
+  updates, not to replacing the page with a new lesson.
 - For page work, use `npm run dev` and keep `http://localhost:5173` available. The user reloads
   this fixed URL to see the explanation.
 - Vite is only the dev server; this project has no framework or build step. It binds to IPv6

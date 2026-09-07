@@ -1,100 +1,337 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>From URL to container</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&amp;family=Public+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet"><style>
-:root{color-scheme:light;--bg:#f3f6fa;--paper:#ffffff;--ink:#20334d;--muted:#52657d;--line:#cbd6e4;--blue:#245bc7;--green:#137c78;--red:#b33f54;--wash:#e7eef8;--shadow:0 12px 36px #20334d08}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#152032;--paper:#1d2c42;--ink:#e5edf9;--muted:#b2c1d7;--line:#415572;--blue:#97baff;--green:#77d3c6;--red:#ffa2b3;--wash:#253a56;--shadow:none}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#152032;--paper:#1d2c42;--ink:#e5edf9;--muted:#b2c1d7;--line:#415572;--blue:#97baff;--green:#77d3c6;--red:#ffa2b3;--wash:#253a56;--shadow:none}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:28px}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Public Sans",sans-serif}main{max-width:1420px;padding:36px 36px 64px;margin:auto;display:grid;grid-template-columns:205px minmax(0,1fr);column-gap:38px;row-gap:28px}.sidebar{grid-column:1;grid-row:1/9;position:sticky;top:36px;align-self:start;display:grid;gap:30px}.brand{font:600 24px/1.2 Barlow,sans-serif;color:var(--ink);display:flex;align-items:center;gap:10px}.brand svg{width:30px;min-width:0;height:30px;color:var(--blue)}.sidebar small{color:var(--muted);font-size:12px}.sidebar nav{display:grid;gap:8px}.sidebar nav a{display:grid;gap:2px;padding:12px 14px;text-decoration:none;border:1px solid transparent;border-radius:6px;color:var(--ink);font-weight:600;font-size:14px}.sidebar nav a:hover,.sidebar nav a:focus-visible{background:var(--paper);border-color:var(--line)}.sidebar nav a span{font-size:12px;font-weight:400;color:var(--muted)}.theme-label{display:grid;gap:7px;font-size:12px;color:var(--muted)}select{font:14px "Public Sans",sans-serif;padding:9px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:5px;max-width:175px}header,section,footer{grid-column:2;min-width:0}header{padding:14px 0 10px;display:grid;gap:14px;max-width:790px}.eyebrow{font:500 12px "IBM Plex Mono",monospace;letter-spacing:.09em;color:var(--blue)}h1,h2,h3,p,figure,pre{margin:0}h1,h2,h3{font-family:Barlow,sans-serif;text-wrap:balance}h1{font-size:clamp(36px,4vw,54px);font-weight:600;line-height:1.08;letter-spacing:-.025em}h2{font-size:30px;line-height:1.2;font-weight:600}h3{font-size:22px;line-height:1.3;font-weight:600}header p{font-size:17px;max-width:65ch}section{background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:30px;display:grid;gap:22px;align-content:start}section>p,section>h3,details p{max-width:65ch}section>h2{display:flex;align-items:center;gap:12px}section>h2::before{content:"";width:11px;height:11px;border:3px solid var(--blue);border-radius:50%;flex-shrink:0}a{color:var(--blue);text-underline-offset:3px}strong{font-weight:650}code{font:.86em "IBM Plex Mono",monospace;background:var(--wash);padding:3px 5px;border-radius:3px;overflow-wrap:anywhere}pre{background:var(--wash);border-radius:5px;padding:20px;overflow-x:auto;font:14px/1.8 "IBM Plex Mono",monospace}pre code{font:inherit;padding:0}figure{display:grid;gap:14px;min-width:0}.scroll{overflow-x:auto;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:20px}svg{display:block;width:100%;min-width:650px;height:auto;color:var(--ink)}svg text{fill:currentColor;font:17px "Public Sans",sans-serif}svg .small{font:14px "IBM Plex Mono",monospace;fill:var(--muted)}svg .box{fill:var(--paper);stroke:var(--line);stroke-width:2}svg .route{fill:none;stroke:var(--blue);stroke-width:3;marker-end:url(#arrow)}svg .stop{fill:none;stroke:var(--red);stroke-width:3}figcaption{color:var(--muted);font-size:14px;max-width:80ch}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.6;font-variant-numeric:tabular-nums}th,td{text-align:left;padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--wash);font-weight:600}table code{background:transparent;padding:0}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:5px}details{background:var(--bg);padding:16px 18px;border-radius:5px;display:block}summary{cursor:pointer;font-size:14px;font-weight:600}details[open]{display:grid;gap:16px}details p{font-size:15px}footer{font-size:12px;max-width:85ch;color:var(--muted)}a:focus-visible,summary:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--blue);outline-offset:4px}.skip{position:absolute;top:-100px}.skip:focus{top:6px;background:var(--paper);z-index:5}.diagram-label{font:500 11px "IBM Plex Mono",monospace;color:var(--green);letter-spacing:.07em}
-@media(min-width:1200px){section{padding:34px}#loopback{grid-template-columns:1fr 1fr}#loopback>h2,#loopback>figure{grid-column:1/-1}#loopback>p:last-child{grid-column:2;grid-row:2}#loopback>figure{grid-row:3}}
-@media(max-width:950px){main{grid-template-columns:1fr;padding:22px;gap:22px}.sidebar{grid-row:auto;grid-column:1;position:static;grid-template-columns:1fr auto;gap:18px}.sidebar nav{grid-column:1/-1;grid-row:2;grid-template-columns:repeat(3,1fr);gap:6px}.sidebar nav a{background:var(--paper);border-color:var(--line)}.sidebar small{display:none}.theme-label{display:block}.theme-label>span{position:absolute;width:1px;height:1px;overflow:hidden}header,section,footer{grid-column:1}header{padding:12px 0}section{padding:24px}}
-@media(max-width:540px){main{padding:16px;gap:20px}.brand{font-size:22px}.sidebar nav a{font-size:12px;padding:10px 8px}.sidebar nav a span{font-size:10px}section{padding:19px;gap:20px}h2{font-size:27px}body{font-size:15px}header p{font-size:16px}.scroll{padding:12px}figure{margin-inline:-8px}pre{font-size:12px;padding:15px}select{max-width:110px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-
-.steps{margin:0;padding-left:24px;display:grid;gap:18px;max-width:65ch}.steps li{padding-left:5px}.steps li::marker{color:var(--blue);font-weight:600}.source{font-size:12px;color:var(--muted)}.pathline{font:500 14px/1.8 "IBM Plex Mono",monospace;color:var(--blue);overflow-wrap:anywhere}svg .flow{fill:none;stroke:currentColor;stroke-width:2;marker-end:url(#flow-arrow)}svg .accent{color:var(--blue)}svg .private{fill:var(--wash);stroke:var(--line);stroke-width:2;stroke-dasharray:7 5}.sidebar nav a{padding:9px 12px}.diagram-label{line-height:1.6}footer{display:grid;gap:8px}@media(max-width:540px){.sidebar nav{grid-template-columns:repeat(2,1fr)}svg{min-width:650px}}
-</style></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Follow a visit to a Docker app through deployment, DNS, HTTPS, a reverse proxy, and the API response.">
+  <title>Your app, on the web</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Source+Sans+3:wght@400;500;600;700&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ground: #f7f5f8; --surface: #ffffff; --text: #332d3b;
+      --subtle: #665e70; --line: #dcd6e2;
+      --visitor: #6942ad; --visitor-fill: #f0e9fb;
+      --server: #167366; --server-fill: #e4f3ee;
+      --secure: #995b10; --secure-fill: #fff0d6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --ground: #201c26; --surface: #292430; --text: #eee8f3;
+        --subtle: #bdb1c8; --line: #4c4257;
+        --visitor: #c5a8fb; --visitor-fill: #392c4e;
+        --server: #83d7bd; --server-fill: #233e36;
+        --secure: #f5c16f; --secure-fill: #493720;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ground: #201c26; --surface: #292430; --text: #eee8f3;
+      --subtle: #bdb1c8; --line: #4c4257;
+      --visitor: #c5a8fb; --visitor-fill: #392c4e;
+      --server: #83d7bd; --server-fill: #233e36;
+      --secure: #f5c16f; --secure-fill: #493720;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+    body { margin: 0; background: var(--ground); color: var(--text); font: 18px/1.65 "Source Sans 3", sans-serif; }
+    h1,h2,h3,p,figure,pre { margin: 0; }
+    h1,h2,h3 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 600; line-height: 1.15; text-wrap: balance; }
+    h1 { font-size: clamp(38px,5.2vw,66px); letter-spacing: -.035em; max-width: 15ch; }
+    h2 { font-size: clamp(27px,3vw,36px); letter-spacing: -.025em; }
+    h3 { font-size: 23px; }
+    a { color: inherit; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+    a:hover { text-decoration-thickness: 2px; }
+    button,select { font: inherit; }
+    a:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible { outline: 3px solid var(--text); outline-offset: 5px; }
+    code { font: .8em/1.6 "DM Mono", monospace; overflow-wrap: anywhere; }
+    p code,td code { padding: 2px 4px; background: var(--ground); border-radius: 3px; }
+    strong { font-weight: 700; }
+    .shell { max-width: 1180px; margin-inline: auto; padding-inline: 36px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+    .wordmark { font: 600 18px "Bricolage Grotesque", sans-serif; }
+    .wordmark span { font-weight: 500; color: var(--subtle); }
+    .appearance { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+    select { border: 1px solid var(--line); border-radius: 5px; background: var(--surface); color: var(--text); padding: 7px 10px; }
+    .skip { position: absolute; top: -80px; padding: 10px; background: var(--surface); }
+    .skip:focus { top: 8px; z-index: 10; }
+    .hero { display: grid; grid-template-columns: 1.35fr 1fr; gap: 64px; padding-block: 62px 42px; align-items: center; }
+    .intro { display: grid; gap: 23px; }
+    .eyebrow { font: 500 12px/1.6 "DM Mono", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--subtle); }
+    .intro p { max-width: 49ch; font-size: 20px; line-height: 1.55; }
+    .visit { border: 1px solid var(--visitor); background: var(--surface); border-radius: 12px; overflow: hidden; }
+    .visit-head { background: var(--visitor-fill); color: var(--visitor); padding: 14px 20px; display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
+    .visit-body { display: grid; gap: 18px; padding: 24px; }
+    .address { display: flex; flex-wrap: wrap; font: 500 18px/1.6 "DM Mono", monospace; }
+    .address .scheme { color: var(--secure); background: var(--secure-fill); padding: 2px 3px; }
+    .address .domain { color: var(--visitor); padding: 2px 3px; }
+    .visit-body p { font-size: 16px; line-height: 1.5; color: var(--subtle); }
+    .task { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding-top: 18px; color: var(--visitor); font-size: 17px; }
+    .task-square { width: 17px; height: 17px; border: 2px solid currentColor; border-radius: 3px; }
+    .jump { display: flex; flex-wrap: wrap; column-gap: 28px; row-gap: 12px; padding-block: 18px 28px; font-size: 15px; border-bottom: 1px solid var(--line); }
+    .lesson { padding-block: 48px; border-bottom: 1px solid var(--line); }
+    .split { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 60px; }
+    .prose { display: grid; gap: 18px; min-width: 0; }
+    .prose p { max-width: 65ch; }
+    .section-kicker { font: 500 12px/1.6 "DM Mono", monospace; text-transform: uppercase; letter-spacing: .075em; color: var(--subtle); }
+    .server-text { color: var(--server); }
+    .visitor-text { color: var(--visitor); }
+    .secure-text { color: var(--secure); }
+    .diagram { display: grid; gap: 15px; min-width: 0; }
+    svg { display: block; width: 100%; height: auto; overflow: visible; color: var(--text); }
+    svg text { fill: currentColor; font: 600 16px "Source Sans 3", sans-serif; }
+    svg .tiny { font: 400 13px "DM Mono", monospace; }
+    svg .note { font: 400 15px "Source Sans 3", sans-serif; }
+    svg .neutral-box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+    svg .visitor-box { fill: var(--visitor-fill); stroke: var(--visitor); stroke-width: 1.5; }
+    svg .server-box { fill: var(--surface); stroke: var(--server); stroke-width: 1.5; }
+    svg .server-boundary { fill: var(--server-fill); stroke: var(--server); stroke-width: 1.5; stroke-dasharray: 5 5; }
+    svg .wire { fill: none; stroke: currentColor; stroke-width: 2; }
+    svg .muted { color: var(--subtle); }
+    figcaption { color: var(--subtle); font-size: 15px; line-height: 1.5; max-width: 80ch; }
+    .map-section { padding-block: 46px; display: grid; gap: 24px; }
+    .map-title { display: flex; justify-content: space-between; align-items: end; gap: 28px; }
+    .map-title p { max-width: 35ch; color: var(--subtle); font-size: 16px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px 24px; font-size: 14px; }
+    .key { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; }
+    .dot { width: 10px; height: 10px; background: currentColor; border-radius: 50%; }
+    .square { width: 10px; height: 10px; border: 2px solid currentColor; }
+    .dash { width: 18px; height: 0; border-top: 3px solid currentColor; }
+    .map-frame { padding: 24px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
+    .mobile-map { display: none; }
+    .step { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 46px; }
+    .step-label { display: grid; gap: 9px; align-content: start; }
+    .step-number { font: 500 42px/1 "Bricolage Grotesque", sans-serif; color: var(--subtle); }
+    .step-label p { font-size: 16px; font-weight: 600; }
+    .example { padding: 20px 24px; border: 1px solid var(--line); background: var(--surface); display: grid; gap: 10px; border-radius: 6px; }
+    .lookup { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; font: 500 16px/1.6 "DM Mono", monospace; }
+    .lookup small { font: 14px "Source Sans 3", sans-serif; color: var(--subtle); }
+    .micro { font-size: 14px; color: var(--subtle); }
+    .secure-example { background: var(--secure-fill); border-color: var(--secure); }
+    .secure-example h3 { color: var(--secure); font-size: 21px; }
+    .routing { width: 100%; border-collapse: collapse; font-size: 16px; }
+    .routing th { text-align: left; padding: 12px; border-bottom: 2px solid var(--line); font-size: 14px; font-weight: 600; }
+    .routing td { padding: 16px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .routing th:first-child,.routing td:first-child { color: var(--visitor); }
+    .routing th:last-child,.routing td:last-child { color: var(--server); }
+    .routing td code { background: transparent; padding: 0; }
+    .roundtrip { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 16px; }
+    .tag { padding: 5px 11px; font-weight: 600; border-radius: 4px; }
+    .tag.visitor-text { background: var(--visitor-fill); }
+    .tag.server-text { background: var(--server-fill); }
+    pre { padding: 18px 22px; background: var(--visitor-fill); color: var(--visitor); border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    pre code { font-size: 14px; }
+    details { border-block: 1px solid var(--line); padding-block: 17px; }
+    summary { cursor: pointer; font-weight: 600; }
+    details p { padding-top: 12px; }
+    .next { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 46px; padding-block: 44px; }
+    .sources { padding-block: 24px 40px; color: var(--subtle); font-size: 14px; display: flex; flex-wrap: wrap; gap: 10px 22px; }
+    @media (max-width: 850px) {
+      .hero { gap: 32px; grid-template-columns: 1.1fr 1fr; }
+      .split { gap: 30px; }
+      .step,.next { grid-template-columns: 110px minmax(0,1fr); gap: 24px; }
+      .map-frame { padding: 16px; }
+    }
+    @media (max-width: 650px) {
+      body { font-size: 17px; }
+      .shell { padding-inline: 20px; }
+      .topbar { gap: 12px; padding-block: 17px; }
+      .wordmark { font-size: 16px; }
+      .wordmark span { display: block; font-size: 13px; padding-top: 3px; }
+      .appearance>span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+      .hero { grid-template-columns: 1fr; gap: 28px; padding-block: 36px 24px; }
+      .intro { gap: 18px; }
+      .intro p { font-size: 19px; }
+      .visit-body { padding: 20px; }
+      .jump { column-gap: 22px; font-size: 14px; }
+      .lesson { padding-block: 32px; }
+      .split,.step,.next { grid-template-columns: 1fr; gap: 24px; }
+      .split .diagram { max-width: 410px; width: 100%; margin-inline: auto; }
+      .map-title { display: grid; gap: 14px; }
+      .map-section { padding-block: 32px; }
+      .map-frame { padding: 10px; }
+      .desktop-map { display: none; }
+      .mobile-map { display: block; max-width: 380px; margin-inline: auto; }
+      .legend { gap: 10px 18px; font-size: 13px; }
+      .step-label { display: flex; align-items: center; gap: 13px; }
+      .step-number { font-size: 27px; }
+      .step-label p { font-size: 15px; }
+      .example { padding: 17px; }
+      .lookup { font-size: 14px; }
+      .routing { font-size: 15px; }
+      .routing th,.routing td { padding-inline: 6px; }
+      .routing code { font-size: 12px; }
+      .next { padding-block: 32px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
 <body>
-<a class="skip" href="#deployment">Skip to explanation</a>
-<main>
-<aside class="sidebar" aria-label="Page navigation">
-<div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 8 H24 V24 H6 Z M6 16 H24" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="8" r="4" fill="currentColor"/><circle cx="24" cy="24" r="4" fill="currentColor"/></svg>From URL<br>to container</div>
-<nav aria-label="Lesson sections">
-<a href="#deployment">Before the visit<span>Deploy to a server</span></a>
-<a href="#dns">Find the server<span>Domain names and DNS</span></a>
-<a href="#https">Secure the connection<span>HTTPS and certificates</span></a>
-<a href="#proxy">Choose a container<span>The reverse proxy</span></a>
-<a href="#response">Load the app<span>Page, API, response</span></a>
-<a href="#next">Deploy the next version<span>Where CI/CD fits</span></a>
-</nav>
-<label class="theme-label"><span>Appearance</span><select id="theme" aria-label="Appearance"><option value="system">System theme</option><option value="light">Light theme</option><option value="dark">Dark theme</option></select></label>
-<small>One visit to a task app.<br>Follow the request all the way back.</small>
-</aside>
-<header><div class="eyebrow">DOCKER → SERVER → BROWSER</div><h1>What happens when someone opens your app's URL?</h1><p>Your containers run on a server. A domain helps the browser find it. An encrypted connection carries the request to a reverse proxy, which passes it to your app.</p><p>Let's follow <code>https://myapp.com</code> to a small task app with a web container, an API container, and a database. We'll use one server to keep the route visible.</p></header>
-<section id="deployment">
-<h2>Before the visit, your app needs a home</h2>
-<p>A <strong>server</strong> is a computer that runs your app and accepts network requests. Here, it is a rented Linux machine with a public IP address. It keeps running when your laptop is off.</p>
-<p><strong>Deployment</strong> means putting a version of your app on that machine and starting it with the settings it needs. A Docker image packages the app and its dependencies; a container is a running instance of that image.</p>
-<figure><div class="diagram-label">MOVING A VERSION OF YOUR APP TO THE SERVER</div><div class="scroll" tabindex="0" aria-label="Deployment diagram, scroll horizontally on small screens"><svg viewBox="0 0 820 210" role="img" aria-label="Build an image, upload it to an image registry, then download and run it on a remote server. The running app no longer depends on the laptop."><defs><marker id="deploy-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="currentColor"/></marker></defs>
-<rect class="box" x="10" y="55" width="205" height="100" rx="6"/><text x="30" y="90">Build machine</text><text class="small" x="30" y="122">Code → image v1</text>
-<path d="M215 105 H300" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#deploy-arrow)"/><text class="small" x="238" y="87">push</text>
-<rect class="box" x="315" y="55" width="190" height="100" rx="6"/><text x="335" y="90">Image registry</text><text class="small" x="335" y="122">Stores image v1</text>
-<path d="M505 105 H590" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#deploy-arrow)"/><text class="small" x="528" y="87">pull</text>
-<rect class="box" x="605" y="55" width="205" height="100" rx="6"/><text x="625" y="90">Remote server</text><text class="small" x="625" y="122">Runs containers</text><text class="small" x="410" y="195" text-anchor="middle">This happens at deployment time, before a visitor arrives.</text>
-</svg></div><figcaption>A registry stores images for the server to download. Compose can start the containers on that server, just as it can on your laptop.</figcaption></figure>
-<p>On the server, you supply production configuration and secrets, keep database data in persistent storage, and make the proxy reachable through published ports and firewall rules. Starting containers alone does not give the app a public domain or HTTPS.</p>
-</section>
-<section id="dns">
-<h2>1. The browser finds the server's address</h2>
-<p><code>myapp.com</code> is a <strong>domain name</strong>. DNS, the Domain Name System, lets the browser look up an IP address for that name. The lookup may already be cached.</p>
-<p>For this setup, you configure the domain's DNS with an <code>A</code> record pointing to the server's public IPv4 address. An <code>AAAA</code> record does the equivalent job for IPv6.</p>
-<p class="pathline">myapp.com → DNS lookup → 203.0.113.10</p>
-<p>The address above is a documentation example. DNS supplies the address; website requests then travel to the server. DNS does not choose between <code>/</code> and <code>/api/tasks</code>.</p>
-<p class="source">Reference: <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works">MDN on browsers, DNS, and HTTP</a>.</p>
-</section>
-<section id="https">
-<h2>2. The browser establishes HTTPS</h2>
-<p>Because the URL starts with <code>https://</code>, the browser connects securely, using port <code>443</code> by default. A port identifies the service to contact at an IP address.</p>
-<p><strong>HTTPS</strong> is HTTP protected by TLS, the protocol that encrypts traffic and detects tampering. During connection setup, the server presents a certificate. The browser checks that it is valid for <code>myapp.com</code> and trusted, then establishes encryption keys.</p>
-<p>In our setup, the reverse proxy handles TLS. It decrypts requests and encrypts responses. The private connection from the proxy to an app container uses HTTP here; that connection needs its own TLS configuration if you want it encrypted too.</p>
-<p>A proxy such as Caddy can obtain and renew certificates automatically when the domain and certificate validation are configured correctly. Nginx can also handle HTTPS, with certificates supplied through your chosen setup.</p>
-<p class="source">Reference: <a href="https://caddyserver.com/docs/automatic-https">Caddy's automatic HTTPS documentation</a>.</p>
-</section>
-<section id="proxy">
-<h2>3. The proxy chooses a container</h2>
-<p>A <strong>reverse proxy</strong> receives requests on behalf of your app. It reads the requested hostname and path, then forwards the request to the service you configured. The browser keeps using your public URL.</p>
-<figure><div class="diagram-label">AFTER DNS, REQUESTS ENTER THROUGH THE PROXY</div><div class="scroll" tabindex="0" aria-label="Request routing diagram, scroll horizontally on small screens"><svg viewBox="0 0 850 440" role="img" aria-label="The browser connects over HTTPS to the reverse proxy on server port 443. Inside the server, the proxy forwards slash requests to web port 3000 and slash api requests to api port 8000 over HTTP. Only the API queries the database. Responses return through the proxy.">
-<defs><marker id="flow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="currentColor"/></marker></defs>
-<rect class="private" x="345" y="15" width="490" height="410" rx="10"/><text x="365" y="47">Your server</text><text class="small" x="365" y="72">Containers on a private Docker network</text>
-<rect class="box" x="15" y="175" width="150" height="95" rx="6"/><text x="35" y="210">Browser</text><text class="small" x="35" y="241">myapp.com</text>
-<g class="accent"><path class="flow" d="M165 208 H370"/><text class="small" x="195" y="189">HTTPS :443</text><path class="flow" d="M370 249 H165"/><text class="small" x="207" y="278">response</text></g>
-<rect class="box" x="380" y="175" width="170" height="95" rx="6"/><text x="398" y="210">Reverse proxy</text><text class="small" x="398" y="241">TLS ends here</text>
-<path class="flow" d="M465 175 V128 H635"/><text class="small" x="495" y="110">/ → HTTP</text>
-<rect class="box" x="645" y="90" width="170" height="77" rx="6"/><text x="663" y="122">Web container</text><text class="small" x="663" y="148">web:3000</text>
-<path class="flow" d="M550 220 H635"/><text class="small" x="558" y="193">/api/*</text><text class="small" x="564" y="248">HTTP</text>
-<rect class="box" x="645" y="180" width="170" height="85" rx="6"/><text x="663" y="212">API container</text><text class="small" x="663" y="242">api:8000</text>
-<path class="flow" d="M730 265 V325"/><text class="small" x="646" y="301">queries</text>
-<rect class="box" x="645" y="340" width="170" height="60" rx="6"/><text x="663" y="376">Database</text>
-<text class="small" x="365" y="367">App ports stay private.</text><text class="small" x="365" y="392">Responses retrace the route.</text>
-</svg></div><figcaption>One public entry point can serve several containers. Only the proxy publishes web ports in this example. The proxy reaches app containers through their Docker service names and internal ports.</figcaption></figure>
-<div class="table-wrap"><table><thead><tr><th>Browser requests</th><th>Proxy forwards to</th><th>Service returns</th></tr></thead><tbody><tr><td><code>https://myapp.com/</code></td><td><code>http://web:3000/</code></td><td>The page</td></tr><tr><td><code>https://myapp.com/api/tasks</code></td><td><code>http://api:8000/api/tasks</code></td><td>Task data as JSON</td></tr></tbody></table></div>
-<p>These are example routing rules, with the path preserved. Docker resolves <code>web</code> and <code>api</code> inside the shared network. Your visitor's browser cannot use those private service names.</p>
-<p class="source">References: <a href="https://docs.docker.com/compose/how-tos/networking/">Docker Compose networking</a> and <a href="https://caddyserver.com/docs/caddyfile/directives/reverse_proxy">Caddy request forwarding</a>.</p>
-</section>
-<section id="response">
-<h2>4. The page loads, then asks for data</h2>
-<ol class="steps">
-<li>The browser requests <code>/</code>. The proxy forwards it to the web container, which sends back HTML. The browser also requests the page's CSS and JavaScript.</li>
-<li>The downloaded JavaScript runs in the browser. Our task app calls <code>fetch("/api/tasks")</code>, which uses the same public site, <code>https://myapp.com/api/tasks</code>.</li>
-<li>The proxy sends that request to the API. The API reads tasks from the database and returns JSON through the proxy to the browser.</li>
-<li>The browser uses the JSON to display the task list. Your API code ran on the server; the code drawing this task list ran in the visitor's browser.</li>
-</ol>
-<details><summary>Why not call localhost:8000 from the frontend?</summary><p>In browser JavaScript, <code>localhost</code> means the visitor's own computer. It would try to reach an API there. Use the public API URL, or a relative path such as <code>/api/tasks</code> when the proxy routes API requests on the same site.</p></details>
-</section>
-<section id="next">
-<h2>Next time, deploy a new version</h2>
-<p>The server keeps running the version you deployed until you replace it. Editing code on your laptop does not update those running containers.</p>
-<p><strong>CI/CD</strong> automates checks and delivery. A typical pipeline tests a change, builds a new image, pushes it to the registry, and updates the server's containers. Continuous delivery can keep a human release step; continuous deployment makes that release automatic.</p>
-<p>The visitor still uses <code>https://myapp.com</code>. If the server address and routing stay the same, DNS and the public URL can stay the same while the app behind them changes.</p>
-</section>
-<footer><p>This example uses one server and a browser-rendered task app. Larger deployments can add load balancers or a CDN, but the same jobs still need doing: finding an address, securing the connection, routing requests, and returning responses.</p></footer>
-</main>
-<script>document.getElementById("theme").addEventListener("change",function(){if(this.value==="system"){document.documentElement.removeAttribute("data-theme")}else{document.documentElement.dataset.theme=this.value}});</script>
-</body></html>
+  <a class="skip" href="#deployment">Skip to the explanation</a>
+  <div class="shell">
+    <div class="topbar">
+      <div class="wordmark">Learning with AI <span>/ Infrastructure</span></div>
+      <label class="appearance"><span>Appearance</span><select id="appearance" aria-label="Appearance"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+    </div>
+    <main>
+      <header class="hero">
+        <div class="intro">
+          <div class="eyebrow">From Docker to a public website</div>
+          <h1>Your app, on the web.</h1>
+          <p>What happens when someone opens your deployed app's URL? Follow one visit from the browser to your containers, then back to the screen.</p>
+        </div>
+        <aside class="visit" aria-label="The example used throughout this lesson">
+          <div class="visit-head"><span class="square" aria-hidden="true"></span>A visitor opens your task app</div>
+          <div class="visit-body">
+            <div class="address"><span class="scheme">https://</span><span class="domain">myapp.com</span></div>
+            <p>The browser needs the page first. Then the page's JavaScript asks your API for the tasks.</p>
+            <div class="task"><span class="task-square" aria-hidden="true"></span>Ship my first website</div>
+          </div>
+        </aside>
+      </header>
+      <nav class="jump" aria-label="Lesson sections"><a href="#deployment">Deployment</a><a href="#map">Request map</a><a href="#dns">DNS</a><a href="#https">HTTPS</a><a href="#proxy">Reverse proxy</a><a href="#response">The response</a></nav>
+      <section class="lesson split" id="deployment">
+        <div class="prose">
+          <div class="section-kicker">Before anyone visits</div>
+          <h2>Give your containers a home.</h2>
+          <p>A <strong>server</strong> is a computer that runs your app and accepts requests. In this example, you rent a Linux machine with a public IP address. It stays on when your laptop is off.</p>
+          <p><strong>Deployment</strong> puts a version of your app on that server and starts it. You build Docker images, upload them to an image registry, then have the server download them and run containers.</p>
+          <p>Compose can start the services there. You supply production settings and secrets, persistent database storage, and network access to the proxy's public ports.</p>
+        </div>
+        <figure class="diagram">
+          <svg viewBox="0 0 380 315" role="img" aria-label="Deployment moves a Docker image from the build machine to a registry, then onto the remote server, where containers run independently of the laptop.">
+            <defs><marker id="deploy-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="currentColor"/></marker></defs>
+            <rect class="neutral-box" x="12" y="12" width="356" height="66" rx="6"/>
+            <text x="30" y="39">Build machine</text><text class="tiny muted" x="30" y="61">Code → Docker image v1</text>
+            <path class="wire" d="M190 78V115" marker-end="url(#deploy-tip)"/><text class="note muted" x="205" y="103">push the image</text>
+            <rect class="neutral-box" x="12" y="124" width="356" height="66" rx="6"/>
+            <text x="30" y="150">Image registry</text><text class="tiny muted" x="30" y="174">Stores the image for download</text>
+            <path class="wire" d="M190 190V228" marker-end="url(#deploy-tip)"/><text class="note muted" x="205" y="216">server pulls it</text>
+            <g class="server-text"><rect x="12" y="237" width="356" height="66" rx="6" fill="var(--server-fill)" stroke="currentColor" stroke-width="1.5"/>
+            <text x="30" y="264">Remote server</text><text class="tiny" x="30" y="287">Runs containers from image v1</text></g>
+          </svg>
+          <figcaption>This transfer happens at deployment time. Visitors later contact the running server.</figcaption>
+        </figure>
+      </section>
+      <section class="map-section" id="map">
+        <div class="map-title"><h2>One address.<br>A route to each service.</h2><p>Our example puts the proxy, web app, API, and database on one server.</p></div>
+        <div class="legend" aria-label="Color meanings"><span class="key visitor-text"><span class="square" aria-hidden="true"></span>Visitor's browser</span><span class="key server-text"><span class="dot" aria-hidden="true"></span>Server services</span><span class="key secure-text"><span class="dash" aria-hidden="true"></span>Encrypted connection</span></div>
+        <figure class="diagram">
+          <div class="map-frame">
+            <svg class="desktop-map" viewBox="0 0 980 400" role="img" aria-label="After DNS finds the server, the browser uses HTTPS on port 443 to contact a reverse proxy. Inside the private Docker network, the proxy sends page requests to web:3000 and API requests to api:8000. The API queries the database. Responses return through the proxy.">
+              <defs>
+                <marker id="server-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--server)"/></marker>
+                <marker id="secure-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--secure)"/></marker>
+              </defs>
+              <rect class="server-boundary" x="410" y="10" width="556" height="376" rx="10"/>
+              <g class="server-text"><text x="431" y="40">Your server</text><text class="note" x="431" y="63">Private Docker network</text></g>
+              <g class="visitor-text"><rect class="visitor-box" x="14" y="142" width="190" height="100" rx="8"/><text x="34" y="174">Visitor's browser</text><text class="tiny" x="34" y="199">myapp.com</text><text class="note" x="34" y="223">Renders the page</text></g>
+              <rect x="215" y="141" width="197" height="103" rx="6" fill="var(--secure-fill)"/>
+              <g class="secure-text"><text x="230" y="164">HTTPS · port 443</text><path class="wire" d="M204 183H430" marker-end="url(#secure-tip)"/><path class="wire" d="M430 217H204" marker-end="url(#secure-tip)"/><text class="note" x="246" y="238">response back</text></g>
+              <g class="server-text">
+                <rect class="server-box" x="438" y="142" width="182" height="100" rx="8"/><text x="456" y="174">Reverse proxy</text><text class="note" x="456" y="222">Chooses a service</text>
+                <path class="wire" d="M529 142V108H751" marker-end="url(#server-tip)"/><text class="tiny" x="635" y="94">/ → HTTP</text>
+                <rect class="server-box" x="760" y="76" width="186" height="68" rx="6"/><text x="779" y="103">Web container</text><text class="tiny" x="779" y="126">web:3000</text>
+                <path class="wire" d="M620 192H751" marker-end="url(#server-tip)"/><text class="tiny" x="634" y="177">/api/*</text><text class="tiny" x="647" y="214">HTTP</text>
+                <rect class="server-box" x="760" y="158" width="186" height="72" rx="6"/><text x="779" y="186">API container</text><text class="tiny" x="779" y="210">api:8000</text>
+                <path class="wire" d="M853 230V293" marker-end="url(#server-tip)"/><text class="note" x="780" y="267">queries</text>
+                <rect class="server-box" x="760" y="304" width="186" height="56" rx="6"/><text x="779" y="337">Database</text>
+                <text class="note" x="432" y="330">App ports stay private.</text><text class="note" x="432" y="353">Only the proxy is public.</text>
+              </g>
+              <text class="tiny secure-text" x="456" y="198">TLS ends here</text>
+              <text class="note muted" x="16" y="294">DNS found the address.</text><text class="note muted" x="16" y="317">Requests now go to the server.</text>
+            </svg>
+            <svg class="mobile-map" viewBox="0 0 340 658" role="img" aria-label="After DNS, the visitor's browser connects downwards over HTTPS to the proxy. Inside the server, the proxy branches to web:3000 for the page or api:8000 for data. The API queries the database. Responses return through the proxy.">
+              <defs><marker id="m-secure-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--secure)"/></marker><marker id="m-server-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--server)"/></marker></defs>
+              <g class="visitor-text"><rect class="visitor-box" x="65" y="10" width="210" height="75" rx="8"/><text x="86" y="40">Visitor's browser</text><text class="tiny" x="86" y="64">myapp.com</text></g>
+              <rect class="server-boundary" x="8" y="191" width="324" height="455" rx="8"/>
+              <g class="server-text"><text x="25" y="218">Your server</text><text class="tiny" x="25" y="237">Private</text><text class="tiny" x="25" y="255">network</text></g>
+              <rect x="90" y="93" width="160" height="91" rx="6" fill="var(--secure-fill)"/>
+              <g class="secure-text"><path class="wire" d="M146 85V260" marker-end="url(#m-secure-tip)"/><path class="wire" d="M194 260V85" marker-end="url(#m-secure-tip)"/><text class="tiny" x="23" y="122">HTTPS</text><text class="tiny" x="23" y="142">:443</text><text class="note" x="210" y="160">response</text></g>
+              <g class="server-text"><rect class="server-box" x="65" y="269" width="210" height="86" rx="8"/><text x="86" y="299">Reverse proxy</text><text class="note" x="86" y="340">Chooses a service</text>
+              <path class="wire" d="M120 355V380H82V413" marker-end="url(#m-server-tip)"/><path class="wire" d="M220 355V380H257V413" marker-end="url(#m-server-tip)"/>
+              <text class="tiny" x="8" y="400">/ → HTTP</text><text class="tiny" x="201" y="400">/api/*</text>
+              <rect class="server-box" x="21" y="425" width="133" height="75" rx="6"/><text x="35" y="454">Web container</text><text class="tiny" x="35" y="480">web:3000</text>
+              <rect class="server-box" x="184" y="425" width="133" height="75" rx="6"/><text x="198" y="454">API container</text><text class="tiny" x="198" y="480">api:8000</text>
+              <path class="wire" d="M250 500V556" marker-end="url(#m-server-tip)"/><text class="note" x="185" y="532">queries</text>
+              <rect class="server-box" x="184" y="568" width="133" height="54" rx="6"/><text x="198" y="601">Database</text>
+              <text class="note" x="23" y="569">App ports</text><text class="note" x="23" y="591">stay private.</text></g>
+              <text class="tiny secure-text" x="86" y="320">TLS ends here</text>
+            </svg>
+          </div>
+          <figcaption><span class="secure-text">Amber marks encryption between the browser and proxy.</span> The proxy forwards requests over HTTP inside this server. Responses come back through the proxy, which encrypts them for the browser.</figcaption>
+        </figure>
+      </section>
+      <section class="lesson step" id="dns">
+        <div class="step-label"><span class="step-number">1</span><p>Find the address</p></div>
+        <div class="prose">
+          <h2>DNS tells the browser where to go.</h2>
+          <p>A domain name such as <code>myapp.com</code> is a memorable name. <strong>DNS</strong>, the Domain Name System, lets the browser look up an IP address for it. A cached answer can save a fresh lookup.</p>
+          <div class="example">
+            <div class="lookup"><span class="visitor-text">myapp.com</span><small>DNS lookup →</small><span class="server-text">203.0.113.10</span></div>
+            <p class="micro">Illustrative IP address, reserved for documentation.</p>
+          </div>
+          <p>For this setup, you configure an <code>A</code> record pointing to the server's public IPv4 address. An <code>AAAA</code> record serves the same purpose for IPv6.</p>
+          <p>DNS supplies the address. It does not send the web request onward or choose between <code>/</code> and <code>/api/tasks</code>.</p>
+          <p class="micro">Reference: <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works">MDN on DNS and web requests</a>.</p>
+        </div>
+      </section>
+      <section class="lesson step" id="https">
+        <div class="step-label"><span class="step-number">2</span><p class="secure-text">Secure the connection</p></div>
+        <div class="prose">
+          <h2>HTTPS protects the trip across the internet.</h2>
+          <p>The <code>https://</code> in the URL tells the browser to use a secure connection. It normally contacts port <code>443</code>. A port identifies which service to reach at an IP address.</p>
+          <p><strong>HTTPS</strong> is HTTP protected by TLS. TLS encrypts traffic and detects tampering. The server presents a certificate, and the browser checks that it is trusted and valid for the domain as it establishes the secure connection.</p>
+          <div class="example secure-example"><h3>The encrypted connection ends at the proxy.</h3><p>The proxy decrypts the request so it can read and route it. Our example uses HTTP from there to the containers. Encrypting that second connection requires its own TLS setup.</p></div>
+          <p>Caddy can obtain and renew certificates automatically when its domain and certificate validation are configured correctly. Nginx can also handle HTTPS with certificates you configure.</p>
+          <p class="micro">Reference: <a href="https://caddyserver.com/docs/automatic-https">Caddy's automatic HTTPS documentation</a>.</p>
+        </div>
+      </section>
+      <section class="lesson step" id="proxy">
+        <div class="step-label"><span class="step-number">3</span><p class="server-text">Choose a service</p></div>
+        <div class="prose">
+          <h2>The reverse proxy routes the request.</h2>
+          <p>A <strong>reverse proxy</strong> accepts requests on behalf of your app. It reads the requested hostname and path, then forwards the request according to your routing rules. The browser keeps using the public URL.</p>
+          <table class="routing"><caption class="micro" style="text-align:left;padding-bottom:10px">Example rules for requests to myapp.com</caption><thead><tr><th>Browser asks for</th><th>Proxy contacts inside Docker</th></tr></thead><tbody><tr><td><code>/</code><br>The page</td><td><code>http://web:3000/</code><br>Web container</td></tr><tr><td><code>/api/tasks</code><br>Task data</td><td><code>http://api:8000/api/tasks</code><br>API container</td></tr></tbody></table>
+          <p>These rules preserve the path. Inside their shared Docker network, containers can find each other using service names such as <code>web</code> and <code>api</code>. The visitor's browser cannot resolve those private names.</p>
+          <p>In this setup, only the proxy publishes web ports. The app ports and database stay private. DNS points to the server; the proxy handles the choice of container.</p>
+          <p class="micro">References: <a href="https://docs.docker.com/compose/how-tos/networking/">Compose networking</a> and <a href="https://caddyserver.com/docs/caddyfile/directives/reverse_proxy">Caddy request forwarding</a>.</p>
+        </div>
+      </section>
+      <section class="lesson step" id="response">
+        <div class="step-label"><span class="step-number">4</span><p class="visitor-text">Draw the page</p></div>
+        <div class="prose">
+          <h2>The response completes the round trip.</h2>
+          <p>The web container sends HTML back through the proxy. The browser loads the CSS and JavaScript too. In our task app, that JavaScript runs in the visitor's browser and asks for data:</p>
+          <pre aria-label="JavaScript running in the visitor's browser"><code>const response = await fetch("/api/tasks");
+const tasks = await response.json();</code></pre>
+          <p>The relative path uses the current site, so the request goes to <code>https://myapp.com/api/tasks</code>. The proxy forwards it to the API, which reads the database and returns JSON.</p>
+          <div class="roundtrip" aria-label="Task data returns from API through proxy to browser"><span class="tag server-text">API</span><span aria-hidden="true">→</span><span class="tag server-text">Proxy</span><span class="secure-text">→ HTTPS →</span><span class="tag visitor-text">Browser</span></div>
+          <p>The browser uses those tasks to update the screen. Your API code ran on the server. The JavaScript drawing this task list ran on the visitor's device.</p>
+          <details><summary>Why doesn't the browser call localhost:8000?</summary><p>In browser JavaScript, <code>localhost</code> means the visitor's own computer. It would look for an API there. Use your public API URL, or a relative path such as <code>/api/tasks</code> when your proxy routes API requests on the same site.</p></details>
+        </div>
+      </section>
+      <section class="next" aria-labelledby="next-title">
+        <div class="section-kicker">The next deployment</div>
+        <div class="prose"><h2 id="next-title">New containers. The same public URL.</h2>
+          <p>Editing code on your laptop leaves the server running the deployed version. To release a change, build a new image and update the server's containers.</p>
+          <p><strong>CI/CD</strong> automates checks and delivery. A pipeline can test the code, build and upload the image, then update the server. Delivery can include a human release step; continuous deployment makes release automatic.</p>
+          <p>If the server address and routing stay the same, the visitor still opens <code>https://myapp.com</code>.</p>
+        </div>
+      </section>
+    </main>
+    <footer class="sources"><span>One-server example · Browser-rendered task app</span><span>Larger setups can add a CDN or load balancer.</span></footer>
+  </div>
+  <script>
+    const appearance = document.getElementById("appearance");
+    appearance.addEventListener("change", () => {
+      if (appearance.value === "system") document.documentElement.removeAttribute("data-theme");
+      else document.documentElement.dataset.theme = appearance.value;
+    });
+  </script>
+</body>
+</html>
