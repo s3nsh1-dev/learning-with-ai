@@ -3,61 +3,28 @@
 
 # Learning with AI
 
-The user supplies a prompt. Answer it as one visual explainer page served at the fixed local URL
-they keep open in a browser tab. They reload the page to see the new answer.
+## Response destination
 
-Keep responses concise and easy to digest while preserving the complexity and accuracy the prompt
-requires.
+- When the user points to `prompt.txt` as the prompt to answer, read it and create the explanation
+  in `index.html`. A message containing only a reference to `prompt.txt` counts as this request.
+- Otherwise, answer in chat. Do not inspect `prompt.txt` for ordinary chat questions. Its contents
+  or modification time do not trigger page work by themselves.
+- A reference to `index.html` supplies context for a chat answer. Read it when needed, but do not
+  modify it unless the user asks. Explicit requests to create or update an HTML explanation also
+  select page work.
+- Discussions about these files, skills, or this workflow do not themselves request HTML
+  generation. Explicit instructions such as "do not change anything" take precedence.
+- If the user requests an explanation from `prompt.txt` but it is empty, explain that in chat
+  instead of replacing the existing page.
+- Page work applies to the current request; subsequent chat messages follow these rules afresh.
+- Use the local [eli5 skill](.agents/skills/eli5/SKILL.md) for HTML explanations. Do not invoke it
+  for ordinary chat questions.
 
-## Core pattern
+## Page location and server
 
-- **One question, one page:** write the result to the root `index.html`, replacing its previous
-  contents.
-- **No archive:** do not create numbered pages, topic directories, note files, indexes, or history.
-  Replacing the previous answer is intentional.
-- **Serve it:** use `npm run dev` and keep `http://localhost:5173` available. Vite is only the dev
-  server; this project has no framework or build step. It binds to IPv6 loopback, so use
-  `localhost:5173`, not `127.0.0.1:5173`.
-- **Choose the response mode:** use the user's current request as the source of truth. Read
-  `prompt.txt` when the user asks you to render or continue the prompt stored there.
-
-### Learning mode
-
-Use this when the user wants to learn a topic over time.
-
-1. Ask how deeply they want to explore it and any other questions needed to shape the curriculum.
-2. Update `CURRICULUM.md` to track the stages. Choose the number of stages based on the requested
-   depth.
-3. Cover the curriculum through successive prompts and visual explanations.
-4. End each stage with an MCQ, use the result to gauge understanding, and adjust later stages when
-   needed.
-
-### Explaining mode
-
-Use this for a direct question. Keep a simple question brief. For a follow-up in an ongoing topic,
-explain it step by step. Keep the page focused on the requested topic rather than branching into
-subtopics unless the user asks.
-
-If a prompt genuinely asks for both modes, ask which one to address first. Include an example when
-it materially improves understanding.
-
-## Building the page
-
-1. Use the repository's `$eli5` skill for visual explainer requests. Do not depend on Claude-only
-   `artifact-design` or `artifact-diagramming` skills; their essential requirements are captured
-   below.
-2. Carry each explanation with hand-authored inline SVG. Draw one meaningful figure per moving part
-   of the topic.
-3. Draw the mechanism rather than a labelled box. Position, distance, direction, and overlap must
-   communicate something real: the boundary crossed, the gap, the sequence, or the precise failure
-   point.
-4. Give every figure a caption containing the depth: why it happens, how it fails, and any useful
-   real number or error text. Do not merely restate the picture in prose.
-5. Optimize for a visual learner and keep the page responsive and accessible.
-
-## Verification
-
-Before handing over an explainer page, use the configured Playwright MCP server to check the page
-when it is available. Verify that the diagrams render, the content is coherent, and the tone is
-simple without losing important knowledge. Remove generated screenshots and `.playwright-mcp/`
-afterwards.
+- When creating an HTML explanation, replace the root `index.html`. Do not create additional
+  lesson pages or archives.
+- For page work, use `npm run dev` and keep `http://localhost:5173` available. The user reloads
+  this fixed URL to see the explanation.
+- Vite is only the dev server; this project has no framework or build step. It binds to IPv6
+  loopback, so use `localhost:5173`, not `127.0.0.1:5173`.

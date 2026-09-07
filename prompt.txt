@@ -1,6 +1,12 @@
-i have questions:
+A natural next topic is **how your Docker app becomes a website people can access**.
 
-1. i do not understand this "The 127.0.0.1 prefix is the whole of R5 and R6: without it, "5432:5432" listens on every network the laptop is joined to." => how does a laptop localhost making the port available on network level ? when i do try to open vite server on my phone who is in same wifi. nothing happens. when why this concern and protection ?
-2.1. i do not understand this concept of collector
-2.2 why collector have same volume as api ? specially this line "- ./frames:/var/lib/rainfall/frames " .. i have read some docker compose online and none have this patter on volume 
-3. how we are getting the web_port when we are not declaring the env_file ?
+You now understand how the app runs and how its parts connect. Next, follow a request from someone’s browser to your API:
+
+1. **Server and deployment** — where your containers run when your laptop is off.
+2. **Domain names and DNS** — how `myapp.com` points to that server.
+3. **Reverse proxy** — how one entry point receives requests and sends them to the right container.
+4. **HTTPS** — how the connection between the browser and server is encrypted.
+
+I’d start with **“What happens when someone opens my deployed app’s URL?”** That gives you the overall picture before learning individual tools such as Nginx or Caddy.
+
+After that, CI/CD makes more sense: you’ll understand what your automated deployment is actually doing.
