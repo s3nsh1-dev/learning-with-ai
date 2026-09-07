@@ -1,337 +1,110 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Follow a visit to a Docker app through deployment, DNS, HTTPS, a reverse proxy, and the API response.">
-  <title>Your app, on the web</title>
-  <link rel="icon" href="data:,">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&amp;family=Source+Sans+3:wght@400;500;600;700&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <style>
-    :root {
-      color-scheme: light;
-      --ground: #f7f5f8; --surface: #ffffff; --text: #332d3b;
-      --subtle: #665e70; --line: #dcd6e2;
-      --visitor: #6942ad; --visitor-fill: #f0e9fb;
-      --server: #167366; --server-fill: #e4f3ee;
-      --secure: #995b10; --secure-fill: #fff0d6;
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Inside the EC2 box</title><link rel="icon" href="data:,"><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--bg:#eef3f7;--panel:#fff;--ink:#172c40;--muted:#496075;--line:#b9cad7;--web:#245eb4;--api:#925300;--db:#087367;--soft:#e4edf4}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14212c;--panel:#1b2d3b;--ink:#e6eff7;--muted:#afc2d3;--line:#506679;--web:#8ebaff;--api:#efbd6c;--db:#77d6c5;--soft:#233b4e}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#14212c;--panel:#1b2d3b;--ink:#e6eff7;--muted:#afc2d3;--line:#506679;--web:#8ebaff;--api:#efbd6c;--db:#77d6c5;--soft:#233b4e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 'IBM Plex Sans',sans-serif}main{max-width:1080px;margin:auto;padding:30px 32px 80px}header{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:18px}.eyebrow,.file{font:12px 'IBM Plex Mono',monospace;letter-spacing:.07em}.eyebrow{text-transform:uppercase;color:var(--muted)}h1,h2,h3{font-family:Barlow,sans-serif;line-height:1.15;text-wrap:balance}h1{font-size:clamp(38px,6vw,66px);max-width:800px;margin:30px 0 20px}h2{font-size:32px;margin:0 0 22px}h3{font-size:23px;margin:24px 0 12px}p{max-width:72ch;margin:12px 0 20px}.lead{font-size:21px;max-width:65ch}section{padding-top:54px}a{color:var(--web);text-underline-offset:3px}code{font-family:'IBM Plex Mono',monospace;font-size:.88em}p code,td code{background:var(--soft);padding:2px 5px;border-radius:3px}button,select{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);padding:9px 13px;border-radius:5px}button{cursor:pointer}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--web);outline-offset:4px}.web{color:var(--web)}.api{color:var(--api)}.db{color:var(--db)}figure{margin:24px 0;background:var(--panel);padding:24px;border:1px solid var(--line);border-radius:8px}.diagram{overflow-x:auto}svg{display:block;width:100%;height:auto;min-width:660px}svg text{fill:currentColor;font-family:'IBM Plex Sans',sans-serif;font-size:16px}svg .small{font-size:13px}svg rect{fill:var(--panel);stroke:currentColor;stroke-width:1.5}svg .boundary{fill:var(--soft);stroke:var(--line);stroke-dasharray:7 5}svg .wire{fill:none;stroke:currentColor;stroke-width:2;marker-end:url(#arrow)}figcaption{color:var(--muted);font-size:14px;margin-top:16px;max-width:80ch}.note{background:var(--soft);padding:20px 24px;border-radius:6px}.split{display:grid;grid-template-columns:1fr 1fr;gap:24px}.split>div{min-width:0}.code{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:20px 0;background:var(--panel)}.file{padding:10px 16px;background:var(--soft);color:var(--muted)}pre{margin:0;padding:18px;overflow-x:auto;font-size:14px;line-height:1.65}table{border-collapse:collapse;width:100%;font-size:15px}th,td{text-align:left;padding:14px;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--soft)}.table-wrap{overflow-x:auto}li{margin:10px 0}nav{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:24px;font-size:14px}.lab{background:var(--panel);border:1px solid var(--line);padding:24px;border-radius:8px}.lab label{display:block;margin-bottom:12px}.lab select{max-width:100%}.result{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:20px}.result strong{display:block;font-size:19px}.result p{margin:6px 0}.step{font:14px 'IBM Plex Mono',monospace;color:var(--muted);display:block;margin-bottom:10px}footer{margin-top:50px;padding-top:24px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}@media(max-width:650px){main{padding:20px 18px 50px}body{font-size:16px}.split,.result{grid-template-columns:1fr}figure{padding:14px}h2{font-size:28px}section{padding-top:40px}header .eyebrow{max-width:180px}pre{font-size:12px}.lead{font-size:19px}th,td{padding:10px}}
+</style></head><body><main><header><span class="eyebrow">Field notes / Docker networking</span><button id="theme" aria-label="Switch color theme">Switch theme</button></header><h1>One EC2 machine.<br>Several different “here”s.</h1><p class="lead">Your VPS knowledge still applies. EC2 is the server. Docker runs your web server, API, and database in separate containers on that server. Each container has its own <code>localhost</code>.</p><p>The question that makes an address click is <strong>“Where is the code making this request running?”</strong> A browser and a web container are two different callers.</p><nav aria-label="Lesson sections"><a href="#map">See the route</a><a href="#addresses">Understand the names</a><a href="#setup">Set it up on EC2</a><a href="#verify">Check each hop</a></nav>
+<section id="map"><h2>Follow one request for a list of todos</h2><p>We’ll use one public entry point. The <span class="web">web container</span> serves the frontend and forwards <code>/api/</code> requests to the <span class="api">API container</span>. The API queries <span class="db">PostgreSQL</span>. A server that forwards requests this way is a <strong>reverse proxy</strong>.</p>
+<figure><div class="diagram"><svg viewBox="0 0 960 360" role="img" aria-label="A browser outside EC2 sends HTTP to EC2 port 80, mapped to web port 3000. Web forwards to api port 8000, which queries db port 5432. API and database ports are not published."><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"/></marker></defs><rect class="boundary" x="235" y="25" width="705" height="300" rx="10"/><text x="255" y="55">EC2 instance · one Linux machine</text><text x="255" y="79" class="small">Docker networks inside this machine</text><rect x="15" y="130" width="160" height="95" rx="5"/><text x="95" y="163" text-anchor="middle">Your browser</text><text x="95" y="188" text-anchor="middle" class="small">on your laptop</text><text x="95" y="210" text-anchor="middle" class="small">fetch('/api/todos')</text><path class="wire" d="M175 175 H305"/><text x="199" y="135" class="small">public IP</text><text x="192" y="155" class="small">80 → 3000</text><g class="web"><rect x="310" y="130" width="155" height="95" rx="5"/><text x="388" y="165" text-anchor="middle">web :3000</text><text x="388" y="194" text-anchor="middle" class="small">files + proxy</text></g><path class="wire" d="M465 175 H550"/><text x="472" y="147" class="small">HTTP</text><g class="api"><rect x="555" y="130" width="150" height="95" rx="5"/><text x="630" y="165" text-anchor="middle">api :8000</text><text x="630" y="194" text-anchor="middle" class="small">application code</text></g><path class="wire" d="M705 175 H780"/><text x="719" y="147" class="small">SQL</text><g class="db"><rect x="785" y="130" width="135" height="95" rx="20"/><text x="852" y="165" text-anchor="middle">db :5432</text><text x="852" y="194" text-anchor="middle" class="small">PostgreSQL</text></g><text x="490" y="260" text-anchor="middle" class="small">web calls http://api:8000/todos</text><text x="765" y="290" text-anchor="middle" class="small">API connects to db:5432</text><text x="260" y="308" class="small">Only web has a published port.</text></svg></div><figcaption>The browser reaches the EC2 public address. Docker forwards host port 80 into web port 3000. The remaining hops stay inside Docker networks; responses return through the same chain.</figcaption></figure>
+<div class="note"><strong>The frontend has two locations.</strong><p>The web container sends HTML and JavaScript files to your browser. That JavaScript then runs on your laptop. Its <code>fetch('/api/todos')</code> calls the same public origin that served the page. The web server receives it and makes a separate internal request to <code>http://api:8000/todos</code>.</p></div><p>“The API only receives web requests” can mean that outside clients cannot connect directly to port 8000. This setup achieves that. People can still call the public <code>/api/todos</code> route themselves, without your UI. The API must still authenticate users and check permissions. Private networking does not prove that a request came from your frontend code.</p></section>
+<section id="addresses"><h2><code>api</code> is a private name, not a special URL</h2><p>In <code>http://api:8000</code>, <code>http</code> is the protocol, <code>api</code> is the destination name, and <code>8000</code> is the destination container’s listening port. Docker’s internal name lookup translates the Compose service name <code>api</code> into its container IP for containers sharing its network. <a href="https://docs.docker.com/compose/how-tos/networking/">Docker’s networking guide</a></p><p><code>http://web:3000</code> works the same way. Another container sharing web’s network can use it to reach web. Your browser normally uses <code>http://EC2_PUBLIC_IP</code>, not <code>http://web:3000</code>. These private names work on a VPS too; they are a Docker feature, not an AWS feature.</p>
+<div class="lab"><label for="caller">Place yourself where the calling code runs</label><select id="caller"><option value="browser">My laptop’s browser</option><option value="host">An SSH terminal on EC2</option><option value="web">Inside the web container</option><option value="api">Inside the API container</option></select><div class="result" id="result" aria-live="polite"></div></div>
+<h3>Why localhost used to work</h3><p>If your frontend and backend ran directly on your laptop, the browser could call <code>localhost:8000</code> on that same laptop. With ordinary Docker bridge networking, web’s <code>localhost:8000</code> points back into web, where no API is listening. Use <code>api:8000</code> to cross into the API container.</p><div class="table-wrap"><table><thead><tr><th>Address or setting</th><th>What it means here</th></tr></thead><tbody><tr><td><code>0.0.0.0:8000</code></td><td>API listens on all its container’s IPv4 interfaces. This is a bind address, not the URL callers should use.</td></tr><tr><td><code>"80:3000"</code></td><td>Publish EC2 host port 80 to web container port 3000. Inside Docker, web is still reached on 3000.</td></tr><tr><td><code>EXPOSE 8000</code></td><td>Image metadata describing an intended port. It does not publish that port or start a listener.</td></tr><tr><td><code>expose: [8000]</code></td><td>Optional Compose documentation of an internal port. Shared-network containers can connect without it. It is not an access-control rule.</td></tr><tr><td><code>db:5432</code></td><td>A PostgreSQL connection destination. Your database driver uses the PostgreSQL protocol, not HTTP.</td></tr></tbody></table></div><p><a href="https://docs.docker.com/get-started/docker-concepts/running-containers/publishing-ports/">Published ports</a> connect host ports to container ports. <a href="https://docs.docker.com/reference/compose-file/services/">Compose’s service reference</a> explains <code>ports</code>, <code>expose</code>, and network membership.</p></section>
+<section id="setup"><h2>Put this on an EC2 instance</h2><p>This walkthrough assumes a fresh Ubuntu 24.04 EC2 instance and prebuilt Linux images for your app. It is a networking setup with an initial HTTP check. Add HTTPS before using real logins or private data.</p><span class="step">1 / Prepare the Linux machine</span><p>Launch an Ubuntu 24.04 instance in a public subnet with an internet-gateway route and a public IPv4 address. Choose an instance architecture supported by your images. Attach storage large enough for images and database data.</p><p>In its security group, allow TCP 22 from your current IP for SSH and TCP 80 from your current IP for this first check. For a public website, web traffic will later need public access on 443. Do not add inbound rules for 3000, 8000, or 5432. A security group is AWS’s network firewall around the instance.</p>
+<div class="code"><div class="file">On your laptop</div><pre><code>chmod 400 your-key.pem
+ssh -i your-key.pem ubuntu@EC2_PUBLIC_IP</code></pre></div>
+<p>On EC2, install Docker Engine and the Compose plugin using <a href="https://docs.docker.com/engine/install/ubuntu/#install-using-the-apt-repository">Docker’s Ubuntu apt-repository instructions</a>. Use the repository setup commands there, then install and check:</p>
+<div class="code"><div class="file">Inside the EC2 SSH terminal</div><pre><code>sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl enable --now docker
+sudo docker run hello-world
+sudo docker compose version
+mkdir -p ~/todo-stack
+cd ~/todo-stack</code></pre></div>
+<span class="step">2 / Know what you are downloading</span><p>An <strong>image</strong> is the packaged filesystem and startup instructions for a program. A <strong>container</strong> is a running instance of that image. Pulling an image downloads it; starting a container runs its program. Image names such as <code>ghcr.io/YOUR_ORG/todo-api:1.0.0</code> identify packages in a registry. Service names such as <code>api</code> identify running services in this Compose project.</p><p>The two app image names below are placeholders. Replace them with images you or your team have built and pushed. A random frontend image will not automatically provide proxying, and a random API will not automatically understand these environment variables.</p><div class="split"><div><h3 class="web">Web image contract</h3><p>Serves built frontend files and listens on <code>0.0.0.0:3000</code>. In this example it contains Nginx with the configuration below and files in <code>/usr/share/nginx/html</code>. Browser code uses <code>fetch('/api/todos')</code>.</p></div><div><h3 class="api">API image contract</h3><p>Listens on <code>0.0.0.0:8000</code>, implements <code>GET /todos</code>, and reads <code>DATABASE_URL</code>. It uses a PostgreSQL driver, creates its schema through your migration process, and retries transient database connections.</p></div></div>
+<div class="code"><div class="file">Inside your web image · /etc/nginx/conf.d/default.conf</div><pre><code>server {
+    listen 3000;
+    root /usr/share/nginx/html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
     }
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        color-scheme: dark;
-        --ground: #201c26; --surface: #292430; --text: #eee8f3;
-        --subtle: #bdb1c8; --line: #4c4257;
-        --visitor: #c5a8fb; --visitor-fill: #392c4e;
-        --server: #83d7bd; --server-fill: #233e36;
-        --secure: #f5c16f; --secure-fill: #493720;
-      }
+
+    location /api/ {
+        proxy_pass http://api:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --ground: #201c26; --surface: #292430; --text: #eee8f3;
-      --subtle: #bdb1c8; --line: #4c4257;
-      --visitor: #c5a8fb; --visitor-fill: #392c4e;
-      --server: #83d7bd; --server-fill: #233e36;
-      --secure: #f5c16f; --secure-fill: #493720;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; scroll-padding-top: 24px; }
-    body { margin: 0; background: var(--ground); color: var(--text); font: 18px/1.65 "Source Sans 3", sans-serif; }
-    h1,h2,h3,p,figure,pre { margin: 0; }
-    h1,h2,h3 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 600; line-height: 1.15; text-wrap: balance; }
-    h1 { font-size: clamp(38px,5.2vw,66px); letter-spacing: -.035em; max-width: 15ch; }
-    h2 { font-size: clamp(27px,3vw,36px); letter-spacing: -.025em; }
-    h3 { font-size: 23px; }
-    a { color: inherit; text-underline-offset: 4px; text-decoration-thickness: 1px; }
-    a:hover { text-decoration-thickness: 2px; }
-    button,select { font: inherit; }
-    a:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible { outline: 3px solid var(--text); outline-offset: 5px; }
-    code { font: .8em/1.6 "DM Mono", monospace; overflow-wrap: anywhere; }
-    p code,td code { padding: 2px 4px; background: var(--ground); border-radius: 3px; }
-    strong { font-weight: 700; }
-    .shell { max-width: 1180px; margin-inline: auto; padding-inline: 36px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 22px; border-bottom: 1px solid var(--line); }
-    .wordmark { font: 600 18px "Bricolage Grotesque", sans-serif; }
-    .wordmark span { font-weight: 500; color: var(--subtle); }
-    .appearance { display: flex; align-items: center; gap: 10px; font-size: 14px; }
-    select { border: 1px solid var(--line); border-radius: 5px; background: var(--surface); color: var(--text); padding: 7px 10px; }
-    .skip { position: absolute; top: -80px; padding: 10px; background: var(--surface); }
-    .skip:focus { top: 8px; z-index: 10; }
-    .hero { display: grid; grid-template-columns: 1.35fr 1fr; gap: 64px; padding-block: 62px 42px; align-items: center; }
-    .intro { display: grid; gap: 23px; }
-    .eyebrow { font: 500 12px/1.6 "DM Mono", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--subtle); }
-    .intro p { max-width: 49ch; font-size: 20px; line-height: 1.55; }
-    .visit { border: 1px solid var(--visitor); background: var(--surface); border-radius: 12px; overflow: hidden; }
-    .visit-head { background: var(--visitor-fill); color: var(--visitor); padding: 14px 20px; display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
-    .visit-body { display: grid; gap: 18px; padding: 24px; }
-    .address { display: flex; flex-wrap: wrap; font: 500 18px/1.6 "DM Mono", monospace; }
-    .address .scheme { color: var(--secure); background: var(--secure-fill); padding: 2px 3px; }
-    .address .domain { color: var(--visitor); padding: 2px 3px; }
-    .visit-body p { font-size: 16px; line-height: 1.5; color: var(--subtle); }
-    .task { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding-top: 18px; color: var(--visitor); font-size: 17px; }
-    .task-square { width: 17px; height: 17px; border: 2px solid currentColor; border-radius: 3px; }
-    .jump { display: flex; flex-wrap: wrap; column-gap: 28px; row-gap: 12px; padding-block: 18px 28px; font-size: 15px; border-bottom: 1px solid var(--line); }
-    .lesson { padding-block: 48px; border-bottom: 1px solid var(--line); }
-    .split { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 60px; }
-    .prose { display: grid; gap: 18px; min-width: 0; }
-    .prose p { max-width: 65ch; }
-    .section-kicker { font: 500 12px/1.6 "DM Mono", monospace; text-transform: uppercase; letter-spacing: .075em; color: var(--subtle); }
-    .server-text { color: var(--server); }
-    .visitor-text { color: var(--visitor); }
-    .secure-text { color: var(--secure); }
-    .diagram { display: grid; gap: 15px; min-width: 0; }
-    svg { display: block; width: 100%; height: auto; overflow: visible; color: var(--text); }
-    svg text { fill: currentColor; font: 600 16px "Source Sans 3", sans-serif; }
-    svg .tiny { font: 400 13px "DM Mono", monospace; }
-    svg .note { font: 400 15px "Source Sans 3", sans-serif; }
-    svg .neutral-box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
-    svg .visitor-box { fill: var(--visitor-fill); stroke: var(--visitor); stroke-width: 1.5; }
-    svg .server-box { fill: var(--surface); stroke: var(--server); stroke-width: 1.5; }
-    svg .server-boundary { fill: var(--server-fill); stroke: var(--server); stroke-width: 1.5; stroke-dasharray: 5 5; }
-    svg .wire { fill: none; stroke: currentColor; stroke-width: 2; }
-    svg .muted { color: var(--subtle); }
-    figcaption { color: var(--subtle); font-size: 15px; line-height: 1.5; max-width: 80ch; }
-    .map-section { padding-block: 46px; display: grid; gap: 24px; }
-    .map-title { display: flex; justify-content: space-between; align-items: end; gap: 28px; }
-    .map-title p { max-width: 35ch; color: var(--subtle); font-size: 16px; }
-    .legend { display: flex; flex-wrap: wrap; gap: 12px 24px; font-size: 14px; }
-    .key { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; }
-    .dot { width: 10px; height: 10px; background: currentColor; border-radius: 50%; }
-    .square { width: 10px; height: 10px; border: 2px solid currentColor; }
-    .dash { width: 18px; height: 0; border-top: 3px solid currentColor; }
-    .map-frame { padding: 24px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
-    .mobile-map { display: none; }
-    .step { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 46px; }
-    .step-label { display: grid; gap: 9px; align-content: start; }
-    .step-number { font: 500 42px/1 "Bricolage Grotesque", sans-serif; color: var(--subtle); }
-    .step-label p { font-size: 16px; font-weight: 600; }
-    .example { padding: 20px 24px; border: 1px solid var(--line); background: var(--surface); display: grid; gap: 10px; border-radius: 6px; }
-    .lookup { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; font: 500 16px/1.6 "DM Mono", monospace; }
-    .lookup small { font: 14px "Source Sans 3", sans-serif; color: var(--subtle); }
-    .micro { font-size: 14px; color: var(--subtle); }
-    .secure-example { background: var(--secure-fill); border-color: var(--secure); }
-    .secure-example h3 { color: var(--secure); font-size: 21px; }
-    .routing { width: 100%; border-collapse: collapse; font-size: 16px; }
-    .routing th { text-align: left; padding: 12px; border-bottom: 2px solid var(--line); font-size: 14px; font-weight: 600; }
-    .routing td { padding: 16px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
-    .routing th:first-child,.routing td:first-child { color: var(--visitor); }
-    .routing th:last-child,.routing td:last-child { color: var(--server); }
-    .routing td code { background: transparent; padding: 0; }
-    .roundtrip { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 16px; }
-    .tag { padding: 5px 11px; font-weight: 600; border-radius: 4px; }
-    .tag.visitor-text { background: var(--visitor-fill); }
-    .tag.server-text { background: var(--server-fill); }
-    pre { padding: 18px 22px; background: var(--visitor-fill); color: var(--visitor); border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
-    pre code { font-size: 14px; }
-    details { border-block: 1px solid var(--line); padding-block: 17px; }
-    summary { cursor: pointer; font-weight: 600; }
-    details p { padding-top: 12px; }
-    .next { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 46px; padding-block: 44px; }
-    .sources { padding-block: 24px 40px; color: var(--subtle); font-size: 14px; display: flex; flex-wrap: wrap; gap: 10px 22px; }
-    @media (max-width: 850px) {
-      .hero { gap: 32px; grid-template-columns: 1.1fr 1fr; }
-      .split { gap: 30px; }
-      .step,.next { grid-template-columns: 110px minmax(0,1fr); gap: 24px; }
-      .map-frame { padding: 16px; }
-    }
-    @media (max-width: 650px) {
-      body { font-size: 17px; }
-      .shell { padding-inline: 20px; }
-      .topbar { gap: 12px; padding-block: 17px; }
-      .wordmark { font-size: 16px; }
-      .wordmark span { display: block; font-size: 13px; padding-top: 3px; }
-      .appearance>span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-      .hero { grid-template-columns: 1fr; gap: 28px; padding-block: 36px 24px; }
-      .intro { gap: 18px; }
-      .intro p { font-size: 19px; }
-      .visit-body { padding: 20px; }
-      .jump { column-gap: 22px; font-size: 14px; }
-      .lesson { padding-block: 32px; }
-      .split,.step,.next { grid-template-columns: 1fr; gap: 24px; }
-      .split .diagram { max-width: 410px; width: 100%; margin-inline: auto; }
-      .map-title { display: grid; gap: 14px; }
-      .map-section { padding-block: 32px; }
-      .map-frame { padding: 10px; }
-      .desktop-map { display: none; }
-      .mobile-map { display: block; max-width: 380px; margin-inline: auto; }
-      .legend { gap: 10px 18px; font-size: 13px; }
-      .step-label { display: flex; align-items: center; gap: 13px; }
-      .step-number { font-size: 27px; }
-      .step-label p { font-size: 15px; }
-      .example { padding: 17px; }
-      .lookup { font-size: 14px; }
-      .routing { font-size: 15px; }
-      .routing th,.routing td { padding-inline: 6px; }
-      .routing code { font-size: 12px; }
-      .next { padding-block: 32px; }
-    }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-  </style>
-</head>
-<body>
-  <a class="skip" href="#deployment">Skip to the explanation</a>
-  <div class="shell">
-    <div class="topbar">
-      <div class="wordmark">Learning with AI <span>/ Infrastructure</span></div>
-      <label class="appearance"><span>Appearance</span><select id="appearance" aria-label="Appearance"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
-    </div>
-    <main>
-      <header class="hero">
-        <div class="intro">
-          <div class="eyebrow">From Docker to a public website</div>
-          <h1>Your app, on the web.</h1>
-          <p>What happens when someone opens your deployed app's URL? Follow one visit from the browser to your containers, then back to the screen.</p>
-        </div>
-        <aside class="visit" aria-label="The example used throughout this lesson">
-          <div class="visit-head"><span class="square" aria-hidden="true"></span>A visitor opens your task app</div>
-          <div class="visit-body">
-            <div class="address"><span class="scheme">https://</span><span class="domain">myapp.com</span></div>
-            <p>The browser needs the page first. Then the page's JavaScript asks your API for the tasks.</p>
-            <div class="task"><span class="task-square" aria-hidden="true"></span>Ship my first website</div>
-          </div>
-        </aside>
-      </header>
-      <nav class="jump" aria-label="Lesson sections"><a href="#deployment">Deployment</a><a href="#map">Request map</a><a href="#dns">DNS</a><a href="#https">HTTPS</a><a href="#proxy">Reverse proxy</a><a href="#response">The response</a></nav>
-      <section class="lesson split" id="deployment">
-        <div class="prose">
-          <div class="section-kicker">Before anyone visits</div>
-          <h2>Give your containers a home.</h2>
-          <p>A <strong>server</strong> is a computer that runs your app and accepts requests. In this example, you rent a Linux machine with a public IP address. It stays on when your laptop is off.</p>
-          <p><strong>Deployment</strong> puts a version of your app on that server and starts it. You build Docker images, upload them to an image registry, then have the server download them and run containers.</p>
-          <p>Compose can start the services there. You supply production settings and secrets, persistent database storage, and network access to the proxy's public ports.</p>
-        </div>
-        <figure class="diagram">
-          <svg viewBox="0 0 380 315" role="img" aria-label="Deployment moves a Docker image from the build machine to a registry, then onto the remote server, where containers run independently of the laptop.">
-            <defs><marker id="deploy-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="currentColor"/></marker></defs>
-            <rect class="neutral-box" x="12" y="12" width="356" height="66" rx="6"/>
-            <text x="30" y="39">Build machine</text><text class="tiny muted" x="30" y="61">Code → Docker image v1</text>
-            <path class="wire" d="M190 78V115" marker-end="url(#deploy-tip)"/><text class="note muted" x="205" y="103">push the image</text>
-            <rect class="neutral-box" x="12" y="124" width="356" height="66" rx="6"/>
-            <text x="30" y="150">Image registry</text><text class="tiny muted" x="30" y="174">Stores the image for download</text>
-            <path class="wire" d="M190 190V228" marker-end="url(#deploy-tip)"/><text class="note muted" x="205" y="216">server pulls it</text>
-            <g class="server-text"><rect x="12" y="237" width="356" height="66" rx="6" fill="var(--server-fill)" stroke="currentColor" stroke-width="1.5"/>
-            <text x="30" y="264">Remote server</text><text class="tiny" x="30" y="287">Runs containers from image v1</text></g>
-          </svg>
-          <figcaption>This transfer happens at deployment time. Visitors later contact the running server.</figcaption>
-        </figure>
-      </section>
-      <section class="map-section" id="map">
-        <div class="map-title"><h2>One address.<br>A route to each service.</h2><p>Our example puts the proxy, web app, API, and database on one server.</p></div>
-        <div class="legend" aria-label="Color meanings"><span class="key visitor-text"><span class="square" aria-hidden="true"></span>Visitor's browser</span><span class="key server-text"><span class="dot" aria-hidden="true"></span>Server services</span><span class="key secure-text"><span class="dash" aria-hidden="true"></span>Encrypted connection</span></div>
-        <figure class="diagram">
-          <div class="map-frame">
-            <svg class="desktop-map" viewBox="0 0 980 400" role="img" aria-label="After DNS finds the server, the browser uses HTTPS on port 443 to contact a reverse proxy. Inside the private Docker network, the proxy sends page requests to web:3000 and API requests to api:8000. The API queries the database. Responses return through the proxy.">
-              <defs>
-                <marker id="server-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--server)"/></marker>
-                <marker id="secure-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--secure)"/></marker>
-              </defs>
-              <rect class="server-boundary" x="410" y="10" width="556" height="376" rx="10"/>
-              <g class="server-text"><text x="431" y="40">Your server</text><text class="note" x="431" y="63">Private Docker network</text></g>
-              <g class="visitor-text"><rect class="visitor-box" x="14" y="142" width="190" height="100" rx="8"/><text x="34" y="174">Visitor's browser</text><text class="tiny" x="34" y="199">myapp.com</text><text class="note" x="34" y="223">Renders the page</text></g>
-              <rect x="215" y="141" width="197" height="103" rx="6" fill="var(--secure-fill)"/>
-              <g class="secure-text"><text x="230" y="164">HTTPS · port 443</text><path class="wire" d="M204 183H430" marker-end="url(#secure-tip)"/><path class="wire" d="M430 217H204" marker-end="url(#secure-tip)"/><text class="note" x="246" y="238">response back</text></g>
-              <g class="server-text">
-                <rect class="server-box" x="438" y="142" width="182" height="100" rx="8"/><text x="456" y="174">Reverse proxy</text><text class="note" x="456" y="222">Chooses a service</text>
-                <path class="wire" d="M529 142V108H751" marker-end="url(#server-tip)"/><text class="tiny" x="635" y="94">/ → HTTP</text>
-                <rect class="server-box" x="760" y="76" width="186" height="68" rx="6"/><text x="779" y="103">Web container</text><text class="tiny" x="779" y="126">web:3000</text>
-                <path class="wire" d="M620 192H751" marker-end="url(#server-tip)"/><text class="tiny" x="634" y="177">/api/*</text><text class="tiny" x="647" y="214">HTTP</text>
-                <rect class="server-box" x="760" y="158" width="186" height="72" rx="6"/><text x="779" y="186">API container</text><text class="tiny" x="779" y="210">api:8000</text>
-                <path class="wire" d="M853 230V293" marker-end="url(#server-tip)"/><text class="note" x="780" y="267">queries</text>
-                <rect class="server-box" x="760" y="304" width="186" height="56" rx="6"/><text x="779" y="337">Database</text>
-                <text class="note" x="432" y="330">App ports stay private.</text><text class="note" x="432" y="353">Only the proxy is public.</text>
-              </g>
-              <text class="tiny secure-text" x="456" y="198">TLS ends here</text>
-              <text class="note muted" x="16" y="294">DNS found the address.</text><text class="note muted" x="16" y="317">Requests now go to the server.</text>
-            </svg>
-            <svg class="mobile-map" viewBox="0 0 340 658" role="img" aria-label="After DNS, the visitor's browser connects downwards over HTTPS to the proxy. Inside the server, the proxy branches to web:3000 for the page or api:8000 for data. The API queries the database. Responses return through the proxy.">
-              <defs><marker id="m-secure-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--secure)"/></marker><marker id="m-server-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--server)"/></marker></defs>
-              <g class="visitor-text"><rect class="visitor-box" x="65" y="10" width="210" height="75" rx="8"/><text x="86" y="40">Visitor's browser</text><text class="tiny" x="86" y="64">myapp.com</text></g>
-              <rect class="server-boundary" x="8" y="191" width="324" height="455" rx="8"/>
-              <g class="server-text"><text x="25" y="218">Your server</text><text class="tiny" x="25" y="237">Private</text><text class="tiny" x="25" y="255">network</text></g>
-              <rect x="90" y="93" width="160" height="91" rx="6" fill="var(--secure-fill)"/>
-              <g class="secure-text"><path class="wire" d="M146 85V260" marker-end="url(#m-secure-tip)"/><path class="wire" d="M194 260V85" marker-end="url(#m-secure-tip)"/><text class="tiny" x="23" y="122">HTTPS</text><text class="tiny" x="23" y="142">:443</text><text class="note" x="210" y="160">response</text></g>
-              <g class="server-text"><rect class="server-box" x="65" y="269" width="210" height="86" rx="8"/><text x="86" y="299">Reverse proxy</text><text class="note" x="86" y="340">Chooses a service</text>
-              <path class="wire" d="M120 355V380H82V413" marker-end="url(#m-server-tip)"/><path class="wire" d="M220 355V380H257V413" marker-end="url(#m-server-tip)"/>
-              <text class="tiny" x="8" y="400">/ → HTTP</text><text class="tiny" x="201" y="400">/api/*</text>
-              <rect class="server-box" x="21" y="425" width="133" height="75" rx="6"/><text x="35" y="454">Web container</text><text class="tiny" x="35" y="480">web:3000</text>
-              <rect class="server-box" x="184" y="425" width="133" height="75" rx="6"/><text x="198" y="454">API container</text><text class="tiny" x="198" y="480">api:8000</text>
-              <path class="wire" d="M250 500V556" marker-end="url(#m-server-tip)"/><text class="note" x="185" y="532">queries</text>
-              <rect class="server-box" x="184" y="568" width="133" height="54" rx="6"/><text x="198" y="601">Database</text>
-              <text class="note" x="23" y="569">App ports</text><text class="note" x="23" y="591">stay private.</text></g>
-              <text class="tiny secure-text" x="86" y="320">TLS ends here</text>
-            </svg>
-          </div>
-          <figcaption><span class="secure-text">Amber marks encryption between the browser and proxy.</span> The proxy forwards requests over HTTP inside this server. Responses come back through the proxy, which encrypts them for the browser.</figcaption>
-        </figure>
-      </section>
-      <section class="lesson step" id="dns">
-        <div class="step-label"><span class="step-number">1</span><p>Find the address</p></div>
-        <div class="prose">
-          <h2>DNS tells the browser where to go.</h2>
-          <p>A domain name such as <code>myapp.com</code> is a memorable name. <strong>DNS</strong>, the Domain Name System, lets the browser look up an IP address for it. A cached answer can save a fresh lookup.</p>
-          <div class="example">
-            <div class="lookup"><span class="visitor-text">myapp.com</span><small>DNS lookup →</small><span class="server-text">203.0.113.10</span></div>
-            <p class="micro">Illustrative IP address, reserved for documentation.</p>
-          </div>
-          <p>For this setup, you configure an <code>A</code> record pointing to the server's public IPv4 address. An <code>AAAA</code> record serves the same purpose for IPv6.</p>
-          <p>DNS supplies the address. It does not send the web request onward or choose between <code>/</code> and <code>/api/tasks</code>.</p>
-          <p class="micro">Reference: <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works">MDN on DNS and web requests</a>.</p>
-        </div>
-      </section>
-      <section class="lesson step" id="https">
-        <div class="step-label"><span class="step-number">2</span><p class="secure-text">Secure the connection</p></div>
-        <div class="prose">
-          <h2>HTTPS protects the trip across the internet.</h2>
-          <p>The <code>https://</code> in the URL tells the browser to use a secure connection. It normally contacts port <code>443</code>. A port identifies which service to reach at an IP address.</p>
-          <p><strong>HTTPS</strong> is HTTP protected by TLS. TLS encrypts traffic and detects tampering. The server presents a certificate, and the browser checks that it is trusted and valid for the domain as it establishes the secure connection.</p>
-          <div class="example secure-example"><h3>The encrypted connection ends at the proxy.</h3><p>The proxy decrypts the request so it can read and route it. Our example uses HTTP from there to the containers. Encrypting that second connection requires its own TLS setup.</p></div>
-          <p>Caddy can obtain and renew certificates automatically when its domain and certificate validation are configured correctly. Nginx can also handle HTTPS with certificates you configure.</p>
-          <p class="micro">Reference: <a href="https://caddyserver.com/docs/automatic-https">Caddy's automatic HTTPS documentation</a>.</p>
-        </div>
-      </section>
-      <section class="lesson step" id="proxy">
-        <div class="step-label"><span class="step-number">3</span><p class="server-text">Choose a service</p></div>
-        <div class="prose">
-          <h2>The reverse proxy routes the request.</h2>
-          <p>A <strong>reverse proxy</strong> accepts requests on behalf of your app. It reads the requested hostname and path, then forwards the request according to your routing rules. The browser keeps using the public URL.</p>
-          <table class="routing"><caption class="micro" style="text-align:left;padding-bottom:10px">Example rules for requests to myapp.com</caption><thead><tr><th>Browser asks for</th><th>Proxy contacts inside Docker</th></tr></thead><tbody><tr><td><code>/</code><br>The page</td><td><code>http://web:3000/</code><br>Web container</td></tr><tr><td><code>/api/tasks</code><br>Task data</td><td><code>http://api:8000/api/tasks</code><br>API container</td></tr></tbody></table>
-          <p>These rules preserve the path. Inside their shared Docker network, containers can find each other using service names such as <code>web</code> and <code>api</code>. The visitor's browser cannot resolve those private names.</p>
-          <p>In this setup, only the proxy publishes web ports. The app ports and database stay private. DNS points to the server; the proxy handles the choice of container.</p>
-          <p class="micro">References: <a href="https://docs.docker.com/compose/how-tos/networking/">Compose networking</a> and <a href="https://caddyserver.com/docs/caddyfile/directives/reverse_proxy">Caddy request forwarding</a>.</p>
-        </div>
-      </section>
-      <section class="lesson step" id="response">
-        <div class="step-label"><span class="step-number">4</span><p class="visitor-text">Draw the page</p></div>
-        <div class="prose">
-          <h2>The response completes the round trip.</h2>
-          <p>The web container sends HTML back through the proxy. The browser loads the CSS and JavaScript too. In our task app, that JavaScript runs in the visitor's browser and asks for data:</p>
-          <pre aria-label="JavaScript running in the visitor's browser"><code>const response = await fetch("/api/tasks");
-const tasks = await response.json();</code></pre>
-          <p>The relative path uses the current site, so the request goes to <code>https://myapp.com/api/tasks</code>. The proxy forwards it to the API, which reads the database and returns JSON.</p>
-          <div class="roundtrip" aria-label="Task data returns from API through proxy to browser"><span class="tag server-text">API</span><span aria-hidden="true">→</span><span class="tag server-text">Proxy</span><span class="secure-text">→ HTTPS →</span><span class="tag visitor-text">Browser</span></div>
-          <p>The browser uses those tasks to update the screen. Your API code ran on the server. The JavaScript drawing this task list ran on the visitor's device.</p>
-          <details><summary>Why doesn't the browser call localhost:8000?</summary><p>In browser JavaScript, <code>localhost</code> means the visitor's own computer. It would look for an API there. Use your public API URL, or a relative path such as <code>/api/tasks</code> when your proxy routes API requests on the same site.</p></details>
-        </div>
-      </section>
-      <section class="next" aria-labelledby="next-title">
-        <div class="section-kicker">The next deployment</div>
-        <div class="prose"><h2 id="next-title">New containers. The same public URL.</h2>
-          <p>Editing code on your laptop leaves the server running the deployed version. To release a change, build a new image and update the server's containers.</p>
-          <p><strong>CI/CD</strong> automates checks and delivery. A pipeline can test the code, build and upload the image, then update the server. Delivery can include a human release step; continuous deployment makes release automatic.</p>
-          <p>If the server address and routing stay the same, the visitor still opens <code>https://myapp.com</code>.</p>
-        </div>
-      </section>
-    </main>
-    <footer class="sources"><span>One-server example · Browser-rendered task app</span><span>Larger setups can add a CDN or load balancer.</span></footer>
-  </div>
-  <script>
-    const appearance = document.getElementById("appearance");
-    appearance.addEventListener("change", () => {
-      if (appearance.value === "system") document.documentElement.removeAttribute("data-theme");
-      else document.documentElement.dataset.theme = appearance.value;
-    });
-  </script>
-</body>
-</html>
+}</code></pre></div>
+<p>The trailing slash in <code>proxy_pass</code> makes <code>/api/todos</code> become <code>/todos</code> upstream. If your API expects <code>/api/todos</code>, use <code>proxy_pass http://api:8000;</code> instead. This routing is web-server behavior that you configure, not something Docker adds. <a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass">Nginx proxy_pass reference</a></p><span class="step">3 / Describe the containers and connections</span><p>Create <code>compose.yaml</code> in <code>~/todo-stack</code> on EC2. Web and API share <code>web_api</code>. API and database share <code>api_db</code>. Web has no direct network connection to the database.</p>
+<div class="code"><div class="file">~/todo-stack/compose.yaml</div><pre><code>services:
+  web:
+    image: ghcr.io/YOUR_ORG/todo-web:1.0.0
+    ports:
+      - &quot;80:3000&quot;
+    networks: [web_api]
+    depends_on: [api]
+    restart: unless-stopped
+
+  api:
+    image: ghcr.io/YOUR_ORG/todo-api:1.0.0
+    environment:
+      DATABASE_URL: &quot;postgresql://todo:${DB_PASSWORD:?Set DB_PASSWORD}@db:5432/todo&quot;
+    networks: [web_api, api_db]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: todo
+      POSTGRES_PASSWORD: &quot;${DB_PASSWORD:?Set DB_PASSWORD}&quot;
+      POSTGRES_DB: todo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [api_db]
+    healthcheck:
+      test: [&quot;CMD-SHELL&quot;, &quot;pg_isready -U todo -d todo&quot;]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+networks:
+  web_api:
+  api_db:
+    internal: true
+
+volumes:
+  pgdata:</code></pre></div>
+<p>The database network has no external gateway. The API also joins <code>web_api</code>, so the API can still make outbound requests if needed. Network membership permits communication in both directions; it does not enforce “only web may send HTTP.” Host administrators can also reach containers.</p><p><span class="db">The named volume <code>pgdata</code></span> keeps database files when a database container is replaced. It does not protect you against losing the EC2 disk and is not a backup. PostgreSQL’s initialization variables apply when the data directory is empty; changing the password in this file later does not reset an existing database password. <a href="https://hub.docker.com/_/postgres">Official PostgreSQL image instructions</a></p><span class="step">4 / Set a password, pull, and start</span><p>Create a local <code>.env</code> file next to Compose. This command generates a hex password, so it is safe to place in this example’s database URL without URL encoding. Keep this file out of Git.</p>
+<div class="code"><div class="file">On EC2 · in ~/todo-stack</div><pre><code>umask 077
+printf &#x27;DB_PASSWORD=%s
+&#x27; &quot;$(openssl rand -hex 32)&quot; &gt; .env
+
+# If your images are private, authenticate to their registry first:
+sudo docker login ghcr.io
+
+# Download web, API, and PostgreSQL images:
+sudo docker compose pull
+
+# Create networks, volume, and running containers:
+sudo docker compose up -d
+sudo docker compose ps</code></pre></div>
+<p>Run password generation once. For real production secrets, use your secret-management process; Docker administrators can inspect container environment variables. Before expecting <code>/todos</code> to work, run the schema migration command provided by your API project. There is no universal Docker command that creates your application’s tables.</p><p><code>depends_on</code> waits for the database health check here. Web only waits for the API container to start, so initial requests may return 502 until the API is listening. Applications still need retries when dependencies restart. With this simple Nginx configuration, restart web after replacing API so Nginx resolves its current container address.</p></section><section id="verify"><h2>Check each hop from the right place</h2><p>Use your actual public IP in the browser. The example commands below run in the EC2 SSH terminal unless stated otherwise.</p>
+<div class="code"><div class="file">First check the running services</div><pre><code>sudo docker compose ps
+sudo docker compose logs --tail=50 web api db
+curl -i http://localhost/
+curl -i http://localhost/api/todos</code></pre></div>
+<p>These two <code>localhost</code> requests start on the EC2 host. Host port 80 is published to web, so they can work. In your laptop’s browser, open <code>http://EC2_PUBLIC_IP</code> and inspect the Network tab. The API request should go to that same public host at <code>/api/todos</code>.</p>
+<div class="code"><div class="file">Test inside web · assumes the image contains wget</div><pre><code>sudo docker compose exec web wget -qO- http://api:8000/todos</code></pre></div>
+<p>This request starts inside web, where Docker can resolve <code>api</code>. If the image lacks a diagnostic command, that alone does not mean networking failed. Check the API logs or use a tool your image actually includes.</p>
+<div class="code"><div class="file">Check PostgreSQL itself</div><pre><code>sudo docker compose exec db psql -U todo -d todo -c &#x27;SELECT 1;&#x27;
+# Then inspect the API logs after requesting /api/todos:
+sudo docker compose logs --tail=50 api</code></pre></div>
+<p><code>SELECT 1</code> inside db checks the database process. A successful app request that reads its table also verifies API-to-database connectivity, credentials, and schema.</p><div class="table-wrap"><table><thead><tr><th>What you see</th><th>What to inspect</th></tr></thead><tbody><tr><td>Browser cannot resolve <code>api</code></td><td>Private Docker name leaked into browser code. Use <code>/api/todos</code> with this proxy setup.</td></tr><tr><td>Public address times out</td><td>EC2 public IP, subnet route, security-group source IP, host firewall, and web’s published port.</td></tr><tr><td>Web returns 502</td><td>API startup, shared network, correct port, and binding to <code>0.0.0.0</code>. Restart web after replacing API.</td></tr><tr><td>API returns a database error</td><td><code>db:5432</code>, credentials, database readiness, and migrations.</td></tr><tr><td>API returns 404</td><td>Compare the API’s route with the proxy’s rewritten path.</td></tr></tbody></table></div>
+<h3>Take the working connection to production</h3><p>Attach a domain to a stable public address, configure a certificate and TLS termination on web or a load balancer, and allow 443 in the security group. Redirect HTTP to HTTPS. The internal destination can remain <code>http://api:8000</code> on this single-host Docker network.</p><p>The example’s <code>POSTGRES_USER</code> creates an administrative database role. Give the production API a separate role limited to the tables and operations it needs. Use tested image versions or digests, database backups with restore checks, application authentication, and logs you can monitor. This single EC2 host is a single point of failure. If you later move the database to RDS, replace <code>db:5432</code> with the RDS endpoint and configure its network access and TLS. It will no longer be a Compose service name.</p><div class="note"><strong>Keep these three destinations separate.</strong><p>Browser → public domain.<br><span class="web">Web container</span> → <span class="api"><code>http://api:8000</code></span>.<br><span class="api">API container</span> → <span class="db"><code>db:5432</code></span> through a database driver.</p></div></section><footer>Reference notes: <a href="https://docs.docker.com/compose/how-tos/networking/">Docker service discovery</a> · <a href="https://docs.docker.com/compose/how-tos/startup-order/">Startup order</a> · <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html">EC2 security groups</a>. Commands are a walkthrough for your EC2 machine; this lesson does not deploy AWS resources.</footer></main><script>
+const content={browser:['Your laptop','localhost points to your laptop, even when the page came from EC2.','http://EC2_PUBLIC_IP/api/todos','The public web server proxies this request. Docker names api and web are not available here.'],host:['The EC2 host','localhost:80 reaches the host port published by Docker.','http://localhost/api/todos','This enters web through port 80. The EC2 host does not normally resolve Compose service names.'],web:['The web container','localhost:3000 reaches web itself. localhost:8000 would also stay inside web.','http://api:8000/todos','Docker resolves api on the shared web_api network. http://web:3000 would reach web itself.'],api:['The API container','localhost:8000 reaches the API itself.','db:5432','The PostgreSQL driver connects to db on api_db. It uses PostgreSQL, not HTTP.']};
+const caller=document.querySelector('#caller');function render(){const x=content[caller.value];document.querySelector('#result').innerHTML='<div><span class="eyebrow">Where is localhost?</span><strong>'+x[0]+'</strong><p>'+x[1]+'</p></div><div><span class="eyebrow">A useful destination</span><strong><code>'+x[2]+'</code></strong><p>'+x[3]+'</p></div>'}caller.addEventListener('change',render);render();document.querySelector('#theme').addEventListener('click',()=>{const dark=document.documentElement.dataset.theme?document.documentElement.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=dark?'light':'dark'});
+</script></body></html>

@@ -1,12 +1,1 @@
-A natural next topic is **how your Docker app becomes a website people can access**.
-
-You now understand how the app runs and how its parts connect. Next, follow a request from someone’s browser to your API:
-
-1. **Server and deployment** — where your containers run when your laptop is off.
-2. **Domain names and DNS** — how `myapp.com` points to that server.
-3. **Reverse proxy** — how one entry point receives requests and sends them to the right container.
-4. **HTTPS** — how the connection between the browser and server is encrypted.
-
-I’d start with **“What happens when someone opens my deployed app’s URL?”** That gives you the overall picture before learning individual tools such as Nginx or Caddy.
-
-After that, CI/CD makes more sense: you’ll understand what your automated deployment is actually doing.
+i want you to know walk through me using ec2 instance and downloading these container (web and api and database) detailed way to each of them exposing there services to get used by each other like web calling api and database. api only receives the web image request. i am diffuculty picuturing the http://web:3000 and http://api:8000 .. i have worked with vps but did not used images are frontend and backend. and i think i used localhost for making client and server calling each other. database was online. help me understand this web:3000 and api:8000. i am learning prod setting this everythign which is not localhost i have trouble picturing 
