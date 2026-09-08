@@ -1,17 +1,74 @@
 ---
 name: eli5
-description: Create a beginner-friendly, picture-first HTML explainer in this repository. Use when the user invokes $eli5 or asks for a simple visual explanation of how something works. Do not use for unrelated coding or prose-only requests.
+description: Create HTML learning explanations when the response-destination rules in AGENTS.md select HTML, or when explicitly invoked for an HTML explanation. Do not use for ordinary chat explanations or questions about this skill.
 ---
 
 # ELI5 visual explainer
 
-Explain the topic for a reader with no assumed background knowledge.
+Apply this guidance only to requested HTML explanations. Follow `AGENTS.md` for response
+destination, page location, and server settings. Use `prompt.txt` when the user points to it as
+the prompt; otherwise use the topic or page update explicitly requested by the user.
 
-- Follow the response mode, page location, visual language, and verification requirements in the
-  repository's `AGENTS.md`.
-- Use the topic from the user's current request. Read `prompt.txt` only when the user asks to render
-  or continue the prompt stored there.
-- Prefer a small number of plain words supported by large, meaningful inline SVG illustrations.
-- Preserve technically important causal details. Simplicity should come from clear sequencing and
-  concrete examples, not from making the explanation inaccurate.
-- Replace `index.html` with the completed single-page explainer and verify it before handoff.
+## Audience and depth
+
+- The reader is a software developer approaching an unfamiliar topic. Assume general programming
+  experience, but introduce the topic's own concepts and terminology from the beginning.
+- Teach a useful foundation: what the concept means, why it is needed, and how its basic mechanism
+  works. Connect it to familiar software knowledge when helpful.
+- Keep the scope concise. Introduce each concept, teach its basics, and move on. Do not turn each
+  concept into an essay or compress several unfamiliar ideas into one sentence.
+- Preserve accuracy while limiting depth. Include advanced details and exceptions only when the
+  current explanation needs them to avoid a misleading conclusion.
+
+## Language and explanation
+
+- Explain an idea in everyday adult language before introducing its technical name. Define
+  unfamiliar terms where they first appear.
+- Use consistent names. If the same thing has different names in different places, explain that
+  connection explicitly.
+- Use short, connected sentences and concrete actions such as "reads the file" or "passes the
+  value". Leave enough room to explain how one step leads to the next.
+- Use a small, concrete example and carry it through the explanation where possible. Help the
+  reader picture what happens.
+- For a requested HTML follow-up, address the specific misunderstanding first. Identify what the
+  reader understood correctly, then explain the correction. Use a simpler example before adding
+  more detail. Do not repeat the whole lesson unless requested.
+
+## Lesson scope
+
+For a direct question, keep the page focused on the requested topic. Explain the basics without
+branching into unrelated subtopics.
+
+Use structured learning only when the user explicitly requests a course or staged curriculum:
+
+1. Ask about the desired depth and any missing information needed to shape the curriculum.
+2. Update `CURRICULUM.md` to track stages appropriate to that depth.
+3. Cover the stages through successive user-requested HTML explanations.
+4. End each stage with an MCQ and use the answer to adjust later stages.
+
+Curriculum tracking is not a lesson archive. Ordinary follow-up messages still use the response
+destination rules in `AGENTS.md`; a course does not authorize a page rewrite for every reply.
+
+## Visual design and diagrams
+
+- Apply the repository's [artifact-design](../artifact-design/SKILL.md),
+  [artifact-diagramming](../artifact-diagramming/SKILL.md), and
+  [frontend-design](../frontend-design/SKILL.md) skills when creating or redesigning a page.
+  For a content update, preserve the existing visual design unless the user requests a redesign.
+- Support the explanation with hand-authored inline SVG. Give each figure one clear claim and
+  draw each distinct mechanism that benefits from a picture; avoid decorative or redundant figures.
+- Show the mechanism through position, distance, direction, overlap, and labelled arrows. Make
+  the relevant boundary, sequence, or failure point visible rather than drawing only labelled boxes.
+- Give every figure an accessible description and a caption explaining why the pictured mechanism
+  works. Add failure cases, real numbers, or error text only when they help the current lesson.
+- Keep the page responsive and accessible, with legible diagrams and clear visual hierarchy.
+
+## Verification and handoff
+
+After creating or modifying an explainer page, use the configured Playwright MCP server when
+available. Check that diagrams render, the layout works on desktop and small screens, and the
+explanation uses simple language without losing accuracy. Verify any changed interactions.
+
+Remove screenshots and `.playwright-mcp/` artifacts generated by this verification afterwards.
+Give a concise chat handoff with the fixed local URL. Do not run page verification for chat-only
+answers or edits to these instructions.

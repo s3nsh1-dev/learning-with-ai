@@ -1,6 +1,1 @@
-i have questions:
-
-1. i do not understand this "The 127.0.0.1 prefix is the whole of R5 and R6: without it, "5432:5432" listens on every network the laptop is joined to." => how does a laptop localhost making the port available on network level ? when i do try to open vite server on my phone who is in same wifi. nothing happens. when why this concern and protection ?
-2.1. i do not understand this concept of collector
-2.2 why collector have same volume as api ? specially this line "- ./frames:/var/lib/rainfall/frames " .. i have read some docker compose online and none have this patter on volume 
-3. how we are getting the web_port when we are not declaring the env_file ?
+i want you to know walk through me using ec2 instance and downloading these container (web and api and database) detailed way to each of them exposing there services to get used by each other like web calling api and database. api only receives the web image request. i am diffuculty picuturing the http://web:3000 and http://api:8000 .. i have worked with vps but did not used images are frontend and backend. and i think i used localhost for making client and server calling each other. database was online. help me understand this web:3000 and api:8000. i am learning prod setting this everythign which is not localhost i have trouble picturing 
