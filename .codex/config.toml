@@ -7,3 +7,12 @@ model_reasoning_summary = "concise"
 command = "npx"
 args = ["-y", "@playwright/mcp@latest"]
 startup_timeout_sec = 30
+
+[mcp_servers.playwright.tools.browser_navigate]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_resize]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_run_code_unsafe]
+approval_mode = "approve"
