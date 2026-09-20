@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Compose, checked</title>
+<style>
+:root{color-scheme:light;--bg:#eef3f8;--paper:#fff;--ink:#1c2c40;--muted:#52647a;--line:#c9d5e2;--web:#2459ad;--api:#087a70;--db:#92600b;--soft:#e6edf5}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#131d29;--paper:#1c2938;--ink:#e6edf5;--muted:#b2c2d4;--line:#43576f;--web:#96baff;--api:#77dace;--db:#f0c16a;--soft:#25364b}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#131d29;--paper:#1c2938;--ink:#e6edf5;--muted:#b2c2d4;--line:#43576f;--web:#96baff;--api:#77dace;--db:#f0c16a;--soft:#25364b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 "Segoe UI",Arial,sans-serif}header{max-width:1200px;margin:auto;padding:30px 28px 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}header p{margin:0;color:var(--muted);font-size:14px}h1,h2,h3{font-family:"Trebuchet MS","Segoe UI",sans-serif;line-height:1.2;text-wrap:balance}h1{font-size:30px;margin:0 0 5px}h2{font-size:32px;margin:10px 0 25px}h3{font-size:21px;margin:30px 0 10px}a{color:var(--web)}button,select{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);padding:10px 14px;border-radius:6px;cursor:pointer}button:disabled{opacity:.45;cursor:default}:focus-visible{outline:3px solid var(--api);outline-offset:3px}.shell{max-width:1200px;margin:0 auto 60px;padding:0 28px;display:grid;grid-template-columns:245px minmax(0,1fr);gap:28px}aside{align-self:start;position:sticky;top:20px}summary{font-weight:700;cursor:pointer}nav{display:grid;gap:5px;margin-top:15px}nav a{display:flex;gap:10px;padding:10px;text-decoration:none;color:var(--muted);border-radius:5px;font-size:15px}nav a[aria-current="page"]{background:var(--paper);color:var(--ink);box-shadow:inset 3px 0 var(--api)}nav small{display:block;font-size:12px}progress{width:100%;accent-color:var(--api);height:7px}.saving{font-size:13px;color:var(--muted)}main{background:var(--paper);padding:32px 38px;border-radius:10px;min-width:0}p{max-width:68ch;margin:15px 0}.eyebrow{font:12px/1.5 Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.check{background:var(--soft);padding:16px 20px;margin:22px 0}.check p{margin:6px 0}.verdict{font-weight:700}.web{color:var(--web)}.api{color:var(--api)}.db{color:var(--db)}code,pre{font-family:Consolas,"Liberation Mono",monospace;font-size:.88em}code{overflow-wrap:anywhere}pre{background:var(--soft);padding:18px;overflow:auto;line-height:1.65;border-radius:5px}pre code{overflow-wrap:normal;font-size:1em}figure{margin:26px 0}figure .diagram{overflow:auto;padding:14px 0}svg{display:block;width:100%;min-width:570px;height:auto}svg text{fill:currentColor;font-family:"Segoe UI",Arial,sans-serif;font-size:16px}svg .box{fill:var(--paper);stroke:currentColor;stroke-width:2}svg .wire{fill:none;stroke:currentColor;stroke-width:2}figcaption,.source{font-size:14px;color:var(--muted)}.table{overflow:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--muted)}footer{border-top:1px solid var(--line);padding-top:22px;margin-top:32px}.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}#complete{background:var(--soft)}#status{font-size:13px;color:var(--muted);margin-bottom:0}.answer{padding:12px 0;border-top:1px solid var(--line)}.answer summary{font-size:16px}section[hidden]{display:none}.diagram-hint{display:none;font-size:13px;color:var(--muted)}.legend{display:flex;gap:22px;font-size:13px;flex-wrap:wrap}.theme{font-size:13px;white-space:nowrap}
+@media(max-width:760px){header{padding:20px;align-items:start}h1{font-size:25px}.shell{display:block;padding:0 14px}aside{position:static;margin-bottom:18px;padding:0 8px}main{padding:25px 20px}h2{font-size:27px}body{font-size:16px}.theme select{padding:7px;font-size:13px}header p{max-width:24ch}svg{min-width:570px}.diagram-hint{display:block}}
+</style></head><body>
+<header><div><h1>Compose, checked</h1><p>Your handwritten notes on topic 8</p></div><label class="theme">Theme <select id="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label></header>
+<div class="shell"><aside><details id="outline"><summary>Topics · <span id="count"></span></summary><progress id="progress" max="9" value="0" aria-label="Topics completed"></progress><nav aria-label="Review topics"></nav></details><p class="saving" id="saving">Progress saves in this browser.</p><a class="saving" href="index.html#compose">Original topic 8 ↗</a></aside><main><div id="position" class="eyebrow"></div>
+<section id="ports" data-title="Your port explanation"><div class="eyebrow">Notes part 1 · explanation</div><h2>80 is the host port. 3000 is the container port.</h2>
+<div class="check"><div class="verdict">Mostly correct</div><p>I read your note as saying that EC2 port 80 maps to the web container's port 3000. That direction is correct. The handwritten number also looks like 5000 in one place; the lesson uses <strong>3000</strong>.</p></div>
+<pre><code>services:
+  web:
+    ports:
+      - "80:3000"</code></pre>
+<p>Docker forwards connections arriving at host port 80 to port 3000 inside <span class="web">web</span>. The web server must actually listen there, usually on <code>0.0.0.0:3000</code>. This mapping does not change the server's listening port.</p>
+<figure><p class="diagram-hint">Swipe sideways in the diagram to see the full connection.</p><div class="diagram" tabindex="0" role="region" aria-label="Port forwarding diagram, scroll horizontally on mobile"><svg viewBox="0 0 640 135" role="img" aria-label="EC2 port 80 forwards to web container port 3000"><rect class="box" x="15" y="42" width="180" height="66" rx="5"/><text x="105" y="69" text-anchor="middle">EC2 host</text><text x="105" y="93" text-anchor="middle">port 80</text><path class="wire" d="M195 75H425m-10 -7 10 7-10 7"/><text x="310" y="52" text-anchor="middle">Docker forwards</text><g class="web"><rect class="box" x="425" y="42" width="195" height="66" rx="5"/><text x="522" y="69" text-anchor="middle">web container</text><text x="522" y="93" text-anchor="middle">port 3000</text></g></svg></div><figcaption>One incoming connection crosses from the host's published port into web's listening port.</figcaption></figure>
+<p>Your <code>EXPOSE</code> location is right: <code>EXPOSE 3000</code> belongs in a Dockerfile. It documents a port; it neither publishes it nor starts a server. Publishing works without that instruction. AWS security-group access remains a separate setting.</p>
+<p>Small spelling fixes for your transcription: use <code>services</code>, <code>ports</code>, and <code>networks</code>, with the shown casing. Topic 8 uses an existing <code>image:</code>; <code>build: ./web</code> instead asks Compose to build from that directory.</p><p class="source">Reference: <a href="https://docs.docker.com/reference/compose-file/services/#ports">Compose ports</a>.</p>
+</section>
+<section id="variables" data-title="Password and URL"><div class="eyebrow">Notes part 2 · explanation</div><h2>One input variable. Two places that use it.</h2>
+<div class="check"><div class="verdict">The variable reading needs a correction</div><p><code>${DB_PASSWORD:?Set DB_PASSWORD}</code> refers to <strong>one</strong> variable. <code>Set DB_PASSWORD</code> is an error message, not a second variable.</p></div>
+<p>Before creating containers, Compose replaces <code>${...}</code> with a value. This is called <strong>interpolation</strong>. Here <code>:?</code> means “stop with this message if the value is missing or empty.”</p>
+<pre><code># .env beside compose.yaml, example value only
+DB_PASSWORD=example123
+
+# api.environment in the lesson
+DATABASE_URL: "postgresql://todo:${DB_PASSWORD:?Set DB_PASSWORD}@db:5432/todo"
+
+# db.environment in the lesson
+POSTGRES_PASSWORD: "${DB_PASSWORD:?Set DB_PASSWORD}"</code></pre>
+<p>For this example, API receives <code>DATABASE_URL=postgresql://todo:example123@db:5432/todo</code>. DB receives <code>POSTGRES_PASSWORD=example123</code>. A shell environment value can override the value from <code>.env</code>.</p>
+<p>DB does not send its environment to API. Compose configures each separately. Nor does every entry in <code>.env</code> automatically enter every container.</p>
+<div class="table"><table><thead><tr><th>URL piece</th><th>Meaning</th></tr></thead><tbody><tr><td><code>postgresql://</code></td><td>PostgreSQL connection scheme</td></tr><tr><td><code>todo:example123</code></td><td>Database user and password</td></tr><tr><td><code>@db:5432</code></td><td>DB service hostname and listening port</td></tr><tr><td><code>/todo</code></td><td>Database name</td></tr></tbody></table></div>
+<p>The username and database name happen to both be <code>todo</code>. They are different settings. The URL uses them as text, not as references to variables named <code>POSTGRES_USER</code> or <code>POSTGRES_DB</code>.</p><p class="source">References: <a href="https://docs.docker.com/reference/compose-file/interpolation/">required-value syntax</a>, <a href="https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/">.env and interpolation</a>.</p>
+</section>
+<section id="initialization" data-title="What DB settings do"><div class="eyebrow">Notes parts 2–3 · explanation</div><h2>The database image reads those names.</h2>
+<div class="check"><div class="verdict">Your startup intuition is right</div><p>Those environment values help the PostgreSQL container initialize. But the names in topic 8 are correct. They are <code>POSTGRES_USER</code>, <code>POSTGRES_PASSWORD</code>, and <code>POSTGRES_DB</code>, without <code>QL</code>.</p></div>
+<pre><code>db:
+  image: postgres:17
+  environment:
+    POSTGRES_USER: todo
+    POSTGRES_PASSWORD: "${DB_PASSWORD:?Set DB_PASSWORD}"
+    POSTGRES_DB: todo</code></pre>
+<p>The official image's startup script uses these settings when its data directory is empty. It creates the initial administrative user, sets that user's password, and creates the named database. <code>POSTGRES_DB</code> is therefore used, even though your own API code never reads that variable.</p>
+<p>API receives its own connection setting, <code>DATABASE_URL</code>. Its database library uses that URL to log in to the database that DB initialized. Your API code must be written to read this setting.</p>
+<p>These values do not reset an existing database on each launch. If the saved database already exists, editing <code>POSTGRES_PASSWORD</code> does not change its actual password.</p>
+<h3>The volume explains why data survives</h3><pre><code>volumes:
+  - pgdata:/var/lib/postgresql/data</code></pre><p>This mounts Docker-managed storage named <code>pgdata</code> at PostgreSQL 17's data directory. Replacing the DB container can reuse those files. The volume keeps data outside that container's writable layer; it is still stored on the host, so it is not a backup against losing the host's disk.</p>
+<p class="source">References: <a href="https://hub.docker.com/_/postgres">PostgreSQL image initialization</a>, <a href="https://docs.docker.com/engine/storage/volumes/">volume lifetime</a>.</p>
+</section>
+<section id="membership" data-title="Why API has two networks"><div class="eyebrow">Notes parts 1–4 · teach + explanation</div><h2>Declare the networks. Then attach services.</h2>
+<div class="check"><div class="verdict">Your DB membership explanation is correct</div><p>DB joins <code>api_db</code> so API and DB can communicate. API joins two networks because it needs to communicate with both web and DB.</p></div>
+<pre><code>services:
+  web:
+    networks: [web_api]
+  api:
+    networks: [web_api, api_db]
+  db:
+    networks: [api_db]
+
+networks:
+  web_api:
+  api_db:
+    internal: true</code></pre>
+<p>At the bottom, top-level <code>networks:</code> declares the networks for this project. Under a service, <code>networks:</code> attaches that service's containers to the named networks. Neither declaration alone does both jobs. The square brackets are a YAML list.</p>
+<p><code>web_api</code> and <code>api_db</code> are names we chose. Docker does not interpret the words to decide who belongs. The service-level lists decide membership. A hyphen is also legal in a chosen name, but spelling must match everywhere.</p>
+<figure><p class="diagram-hint">Swipe sideways in the diagram to see the full connection.</p><div class="diagram" tabindex="0" role="region" aria-label="Two-network membership diagram, scroll horizontally on mobile"><svg viewBox="0 0 650 270" role="img" aria-label="Web and API attach to web_api. API and DB attach to api_db. API has an interface on each network."><path class="wire" d="M40 105H605M40 230H605"/><text x="40" y="85">web_api</text><text x="40" y="211">api_db · internal</text><g class="web"><rect class="box" x="75" y="12" width="100" height="48" rx="4"/><text x="125" y="42" text-anchor="middle">web</text><path class="wire" d="M125 60V105"/><circle cx="125" cy="105" r="5" fill="currentColor"/></g><g class="api"><rect class="box" x="280" y="128" width="100" height="48" rx="4"/><text x="330" y="159" text-anchor="middle">api</text><path class="wire" d="M330 105V128M330 176V230"/><circle cx="330" cy="105" r="5" fill="currentColor"/><circle cx="330" cy="230" r="5" fill="currentColor"/></g><g class="db"><rect class="box" x="490" y="128" width="100" height="48" rx="4"/><text x="540" y="159" text-anchor="middle">db</text><path class="wire" d="M540 176V230"/><circle cx="540" cy="230" r="5" fill="currentColor"/></g><text x="405" y="40">Lines = network membership</text></svg></div><figcaption>API has a connection to each network. Web and DB share none, so this setup gives them no direct container-to-container path.</figcaption></figure>
+<p>For this single-host setup, Docker creates virtual bridge networks inside EC2. Think of each bridge as a virtual Ethernet switch. Containers attach through virtual interfaces. This gives them a packet path; it does not make them share one network namespace.</p><p>Network membership permits communication both ways. The API application receives a web request and makes a separate database connection. Joining two networks does not automatically make API forward arbitrary packets between them.</p>
+<p class="source">References: <a href="https://docs.docker.com/reference/compose-file/networks/">network declaration and attachment</a>, <a href="https://docs.docker.com/engine/network/drivers/bridge/">bridge networks</a>.</p>
+</section>
+<section id="health" data-title="What the health check tests"><div class="eyebrow">Notes part 3 · teach</div><h2>Running is earlier than ready.</h2>
+<p>A new DB container can be running while PostgreSQL is still starting. The health check repeatedly asks whether PostgreSQL is accepting connections.</p>
+<pre><code>healthcheck:
+  test: ["CMD-SHELL", "pg_isready -U todo -d todo"]
+  interval: 5s
+  timeout: 3s
+  retries: 10</code></pre>
+<p><code>CMD-SHELL</code> runs the command through a shell <strong>inside DB</strong>. <code>pg_isready</code> is PostgreSQL's readiness tool. <code>-U todo</code> supplies a username and <code>-d todo</code> supplies a database name. With no <code>-h</code>, this image normally checks the local server through its Unix socket.</p><p>The interval sets the spacing between checks. Timeout limits each check to three seconds. Ten consecutive failures mark the container unhealthy. A successful check marks it healthy; this is not “wait for ten successes.”</p>
+<pre><code># Inside api's service definition
+depends_on:
+  db:
+    condition: service_healthy</code></pre>
+<p>Compose waits for DB's health check to pass before starting API. By contrast, web's <code>depends_on: [api]</code> waits for API to start, without checking whether it is ready to serve HTTP.</p>
+<div class="check"><div class="verdict">What a green check does not prove</div><p><code>pg_isready</code> tests server readiness. It does not prove that API's password works, that API can reach DB over its network, or that your app's tables exist. An actual query from API checks those additional steps.</p></div>
+<p>Later failures still need application retries. A plain Docker health check does not restart an unhealthy container by itself.</p>
+<p class="source">References: <a href="https://docs.docker.com/compose/how-tos/startup-order/">Compose startup order</a>, <a href="https://www.postgresql.org/docs/17/app-pg-isready.html">pg_isready</a>, <a href="https://docs.docker.com/reference/compose-file/services/#healthcheck">health-check settings</a>.</p>
+</section>
+<section id="internal" data-title="What internal changes"><div class="eyebrow">Notes part 4 · explanation</div><h2>EC2 contains the networks. They are not one shared network.</h2>
+<div class="check"><div class="verdict">Refine your EC2 → Docker → container sketch</div><p>It correctly places Docker networking inside EC2. But there are two separate virtual networks here, and API attaches to both. A container is not automatically connected to every Docker network on EC2.</p></div>
+<pre><code>networks:
+  web_api:
+  api_db:
+    internal: true</code></pre>
+<p><code>internal: true</code> makes <code>api_db</code> externally isolated. DB can talk to API on that network, but it does not get an ordinary outbound internet path through it. The empty <code>web_api:</code> definition uses the normal network defaults.</p>
+<p>API also joins <code>web_api</code>, so API can still have outbound internet access through that other network. Marking one network internal does not isolate every container attached to it from all other networks.</p>
+<p>These are different controls: network membership connects containers, <code>internal</code> controls external connectivity of that network, and <code>ports</code> publishes a service through the host. In the lesson, only web publishes a port.</p>
+<div class="table"><table><thead><tr><th>Connection in this setup</th><th>Reason</th></tr></thead><tbody><tr><td><span class="web">web</span> ↔ <span class="api">api</span></td><td>Shared web_api network</td></tr><tr><td><span class="api">api</span> ↔ <span class="db">db</span></td><td>Shared api_db network</td></tr><tr><td><span class="web">web</span> → <span class="db">db</span> directly</td><td>No shared network</td></tr><tr><td>Internet → web</td><td>Published host port, subject to AWS and host access rules</td></tr></tbody></table></div>
+<p class="source">References: <a href="https://docs.docker.com/reference/compose-file/networks/#internal">internal network setting</a>, <a href="https://docs.docker.com/compose/how-tos/networking/">Compose connectivity</a>.</p>
+</section>
+<section id="request" data-title="Correct your full request story"><div class="eyebrow">Notes part 5 · explanation</div><h2>First ask where the code is running.</h2>
+<div class="check"><div class="verdict">Your image-to-container sequence is right</div><p>You build images using Dockerfiles, then Compose uses images to create containers with the configured connections. The correction is in the next step: frontend JavaScript downloaded from web runs in the user's browser.</p></div>
+<p>In this lesson, browser code calls <code>fetch('/api/todos')</code>. It reaches the public EC2 address. The web server then proxies the request to <code>http://api:8000/todos</code>. Browser code cannot normally use Docker's private <code>api</code> hostname.</p>
+<figure><p class="diagram-hint">Swipe sideways in the diagram to see the full connection.</p><div class="diagram" tabindex="0" role="region" aria-label="Request path, scroll horizontally on mobile"><svg viewBox="0 0 650 285" role="img" aria-label="Browser calls public slash api slash todos. Web proxies to API. API connects to DB using PostgreSQL."><rect class="box" x="15" y="15" width="175" height="56" rx="4"/><text x="102" y="49" text-anchor="middle">Browser on laptop</text><path class="wire" d="M190 43H410m-10 -7 10 7-10 7"/><text x="295" y="29" text-anchor="middle">public host:80</text><text x="295" y="66" text-anchor="middle">/api/todos</text><g class="web"><rect class="box" x="410" y="15" width="220" height="56" rx="4"/><text x="520" y="49" text-anchor="middle">web :3000</text></g><path class="wire" d="M520 71V135m-7 -10 7 10 7-10"/><text x="355" y="113" text-anchor="middle">proxy to api:8000/todos</text><g class="api"><rect class="box" x="410" y="135" width="220" height="56" rx="4"/><text x="520" y="169" text-anchor="middle">api :8000</text></g><path class="wire" d="M520 191V243H240m10 -7-10 7 10 7"/><text x="413" y="272" text-anchor="middle">PostgreSQL connection</text><g class="db"><rect class="box" x="20" y="215" width="220" height="56" rx="4"/><text x="130" y="249" text-anchor="middle">db :5432</text></g></svg></div><figcaption>There are separate connections at each hop. The web server's proxy and API's database driver create the internal connections.</figcaption></figure>
+<h3>DNS gives an address. Networking carries packets.</h3><p>Your phrase “namespace is changed to Docker IP” needs a small replacement: <strong>Docker DNS resolves the service name to a container IP</strong>. It does not change a namespace or transport the HTTP request.</p><p>For web to reach API, web needs the shared network path, a resolved destination address, and an API process listening on the right interface and port. DNS helps find the address. It cannot make a missing connection or stopped server work.</p>
+<p>API connects to <code>db:5432</code> with a PostgreSQL driver, not HTTP fetch. DNS resolves <code>db</code>, the shared <code>api_db</code> network carries packets, and PostgreSQL checks the connection credentials.</p>
+<div class="check"><div class="verdict">A corrected version of your explanation</div><p>Compose attaches web and API to one network, and API and DB to another. It publishes EC2 port 80 to web port 3000. Browser requests reach web through the public address. Web proxies API requests over web_api. API opens a database connection over api_db. Docker DNS lets the containers use service names instead of fixed IP addresses.</p></div>
+<details class="answer"><summary>Check yourself: would EXPOSE 8000 let my browser use api:8000?</summary><p>No. EXPOSE is image metadata. Your browser still cannot resolve that private Docker name. In this setup it calls the public <code>/api/todos</code> route.</p></details>
+<details class="answer"><summary>Check yourself: does a passing DB health check prove my tables exist?</summary><p>No. It means the server is accepting connections. Your migration creates the application's tables; an application query verifies they can be used.</p></details>
+<p class="source">References: <a href="https://docs.docker.com/compose/how-tos/networking/">service-name lookup</a>. The browser and proxy route above follows the Nginx configuration in <a href="index.html#images">your original lesson</a>.</p><p class="saving">Scope: your “explanation” and “teach” annotations across all three PDF pages. Topics 8 and 9 add the requested Dockerfile examples. You can delete this HTML file when finished.</p>
+</section>
+<section id="web-dockerfile" data-title="Web image Dockerfile"><div class="eyebrow">Topic 8 · build the web image</div><h2>Build the frontend. Give the result to Nginx.</h2>
+<p>This example assumes a React/Vite frontend with a <code>build</code> script that runs <code>vite build</code> and produces <code>dist/</code>. These are example application files, not this learning repo's own setup.</p>
+<pre><code>todo-stack/
+  compose.yaml
+  .env
+  web/
+    Dockerfile
+    .dockerignore
+    nginx.conf
+    package.json
+    package-lock.json
+    index.html
+    src/                 # your frontend source
+  api/                   # next topic</code></pre>
+<h3 class="web">web/Dockerfile</h3>
+<pre><code># Stage 1: turn frontend source into browser files
+FROM node:24-bookworm-slim AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: the image we actually run
+FROM nginx:stable-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/ /usr/share/nginx/html/
+EXPOSE 3000
+CMD ["nginx", "-g", "daemon off;"]</code></pre>
+<p><code>FROM</code> starts a build stage from a base image. The first stage has Node and npm to build your frontend. <code>WORKDIR /app</code> sets the working directory inside that stage. Copying the package files first lets Docker reuse the dependency-install step when only your source changes.</p>
+<p><code>npm ci</code> installs the dependencies described by your lockfile, including the build tools. It requires <code>package-lock.json</code> to match <code>package.json</code>. <code>COPY . .</code> then copies the remaining web files into <code>/app</code>, and <code>npm run build</code> creates the browser assets.</p>
+<figure><p class="diagram-hint">Swipe sideways in the diagram to see both build stages.</p><div class="diagram" tabindex="0" role="region" aria-label="Frontend build stages, scroll horizontally on mobile"><svg viewBox="0 0 650 180" role="img" aria-label="The Node build stage produces dist files. Only those files are copied into the final Nginx stage."><rect class="box" x="15" y="25" width="210" height="115" rx="4"/><text x="120" y="54" text-anchor="middle">Node build stage</text><text x="120" y="83" text-anchor="middle">source + build tools</text><text x="120" y="118" text-anchor="middle">npm run build → dist/</text><path class="wire" d="M225 99H410m-10 -7 10 7-10 7"/><text x="317" y="77" text-anchor="middle">copy dist/ only</text><g class="web"><rect class="box" x="410" y="25" width="225" height="115" rx="4"/><text x="522" y="54" text-anchor="middle">Final web image</text><text x="522" y="83" text-anchor="middle">Nginx + browser files</text><text x="522" y="118" text-anchor="middle">+ nginx.conf</text></g></svg></div><figcaption>The final image starts at the second FROM. Node and the build tools stay in the build stage; Nginx serves the copied files when web starts.</figcaption></figure>
+<p>This is a <strong>multi-stage build</strong>. It does not create two running Compose services. Compose starts one web container from the final image. <code>RUN</code> executes during the build; <code>CMD</code> records the default command for container startup. <code>daemon off;</code> keeps Nginx in the foreground.</p>
+<h3>The configuration that actually opens port 3000</h3><p>Save this as <code>web/nginx.conf</code>. The Dockerfile copies it into Nginx's configuration directory.</p>
+<pre><code>server {
+    listen 3000;
+    root /usr/share/nginx/html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://api:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}</code></pre>
+<p><code>listen 3000</code> makes Nginx accept connections on port 3000. <code>EXPOSE 3000</code> only documents it. Compose's <code>"80:3000"</code> publishes it through host port 80.</p><p>Nginx serves files from <code>root</code>. For a frontend route without a matching file, <code>try_files</code> falls back to <code>index.html</code>. Requests starting with <code>/api/</code> instead go to API. The trailing slash on <code>proxy_pass</code> turns <code>/api/todos</code> into <code>/todos</code>.</p>
+<h3>Keep local files out of the build</h3><p>Save this as <code>web/.dockerignore</code>:</p><pre><code>node_modules
+dist
+.git
+.env
+.env.*</code></pre>
+<p>The browser still calls <code>fetch('/api/todos')</code>. No database password belongs in these frontend files. This example uses the same public origin, so it needs no environment-specific API hostname baked into the frontend.</p><p>The base-image tags shown here can receive updates. A release can pin tested digests for an exact rebuild. With this simple Nginx configuration, restart web after replacing API so it resolves API's current address.</p>
+<p class="source">References: <a href="https://docs.docker.com/build/building/multi-stage/">multi-stage builds</a>, <a href="https://docs.npmjs.com/cli/v11/commands/npm-ci/">npm ci</a>, <a href="https://vite.dev/guide/build.html">Vite builds</a>, <a href="https://hub.docker.com/_/nginx">Nginx image</a>, <a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass">proxy path handling</a>.</p>
+</section>
+<section id="api-dockerfile" data-title="API image Dockerfile"><div class="eyebrow">Topic 9 · build the API image</div><h2>Keep Node in the API image. It runs your server.</h2>
+<div class="check"><div class="verdict">The stack in these examples</div><p>The original lesson uses PostgreSQL, not MongoDB. Here we choose React, Express, and Node to fill in its unspecified application pieces. Together with PostgreSQL, this is often called PERN. Nginx serves the React build and forwards API requests.</p></div>
+<p>Assume a plain JavaScript Express API with <code>server.cjs</code> as its entry file and <code>express</code> and <code>pg</code> listed under <code>dependencies</code>. Its <code>package-lock.json</code> comes from installing those dependencies with npm.</p>
+<pre><code>api/
+  Dockerfile
+  .dockerignore
+  package.json
+  package-lock.json
+  server.cjs
+  # Other route or database files your server imports</code></pre>
+<h3 class="api">api/Dockerfile</h3><pre><code>FROM node:24-bookworm-slim
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+COPY --chown=node:node . .
+
+USER node
+EXPOSE 8000
+CMD ["node", "server.cjs"]</code></pre>
+<p>This API runs JavaScript directly, so it needs no frontend-style build step. Node remains in the final image because it executes your server throughout the container's lifetime. A TypeScript API would need a compilation step before running the resulting JavaScript.</p>
+<div class="table"><table><thead><tr><th>Instruction</th><th>Purpose here</th></tr></thead><tbody><tr><td><code>ENV NODE_ENV=production</code></td><td>Sets the default runtime mode for libraries that read it.</td></tr><tr><td><code>RUN npm ci --omit=dev</code></td><td>Installs locked runtime dependencies; omits development-only packages.</td></tr><tr><td><code>COPY --chown=node:node . .</code></td><td>Copies API files into /app and gives the image's node user ownership of those copied files.</td></tr><tr><td><code>USER node</code></td><td>Runs the startup command as the base image's non-root node user.</td></tr><tr><td><code>CMD ["node", "server.cjs"]</code></td><td>Starts /app/server.cjs when the container starts.</td></tr></tbody></table></div>
+<p>Save the same ignore rules as topic 8 in <code>api/.dockerignore</code>. In particular, excluding <code>node_modules</code> prevents your laptop's installed packages from overwriting the ones installed inside the image. Excluding <code>.env</code> keeps local configuration out of the image.</p>
+<h3>The application supplies the actual behavior</h3><p>The Dockerfile cannot create an HTTP route or database connection. These are the relevant lines in your Express application, shown as an excerpt:</p>
+<pre><code>const express = require('express');
+const { Pool } = require('pg');
+const app = express();
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
+
+app.get('/todos', async (req, res) =&gt; {
+  try {
+    const result = await pool.query(
+      'SELECT id, title FROM todos ORDER BY id'
+    );
+    res.json(result.rows);
+  } catch (error) {
+    res.status(503).json({ error: 'Could not load todos' });
+  }
+});
+
+app.listen(8000, '0.0.0.0');</code></pre>
+<p><code>app.listen</code> opens the port. <code>EXPOSE 8000</code> documents it. The <code>pg</code> library reads the connection string you pass to it and uses PostgreSQL's protocol to talk to DB. This excerpt assumes your migration already created <code>todos</code> with <code>id</code> and <code>title</code> columns. It illustrates the connection; a complete API also needs its authentication, logging, and retry behavior.</p>
+<h3>Compose adds the password when API starts</h3>
+<figure><p class="diagram-hint">Swipe sideways in the diagram to see both inputs.</p><div class="diagram" tabindex="0" role="region" aria-label="API startup inputs, scroll horizontally on mobile"><svg viewBox="0 0 650 225" role="img" aria-label="Docker image supplies Node and server code. Compose supplies DATABASE_URL at startup. The running API receives both."><rect class="box" x="15" y="15" width="205" height="65" rx="4"/><text x="117" y="41" text-anchor="middle">API image</text><text x="117" y="65" text-anchor="middle">Node + code + packages</text><rect class="box" x="15" y="135" width="205" height="65" rx="4"/><text x="117" y="162" text-anchor="middle">Compose environment</text><text x="117" y="186" text-anchor="middle">DATABASE_URL</text><path class="wire" d="M220 48H300V85H425m-10-7 10 7-10 7M220 168H300V125H425m-10-7 10 7-10 7"/><text x="328" y="30" text-anchor="middle">start program</text><text x="328" y="190" text-anchor="middle">pass setting</text><g class="api"><rect class="box" x="425" y="65" width="210" height="80" rx="4"/><text x="530" y="96" text-anchor="middle">Running API</text><text x="530" y="122" text-anchor="middle">process.env + server</text></g></svg></div><figcaption>The image contains the program. Compose supplies the database URL at runtime, so changing the deployment's credentials does not require rebuilding the program.</figcaption></figure>
+<p>Keep the existing <code>api.environment.DATABASE_URL</code> in Compose. Do not put the password in a Dockerfile <code>ENV</code> instruction. The root <code>.env</code> feeds Compose's substitution; your container receives the resulting setting through <code>environment:</code>.</p>
+<h3>Connect these Dockerfiles to the existing Compose file</h3>
+<p>In the example app's <code>compose.yaml</code>, replace the two registry-placeholder image lines and add <code>build</code> as below. Keep all the original ports, environment, networks, dependencies, DB settings, and volumes. This is a fragment, not a replacement for the whole file.</p>
+<pre><code>services:
+  web:
+    build: ./web
+    image: todo-web:local
+    # Keep web's other settings from topic 8 in index.html
+
+  api:
+    build: ./api
+    image: todo-api:local
+    # Keep API's other settings from topic 8 in index.html</code></pre>
+<p><code>build: ./web</code> selects the directory Docker may copy from, called the <strong>build context</strong>, and uses its Dockerfile. <code>image: todo-web:local</code> names the built result. API works the same way. These names identify local images; they do not upload anything to a registry.</p><pre><code># From the example app's todo-stack directory
+docker compose up -d --build</code></pre>
+<p>This builds the application images and starts the services. Your existing DB image remains <code>postgres:17</code>; it needs no custom Dockerfile for this example. If images are built elsewhere, push them to your registry and use those image names on EC2 as the original lesson describes.</p>
+<details class="answer"><summary>Why does web have two FROM lines while API has one?</summary><p>Web uses Node to produce static files, then needs only Nginx to serve them. This plain JavaScript API needs Node at runtime and has no separate compilation output to copy. The number of stages follows the application's needs.</p></details>
+<p class="source">References: <a href="https://docs.docker.com/reference/dockerfile/">Dockerfile instructions</a>, <a href="https://hub.docker.com/_/node">Node image</a>, <a href="https://docs.npmjs.com/cli/v11/commands/npm-ci/">npm ci options</a>, <a href="https://docs.docker.com/build/concepts/context/#dockerignore-files">build context and ignore files</a>, <a href="https://docs.docker.com/reference/compose-file/build/">Compose build settings</a>, <a href="https://expressjs.com/en/starter/hello-world/">Express server</a>, <a href="https://node-postgres.com/features/connecting">PostgreSQL connection strings</a>.</p>
+</section>
+<footer><div class="actions"><button id="previous">Previous</button><button id="complete">Mark complete</button><button id="next">Next</button></div><p id="status" role="status"></p></footer>
+</main></div><script>
+const key='compose-notes-review-v1';const sections=[...document.querySelectorAll('main section')];const ids=sections.map(s=>s.id);document.querySelector('#progress').max=ids.length;let saved={},storage=true;try{saved=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch{storage=false}let active=ids.includes(location.hash.slice(1))?location.hash.slice(1):ids.includes(saved.active)?saved.active:ids[0];const done=new Set((Array.isArray(saved.done)?saved.done:[]).filter(id=>ids.includes(id)));const theme=document.querySelector('#theme');theme.value=['light','dark'].includes(saved.theme)?saved.theme:'system';function applyTheme(){if(theme.value==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme.value}applyTheme();const nav=document.querySelector('nav');sections.forEach(s=>{let a=document.createElement('a');a.href='#'+s.id;a.dataset.id=s.id;a.innerHTML='<span aria-hidden="true" class="marker"></span><span>'+s.dataset.title+'<small></small></span>';a.addEventListener('click',e=>{e.preventDefault();go(s.id)});nav.append(a)});const outline=document.querySelector('#outline');outline.open=matchMedia('(min-width:761px)').matches;function save(){try{localStorage.setItem(key,JSON.stringify({active,done:[...done],theme:theme.value}))}catch{storage=false}document.querySelector('#saving').textContent=storage?'Progress saves in this browser.':'Storage unavailable. Progress works for this visit.'}function render(){let n=ids.indexOf(active);sections.forEach(s=>s.hidden=s.id!==active);nav.querySelectorAll('a').forEach(a=>{if(a.dataset.id===active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');a.querySelector('.marker').textContent=done.has(a.dataset.id)?'✓':'○';a.querySelector('small').textContent=done.has(a.dataset.id)?'Completed':'Not completed'});document.querySelector('#count').textContent=done.size+'/'+ids.length;document.querySelector('#progress').value=done.size;document.querySelector('#position').textContent='Topic '+(n+1)+' of '+ids.length;document.querySelector('#previous').disabled=n===0;document.querySelector('#next').disabled=n===ids.length-1;document.querySelector('#complete').textContent=done.has(active)?'Mark incomplete':'Mark complete';document.querySelector('#status').textContent=done.has(active)?'You marked this topic complete.':'Reading a topic does not mark it complete.';save()}function go(id){if(!ids.includes(id))return;active=id;history.replaceState(null,'','#'+id);render();if(matchMedia('(max-width:760px)').matches)outline.open=false;const h=document.querySelector('#'+id+' h2');h.tabIndex=-1;h.focus({preventScroll:true});window.scrollTo(0,0)}document.querySelector('#previous').onclick=()=>go(ids[ids.indexOf(active)-1]);document.querySelector('#next').onclick=()=>go(ids[ids.indexOf(active)+1]);document.querySelector('#complete').onclick=()=>{done.has(active)?done.delete(active):done.add(active);render()};theme.onchange=()=>{applyTheme();save()};addEventListener('hashchange',()=>go(location.hash.slice(1)));render();
+</script></body></html>
