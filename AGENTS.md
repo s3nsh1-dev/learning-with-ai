@@ -36,6 +36,15 @@
   visual cues. Also verify mobile layout, both themes, and changed interactions. Successful
   rendering or theme switching alone does not establish that the design serves the lesson.
 
+## Section-based reading and progress
+
+- Show one manageable topic at a time, with Previous/Next controls and a sidebar listing topics
+  and completion status. Make the sidebar collapsible on mobile.
+- Let the reader explicitly mark topics complete or incomplete; visiting a topic never completes it.
+- Save and restore the current topic and completed topics in `localStorage`. Use a lesson-specific
+  key and stable topic IDs so new lessons start fresh and minor updates preserve progress.
+- If storage is unavailable, keep navigation and progress tracking working for the current visit.
+
 ## Page location and server
 
 - When creating an HTML explanation, replace the root `index.html`. Do not create additional
