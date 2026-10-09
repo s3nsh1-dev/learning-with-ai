@@ -33,6 +33,9 @@ the prompt; otherwise use the topic or page update explicitly requested by the u
 - For a requested HTML follow-up, address the specific misunderstanding first. Identify what the
   reader understood correctly, then explain the correction. Use a simpler example before adding
   more detail. Do not repeat the whole lesson unless requested.
+- When generating an HTML explanation from prompts that ask questions about the ongoing topic
+  (inspect `index.html` or `disposable-compose-review.html` to determine current topic context),
+  always explicitly state the question being addressed before continuing with the rest of the explanation.
 
 ## Lesson scope
 
