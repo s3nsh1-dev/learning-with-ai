@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map the Todo App Delivery System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* -------------------------------------------------------------
+       ENGINEERING NOTEBOOK TOKENS & SYSTEM PALETTE
+       Restrained Blue, Amber, Slate with Dual Theme Support
+       ------------------------------------------------------------- */
+    :root {
+      /* Light theme (default) */
+      --bg-canvas: #f8fafc;
+      --bg-grid: rgba(203, 213, 225, 0.4);
+      --surface-card: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --surface-elevated: #ffffff;
+      --line: #cbd5e1;
+      --line-subtle: #e2e8f0;
+      --line-strong: #94a3b8;
+      
+      --ink-primary: #0f172a;
+      --ink-secondary: #334155;
+      --ink-muted: #64748b;
+      --ink-faint: #94a3b8;
+
+      /* Restrained Blue (Deployment Rail & Primary Actions) */
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --blue-line: #93c5fd;
+      --blue-text: #1d4ed8;
+
+      /* Restrained Amber (Secrets, Security Gates, Isolation Boundaries) */
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --amber-line: #fcd34d;
+      --amber-text: #b45309;
+
+      /* Restrained Slate (Structural Components, Containers, Runners) */
+      --slate: #475569;
+      --slate-soft: #f8fafc;
+      --slate-line: #cbd5e1;
+      --slate-text: #334155;
+
+      /* Emerald (Verification, Green Gates, Health Status) */
+      --emerald: #059669;
+      --emerald-soft: #ecfdf5;
+      --emerald-line: #6ee7b7;
+      --emerald-text: #047857;
+
+      /* Code Blocks */
+      --code-bg: #0f172a;
+      --code-ink: #f1f5f9;
+      --code-border: #1e293b;
+
+      /* Shadows & Highlights */
+      --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+      --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+
+      /* Typography */
+      --font-heading: "Chakra Petch", -apple-system, sans-serif;
+      --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", SFMono-Regular, Consolas, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-canvas: #090d16;
+        --bg-grid: rgba(30, 41, 59, 0.6);
+        --surface-card: #0f172a;
+        --surface-subtle: #141e33;
+        --surface-elevated: #1a253c;
+        --line: #1e293b;
+        --line-subtle: #162032;
+        --line-strong: #334155;
+
+        --ink-primary: #f1f5f9;
+        --ink-secondary: #cbd5e1;
+        --ink-muted: #94a3b8;
+        --ink-faint: #64748b;
+
+        --blue: #3b82f6;
+        --blue-soft: rgba(59, 130, 246, 0.12);
+        --blue-line: #1d4ed8;
+        --blue-text: #93c5fd;
+
+        --amber: #f59e0b;
+        --amber-soft: rgba(245, 158, 11, 0.12);
+        --amber-line: #b45309;
+        --amber-text: #fcd34d;
+
+        --slate: #94a3b8;
+        --slate-soft: rgba(148, 163, 184, 0.08);
+        --slate-line: #334155;
+        --slate-text: #cbd5e1;
+
+        --emerald: #10b981;
+        --emerald-soft: rgba(16, 185, 129, 0.12);
+        --emerald-line: #047857;
+        --emerald-text: #6ee7b7;
+
+        --code-bg: #060910;
+        --code-ink: #f1f5f9;
+        --code-border: #1e293b;
+
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-canvas: #090d16;
+      --bg-grid: rgba(30, 41, 59, 0.6);
+      --surface-card: #0f172a;
+      --surface-subtle: #141e33;
+      --surface-elevated: #1a253c;
+      --line: #1e293b;
+      --line-subtle: #162032;
+      --line-strong: #334155;
+
+      --ink-primary: #f1f5f9;
+      --ink-secondary: #cbd5e1;
+      --ink-muted: #94a3b8;
+      --ink-faint: #64748b;
+
+      --blue: #3b82f6;
+      --blue-soft: rgba(59, 130, 246, 0.12);
+      --blue-line: #1d4ed8;
+      --blue-text: #93c5fd;
+
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      --amber-line: #b45309;
+      --amber-text: #fcd34d;
+
+      --slate: #94a3b8;
+      --slate-soft: rgba(148, 163, 184, 0.08);
+      --slate-line: #334155;
+      --slate-text: #cbd5e1;
+
+      --emerald: #10b981;
+      --emerald-soft: rgba(16, 185, 129, 0.12);
+      --emerald-line: #047857;
+      --emerald-text: #6ee7b7;
+
+      --code-bg: #060910;
+      --code-ink: #f1f5f9;
+      --code-border: #1e293b;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45);
+    }
+
+    /* -------------------------------------------------------------
+       BASE & RESET
+       ------------------------------------------------------------- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--ink-primary);
+      background-color: var(--bg-canvas);
+      background-image: radial-gradient(circle, var(--bg-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 1rem;
+      background: var(--blue);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      z-index: 999;
+      transition: top 0.2s ease;
+      text-decoration: none;
+    }
+    .skip-link:focus {
+      top: 1rem;
+      outline: var(--focus-ring);
+    }
+
+    /* -------------------------------------------------------------
+       TOP NAVIGATION & SPEC HEADER
+       ------------------------------------------------------------- */
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-card);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+    .topbar-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .brand-spec {
+      font-family: var(--font-heading);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue-text);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .badge-rev {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: var(--surface-subtle);
+      border: 1px solid var(--line);
+      padding: 0.15rem 0.45rem;
+      border-radius: 3px;
+      color: var(--ink-muted);
+    }
+    .brand-title {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      border-left: 1px solid var(--line);
+      padding-left: 0.75rem;
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .theme-picker {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+    }
+    .theme-select {
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--surface-card);
+      color: var(--ink-primary);
+      cursor: pointer;
+    }
+    .theme-select:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    /* -------------------------------------------------------------
+       LAYOUT SHELL
+       ------------------------------------------------------------- */
+    .shell {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.75rem 1.25rem 3.5rem;
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 2rem;
+    }
+
+    /* -------------------------------------------------------------
+       SIDEBAR & PROGRESS
+       ------------------------------------------------------------- */
+    .sidebar {
+      align-self: start;
+      position: sticky;
+      top: 4.5rem;
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .mobile-menu-btn {
+      display: none;
+    }
+    .sidebar-head {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+    .stage-tag {
+      font-family: var(--font-heading);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--blue-text);
+      display: inline-block;
+      margin-bottom: 0.25rem;
+    }
+    .stage-name {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      line-height: 1.3;
+    }
+    .progress-box {
+      margin-top: 1rem;
+    }
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      color: var(--ink-muted);
+      margin-bottom: 0.4rem;
+    }
+    .progress-track {
+      height: 6px;
+      background: var(--surface-subtle);
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid var(--line-subtle);
+    }
+    .progress-bar-fill {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--blue);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .topic-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-top: 1.2rem;
+    }
+    .topic-btn {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 28px 1fr 22px;
+      align-items: center;
+      gap: 0.6rem;
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: none;
+      color: var(--ink-secondary);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      line-height: 1.35;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .topic-btn:hover {
+      background: var(--surface-subtle);
+      color: var(--ink-primary);
+    }
+    .topic-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .topic-btn[aria-current="step"] {
+      background: var(--blue-soft);
+      border-color: var(--blue-line);
+      color: var(--blue-text);
+      font-weight: 600;
+    }
+    .topic-num {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+    }
+    .topic-btn[aria-current="step"] .topic-num {
+      color: var(--blue-text);
+    }
+    .topic-title-text {
+      white-space: normal;
+      word-break: break-word;
+    }
+    .topic-check {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      color: transparent;
+      background: var(--surface-card);
+      transition: all 0.15s;
+    }
+    .topic-btn.is-complete .topic-check {
+      background: var(--emerald);
+      border-color: var(--emerald);
+      color: #ffffff;
+    }
+    .sidebar-footnote {
+      margin-top: 1.4rem;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--line);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    /* -------------------------------------------------------------
+       MAIN ARTICLE & LESSON CARDS
+       ------------------------------------------------------------- */
+    main {
+      min-width: 0;
+    }
+    .lesson-frame {
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .lesson-header {
+      padding: 1.75rem 2rem 1.5rem;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-subtle);
+    }
+    .lesson-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.65rem;
+    }
+    .meta-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: var(--surface-card);
+      color: var(--ink-muted);
+      letter-spacing: 0.03em;
+    }
+    .meta-tag.primary {
+      color: var(--blue-text);
+      border-color: var(--blue-line);
+      background: var(--blue-soft);
+      font-weight: 600;
+    }
+    .meta-tag.amber {
+      color: var(--amber-text);
+      border-color: var(--amber-line);
+      background: var(--amber-soft);
+      font-weight: 600;
+    }
+    .lesson-header h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.4rem, 2.8vw, 1.95rem);
+      font-weight: 700;
+      color: var(--ink-primary);
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+    .lesson-summary {
+      font-size: 1.02rem;
+      color: var(--ink-secondary);
+      margin-top: 0.6rem;
+      max-width: 74ch;
+    }
+
+    /* Topic Content */
+    .topic-section {
+      padding: clamp(1.5rem, 3.2vw, 2.5rem);
+    }
+    .topic-section[hidden] {
+      display: none !important;
+    }
+    .topic-eyebrow {
+      font-family: var(--font-heading);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue-text);
+      margin-bottom: 0.5rem;
+    }
+    .topic-heading {
+      font-family: var(--font-heading);
+      font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+      font-weight: 700;
+      color: var(--ink-primary);
+      line-height: 1.3;
+      margin-bottom: 1.1rem;
+    }
+    .lead-paragraph {
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: var(--ink-primary);
+      margin-bottom: 1.4rem;
+      max-width: 72ch;
+    }
+    p {
+      margin-bottom: 1.2rem;
+      color: var(--ink-secondary);
+      max-width: 74ch;
+    }
+    h3 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin: 1.75rem 0 0.75rem;
+    }
+    h4 {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin: 1.2rem 0 0.5rem;
+    }
+    ul, ol {
+      margin: 0.85rem 0 1.25rem 1.4rem;
+      color: var(--ink-secondary);
+      max-width: 74ch;
+    }
+    li {
+      margin-bottom: 0.45rem;
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--surface-subtle);
+      border: 1px solid var(--line);
+      padding: 0.12em 0.35em;
+      border-radius: 4px;
+      color: var(--ink-primary);
+    }
+
+    /* -------------------------------------------------------------
+       DIAGRAMS & FIGURES
+       ------------------------------------------------------------- */
+    figure.diagram-card {
+      margin: 1.75rem 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-subtle);
+      padding: 1.25rem;
+      overflow-x: auto;
+    }
+    figure.diagram-card figcaption {
+      margin-top: 1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.84rem;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+    svg.delivery-rail-svg {
+      display: block;
+      width: 100%;
+      min-width: 760px;
+      height: auto;
+      overflow: visible;
+    }
+
+    /* SVG Themed Classes */
+    .svg-rail-bg {
+      fill: var(--surface-card);
+      stroke: var(--line);
+      stroke-width: 1;
+    }
+    .svg-boundary-box {
+      fill: var(--surface-subtle);
+      stroke: var(--line-strong);
+      stroke-dasharray: 4 4;
+      stroke-width: 1.2;
+    }
+    .svg-boundary-label {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      fill: var(--ink-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .svg-node-box {
+      fill: var(--surface-card);
+      stroke: var(--line-strong);
+      stroke-width: 1.5;
+      rx: 6px;
+      transition: all 0.2s;
+    }
+    .svg-node-box.blue {
+      stroke: var(--blue);
+      fill: var(--blue-soft);
+    }
+    .svg-node-box.amber {
+      stroke: var(--amber);
+      fill: var(--amber-soft);
+    }
+    .svg-node-box.emerald {
+      stroke: var(--emerald);
+      fill: var(--emerald-soft);
+    }
+    .svg-node-title {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      fill: var(--ink-primary);
+    }
+    .svg-node-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      fill: var(--ink-muted);
+    }
+    .svg-wire {
+      fill: none;
+      stroke: var(--line-strong);
+      stroke-width: 2;
+    }
+    .svg-wire.active {
+      stroke: var(--blue);
+    }
+    .svg-wire.blocked {
+      stroke: var(--amber);
+      stroke-dasharray: 4 3;
+    }
+    .svg-wire-label {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      fill: var(--ink-muted);
+    }
+    .svg-secret-badge {
+      fill: var(--amber-soft);
+      stroke: var(--amber);
+      stroke-width: 1;
+      rx: 3px;
+    }
+    .svg-secret-text {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      fill: var(--amber-text);
+    }
+    .svg-badge-private {
+      fill: var(--amber-soft);
+      stroke: var(--amber);
+      stroke-width: 1;
+      rx: 3px;
+    }
+
+    /* Interactive Diagram Station Callout */
+    .station-inspector {
+      margin-top: 1.25rem;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface-card);
+      padding: 1rem;
+    }
+    .inspector-title {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--blue-text);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .inspector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      font-size: 0.85rem;
+    }
+    .inspector-item {
+      background: var(--surface-subtle);
+      border: 1px solid var(--line-subtle);
+      border-radius: 5px;
+      padding: 0.65rem 0.75rem;
+    }
+    .inspector-item strong {
+      display: block;
+      color: var(--ink-primary);
+      font-family: var(--font-heading);
+      font-size: 0.82rem;
+      margin-bottom: 0.2rem;
+    }
+    .inspector-item span {
+      color: var(--ink-secondary);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    /* -------------------------------------------------------------
+       CALLOUT BOXES & HIGHLIGHTS
+       ------------------------------------------------------------- */
+    .callout {
+      margin: 1.4rem 0;
+      border-left: 4px solid var(--blue);
+      background: var(--blue-soft);
+      padding: 1rem 1.25rem;
+      border-radius: 0 6px 6px 0;
+    }
+    .callout.amber {
+      border-left-color: var(--amber);
+      background: var(--amber-soft);
+    }
+    .callout.emerald {
+      border-left-color: var(--emerald);
+      background: var(--emerald-soft);
+    }
+    .callout-title {
+      font-family: var(--font-heading);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* -------------------------------------------------------------
+       TABLES
+       ------------------------------------------------------------- */
+    .table-container {
+      margin: 1.4rem 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow-x: auto;
+      background: var(--surface-card);
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    table.data-table th, table.data-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    table.data-table th {
+      background: var(--surface-subtle);
+      font-family: var(--font-heading);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    table.data-table tr:last-child td {
+      border-bottom: none;
+    }
+    table.data-table td strong {
+      color: var(--ink-primary);
+    }
+
+    /* -------------------------------------------------------------
+       CODE BLOCKS
+       ------------------------------------------------------------- */
+    .code-snippet {
+      margin: 1.3rem 0;
+      border: 1px solid var(--code-border);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--code-bg);
+      color: var(--code-ink);
+    }
+    .code-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.85rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid var(--code-border);
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--ink-faint);
+    }
+    .copy-btn {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.2rem 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--code-ink);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .code-snippet pre {
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      line-height: 1.55;
+    }
+    .code-snippet code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    /* -------------------------------------------------------------
+       INTERACTIVE MCQ
+       ------------------------------------------------------------- */
+    .mcq-container {
+      margin: 2rem 0 1rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-subtle);
+      padding: 1.5rem;
+    }
+    .mcq-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue-text);
+      margin-bottom: 0.5rem;
+    }
+    .mcq-question {
+      font-family: var(--font-heading);
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin-bottom: 1rem;
+      line-height: 1.35;
+    }
+    .mcq-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .mcq-opt-btn {
+      width: 100%;
+      text-align: left;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface-card);
+      color: var(--ink-primary);
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      line-height: 1.45;
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 0.65rem;
+      align-items: start;
+      transition: all 0.15s;
+    }
+    .mcq-opt-btn:hover {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+    .mcq-opt-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .mcq-opt-badge {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-subtle);
+    }
+    .mcq-opt-btn.selected-correct {
+      border-color: var(--emerald);
+      background: var(--emerald-soft);
+      color: var(--emerald-text);
+    }
+    .mcq-opt-btn.selected-correct .mcq-opt-badge {
+      background: var(--emerald);
+      color: #fff;
+      border-color: var(--emerald);
+    }
+    .mcq-opt-btn.selected-incorrect {
+      border-color: var(--amber);
+      background: var(--amber-soft);
+      color: var(--amber-text);
+    }
+    .mcq-opt-btn.selected-incorrect .mcq-opt-badge {
+      background: var(--amber);
+      color: #fff;
+      border-color: var(--amber);
+    }
+    .mcq-feedback {
+      padding: 0.85rem 1rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      display: none;
+    }
+    .mcq-feedback.is-correct {
+      display: block;
+      background: var(--emerald-soft);
+      border: 1px solid var(--emerald-line);
+      color: var(--emerald-text);
+    }
+    .mcq-feedback.is-incorrect {
+      display: block;
+      background: var(--amber-soft);
+      border: 1px solid var(--amber-line);
+      color: var(--amber-text);
+    }
+
+    /* -------------------------------------------------------------
+       BOTTOM ACTION BAR & CONTROLS
+       ------------------------------------------------------------- */
+    .lesson-footer {
+      padding: 1.25rem 2rem;
+      border-top: 1px solid var(--line);
+      background: var(--surface-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-complete {
+      padding: 0.65rem 1.15rem;
+      border: 1px solid var(--emerald-line);
+      background: var(--surface-card);
+      color: var(--emerald-text);
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.15s;
+      min-height: 42px;
+    }
+    .btn-complete:hover {
+      background: var(--emerald-soft);
+    }
+    .btn-complete:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .btn-complete[aria-pressed="true"] {
+      background: var(--emerald);
+      color: #ffffff;
+      border-color: var(--emerald);
+    }
+    .nav-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .btn-nav {
+      padding: 0.65rem 1.1rem;
+      border: 1px solid var(--line);
+      background: var(--surface-card);
+      color: var(--ink-primary);
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s;
+      min-height: 42px;
+    }
+    .btn-nav:hover:not(:disabled) {
+      background: var(--surface-subtle);
+      border-color: var(--line-strong);
+    }
+    .btn-nav:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .btn-nav:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-nav.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .btn-nav.primary:hover:not(:disabled) {
+      background: var(--blue-text);
+      border-color: var(--blue-text);
+    }
+    .status-announcer {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      margin-top: 0.75rem;
+      text-align: right;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* -------------------------------------------------------------
+       RESPONSIVE ADAPTATIONS
+       ------------------------------------------------------------- */
+    @media (max-width: 960px) {
+      .shell {
+        grid-template-columns: 240px minmax(0, 1fr);
+        gap: 1.25rem;
+      }
+    }
+    @media (max-width: 768px) {
+      .shell {
+        display: block;
+        padding: 1rem 0.75rem 2.5rem;
+      }
+      .sidebar {
+        position: static;
+        max-height: none;
+        margin-bottom: 1rem;
+        padding: 0;
+        border: 1px solid var(--line);
+      }
+      .mobile-menu-btn {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0.85rem 1rem;
+        background: var(--surface-card);
+        border: none;
+        color: var(--ink-primary);
+        font-family: var(--font-heading);
+        font-size: 0.92rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .sidebar-inner {
+        display: none;
+        padding: 1rem;
+        border-top: 1px solid var(--line);
+      }
+      .sidebar.is-open .sidebar-inner {
+        display: block;
+      }
+      .lesson-header {
+        padding: 1.25rem 1rem;
+      }
+      .topic-section {
+        padding: 1.25rem 1rem;
+      }
+      .lesson-footer {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn-complete {
+        width: 100%;
+        justify-content: center;
+      }
+      .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .btn-nav {
+        flex: 1;
+        justify-content: center;
+      }
+      .status-announcer {
+        text-align: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Topbar Specification Banner -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-group">
+        <div class="brand-spec">
+          <span>SPEC-CI-01</span>
+          <span class="badge-rev">STAGE 01/08</span>
+        </div>
+        <span class="brand-title">Docker Todo Pipeline Contract</span>
+      </div>
+      <div class="topbar-actions">
+        <div class="theme-picker">
+          <label for="theme-select">Theme:</label>
+          <select id="theme-select" class="theme-select" aria-label="Appearance Mode">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="shell">
+    <!-- Collapsible Progress Sidebar -->
+    <aside class="sidebar" aria-label="Curriculum Navigation">
+      <button class="mobile-menu-btn" aria-expanded="false" aria-controls="sidebar-inner" id="mobile-toggle">
+        <span>Lesson Topics &amp; Progress</span>
+        <span class="mobile-icon" aria-hidden="true">+</span>
+      </button>
+
+      <div class="sidebar-inner" id="sidebar-inner">
+        <div class="sidebar-head">
+          <span class="stage-tag">Curriculum Stage 1</span>
+          <h2 class="stage-name">Map the Delivery System</h2>
+          
+          <div class="progress-box">
+            <div class="progress-labels">
+              <span>Stage Progress</span>
+              <span id="progress-text">0 / 4 complete</span>
+            </div>
+            <div class="progress-track" role="progressbar" aria-label="Stage 1 completion" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0">
+              <span class="progress-bar-fill" id="progress-bar"></span>
+            </div>
+          </div>
+        </div>
+
+        <nav class="topic-nav" aria-label="Stage Topics" id="topic-nav-container">
+          <!-- Dynamically generated topic buttons -->
+        </nav>
+
+        <div class="sidebar-footnote">
+          <strong>Explicit Completion Rule:</strong> Browsing a topic does not mark it complete. Click the completion button when you're confident with the concepts.
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Lesson Container -->
+    <main id="main">
+      <article class="lesson-frame">
+        <header class="lesson-header">
+          <div class="lesson-meta">
+            <span class="meta-tag primary">CAPSTONE: DOCKER TODO APP</span>
+            <span class="meta-tag amber">SECURITY BOUNDARY DESIGN</span>
+            <span class="meta-tag">TARGET: AWS EC2</span>
+          </div>
+          <h1>Map the Todo App Delivery System</h1>
+          <p class="lesson-summary">
+            Before writing a single GitHub Actions line or launching an EC2 instance, you must trace how this specific Todo app travels from a local feature branch to a live container stack.
+          </p>
+        </header>
+
+        <!-- TOPIC 1: THE DELIVERY RAIL OVERVIEW -->
+        <section class="topic-section" data-id="rail-overview" data-title="The Eight-Station Delivery Rail">
+          <div class="topic-eyebrow">01 / System Map · The Eight Stations</div>
+          <h2 class="topic-heading" tabindex="-1">The Complete Delivery Highway: From Branch to Container</h2>
+          
+          <p class="lead-paragraph">
+            Continuous Integration (CI) and Continuous Deployment (CD) are not abstract automation scripts. For our Todo application, they form a strict, one-way assembly line that packages source code into immutable containers and lands them safely on AWS EC2.
+          </p>
+
+          <p>
+            In your local development environment, you edit files directly in <code>client/</code> and <code>server/</code>, running Vite or <code>tsx</code> with source mounts. In production, <strong>source code is never shipped or compiled on the host</strong>. Instead, pre-built OCI container images are produced in the cloud, sealed with immutable version tags, and pulled onto the host server as ready-to-run black boxes.
+          </p>
+
+          <!-- SVG DELIVERY RAIL FIGURE -->
+          <figure class="diagram-card">
+            <svg class="delivery-rail-svg" viewBox="0 0 1020 460" role="img" aria-labelledby="rail-svg-title rail-svg-desc">
+              <title id="rail-svg-title">Todo App CI/CD Eight-Station Delivery Rail</title>
+              <desc id="rail-svg-desc">
+                An architectural flow diagram connecting Developer Workstation, GitHub Actions CI Runner, GitHub Container Registry, AWS EC2 Instance, and Neon Cloud PostgreSQL across 8 distinct stations.
+              </desc>
+
+              <!-- ZONE BOUNDARIES -->
+              <!-- Zone 1: Developer -->
+              <rect class="svg-boundary-box" x="15" y="40" width="165" height="395" rx="8" />
+              <text class="svg-boundary-label" x="25" y="60">1. Developer Workstation</text>
+
+              <!-- Zone 2: GitHub Cloud -->
+              <rect class="svg-boundary-box" x="200" y="40" width="370" height="395" rx="8" />
+              <text class="svg-boundary-label" x="210" y="60">2. GitHub Actions &amp; GHCR</text>
+
+              <!-- Zone 3: AWS EC2 -->
+              <rect class="svg-boundary-box" x="590" y="40" width="265" height="395" rx="8" />
+              <text class="svg-boundary-label" x="600" y="60">3. AWS EC2 Host (/opt/todo-app)</text>
+
+              <!-- Zone 4: Neon DB Cloud -->
+              <rect class="svg-boundary-box" x="875" y="40" width="130" height="395" rx="8" />
+              <text class="svg-boundary-label" x="885" y="60">4. Neon Managed DB</text>
+
+              <!-- CONNECTING WIRES / ARROWS -->
+              <defs>
+                <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                  <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--blue)" />
+                </marker>
+                <marker id="arrow-slate" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                  <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--line-strong)" />
+                </marker>
+                <marker id="arrow-amber" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                  <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--amber)" />
+                </marker>
+              </defs>
+
+              <!-- Station 1: Feature Branch -->
+              <g id="svg-st1" transform="translate(30, 95)">
+                <rect class="svg-node-box" x="0" y="0" width="135" height="68" />
+                <text class="svg-node-title" x="10" y="24">1. Feature Branch</text>
+                <text class="svg-node-sub" x="10" y="42">git commit</text>
+                <text class="svg-node-sub" x="10" y="56">git push origin</text>
+              </g>
+
+              <!-- Wire 1 -> 2 (PR open) -->
+              <path class="svg-wire active" d="M 165 129 H 220" marker-end="url(#arrow-blue)" />
+              <text class="svg-wire-label" x="168" y="122">Pull Request</text>
+
+              <!-- Station 2: PR CI Checks -->
+              <g id="svg-st2" transform="translate(225, 95)">
+                <rect class="svg-node-box emerald" x="0" y="0" width="145" height="68" />
+                <text class="svg-node-title" x="10" y="24">2. PR CI Gates</text>
+                <text class="svg-node-sub" x="10" y="42">Lint · Build · Unit</text>
+                <text class="svg-node-sub" x="10" y="56">Ephemeral DB Tests</text>
+              </g>
+
+              <!-- Wire 2 -> 3 (Merge to main) -->
+              <path class="svg-wire active" d="M 370 129 H 410" marker-end="url(#arrow-blue)" />
+              <text class="svg-wire-label" x="373" y="122">PR Merged</text>
+
+              <!-- Station 3: Trusted main branch -->
+              <g id="svg-st3" transform="translate(415, 95)">
+                <rect class="svg-node-box blue" x="0" y="0" width="135" height="68" />
+                <text class="svg-node-title" x="10" y="24">3. Trusted main</text>
+                <text class="svg-node-sub" x="10" y="42">Release trigger</text>
+                <text class="svg-node-sub" x="10" y="56">SHA = $GITHUB_SHA</text>
+              </g>
+
+              <!-- Wire 3 down to 4 (Publish images) -->
+              <path class="svg-wire active" d="M 482 163 V 240" marker-end="url(#arrow-blue)" />
+              <text class="svg-wire-label" x="490" y="205">Publish Images</text>
+
+              <!-- Station 4: GHCR Registry -->
+              <g id="svg-st4" transform="translate(225, 245)">
+                <rect class="svg-node-box" x="0" y="0" width="325" height="85" />
+                <text class="svg-node-title" x="12" y="24">4. GitHub Container Registry (GHCR)</text>
+                <text class="svg-node-sub" x="12" y="44">ghcr.io/s3nsh1-dev/...-client:&lt;commit-sha&gt;</text>
+                <text class="svg-node-sub" x="12" y="60">ghcr.io/s3nsh1-dev/...-server:&lt;commit-sha&gt;</text>
+                <rect class="svg-secret-badge" x="12" y="67" width="135" height="15" />
+                <text class="svg-secret-text" x="16" y="78">Private Image Access</text>
+              </g>
+
+              <!-- Wire 4 -> 5 (Deploy via SSH) -->
+              <path class="svg-wire active" d="M 550 287 H 605" marker-end="url(#arrow-blue)" />
+              <text class="svg-wire-label" x="555" y="278">SSH Deploy</text>
+
+              <!-- Station 5: EC2 Compose -->
+              <g id="svg-st5" transform="translate(610, 85)">
+                <rect class="svg-node-box" x="0" y="0" width="225" height="80" />
+                <text class="svg-node-title" x="10" y="22">5. EC2 Compose Coordinator</text>
+                <text class="svg-node-sub" x="10" y="38">Path: /opt/todo-app</text>
+                <text class="svg-node-sub" x="10" y="52">docker-compose.prod.yml</text>
+                <text class="svg-node-sub" x="10" y="66">Reads IMAGE_TAG from release.env</text>
+              </g>
+
+              <!-- Internal Docker Network Box inside EC2 -->
+              <rect x="605" y="180" width="235" height="235" rx="6" fill="rgba(37, 99, 235, 0.04)" stroke="var(--blue-line)" stroke-dasharray="3 3" />
+              <text x="615" y="196" font-family="var(--font-mono)" font-size="9.5" fill="var(--blue-text)" font-weight="600">Docker Network: todo-network</text>
+
+              <!-- Wire Compose -> Containers -->
+              <path class="svg-wire" d="M 722 165 V 205" marker-end="url(#arrow-slate)" />
+
+              <!-- Station 6: Nginx Container -->
+              <g id="svg-st6" transform="translate(615, 215)">
+                <rect class="svg-node-box blue" x="0" y="0" width="215" height="70" />
+                <text class="svg-node-title" x="10" y="22">6. Client (Nginx)</text>
+                <text class="svg-node-sub" x="10" y="38">Public Host Port: 80 -&gt; 80</text>
+                <text class="svg-node-sub" x="10" y="52">Static React Dist + Reverse Proxy</text>
+              </g>
+
+              <!-- Wire Nginx -> Express (Internal only) -->
+              <path class="svg-wire active" d="M 722 285 V 315" marker-end="url(#arrow-blue)" />
+              <text class="svg-wire-label" x="726" y="303">proxy /api/*</text>
+
+              <!-- Station 7: Express API Container -->
+              <g id="svg-st7" transform="translate(615, 320)">
+                <rect class="svg-node-box amber" x="0" y="0" width="215" height="85" />
+                <text class="svg-node-title" x="10" y="20">7. Express API Server</text>
+                <text class="svg-node-sub" x="10" y="36">Internal Port: 5000 (NO HOST PORT)</text>
+                <text class="svg-node-sub" x="10" y="50">Reads /opt/todo-app/server.env</text>
+                <rect class="svg-badge-private" x="10" y="58" width="195" height="18" />
+                <text class="svg-secret-text" x="14" y="70">ISOLATED: Internal bridge only</text>
+              </g>
+
+              <!-- Wire Express -> Neon (External cloud query) -->
+              <path class="svg-wire active" d="M 830 362 H 885" marker-end="url(#arrow-blue)" />
+              <text class="svg-wire-label" x="834" y="354">TLS Port 5432</text>
+
+              <!-- Station 8: Neon PostgreSQL -->
+              <g id="svg-st8" transform="translate(890, 320)">
+                <rect class="svg-node-box emerald" x="0" y="0" width="105" height="85" />
+                <text class="svg-node-title" x="8" y="22">8. Neon DB</text>
+                <text class="svg-node-sub" x="8" y="40">PostgreSQL</text>
+                <text class="svg-node-sub" x="8" y="54">Cloud Serverless</text>
+                <text class="svg-node-sub" x="8" y="70">Prod Data</text>
+              </g>
+            </svg>
+            <figcaption>
+              Figure 1.1: The Eight-Station Delivery Rail for the Docker Todo App. Traffic moves strictly left-to-right from development branches through the PR CI gate, onto the trusted main branch, through immutable image publication, and into the single EC2 host with an internally isolated Express container.
+            </figcaption>
+          </figure>
+
+          <h3>The Eight Stations Broken Down</h3>
+          <p>
+            Each station along this rail performs one isolated responsibility:
+          </p>
+          <ol>
+            <li><strong>Feature Branch:</strong> Where code begins. Developers work on localized branches. Changes trigger checks but have zero authority over production.</li>
+            <li><strong>PR CI Gates:</strong> Automated test runner that executes quality linters, frontend builds, and backend integration tests against a <em>disposable</em> PostgreSQL container.</li>
+            <li><strong>Trusted Main Branch:</strong> The single release truth. Only code reviewed and merged into <code>main</code> can ever initiate package publication or deployment.</li>
+            <li><strong>GitHub Container Registry (GHCR):</strong> Hosts private, versioned container images. Every build is tagged with the exact immutable Git commit SHA.</li>
+            <li><strong>EC2 Compose Coordinator:</strong> A single directory on the server (<code>/opt/todo-app</code>) containing the production Compose contract and release pointers.</li>
+            <li><strong>Nginx Client Gateway:</strong> The sole container exposing a public port (port 80). It serves optimized React static assets and intercepts <code>/api/*</code> requests.</li>
+            <li><strong>Express API Server:</strong> The application backend. It runs purely on the internal Docker bridge network without any host port mapping.</li>
+            <li><strong>Neon PostgreSQL:</strong> Managed cloud database. Accessible only over TLS by the Express backend using credentials provisioned directly on the EC2 host.</li>
+          </ol>
+
+          <div class="callout">
+            <div class="callout-title">Architecture Takeaway</div>
+            <p>
+              The client and server are published as two distinct images because they have fundamentally different runtimes: the client is a static Nginx web server, while the backend is a persistent Node/Express API process connected to Neon.
+            </p>
+          </div>
+        </section>
+
+        <!-- TOPIC 2: TWO DISTINCT LANES -->
+        <section class="topic-section" data-id="two-lanes" data-title="Two Lanes: Untrusted PRs vs Main Releases" hidden>
+          <div class="topic-eyebrow">02 / Workflow Boundaries · The Release Gate</div>
+          <h2 class="topic-heading" tabindex="-1">Two Strict Lanes: Untrusted PRs vs. Trusted Main Releases</h2>
+
+          <p class="lead-paragraph">
+            A catastrophic mistake in naive CI/CD setups is treating every Git push alike. In a production-grade system, pull requests and main pushes run on entirely separate security tracks.
+          </p>
+
+          <p>
+            Anyone with repository access (or fork access in open-source projects) can create a pull request with arbitrary code. If PR workflows possessed deployment credentials or registry publishing rights, an unreviewed PR could deploy broken code, overwrite official container images, or exfiltrate private database credentials.
+          </p>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Lane 1: Pull Request Gate (Untrusted)</th>
+                  <th>Lane 2: Main Push Pipeline (Trusted)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Trigger</strong></td>
+                  <td><code>pull_request: [opened, synchronize]</code></td>
+                  <td><code>push: branches: [main]</code></td>
+                </tr>
+                <tr>
+                  <td><strong>Secrets Access</strong></td>
+                  <td>None. Deployment secrets are withheld.</td>
+                  <td>Full access to <code>EC2_SSH_PRIVATE_KEY</code>, etc.</td>
+                </tr>
+                <tr>
+                  <td><strong>GITHUB_TOKEN</strong></td>
+                  <td>Default read-only permissions.</td>
+                  <td>Explicitly granted <code>packages: write</code>.</td>
+                </tr>
+                <tr>
+                  <td><strong>Database Used</strong></td>
+                  <td>Disposable, ephemeral PostgreSQL container.</td>
+                  <td>Disposable for tests; EC2 runs against Neon.</td>
+                </tr>
+                <tr>
+                  <td><strong>Artifact Output</strong></td>
+                  <td>Test reports &amp; lint logs only. Nothing published.</td>
+                  <td>Two immutable images pushed to GHCR with commit SHA.</td>
+                </tr>
+                <tr>
+                  <td><strong>EC2 Impact</strong></td>
+                  <td>Zero. PRs never touch the network or EC2.</td>
+                  <td>SSH deploy triggered; containers refreshed.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Why We Reject the <code>:latest</code> Tag in Favor of Immutable SHAs</h3>
+          <p>
+            Many tutorials tag images with <code>:latest</code>. In professional software delivery, <strong>the <code>:latest</code> tag is an anti-pattern</strong> for three critical reasons:
+          </p>
+          <ul>
+            <li><strong>Loss of Provenance:</strong> If a container on EC2 crashes, checking <code>todo-server:latest</code> tells you nothing about which Git commit caused the failure. An immutable SHA tag (e.g. <code>ghcr.io/.../server:9f8a32b</code>) points unambiguously to one exact line of Git history.</li>
+            <li><strong>Docker Daemon Cache Pitfalls:</strong> The Docker daemon caches images. If your server already has an image labeled <code>:latest</code>, running <code>docker compose up -d</code> may silently skip pulling newer layers unless forced with explicit pull flags.</li>
+            <li><strong>Impossible Rollback:</strong> When a deployment breaks, how do you roll back a <code>:latest</code> tag? You cannot tell Docker to "use the previous latest". With immutable commit SHAs, rolling back is as trivial as updating <code>IMAGE_TAG</code> to the previous SHA!</li>
+          </ul>
+
+          <div class="code-snippet">
+            <div class="code-top">
+              <span>Proposed GitHub Actions Trigger Shape · delivery.yml</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>name: Delivery Pipeline
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # Check gates run for BOTH PRs and main
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # ... runs client lint, server integration tests with ephemeral Postgres ...
+
+  # Publishing runs ONLY after tests pass AND only on main
+  publish-images:
+    needs: test-and-lint
+    if: github.ref == 'refs/heads/main' &amp;&amp; github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
+    # ... builds and pushes client &amp; server images tagged with github.sha ...</code></pre>
+          </div>
+
+          <div class="callout amber">
+            <div class="callout-title">The Principle of Least Privilege</div>
+            <p>
+              By scoping <code>packages: write</code> strictly to the publishing job on <code>main</code>, pull requests are mathematically incapable of modifying your registry packages, even if someone attempts a malicious workflow modification.
+            </p>
+          </div>
+        </section>
+
+        <!-- TOPIC 3: SECRETS AND NETWORK BOUNDARIES -->
+        <section class="topic-section" data-id="secrets-boundaries" data-title="Secrets &amp; Network Boundaries" hidden>
+          <div class="topic-eyebrow">03 / Security Architecture · Zero-Leak Boundary Model</div>
+          <h2 class="topic-heading" tabindex="-1">Secrets &amp; Network Boundaries: What Lives Where</h2>
+
+          <p class="lead-paragraph">
+            The foundation of secure deployment is knowing exactly which system stores each secret, and ensuring no credential crosses into an environment where it does not belong.
+          </p>
+
+          <h3>The Three Storage Tiers</h3>
+          <p>
+            In our capstone track, credentials and configurations are strictly separated across three isolated tiers:
+          </p>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Storage Location</th>
+                  <th>Secrets Stored Here</th>
+                  <th>What Is Explicitly FORBIDDEN Here</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>GitHub Actions Secrets</strong></td>
+                  <td>
+                    <code>EC2_HOST</code><br>
+                    <code>EC2_USER</code><br>
+                    <code>EC2_SSH_PORT</code><br>
+                    <code>EC2_SSH_PRIVATE_KEY</code><br>
+                    <code>EC2_KNOWN_HOSTS</code>
+                  </td>
+                  <td>
+                    <strong>NO <code>DATABASE_URL</code>!</strong><br>
+                    <strong>NO GHCR pull tokens!</strong><br>
+                    GitHub Actions deploys infrastructure; it does not connect to the production Neon database.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>EC2 Host Filesystem (<code>/opt/todo-app/server.env</code>)</strong></td>
+                  <td>
+                    <code>PORT=5000</code><br>
+                    <code>DATABASE_URL=postgresql://...neon.tech/...</code>
+                  </td>
+                  <td>
+                    <strong>NEVER committed to Git.</strong><br>
+                    <strong>NEVER baked into Docker images.</strong><br>
+                    Owned by deploy user, restricted with <code>chmod 600</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>EC2 Docker Credential Store (<code>~/.docker/config.json</code>)</strong></td>
+                  <td>
+                    One-time GitHub Personal Access Token (PAT) with <code>read:packages</code> scope.
+                  </td>
+                  <td>
+                    Cannot push or overwrite packages. Used only by the host daemon to pull private images.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Why the Express API Has No Public Host Port</h3>
+          <p>
+            Inspect the production Compose contract: Nginx maps <code>80:80</code>, but Express uses <code>expose: ["5000"]</code> (or no port publishing at all). Why?
+          </p>
+          <p>
+            When a port is mapped with <code>ports: ["5000:5000"]</code>, Docker binds that port to the host's network interfaces. Anyone who knows your EC2 public IP can send requests directly to Express, bypassing Nginx entirely.
+          </p>
+          <p>
+            By keeping Express on the internal Docker bridge network:
+          </p>
+          <ul>
+            <li><strong>Direct Scanning is Blocked:</strong> Automated scanners on the internet only see port 80. Port 5000 does not exist to the outside world.</li>
+            <li><strong>Single Ingress Policy:</strong> Nginx serves static client assets directly from disk and proxies <code>/api/*</code> calls to <code>http://server:5000</code> internally. Nginx enforces request limits, headers, and routing.</li>
+            <li><strong>CORS Simplification:</strong> Because Nginx serves both the frontend and proxies <code>/api</code> on the same origin (port 80), the browser never encounters cross-origin complications in production!</li>
+          </ul>
+
+          <div class="code-snippet">
+            <div class="code-top">
+              <span>Nginx Ingress Reverse-Proxy Contract · nginx.conf</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>server {
+    listen 80;
+    server_name localhost;
+
+    # Serve static React client files
+    location / {
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Proxy API requests to Express across internal Docker bridge
+    location /api/ {
+        proxy_pass http://server:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}</code></pre>
+          </div>
+
+          <h3>The SSH Beginner Compromise vs. AWS Systems Manager (SSM)</h3>
+          <div class="callout amber">
+            <div class="callout-title">Deliberate Educational Compromise</div>
+            <p>
+              GitHub-hosted runner IPs come from large, dynamic public cloud ranges that change daily. You cannot easily restrict your EC2 Security Group port 22 to a single static IP without complex IP synchronizer scripts.
+            </p>
+            <p>
+              <strong>Our Hardened Compromise:</strong> We use direct SSH because it is the most approachable, transparent way to learn remote execution. We harden it by enforcing <em>key-only authentication</em> (disabling passwords completely), using a dedicated single-purpose deploy key, and verifying host keys with <code>EC2_KNOWN_HOSTS</code> to prevent man-in-the-middle attacks.
+            </p>
+            <p>
+              <strong>The Enterprise Alternative (AWS SSM):</strong> In larger production systems, teams replace SSH with AWS Systems Manager (SSM) and GitHub Actions OpenID Connect (OIDC). Actions requests a short-lived IAM token from AWS and sends commands over the AWS internal agent bus with <em>zero open inbound ports</em> on EC2. We keep SSH here so the remote execution steps remain visible and debuggable.
+            </p>
+          </div>
+        </section>
+
+        <!-- TOPIC 4: DEPLOYMENT CONTRACT & STAGE 1 REVIEW -->
+        <section class="topic-section" data-id="deploy-review" data-title="Deployment Contract &amp; Stage 1 Review" hidden>
+          <div class="topic-eyebrow">04 / Release Engineering · Safe Execution &amp; Review</div>
+          <h2 class="topic-heading" tabindex="-1">The Deployment Contract: Health Checks, Rollback &amp; Stage 1 Gate</h2>
+
+          <p class="lead-paragraph">
+            Deployment is not complete when containers start. A release is only complete when an automated health probe proves the new application responds successfully.
+          </p>
+
+          <h3>The Six-Step Deployment Dance</h3>
+          <p>
+            When code merges into <code>main</code>, GitHub Actions carries out these exact commands over SSH:
+          </p>
+          <ol>
+            <li><strong>Concurrency Lock:</strong> Workflow sets <code>concurrency: production-deploy</code> so two merges cannot execute simultaneously and overwrite release files.</li>
+            <li><strong>Preserve Previous State:</strong> Back up current <code>release.env</code> to <code>release.env.bak</code> on EC2.</li>
+            <li><strong>Write New Release Contract:</strong> Transfer <code>docker-compose.prod.yml</code> and write the new commit SHA to <code>release.env</code> (e.g. <code>IMAGE_TAG=3a4b5c6</code>).</li>
+            <li><strong>Pre-Pull Images:</strong> Run <code>docker compose -f docker-compose.prod.yml pull</code> to pull both private GHCR images before taking any container down.</li>
+            <li><strong>Recreate Services:</strong> Run <code>docker compose -f docker-compose.prod.yml up -d</code>. (Acceptable brief restart downtime as containers swap).</li>
+            <li><strong>Poll Health Endpoint:</strong> Loop <code>curl -f http://localhost/api/health</code> over SSH with retries and a timeout.</li>
+          </ol>
+
+          <h3>Automated Rollback Mechanics</h3>
+          <p>
+            If the health check fails (e.g. the server crashes on startup, a migration failed, or Neon rejected credentials), the deploy job does not abandon the broken container. It triggers an automated rollback script:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-top">
+              <span>Automatic Rollback Concept · Deploy Step Script</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code># Attempt health polling over SSH
+if ! ssh $EC2_USER@$EC2_HOST "for i in {1..10}; do curl -f http://localhost/api/health && exit 0; sleep 3; done; exit 1"; then
+  echo "::error::Health check failed! Initiating automatic rollback..."
+  
+  # Restore previous release tag and restart
+  ssh $EC2_USER@$EC2_HOST "
+    cd /opt/todo-app
+    cp release.env.bak release.env
+    docker compose -f docker-compose.prod.yml up -d
+  "
+  echo "::notice::Rolled back to previous release tag successfully."
+  exit 1
+fi</code></pre>
+          </div>
+
+          <!-- INTERACTIVE STAGE 1 KNOWLEDGE CHECK (ELI5 MCQ) -->
+          <div class="mcq-container">
+            <div class="mcq-head">Stage 1 Knowledge Check · ELI5</div>
+            <div class="mcq-question" id="mcq-q-text">
+              1. Why should the production database password (DATABASE_URL) live only in /opt/todo-app/server.env on EC2, rather than in GitHub Actions Secrets?
+            </div>
+            <div class="mcq-options" id="mcq-options-container">
+              <button class="mcq-opt-btn" data-index="0">
+                <span class="mcq-opt-badge">A</span>
+                <span>Because GitHub Actions runners are physically unable to send network requests to cloud database services.</span>
+              </button>
+              <button class="mcq-opt-btn" data-index="1">
+                <span class="mcq-opt-badge">B</span>
+                <span>Because GitHub Actions only builds images and coordinates SSH commands; giving CI the DB password unnecessarily increases leak risk and violates least privilege.</span>
+              </button>
+              <button class="mcq-opt-btn" data-index="2">
+                <span class="mcq-opt-badge">C</span>
+                <span>Because Docker images automatically inject host environment variables into their build layers when compiled on GitHub.</span>
+              </button>
+            </div>
+            <div class="mcq-feedback" id="mcq-feedback"></div>
+          </div>
+
+          <h3>Stage 1 Acceptance Criteria Checklist</h3>
+          <p>
+            Before advancing to Stage 2, verify you have internalized the acceptance criteria:
+          </p>
+          <ul>
+            <li>✓ You can trace the 8 stations of the delivery rail from developer branch to Neon.</li>
+            <li>✓ You understand why pull requests run untrusted tests and never publish images or reach EC2.</li>
+            <li>✓ You can explain why immutable Git commit SHAs are required for deterministic releases and instant rollbacks.</li>
+            <li>✓ You know why <code>DATABASE_URL</code> stays on EC2 and why Express has no public host port.</li>
+            <li>✓ You understand the direct SSH trade-off and the AWS SSM alternative.</li>
+          </ul>
+
+          <div class="callout emerald">
+            <div class="callout-title">Ready for Stage 2</div>
+            <p>
+              In Stage 2, we will take our first code step in <code>docker-beginner-simulation</code>: making tests safe and repeatable by replacing the shared Neon integration test with disposable PostgreSQL and wiring full-stack Playwright checks!
+            </p>
+          </div>
+        </section>
+
+        <!-- FOOTER ACTIONS -->
+        <footer class="lesson-footer">
+          <button class="btn-complete" id="complete-btn" aria-pressed="false">
+            <span class="btn-check-icon" aria-hidden="true">✓</span>
+            <span id="complete-label">Mark Topic Complete</span>
+          </button>
+          
+          <div class="nav-buttons">
+            <button class="btn-nav" id="prev-btn" disabled>
+              ← Previous
+            </button>
+            <button class="btn-nav primary" id="next-btn">
+              Next Topic →
+            </button>
+          </div>
+        </footer>
+      </article>
+
+      <div class="status-announcer" id="status-announcer" aria-live="polite">
+        <!-- Live screen reader announcements -->
+      </div>
+    </main>
+  </div>
+
+  <!-- -------------------------------------------------------------
+       CLIENT LOGIC & LOCAL STORAGE STATE
+       Namespaced to learning-ai:cicd-ghcr-ec2:stage-01
+       ------------------------------------------------------------- -->
+  <script>
+    (function() {
+      "use strict";
+
+      const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-01";
+      const sections = Array.from(document.querySelectorAll(".topic-section[data-id]"));
+      const topicIds = sections.map(s => s.dataset.id);
+
+      // Default state
+      let state = {
+        current: topicIds[0],
+        done: [],
+        theme: "system",
+        mcqAnswer: null
+      };
+
+      // Load saved state from localStorage
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (topicIds.includes(parsed.current)) state.current = parsed.current;
+          if (Array.isArray(parsed.done)) state.done = parsed.done.filter(id => topicIds.includes(id));
+          if (["system", "light", "dark"].includes(parsed.theme)) state.theme = parsed.theme;
+          if (parsed.mcqAnswer !== undefined) state.mcqAnswer = parsed.mcqAnswer;
+        }
+      } catch (err) {
+        console.warn("localStorage unavailable or corrupted:", err);
+      }
+
+      const doneSet = new Set(state.done);
+
+      // DOM Elements
+      const navContainer = document.getElementById("topic-nav-container");
+      const completeBtn = document.getElementById("complete-btn");
+      const completeLabel = document.getElementById("complete-label");
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+      const themeSelect = document.getElementById("theme-select");
+      const progressText = document.getElementById("progress-text");
+      const progressBar = document.getElementById("progress-bar");
+      const progressTrack = document.querySelector(".progress-track");
+      const statusAnnouncer = document.getElementById("status-announcer");
+      const mobileToggle = document.getElementById("mobile-toggle");
+      const sidebar = document.querySelector(".sidebar");
+
+      // MCQ Elements
+      const mcqButtons = Array.from(document.querySelectorAll(".mcq-opt-btn"));
+      const mcqFeedback = document.getElementById("mcq-feedback");
+      const CORRECT_MCQ_INDEX = 1; // Option B
+
+      function saveState() {
+        try {
+          state.done = Array.from(doneSet);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (err) {
+          console.warn("Unable to save to localStorage:", err);
+        }
+      }
+
+      function applyTheme() {
+        if (state.theme === "system") {
+          document.documentElement.removeAttribute("data-theme");
+        } else {
+          document.documentElement.dataset.theme = state.theme;
+        }
+        themeSelect.value = state.theme;
+      }
+
+      // Build Sidebar Topic Navigation
+      sections.forEach((sec, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "topic-btn";
+        btn.dataset.id = sec.dataset.id;
+        btn.id = "nav-btn-" + sec.dataset.id;
+
+        const numSpan = document.createElement("span");
+        numSpan.className = "topic-num";
+        numSpan.textContent = String(idx + 1).padStart(2, "0");
+
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "topic-title-text";
+        titleSpan.textContent = sec.dataset.title;
+
+        const checkSpan = document.createElement("span");
+        checkSpan.className = "topic-check";
+        checkSpan.setAttribute("aria-hidden", "true");
+        checkSpan.textContent = "✓";
+
+        btn.appendChild(numSpan);
+        btn.appendChild(titleSpan);
+        btn.appendChild(checkSpan);
+
+        btn.addEventListener("click", () => {
+          navigateToTopic(sec.dataset.id, true);
+        });
+
+        navContainer.appendChild(btn);
+      });
+
+      function render() {
+        const currentIdx = topicIds.indexOf(state.current);
+
+        // Update Sections visibility
+        sections.forEach(sec => {
+          const isActive = sec.dataset.id === state.current;
+          sec.hidden = !isActive;
+        });
+
+        // Update Sidebar items
+        Array.from(navContainer.children).forEach(btn => {
+          const id = btn.dataset.id;
+          const isActive = id === state.current;
+          const isDone = doneSet.has(id);
+
+          if (isActive) {
+            btn.setAttribute("aria-current", "step");
+          } else {
+            btn.removeAttribute("aria-current");
+          }
+
+          btn.classList.toggle("is-complete", isDone);
+          const title = btn.querySelector(".topic-title-text").textContent;
+          btn.setAttribute("aria-label", `${title}${isDone ? ", complete" : ", incomplete"}`);
+        });
+
+        // Update Progress
+        const count = doneSet.size;
+        const total = topicIds.length;
+        const pct = Math.round((count / total) * 100);
+
+        progressText.textContent = `${count} / ${total} complete`;
+        progressBar.style.width = `${pct}%`;
+        progressTrack.setAttribute("aria-valuenow", String(count));
+
+        // Update Navigation buttons
+        prevBtn.disabled = currentIdx === 0;
+        nextBtn.disabled = currentIdx === topicIds.length - 1;
+
+        // Update Complete button
+        const isCurrentDone = doneSet.has(state.current);
+        completeBtn.setAttribute("aria-pressed", String(isCurrentDone));
+        completeLabel.textContent = isCurrentDone ? "Mark Topic Incomplete" : "Mark Topic Complete";
+
+        // Status Announcer
+        statusAnnouncer.textContent = `Topic ${currentIdx + 1} of ${total}: ${sections[currentIdx].dataset.title}. Progress saved.`;
+
+        // Update MCQ if on review topic
+        renderMCQ();
+      }
+
+      function renderMCQ() {
+        if (!mcqFeedback) return;
+        mcqButtons.forEach((btn, idx) => {
+          btn.classList.remove("selected-correct", "selected-incorrect");
+          if (state.mcqAnswer !== null && state.mcqAnswer === idx) {
+            if (idx === CORRECT_MCQ_INDEX) {
+              btn.classList.add("selected-correct");
+            } else {
+              btn.classList.add("selected-incorrect");
+            }
+          }
+        });
+
+        if (state.mcqAnswer === null) {
+          mcqFeedback.className = "mcq-feedback";
+          mcqFeedback.textContent = "";
+        } else if (state.mcqAnswer === CORRECT_MCQ_INDEX) {
+          mcqFeedback.className = "mcq-feedback is-correct";
+          mcqFeedback.textContent = "Correct! GitHub Actions only builds images and coordinates SSH commands. Giving CI runner environments access to the production database password unnecessarily expands the blast radius and violates the principle of least privilege.";
+        } else {
+          mcqFeedback.className = "mcq-feedback is-incorrect";
+          mcqFeedback.textContent = "Not quite. Option B is correct: the CI runner has no reason to connect to Neon. Storing DATABASE_URL strictly on the EC2 host ensures database credentials never risk exposure in CI runner logs or temporary job environments.";
+        }
+      }
+
+      function navigateToTopic(id, shouldFocus) {
+        if (!topicIds.includes(id)) return;
+        state.current = id;
+        saveState();
+        render();
+
+        // Close mobile drawer if open
+        if (sidebar.classList.contains("is-open")) {
+          sidebar.classList.remove("is-open");
+          mobileToggle.setAttribute("aria-expanded", "false");
+          mobileToggle.querySelector(".mobile-icon").textContent = "+";
+        }
+
+        if (shouldFocus) {
+          const currentSection = sections.find(s => s.dataset.id === id);
+          if (currentSection) {
+            const h2 = currentSection.querySelector("h2");
+            if (h2) {
+              h2.focus({ preventScroll: true });
+              h2.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }
+        }
+      }
+
+      // Event Listeners
+      completeBtn.addEventListener("click", () => {
+        if (doneSet.has(state.current)) {
+          doneSet.delete(state.current);
+        } else {
+          doneSet.add(state.current);
+        }
+        saveState();
+        render();
+      });
+
+      prevBtn.addEventListener("click", () => {
+        const idx = topicIds.indexOf(state.current);
+        if (idx > 0) {
+          navigateToTopic(topicIds[idx - 1], true);
+        }
+      });
+
+      nextBtn.addEventListener("click", () => {
+        const idx = topicIds.indexOf(state.current);
+        if (idx < topicIds.length - 1) {
+          navigateToTopic(topicIds[idx + 1], true);
+        }
+      });
+
+      themeSelect.addEventListener("change", (e) => {
+        state.theme = e.target.value;
+        applyTheme();
+        saveState();
+      });
+
+      mobileToggle.addEventListener("click", () => {
+        const isOpen = sidebar.classList.toggle("is-open");
+        mobileToggle.setAttribute("aria-expanded", String(isOpen));
+        mobileToggle.querySelector(".mobile-icon").textContent = isOpen ? "−" : "+";
+      });
+
+      // MCQ Selection
+      mcqButtons.forEach((btn, idx) => {
+        btn.addEventListener("click", () => {
+          state.mcqAnswer = idx;
+          saveState();
+          renderMCQ();
+        });
+      });
+
+      // Keyboard Controls (Arrow navigation)
+      document.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA") return;
+        const idx = topicIds.indexOf(state.current);
+
+        if ((e.key === "ArrowRight" || e.key === "PageDown") && e.altKey) {
+          if (idx < topicIds.length - 1) {
+            e.preventDefault();
+            navigateToTopic(topicIds[idx + 1], true);
+          }
+        } else if ((e.key === "ArrowLeft" || e.key === "PageUp") && e.altKey) {
+          if (idx > 0) {
+            e.preventDefault();
+            navigateToTopic(topicIds[idx - 1], true);
+          }
+        }
+      });
+
+      // Code Copy Buttons
+      document.querySelectorAll(".copy-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const pre = btn.closest(".code-snippet").querySelector("pre code");
+          if (!pre) return;
+          try {
+            await navigator.clipboard.writeText(pre.textContent);
+            btn.textContent = "Copied!";
+            setTimeout(() => { btn.textContent = "Copy"; }, 1800);
+          } catch (err) {
+            btn.textContent = "Failed";
+            setTimeout(() => { btn.textContent = "Copy"; }, 1800);
+          }
+        });
+      });
+
+      // Initialize
+      applyTheme();
+      render();
+    })();
+  </script>
+</body>
+</html>
