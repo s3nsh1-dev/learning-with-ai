@@ -48,20 +48,21 @@ Use structured learning only when the user explicitly requests a course or stage
 2. Update `CURRICULUM.md` to track stages. Every stage must include an explicit post-completion checkpoint for `MCQ.html`.
 3. Teach each stage sequentially in `index.html`.
 4. When the user completes Stage N, prepare `MCQ.html` testing Stage N concepts. Scale question count to stage complexity.
-5. In `MCQ.html`, require answering all questions before submitting. After submission, display the total score, confirm correct answers cleanly, and provide brief explanations only for incorrect choices to target weak spots.
+5. In `MCQ.html`, require answering all questions before submitting. After submission, display the total score, confirm correct answers cleanly, and provide brief explanations only for incorrect choices. All MCQ options must have decent technical complexity and plausible distractors rooted in real architectural misconceptions.
 6. Advance `index.html` to Stage N+1 only after the user reviews their MCQ assessment.
 
 Curriculum tracking is not a lesson archive. Ordinary follow-up messages still use the response
 destination rules in `AGENTS.md`; a course does not authorize a page rewrite for every reply.
 
-## Visual design and diagrams
+## Visual design, navigation and diagrams
 
 - Apply the repository's [artifact-design](../artifact-design/SKILL.md),
   [artifact-diagramming](../artifact-diagramming/SKILL.md), and
   [frontend-design](../frontend-design/SKILL.md) skills when creating or redesigning a page.
   For a content update, preserve the existing visual design unless the user requests a redesign.
-- Support the explanation with hand-authored inline SVG. Give each figure one clear claim and
-  draw each distinct mechanism that benefits from a picture; avoid decorative or redundant figures.
+- **Common Cross-Page Navigation**: Every page (`index.html`, `MCQ.html`, and `disposable.html`) must include a persistent top navigation bar linking between Lesson, Assessment, and Scratchpad.
+- **Topbar Help Button**: Include a `[HELP]` button in the topbar that toggles an in-page panel displaying the full form and a 1-sentence plain-English explanation for every technical acronym introduced on that page.
+- **Interactive SVG for Mechanisms**: Support explanations with hand-authored inline SVG. When explaining mechanisms with multiple states, paths, or failure modes (e.g. PR checks vs. main release, normal vs. rollback), provide simple buttons to toggle SVG states so visual learners see how the system reacts. Avoid decorative or redundant figures.
 - Show the mechanism through position, distance, direction, overlap, and labelled arrows. Make
   the relevant boundary, sequence, or failure point visible rather than drawing only labelled boxes.
 - Give every figure an accessible description and a caption explaining why the pictured mechanism

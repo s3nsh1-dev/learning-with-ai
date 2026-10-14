@@ -15,6 +15,7 @@
 
 ## Lesson UI & State
 
+- Common top navigation linking between index.html, MCQ.html, and disposable.html.
 - Single-topic view with Previous/Next controls and a collapsible sidebar tracking topic completion.
 - Explicit topic completion only (visiting does not complete).
 - Persist active topic and completion state in `localStorage` using unique keys per lesson.

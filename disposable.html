@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scratchpad &amp; Ad-Hoc Reviews</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas: #f8fafc;
+      --bg-grid: rgba(203, 213, 225, 0.4);
+      --surface-card: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --line: #cbd5e1;
+      --line-subtle: #e2e8f0;
+
+      --ink-primary: #0f172a;
+      --ink-secondary: #334155;
+      --ink-muted: #64748b;
+
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --blue-line: #93c5fd;
+      --blue-text: #1d4ed8;
+
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --amber-line: #fcd34d;
+      --amber-text: #b45309;
+
+      --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+      --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+
+      --font-heading: "Chakra Petch", -apple-system, sans-serif;
+      --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-canvas: #090d16;
+        --bg-grid: rgba(30, 41, 59, 0.6);
+        --surface-card: #0f172a;
+        --surface-subtle: #141e33;
+        --line: #1e293b;
+        --line-subtle: #162032;
+
+        --ink-primary: #f1f5f9;
+        --ink-secondary: #cbd5e1;
+        --ink-muted: #94a3b8;
+
+        --blue: #3b82f6;
+        --blue-soft: rgba(59, 130, 246, 0.12);
+        --blue-line: #1d4ed8;
+        --blue-text: #93c5fd;
+
+        --amber: #f59e0b;
+        --amber-soft: rgba(245, 158, 11, 0.12);
+        --amber-line: #b45309;
+        --amber-text: #fcd34d;
+
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+        --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45);
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-canvas: #090d16;
+      --bg-grid: rgba(30, 41, 59, 0.6);
+      --surface-card: #0f172a;
+      --surface-subtle: #141e33;
+      --line: #1e293b;
+      --line-subtle: #162032;
+
+      --ink-primary: #f1f5f9;
+      --ink-secondary: #cbd5e1;
+      --ink-muted: #94a3b8;
+
+      --blue: #3b82f6;
+      --blue-soft: rgba(59, 130, 246, 0.12);
+      --blue-line: #1d4ed8;
+      --blue-text: #93c5fd;
+
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.12);
+      --amber-line: #b45309;
+      --amber-text: #fcd34d;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+      --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink-primary);
+      background-color: var(--bg-canvas);
+      background-image: radial-gradient(circle, var(--bg-grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-card);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+    .topbar-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand-spec {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue-text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .badge-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: var(--surface-subtle);
+      border: 1px solid var(--line);
+      padding: 0.15rem 0.45rem;
+      border-radius: 3px;
+      color: var(--ink-muted);
+    }
+
+    .page-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      border-left: 1px solid var(--line);
+      padding-left: 0.75rem;
+      margin-left: 0.25rem;
+    }
+    .nav-tab {
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      color: var(--ink-muted);
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-tab:hover {
+      background: var(--surface-subtle);
+      color: var(--ink-primary);
+    }
+    .nav-tab.active {
+      background: var(--blue-soft);
+      border-color: var(--blue-line);
+      color: var(--blue-text);
+    }
+
+    .theme-picker {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+    }
+    .theme-select {
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--surface-card);
+      color: var(--ink-primary);
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto 4rem;
+      padding: 0 1.25rem;
+    }
+
+    .scratchpad-card {
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow-sm);
+      padding: 2.5rem 2rem;
+    }
+
+    .eyebrow {
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue-text);
+      margin-bottom: 0.4rem;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: var(--ink-secondary);
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
+    }
+
+    .empty-state {
+      border: 2px dashed var(--line);
+      border-radius: 8px;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      background: var(--surface-subtle);
+      margin-top: 1.5rem;
+    }
+    .empty-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--ink-muted);
+    }
+    .empty-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin-bottom: 0.5rem;
+    }
+    .empty-desc {
+      font-size: 0.92rem;
+      color: var(--ink-muted);
+      max-width: 48ch;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-spec">
+        <span>DEV-LAB</span>
+        <span class="badge-label">SCRATCHPAD</span>
+      </div>
+      <!-- Common Top Navigation Across All Three Pages -->
+      <nav class="page-nav" aria-label="Page switcher">
+        <a href="/index.html" class="nav-tab">Lesson</a>
+        <a href="/MCQ.html" class="nav-tab">Assessment</a>
+        <a href="/disposable.html" class="nav-tab active" aria-current="page">Scratchpad</a>
+      </nav>
+      <div class="theme-picker">
+        <label for="theme-select">Theme:</label>
+        <select id="theme-select" class="theme-select" aria-label="Theme mode">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <article class="scratchpad-card">
+      <div class="eyebrow">Ad-Hoc Explanations &amp; Deep-Dives</div>
+      <h1>Disposable Scratchpad</h1>
+      <p>
+        This page is strictly reserved for user-requested deep dives, targeted troubleshooting, and ad-hoc concept remediation. It is replaced entirely whenever an ad-hoc explainer is generated.
+      </p>
+
+      <div class="empty-state">
+        <div class="empty-icon">🧪</div>
+        <div class="empty-title">Ready for Ad-Hoc Lessons</div>
+        <p class="empty-desc">
+          When you request a concept breakdown or remediation in chat, the explanation and interactive diagrams will populate this page.
+        </p>
+      </div>
+    </article>
+  </main>
+
+  <script>
+    (function() {
+      "use strict";
+      const themeSelect = document.getElementById("theme-select");
+      let theme = localStorage.getItem("learning-ai:theme") || "system";
+
+      function applyTheme() {
+        if (theme === "system") {
+          document.documentElement.removeAttribute("data-theme");
+        } else {
+          document.documentElement.dataset.theme = theme;
+        }
+        themeSelect.value = theme;
+      }
+
+      themeSelect.addEventListener("change", (e) => {
+        theme = e.target.value;
+        localStorage.setItem("learning-ai:theme", theme);
+        applyTheme();
+      });
+
+      applyTheme();
+    })();
+  </script>
+</body>
+</html>

@@ -252,6 +252,201 @@
       border-left: 1px solid var(--line);
       padding-left: 0.75rem;
     }
+
+    /* Common Page Navigation Switcher */
+    .page-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      border-left: 1px solid var(--line);
+      padding-left: 0.75rem;
+      margin-left: 0.25rem;
+    }
+    .nav-tab {
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      color: var(--ink-muted);
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-tab:hover {
+      background: var(--surface-subtle);
+      color: var(--ink-primary);
+    }
+    .nav-tab.active {
+      background: var(--blue-soft);
+      border-color: var(--blue-line);
+      color: var(--blue-text);
+    }
+
+    /* Help Button and Help Panel */
+    .btn-help {
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.32rem 0.65rem;
+      border: 1px solid var(--amber-line);
+      border-radius: 4px;
+      background: var(--amber-soft);
+      color: var(--amber-text);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-help:hover {
+      background: var(--amber);
+      color: #ffffff;
+    }
+    .help-panel {
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-card);
+      box-shadow: var(--shadow-sm);
+    }
+    .help-panel[hidden] {
+      display: none !important;
+    }
+    .help-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.25rem;
+    }
+    .help-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--line-subtle);
+    }
+    .help-head h3 {
+      font-family: var(--font-heading);
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--amber-text);
+      margin: 0;
+    }
+    .help-close-btn {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      cursor: pointer;
+    }
+    .acronym-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.75rem 1.25rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+    .acronym-list li {
+      margin: 0;
+      color: var(--ink-secondary);
+    }
+    .acronym-list strong {
+      font-family: var(--font-mono);
+      color: var(--ink-primary);
+    }
+
+    /* Interactive SVG Simulation Controls */
+    .sim-panel {
+      margin-bottom: 1rem;
+      background: var(--surface-subtle);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+    }
+    .sim-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .sim-label {
+      font-family: var(--font-heading);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-muted);
+    }
+    .sim-btn-group {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .sim-btn {
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--surface-card);
+      color: var(--ink-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sim-btn:hover {
+      border-color: var(--blue-line);
+      background: var(--blue-soft);
+      color: var(--blue-text);
+    }
+    .sim-btn.active {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #ffffff;
+    }
+    .sim-status-box {
+      margin-top: 0.6rem;
+      padding-top: 0.5rem;
+      border-top: 1px dashed var(--line);
+      font-size: 0.84rem;
+      color: var(--ink-secondary);
+      line-height: 1.45;
+    }
+
+    /* Dynamic SVG Flow States */
+    .delivery-rail-svg[data-active-flow="pr"] .flow-deploy,
+    .delivery-rail-svg[data-active-flow="pr"] #svg-st3,
+    .delivery-rail-svg[data-active-flow="pr"] #svg-st4,
+    .delivery-rail-svg[data-active-flow="pr"] #svg-st5,
+    .delivery-rail-svg[data-active-flow="pr"] #svg-st6,
+    .delivery-rail-svg[data-active-flow="pr"] #svg-st7,
+    .delivery-rail-svg[data-active-flow="pr"] #svg-st8 {
+      opacity: 0.2;
+      transition: opacity 0.25s;
+    }
+    .delivery-rail-svg[data-active-flow="main"] #svg-st1 {
+      opacity: 0.25;
+      transition: opacity 0.25s;
+    }
+    .delivery-rail-svg[data-active-flow="rollback"] #svg-st1,
+    .delivery-rail-svg[data-active-flow="rollback"] #svg-st2,
+    .delivery-rail-svg[data-active-flow="rollback"] #svg-st3,
+    .delivery-rail-svg[data-active-flow="rollback"] #svg-st4 {
+      opacity: 0.2;
+      transition: opacity 0.25s;
+    }
+    .delivery-rail-svg[data-active-flow="rollback"] #svg-st5 .svg-node-box {
+      stroke: var(--amber);
+      fill: var(--amber-soft);
+      stroke-width: 2.5;
+    }
+
     .topbar-actions {
       display: flex;
       align-items: center;
@@ -1144,7 +1339,7 @@
 <body>
   <a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- Topbar Specification Banner -->
+  <!-- Topbar Specification Banner with Page Nav & Help -->
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand-group">
@@ -1152,9 +1347,15 @@
           <span>SPEC-CI-01</span>
           <span class="badge-rev">STAGE 01/08</span>
         </div>
-        <span class="brand-title">Docker Todo Pipeline Contract</span>
+        <!-- Common Top Navigation Across All Three Pages -->
+        <nav class="page-nav" aria-label="Page switcher">
+          <a href="/index.html" class="nav-tab active" aria-current="page">Lesson</a>
+          <a href="/MCQ.html" class="nav-tab">Assessment</a>
+          <a href="/disposable.html" class="nav-tab">Scratchpad</a>
+        </nav>
       </div>
       <div class="topbar-actions">
+        <button class="btn-help" id="help-toggle" aria-expanded="false" aria-controls="help-panel">HELP</button>
         <div class="theme-picker">
           <label for="theme-select">Theme:</label>
           <select id="theme-select" class="theme-select" aria-label="Appearance Mode">
@@ -1163,6 +1364,27 @@
             <option value="dark">Dark</option>
           </select>
         </div>
+      </div>
+    </div>
+    <!-- Simple In-Page Acronym Help Panel -->
+    <div class="help-panel" id="help-panel" hidden>
+      <div class="help-content">
+        <div class="help-head">
+          <h3>Stage 1 Acronym Glossary</h3>
+          <button class="help-close-btn" id="help-close" aria-label="Close Help">✕</button>
+        </div>
+        <ul class="acronym-list">
+          <li><strong>GHCR</strong> — <em>GitHub Container Registry</em>: GitHub-hosted private OCI container registry storing our client and server images.</li>
+          <li><strong>SHA</strong> — <em>Secure Hash Algorithm</em>: The 40-character Git commit hash (e.g. <code>9f8a32b</code>) used as an immutable image tag.</li>
+          <li><strong>SSH</strong> — <em>Secure Shell</em>: Remote cryptographic network protocol used to run deployment commands on EC2 via dedicated deploy keys.</li>
+          <li><strong>SSM</strong> — <em>AWS Systems Manager</em>: Cloud-native management service that executes remote commands through an agent, avoiding open inbound SSH ports.</li>
+          <li><strong>OIDC</strong> — <em>OpenID Connect</em>: Token exchange protocol allowing GitHub Actions to authenticate directly with AWS IAM without static credentials.</li>
+          <li><strong>TLS</strong> — <em>Transport Layer Security</em>: Cryptographic protocol encrypting database connections between Express and Neon (port 5432).</li>
+          <li><strong>OCI</strong> — <em>Open Container Initiative</em>: Industry specification ensuring Docker images run reliably across compliant engines and registries.</li>
+          <li><strong>E2E</strong> — <em>End-to-End Testing</em>: Complete system testing (using Playwright) against the full stack rather than mocked single components.</li>
+          <li><strong>PAT</strong> — <em>Personal Access Token</em>: Scoped GitHub token used on EC2 with read-only package access.</li>
+          <li><strong>CORS</strong> — <em>Cross-Origin Resource Sharing</em>: Browser security policy bypassed in production because Nginx serves the frontend and proxies <code>/api</code> on port 80.</li>
+        </ul>
       </div>
     </div>
   </header>
@@ -1229,9 +1451,25 @@
             In your local development environment, you edit files directly in <code>client/</code> and <code>server/</code>, running Vite or <code>tsx</code> with source mounts. In production, <strong>source code is never shipped or compiled on the host</strong>. Instead, pre-built OCI container images are produced in the cloud, sealed with immutable version tags, and pulled onto the host server as ready-to-run black boxes.
           </p>
 
+          <!-- Interactive Delivery Rail State Controls -->
+          <div class="sim-panel">
+            <div class="sim-header">
+              <span class="sim-label">Delivery Mechanism:</span>
+              <div class="sim-btn-group" role="group" aria-label="Delivery rail flow simulation">
+                <button class="sim-btn active" data-flow="all">Complete Rail</button>
+                <button class="sim-btn" data-flow="pr">PR Flow (Tests Only)</button>
+                <button class="sim-btn" data-flow="main">Main Release (Deploy)</button>
+                <button class="sim-btn" data-flow="rollback">Rollback (Failure)</button>
+              </div>
+            </div>
+            <div class="sim-status-box" id="sim-status-box">
+              <strong>Active Flow: Complete Delivery Rail</strong> — Displays all 8 stations along the pipeline from feature branch to production Neon database.
+            </div>
+          </div>
+
           <!-- SVG DELIVERY RAIL FIGURE -->
           <figure class="diagram-card">
-            <svg class="delivery-rail-svg" viewBox="0 0 1020 460" role="img" aria-labelledby="rail-svg-title rail-svg-desc">
+            <svg class="delivery-rail-svg" id="delivery-rail-svg" data-active-flow="all" viewBox="0 0 1020 460" role="img" aria-labelledby="rail-svg-title rail-svg-desc">
               <title id="rail-svg-title">Todo App CI/CD Eight-Station Delivery Rail</title>
               <desc id="rail-svg-desc">
                 An architectural flow diagram connecting Developer Workstation, GitHub Actions CI Runner, GitHub Container Registry, AWS EC2 Instance, and Neon Cloud PostgreSQL across 8 distinct stations.
@@ -1978,6 +2216,47 @@ fi</code></pre>
         const isOpen = sidebar.classList.toggle("is-open");
         mobileToggle.setAttribute("aria-expanded", String(isOpen));
         mobileToggle.querySelector(".mobile-icon").textContent = isOpen ? "−" : "+";
+      });
+
+      // Help Panel Toggle
+      const helpToggle = document.getElementById("help-toggle");
+      const helpPanel = document.getElementById("help-panel");
+      const helpClose = document.getElementById("help-close");
+
+      function toggleHelp(show) {
+        const isHidden = show !== undefined ? !show : !helpPanel.hidden;
+        helpPanel.hidden = isHidden;
+        helpToggle.setAttribute("aria-expanded", String(!isHidden));
+      }
+
+      if (helpToggle && helpPanel) {
+        helpToggle.addEventListener("click", () => toggleHelp());
+      }
+      if (helpClose) {
+        helpClose.addEventListener("click", () => toggleHelp(false));
+      }
+
+      // Interactive Delivery Rail Simulation
+      const simButtons = Array.from(document.querySelectorAll(".sim-btn"));
+      const simStatusBox = document.getElementById("sim-status-box");
+      const deliverySvg = document.getElementById("delivery-rail-svg");
+
+      const flowDescriptions = {
+        all: "<strong>Active View: Complete Delivery Rail</strong> — All 8 stations from local feature branch to production Neon database.",
+        pr: "<strong>Active View: PR CI Gates</strong> — Feature branch pushes to PR runner. Tests run with disposable PostgreSQL. GITHUB_TOKEN has read-only scope. <em>Deployment secrets are blocked; nothing reaches EC2.</em>",
+        main: "<strong>Active View: Main Release Flow</strong> — Merged commit on main builds and publishes immutable SHA images to GHCR with package-write scope, then initiates SSH deployment to EC2.",
+        rollback: "<strong>Active View: Rollback Mechanism</strong> — If the health check fails on EC2, the deploy runner immediately restores <code>release.env.bak</code> and recreates containers with the previous working SHA."
+      };
+
+      simButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const flow = btn.dataset.flow;
+          simButtons.forEach(b => b.classList.toggle("active", b === btn));
+          if (deliverySvg) deliverySvg.dataset.activeFlow = flow;
+          if (simStatusBox && flowDescriptions[flow]) {
+            simStatusBox.innerHTML = flowDescriptions[flow];
+          }
+        });
       });
 
       // MCQ Selection

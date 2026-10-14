@@ -183,6 +183,119 @@
       border-radius: 3px;
       color: var(--ink-muted);
     }
+
+    /* Common Page Navigation Switcher */
+    .page-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      border-left: 1px solid var(--line);
+      padding-left: 0.75rem;
+      margin-left: 0.25rem;
+    }
+    .nav-tab {
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      color: var(--ink-muted);
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-tab:hover {
+      background: var(--surface-subtle);
+      color: var(--ink-primary);
+    }
+    .nav-tab.active {
+      background: var(--blue-soft);
+      border-color: var(--blue-line);
+      color: var(--blue-text);
+    }
+
+    /* Help Button & Help Panel */
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .btn-help {
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.32rem 0.65rem;
+      border: 1px solid var(--amber-line);
+      border-radius: 4px;
+      background: var(--amber-soft);
+      color: var(--amber-text);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-help:hover {
+      background: var(--amber);
+      color: #ffffff;
+    }
+    .help-panel {
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-card);
+      box-shadow: var(--shadow-sm);
+    }
+    .help-panel[hidden] {
+      display: none !important;
+    }
+    .help-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.25rem;
+    }
+    .help-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--line-subtle);
+    }
+    .help-head h3 {
+      font-family: var(--font-heading);
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--amber-text);
+      margin: 0;
+    }
+    .help-close-btn {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      cursor: pointer;
+    }
+    .acronym-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.75rem 1.25rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+    .acronym-list li {
+      margin: 0;
+      color: var(--ink-secondary);
+    }
+    .acronym-list strong {
+      font-family: var(--font-mono);
+      color: var(--ink-primary);
+    }
     .theme-picker {
       display: flex;
       align-items: center;
@@ -534,13 +647,43 @@
         <span>EVAL-STAGE-01</span>
         <span class="badge-stage">MCQ GATE</span>
       </div>
-      <div class="theme-picker">
-        <label for="theme-select">Theme:</label>
-        <select id="theme-select" class="theme-select" aria-label="Theme mode">
-          <option value="system">System</option>
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
+      <!-- Common Top Navigation Across All Three Pages -->
+      <nav class="page-nav" aria-label="Page switcher">
+        <a href="/index.html" class="nav-tab">Lesson</a>
+        <a href="/MCQ.html" class="nav-tab active" aria-current="page">Assessment</a>
+        <a href="/disposable.html" class="nav-tab">Scratchpad</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="btn-help" id="help-toggle" aria-expanded="false" aria-controls="help-panel">HELP</button>
+        <div class="theme-picker">
+          <label for="theme-select">Theme:</label>
+          <select id="theme-select" class="theme-select" aria-label="Theme mode">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <!-- Simple In-Page Acronym Help Panel -->
+    <div class="help-panel" id="help-panel" hidden>
+      <div class="help-content">
+        <div class="help-head">
+          <h3>Stage 1 Acronym Glossary</h3>
+          <button class="help-close-btn" id="help-close" aria-label="Close Help">✕</button>
+        </div>
+        <ul class="acronym-list">
+          <li><strong>GHCR</strong> — <em>GitHub Container Registry</em>: GitHub-hosted private OCI container registry storing our client and server images.</li>
+          <li><strong>SHA</strong> — <em>Secure Hash Algorithm</em>: The 40-character Git commit hash (e.g. <code>9f8a32b</code>) used as an immutable image tag.</li>
+          <li><strong>SSH</strong> — <em>Secure Shell</em>: Remote cryptographic network protocol used to run deployment commands on EC2 via dedicated deploy keys.</li>
+          <li><strong>SSM</strong> — <em>AWS Systems Manager</em>: Cloud-native management service that executes remote commands through an agent, avoiding open inbound SSH ports.</li>
+          <li><strong>OIDC</strong> — <em>OpenID Connect</em>: Token exchange protocol allowing GitHub Actions to authenticate directly with AWS IAM without static credentials.</li>
+          <li><strong>TLS</strong> — <em>Transport Layer Security</em>: Cryptographic protocol encrypting database connections between Express and Neon (port 5432).</li>
+          <li><strong>OCI</strong> — <em>Open Container Initiative</em>: Industry specification ensuring Docker images run reliably across compliant engines and registries.</li>
+          <li><strong>E2E</strong> — <em>End-to-End Testing</em>: Complete system testing (using Playwright) against the full stack rather than mocked single components.</li>
+          <li><strong>PAT</strong> — <em>Personal Access Token</em>: Scoped GitHub token used on EC2 with read-only package access.</li>
+          <li><strong>CORS</strong> — <em>Cross-Origin Resource Sharing</em>: Browser security policy bypassed in production because Nginx serves the frontend and proxies <code>/api</code> on port 80.</li>
+        </ul>
       </div>
     </div>
   </header>
@@ -585,60 +728,60 @@
       const questions = [
         {
           id: "q1",
-          prompt: "Why are the client and server packaged into separate container images rather than running a single container that compiles source code on EC2?",
+          prompt: "Why are the client and server packaged into separate container images rather than combined into a single container image running both processes?",
           options: [
-            "Because Docker does not support running multiple processes in the same container.",
-            "Because the client is a static React build served by Nginx, while the server is a long-lived Node runtime; separating them avoids shipping Node, build compilers, and source files to the production frontend.",
-            "Because AWS EC2 instances reject images that contain more than one service in their Dockerfile.",
-            "Because compiling TypeScript directly on EC2 is required for production caching."
+            "Running Nginx and Node in one container requires process managers (such as Supervisord) that mask individual process crashes and prevent Docker from routing health checks and logs cleanly.",
+            "The client is a static React build served by Nginx, while the server requires the Node runtime and database drivers; separating them keeps compilers, pnpm, and runtime dependencies completely out of the public web frontend.",
+            "Express and Nginx share identical Linux kernel socket buffers when run in one container, causing port conflicts even when binding to separate internal ports.",
+            "Docker Compose contracts forbid mounting environment files into containers that maintain persistent TCP listeners on more than one port."
           ],
           correct: 1,
-          explanation: "Client and server have fundamentally different runtime footprints: the client is static HTML/JS served by lightweight Nginx, whereas the server requires the Node runtime. Compiling inside a build pipeline produces sealed, immutable images so production hosts never compile source or install compiler toolchains."
+          explanation: "Client and server have fundamentally different runtime footprints. Compiling React during CI yields static files served by lightweight Nginx. Combining them forces the production web container to include Node.js, pnpm, and backend dependencies, bloating the attack surface and image size."
         },
         {
           id: "q2",
-          prompt: "What is the primary security rationale for prohibiting pull request (PR) workflows from publishing images to GHCR or holding EC2 SSH credentials?",
+          prompt: "Why must pull request (PR) workflows run strictly with read-only permissions, without package-push rights to GHCR or deployment access to EC2?",
           options: [
-            "GitHub Actions charges higher compute fees for workflows triggered by pull requests.",
-            "PR checks only test frontend code and do not have access to Docker Engine.",
-            "Anyone with branch or fork access can open a pull request; granting deployment secrets or package-write access to unmerged code would allow malicious or buggy commits to overwrite production releases.",
-            "GitHub Container Registry only accepts image uploads that originate from an active EC2 terminal session."
+            "GitHub Actions hosted runner IP addresses change dynamically, which causes AWS EC2 security groups to drop SSH connections initiated from pull request branches.",
+            "PR triggers represent unreviewed code from arbitrary branches or untrusted forks; granting them write tokens or SSH secrets would allow unmerged commits to overwrite verified container releases or execute arbitrary commands on the live server.",
+            "GitHub Container Registry locks package namespaces to default branches and automatically rejects image pushes originating from any Git branch other than main.",
+            "Running Playwright E2E tests and pushing Docker images in the same workflow exceeds the maximum concurrent job execution limit on standard GitHub runner tiers."
           ],
-          correct: 2,
-          explanation: "Pull requests represent untrusted candidate code. Following the principle of least privilege, PR workflows receive read-only permissions and zero deployment secrets to prevent unapproved code from tampering with registries or infrastructure."
+          correct: 1,
+          explanation: "Pull requests represent untrusted candidate code. Following the principle of least privilege, PR workflows run tests in an isolated sandbox. Only after code is reviewed and merged into main does the pipeline gain package-write permissions and deployment keys."
         },
         {
           id: "q3",
           prompt: "Why does our deployment contract mandate tagging GHCR images with the immutable Git commit SHA instead of using the mutable ':latest' tag?",
           options: [
-            "The ':latest' tag is deprecated and has been completely removed from modern OCI container registries.",
-            "Docker Compose fails with a syntax error if ':latest' is specified in an image definition.",
-            "Commit SHAs provide unambiguous 1:1 provenance with source code, eliminate Docker caching bugs where daemons skip pulling updated layers, and enable instant, deterministic rollbacks.",
-            "Images tagged with a Git commit SHA are automatically compressed to smaller byte sizes."
+            "The ':latest' tag is only resolved during docker build, so running docker compose pull on an EC2 instance that already has an older image cached will skip pulling updated layers unless forcefully pruned.",
+            "Commit SHAs provide guaranteed 1:1 provenance with source code, eliminate Docker daemon caching ambiguity on the host, and allow instant, deterministic rollbacks by simply reverting the tag in release.env.",
+            "Git commit SHA hashes are cryptographically verified by the Docker daemon at runtime against GitHub's commit tree, preventing unauthorized image tampering.",
+            "The OCI image distribution specification enforces immutable registry layers only when image tags contain hexadecimal strings."
           ],
-          correct: 2,
-          explanation: "The ':latest' tag is merely a mutable pointer: it breaks rollback tracking (you cannot roll back to a previous 'latest') and causes Docker daemon cache mismatches. Immutable SHAs guarantee that every running container maps to one exact Git commit."
+          correct: 1,
+          explanation: "The ':latest' tag is merely a moving pointer: it breaks rollback tracking (you cannot roll back to a previous 'latest') and causes Docker daemon cache mismatches. Immutable SHAs guarantee that every running container maps to one exact Git commit."
         },
         {
           id: "q4",
-          prompt: "Where should the production Neon database credentials (DATABASE_URL) be stored, and why should they NEVER be stored in GitHub Actions Secrets?",
+          prompt: "Why does DATABASE_URL reside exclusively in /opt/todo-app/server.env on EC2, rather than being stored in GitHub Actions Secrets and injected during CI?",
           options: [
-            "In GitHub Actions Secrets, because Actions requires the database password to run build-time code checks.",
-            "Strictly in /opt/todo-app/server.env on the EC2 host with chmod 600; Actions only deploys container infrastructure and has no reason to connect to Neon, so withholding the DB URL minimizes leak exposure.",
-            "Baked directly into the server Dockerfile so that Express can load it on container startup without an environment file.",
-            "In a public GitHub repository secret named PUBLIC_DATABASE_URL."
+            "GitHub Actions runners run inside hosted cloud networks that block outbound TCP traffic on port 5432 to prevent database abuse.",
+            "GitHub Actions only packages container images and issues remote SSH orchestration commands; giving CI access to production database credentials expands the attack surface into workflow runner logs without any operational necessity.",
+            "Docker Compose ignores host environment files unless the variables are first registered as repository secrets in the upstream Git provider.",
+            "Environment variables stored in GitHub Actions secrets are automatically baked into intermediate image layers during docker build."
           ],
           correct: 1,
-          explanation: "GitHub Actions runner jobs only build images and run remote SSH commands. Storing DATABASE_URL strictly on the EC2 host (chmod 600) prevents production database passwords from leaking into CI logs or third-party workflow actions."
+          explanation: "The CI pipeline builds generic images and triggers remote deployment—it never interacts with production data. Storing DATABASE_URL strictly on EC2 (chmod 600) ensures database secrets are never exposed to runner environments or third-party Actions."
         },
         {
           id: "q5",
-          prompt: "In the production Compose file, Nginx exposes host port 80, but the Express API container maps NO host ports (internal port 5000 only). What is the architectural benefit of this design?",
+          prompt: "In the production Compose file, Nginx publishes port 80 to the host, but Express publishes NO host ports (internal port 5000 only). What is the operational justification for this boundary?",
           options: [
-            "It saves AWS network bandwidth fees by dropping API response headers.",
-            "Express crashes if more than one port is bound on an Ubuntu 24.04 server.",
-            "Outside traffic is forced exclusively through Nginx; direct port-scanning and unauthorized probes cannot hit Express directly, while Nginx handles reverse-proxying /api/* across the private Docker bridge.",
-            "Docker Compose requires backend services to run on loopback before creating database connections."
+            "Express can only accept incoming HTTP requests from the host if it is configured to use Unix domain sockets instead of TCP ports.",
+            "Publishing multiple container ports on an EC2 instance requires an external AWS Application Load Balancer to arbitrate port routing.",
+            "Keeping Express internal to the Docker bridge network prevents direct internet scanning and unauthorized API calls, centralizes reverse proxying and routing at Nginx, and eliminates browser CORS issues in production.",
+            "Docker bridge networks automatically drop all outbound database connections if any service exposes an unencrypted port to the public host interface."
           ],
           correct: 2,
           explanation: "By keeping Express internal to the Docker bridge network, port 5000 is invisible to the public internet. Nginx acts as the solitary public gateway on port 80, serving static assets and safely forwarding /api/* requests internally."
@@ -838,6 +981,23 @@
         render();
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
+
+      const helpToggle = document.getElementById("help-toggle");
+      const helpPanel = document.getElementById("help-panel");
+      const helpClose = document.getElementById("help-close");
+
+      function toggleHelp(show) {
+        const isHidden = show !== undefined ? !show : !helpPanel.hidden;
+        helpPanel.hidden = isHidden;
+        helpToggle.setAttribute("aria-expanded", String(!isHidden));
+      }
+
+      if (helpToggle && helpPanel) {
+        helpToggle.addEventListener("click", () => toggleHelp());
+      }
+      if (helpClose) {
+        helpClose.addEventListener("click", () => toggleHelp(false));
+      }
 
       themeSelect.addEventListener("change", (e) => {
         state.theme = e.target.value;
