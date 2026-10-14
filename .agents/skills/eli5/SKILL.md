@@ -45,9 +45,11 @@ branching into unrelated subtopics.
 Use structured learning only when the user explicitly requests a course or staged curriculum:
 
 1. Ask about the desired depth and any missing information needed to shape the curriculum.
-2. Update `CURRICULUM.md` to track stages appropriate to that depth.
-3. Cover the stages through successive user-requested HTML explanations.
-4. End each stage with an MCQ and use the answer to adjust later stages.
+2. Update `CURRICULUM.md` to track stages. Every stage must include an explicit post-completion checkpoint for `MCQ.html`.
+3. Teach each stage sequentially in `index.html`.
+4. When the user completes Stage N, prepare `MCQ.html` testing Stage N concepts. Scale question count to stage complexity.
+5. In `MCQ.html`, require answering all questions before submitting. After submission, display the total score, confirm correct answers cleanly, and provide brief explanations only for incorrect choices to target weak spots.
+6. Advance `index.html` to Stage N+1 only after the user reviews their MCQ assessment.
 
 Curriculum tracking is not a lesson archive. Ordinary follow-up messages still use the response
 destination rules in `AGENTS.md`; a course does not authorize a page rewrite for every reply.

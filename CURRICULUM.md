@@ -56,6 +56,11 @@ image, Neon database, health endpoint, GitHub Actions runner, GHCR, and EC2.
 request path from the trusted `main` deployment path. Decide which data stays
 on EC2 and which values must never enter a Docker image or Git repository.
 
+**Stage assessment (MCQ.html):** Complete the Stage 1 assessment in `MCQ.html`
+covering the 8 stations, PR isolation, immutable commit SHAs, secret boundaries,
+and internal Express networking. Review any incorrect answers before advancing
+to Stage 2.
+
 **Ready to continue when:** You can explain why the client and server are
 separate images, why the server has no public host port, and why a commit SHA
 is safer than `latest` for deployment.
@@ -69,6 +74,10 @@ writes to its configured database, and the browser tests need a full stack.
 console-only assertions with failing assertions, clean up test data, and run
 Playwright against the Dockerized client, server, and disposable database.
 
+**Stage assessment (MCQ.html):** Complete the Stage 2 assessment in `MCQ.html`
+covering disposable PostgreSQL test isolation, assertion failure modes, cleanup
+guarantees, and full-stack Dockerized test execution.
+
 **Ready to continue when:** Tests never reach Neon production data, pass from
 a clean checkout, and leave no containers or test data behind.
 
@@ -81,6 +90,10 @@ failure logs.
 **Capstone work:** Run client lint and build checks, server typecheck, build,
 and integration tests, then run full-stack end-to-end tests. Trigger them for
 pull requests and pushes to `main`.
+
+**Stage assessment (MCQ.html):** Complete the Stage 3 assessment in `MCQ.html`
+covering GitHub Actions triggers, job dependencies, service containers, caching,
+and pull-request gate security.
 
 **Ready to continue when:** A deliberately broken pull request fails in
 GitHub before it can be merged, while a green pull request has not published
@@ -97,6 +110,10 @@ tags.
 `ghcr.io/s3nsh1-dev/docker-beginner-simulation-server`, each tagged with the
 merged commit SHA.
 
+**Stage assessment (MCQ.html):** Complete the Stage 4 assessment in `MCQ.html`
+covering GITHUB_TOKEN permissions, registry authentication, multi-platform
+image tagging, and immutability guarantees.
+
 **Ready to continue when:** Both images can be found in GHCR and their tags
 identify the exact commit that created them. Pull requests still cannot push
 packages.
@@ -111,6 +128,10 @@ Compose file that consumes GHCR images, reads `IMAGE_TAG` from `release.env`,
 reads runtime secrets from a host-only `server.env`, exposes Nginx on port 80,
 and keeps the API internal.
 
+**Stage assessment (MCQ.html):** Complete the Stage 5 assessment in `MCQ.html`
+covering production Compose contracts, separating source from prebuilt images,
+`release.env` tagging, and port exposure rules.
+
 **Ready to continue when:** `docker compose config` validates the production
 file and changing only `IMAGE_TAG` selects a different complete release.
 
@@ -123,6 +144,10 @@ files, Docker Compose, and registry login.
 **Capstone work:** Install Docker and Compose, create `/opt/todo-app`, store
 the database URL in a permission-restricted `server.env`, and authenticate the
 host to private GHCR images with a read-only package token.
+
+**Stage assessment (MCQ.html):** Complete the Stage 6 assessment in `MCQ.html`
+covering EC2 host security, key-only SSH access, file permissions (`chmod 600`),
+and read-only GHCR token isolation.
 
 **Ready to continue when:** EC2 can pull an image manually, start the
 production Compose file, and respond to `/api/health` through Nginx.
@@ -138,6 +163,10 @@ production Compose file to EC2, write the release SHA, pull the two images,
 recreate the services, and verify the health endpoint. Keep the previous tag
 for rollback.
 
+**Stage assessment (MCQ.html):** Complete the Stage 7 assessment in `MCQ.html`
+covering deployment serialization, SSH host key verification, remote Compose
+execution, and automated health polling.
+
 **Ready to continue when:** Merging a green pull request updates EC2 to the
 same SHA shown in GHCR, and two deployments cannot run over each other.
 
@@ -150,6 +179,10 @@ failures from deployment failures, and recover safely.
 **Capstone work:** Simulate a failing health check, restore the previous
 release tag, review logs, document the recovery commands, and verify the
 normal delivery path once more.
+
+**Stage assessment (MCQ.html):** Complete the Stage 8 assessment in `MCQ.html`
+covering diagnosis workflows, automated rollback execution, log inspection,
+and production hardening trade-offs.
 
 **Ready to finish when:** You can diagnose which stage failed, roll back to a
 known-good SHA, and explain what would need to change before adding TLS or
