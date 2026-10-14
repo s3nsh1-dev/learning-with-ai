@@ -1,1 +1,1 @@
-Stage 1: Map the Todo app delivery system
+Stage 2: Make tests safe and repeatable

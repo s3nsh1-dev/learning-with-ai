@@ -46,7 +46,7 @@ health checks, serialized deployments, and a rollback path.
 
 ## Stage 1: Map the delivery system
 
-**Status:** Current
+**Status:** Complete
 
 Learn how this specific Todo app moves from a feature branch to a running
 container stack. Identify the React and Nginx client image, Express server
@@ -66,6 +66,8 @@ separate images, why the server has no public host port, and why a commit SHA
 is safer than `latest` for deployment.
 
 ## Stage 2: Make tests safe and repeatable
+
+**Status:** Current
 
 Turn the existing checks into reliable CI inputs. The current server test
 writes to its configured database, and the browser tests need a full stack.

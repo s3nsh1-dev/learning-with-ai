@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stage 1 Assessment: Map the Todo App Delivery System</title>
+  <title>Stage 2 Assessment: Make Tests Safe and Repeatable</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -146,6 +146,26 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 1rem;
+      background: var(--blue);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      z-index: 999;
+      transition: top 0.2s ease;
+      text-decoration: none;
+    }
+    .skip-link:focus {
+      top: 1rem;
+      outline: var(--focus-ring);
+    }
+
+    /* Top Navigation */
     .topbar {
       border-bottom: 1px solid var(--line);
       background: var(--surface-card);
@@ -155,7 +175,7 @@
       box-shadow: var(--shadow-sm);
     }
     .topbar-inner {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 0.75rem 1.25rem;
       display: flex;
@@ -163,18 +183,24 @@
       justify-content: space-between;
       gap: 1rem;
     }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
     .brand-spec {
       font-family: var(--font-heading);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--blue-text);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
-    .badge-stage {
+    .badge-rev {
       font-family: var(--font-mono);
       font-size: 0.7rem;
       background: var(--surface-subtle);
@@ -183,15 +209,12 @@
       border-radius: 3px;
       color: var(--ink-muted);
     }
-
-    /* Common Page Navigation Switcher */
     .page-nav {
       display: flex;
       align-items: center;
       gap: 0.35rem;
       border-left: 1px solid var(--line);
       padding-left: 0.75rem;
-      margin-left: 0.25rem;
     }
     .nav-tab {
       font-family: var(--font-heading);
@@ -216,12 +239,6 @@
       color: var(--blue-text);
     }
 
-    /* Help Button & Help Panel */
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
     .btn-help {
       font-family: var(--font-heading);
       font-size: 0.76rem;
@@ -233,11 +250,10 @@
       background: var(--amber-soft);
       color: var(--amber-text);
       cursor: pointer;
-      transition: all 0.15s;
     }
     .btn-help:hover {
       background: var(--amber);
-      color: #ffffff;
+      color: #fff;
     }
     .help-panel {
       border-bottom: 1px solid var(--line);
@@ -248,7 +264,7 @@
       display: none !important;
     }
     .help-content {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 1.25rem;
     }
@@ -283,18 +299,17 @@
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 0.75rem 1.25rem;
       list-style: none;
-      margin: 0;
-      padding: 0;
       font-size: 0.84rem;
-      line-height: 1.45;
-    }
-    .acronym-list li {
-      margin: 0;
-      color: var(--ink-secondary);
     }
     .acronym-list strong {
       font-family: var(--font-mono);
       color: var(--ink-primary);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
     }
     .theme-picker {
       display: flex;
@@ -314,63 +329,59 @@
       cursor: pointer;
     }
 
-    .container {
+    /* Container Shell */
+    .shell {
       max-width: 900px;
-      margin: 2rem auto 4rem;
-      padding: 0 1.25rem;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
     }
 
-    .assessment-card {
+    /* Header Banner */
+    .assessment-hero {
       background: var(--surface-card);
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 8px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 2rem;
       box-shadow: var(--shadow-sm);
-      overflow: hidden;
     }
-
-    .header-banner {
-      padding: 2rem;
-      border-bottom: 1px solid var(--line);
-      background: var(--surface-subtle);
-    }
-    .eyebrow {
+    .hero-eyebrow {
       font-family: var(--font-heading);
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--blue-text);
       margin-bottom: 0.4rem;
     }
-    h1 {
+    .assessment-hero h1 {
       font-family: var(--font-heading);
-      font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+      font-size: clamp(1.5rem, 3vw, 2rem);
       font-weight: 700;
       color: var(--ink-primary);
       line-height: 1.25;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
     }
-    .summary-text {
+    .assessment-hero p {
       color: var(--ink-secondary);
-      font-size: 1rem;
-      max-width: 65ch;
+      font-size: 0.96rem;
+      max-width: 68ch;
+      line-height: 1.55;
     }
 
     /* Scoreboard */
     .scoreboard {
       display: none;
-      margin: 1.5rem 2rem 0;
-      padding: 1.25rem 1.5rem;
-      border-radius: 8px;
       border: 1px solid var(--line);
-      background: var(--surface-subtle);
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      background: var(--surface-card);
+      box-shadow: var(--shadow-sm);
+      animation: fadeIn 0.25s ease-out;
     }
     .scoreboard.visible {
-      display: flex;
+      display: block;
     }
     .scoreboard.pass {
       border-color: var(--emerald-line);
@@ -380,84 +391,84 @@
       border-color: var(--amber-line);
       background: var(--amber-soft);
     }
-    .score-headline {
+    .score-title {
       font-family: var(--font-heading);
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--ink-primary);
+      margin-bottom: 0.35rem;
     }
-    .score-sub {
-      font-size: 0.88rem;
+    .scoreboard.pass .score-title {
+      color: var(--emerald-text);
+    }
+    .scoreboard.review-needed .score-title {
+      color: var(--amber-text);
+    }
+    .score-desc {
+      font-size: 0.92rem;
       color: var(--ink-secondary);
+      line-height: 1.5;
     }
 
-    /* Questions List */
+    /* Question Cards */
     .questions-wrapper {
-      padding: 2rem;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 1.5rem;
     }
-
-    .q-card {
+    .question-card {
+      background: var(--surface-card);
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 1.5rem;
-      background: var(--surface-card);
-      transition: border-color 0.2s, background-color 0.2s;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s;
     }
-    .q-card.is-correct {
-      border-color: var(--emerald-line);
-      background: rgba(16, 185, 129, 0.02);
+    .question-card.has-error {
+      border-color: var(--amber);
     }
-    .q-card.is-incorrect {
-      border-color: var(--amber-line);
-      background: rgba(245, 158, 11, 0.02);
-    }
-
     .q-header {
       display: flex;
-      align-items: baseline;
+      align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
+      gap: 0.5rem;
       margin-bottom: 0.85rem;
+      flex-wrap: wrap;
     }
     .q-number {
       font-family: var(--font-heading);
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--ink-muted);
+      color: var(--blue-text);
     }
     .q-status-badge {
-      font-family: var(--font-heading);
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 0.2rem 0.55rem;
-      border-radius: 4px;
       display: none;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
     }
-    .q-card.is-correct .q-status-badge {
+    .question-card.evaluated-correct .q-status-badge {
       display: inline-block;
-      background: var(--emerald);
-      color: #ffffff;
+      background: var(--emerald-soft);
+      border: 1px solid var(--emerald-line);
+      color: var(--emerald-text);
     }
-    .q-card.is-incorrect .q-status-badge {
+    .question-card.evaluated-wrong .q-status-badge {
       display: inline-block;
-      background: var(--amber);
-      color: #ffffff;
+      background: var(--amber-soft);
+      border: 1px solid var(--amber-line);
+      color: var(--amber-text);
     }
-
     .q-prompt {
       font-family: var(--font-heading);
       font-size: 1.08rem;
       font-weight: 700;
       color: var(--ink-primary);
-      line-height: 1.35;
-      margin-bottom: 1.25rem;
+      line-height: 1.4;
+      margin-bottom: 1.15rem;
     }
 
     .options-list {
@@ -465,16 +476,15 @@
       flex-direction: column;
       gap: 0.6rem;
     }
-
     .option-item {
       display: grid;
-      grid-template-columns: 24px 1fr;
-      gap: 0.75rem;
+      grid-template-columns: 28px 1fr;
       align-items: start;
-      padding: 0.85rem 1rem;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
       border: 1px solid var(--line);
       border-radius: 6px;
-      background: var(--surface-subtle);
+      background: var(--surface-card);
       cursor: pointer;
       font-size: 0.92rem;
       line-height: 1.45;
@@ -489,118 +499,102 @@
     .option-item.selected {
       border-color: var(--blue);
       background: var(--blue-soft);
-      color: var(--ink-primary);
+      color: var(--blue-text);
       font-weight: 500;
     }
-    .option-item.locked {
-      cursor: default;
+    .opt-letter {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1px solid var(--line);
+      background: var(--surface-subtle);
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-muted);
     }
+    .option-item.selected .opt-letter {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    /* Evaluation Styles */
     .option-item.show-correct {
       border-color: var(--emerald);
       background: var(--emerald-soft);
       color: var(--emerald-text);
       font-weight: 600;
     }
+    .option-item.show-correct .opt-letter {
+      background: var(--emerald);
+      border-color: var(--emerald);
+      color: #fff;
+    }
     .option-item.show-wrong {
       border-color: var(--amber);
       background: var(--amber-soft);
       color: var(--amber-text);
-      text-decoration: line-through;
-    }
-
-    .opt-letter {
-      font-family: var(--font-mono);
-      font-weight: 700;
-      font-size: 0.78rem;
-      width: 22px;
-      height: 22px;
-      border: 1px solid var(--line);
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--surface-card);
-      color: var(--ink-muted);
-    }
-    .option-item.selected .opt-letter {
-      border-color: var(--blue);
-      background: var(--blue);
-      color: #ffffff;
-    }
-    .option-item.show-correct .opt-letter {
-      border-color: var(--emerald);
-      background: var(--emerald);
-      color: #ffffff;
     }
     .option-item.show-wrong .opt-letter {
-      border-color: var(--amber);
       background: var(--amber);
-      color: #ffffff;
+      border-color: var(--amber);
+      color: #fff;
+    }
+    .option-item.locked {
+      cursor: default;
     }
 
-    /* Explanation Box (Visible ONLY for incorrect answers) */
+    /* Explanation Box */
     .incorrect-explanation {
-      display: none;
       margin-top: 1rem;
       padding: 0.85rem 1rem;
       border-radius: 6px;
       background: var(--amber-soft);
-      border-left: 3px solid var(--amber);
+      border: 1px solid var(--amber-line);
       font-size: 0.88rem;
-      line-height: 1.5;
-      color: var(--ink-primary);
-    }
-    .incorrect-explanation strong {
       color: var(--amber-text);
-      font-family: var(--font-heading);
-      display: block;
-      margin-bottom: 0.2rem;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      letter-spacing: 0.05em;
-    }
-    .q-card.is-incorrect .incorrect-explanation {
-      display: block;
+      line-height: 1.5;
     }
 
-    /* Footer & Submit Actions */
-    .footer-actions {
-      padding: 1.5rem 2rem;
-      border-top: 1px solid var(--line);
-      background: var(--surface-subtle);
+    /* Submission Bar */
+    .submit-bar {
+      margin-top: 2.5rem;
+      padding: 1.5rem;
+      background: var(--surface-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
       flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
     }
-    .answered-counter {
+    .counter-info {
       font-family: var(--font-mono);
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       color: var(--ink-muted);
     }
-    .action-btn-group {
-      display: flex;
-      gap: 0.75rem;
-    }
-    .btn {
-      padding: 0.7rem 1.4rem;
-      border-radius: 6px;
+    .btn-submit {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--blue);
+      background: var(--blue);
+      color: #ffffff;
       font-family: var(--font-heading);
       font-size: 0.92rem;
       font-weight: 700;
       letter-spacing: 0.04em;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.15s;
-      border: 1px solid transparent;
-    }
-    .btn-submit {
-      background: var(--blue);
-      color: #ffffff;
-      border-color: var(--blue);
     }
     .btn-submit:hover:not(:disabled) {
       background: var(--blue-text);
+      border-color: var(--blue-text);
     }
     .btn-submit:disabled {
       opacity: 0.45;
@@ -608,56 +602,54 @@
     }
     .btn-retry {
       display: none;
-      background: var(--surface-card);
-      border-color: var(--line);
-      color: var(--ink-primary);
-    }
-    .btn-retry:hover {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--line);
       background: var(--surface-subtle);
-      border-color: var(--line-strong);
+      color: var(--ink-primary);
+      font-family: var(--font-heading);
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
     }
     .btn-retry.visible {
       display: inline-block;
     }
-
-    code {
-      font-family: var(--font-mono);
-      font-size: 0.88em;
-      background: var(--surface-subtle);
-      padding: 0.1em 0.3em;
-      border-radius: 3px;
-      border: 1px solid var(--line-subtle);
+    .btn-retry:hover {
+      border-color: var(--line-strong);
+      background: var(--surface-card);
     }
 
-    @media (max-width: 640px) {
-      .header-banner { padding: 1.25rem 1rem; }
-      .questions-wrapper { padding: 1.25rem 1rem; }
-      .q-card { padding: 1rem; }
-      .footer-actions { padding: 1rem; flex-direction: column; align-items: stretch; }
-      .btn { width: 100%; text-align: center; }
-      .action-btn-group { flex-direction: column; width: 100%; }
-      .answered-counter { text-align: center; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Top Navigation Header -->
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand-spec">
-        <span>EVAL-STAGE-01</span>
-        <span class="badge-stage">MCQ GATE</span>
+      <div class="brand-group">
+        <div class="brand-spec">
+          <span>SPEC-CI-02</span>
+          <span class="badge-rev">ASSESSMENT</span>
+        </div>
+        <nav class="page-nav" aria-label="Page switcher">
+          <a href="/index.html" class="nav-tab">Lesson</a>
+          <a href="/MCQ.html" class="nav-tab active" aria-current="page">Assessment</a>
+          <a href="/disposable.html" class="nav-tab">Scratchpad</a>
+        </nav>
       </div>
-      <!-- Common Top Navigation Across All Three Pages -->
-      <nav class="page-nav" aria-label="Page switcher">
-        <a href="/index.html" class="nav-tab">Lesson</a>
-        <a href="/MCQ.html" class="nav-tab active" aria-current="page">Assessment</a>
-        <a href="/disposable.html" class="nav-tab">Scratchpad</a>
-      </nav>
       <div class="topbar-actions">
         <button class="btn-help" id="help-toggle" aria-expanded="false" aria-controls="help-panel">HELP</button>
         <div class="theme-picker">
           <label for="theme-select">Theme:</label>
-          <select id="theme-select" class="theme-select" aria-label="Theme mode">
+          <select id="theme-select" class="theme-select" aria-label="Appearance Mode">
             <option value="system">System</option>
             <option value="light">Light</option>
             <option value="dark">Dark</option>
@@ -665,130 +657,162 @@
         </div>
       </div>
     </div>
-    <!-- Simple In-Page Acronym Help Panel -->
+    <!-- Help Glossary Panel -->
     <div class="help-panel" id="help-panel" hidden>
       <div class="help-content">
         <div class="help-head">
-          <h3>Stage 1 Acronym Glossary</h3>
+          <h3>Stage 2 Acronym Glossary</h3>
           <button class="help-close-btn" id="help-close" aria-label="Close Help">✕</button>
         </div>
         <ul class="acronym-list">
-          <li><strong>GHCR</strong> — <em>GitHub Container Registry</em>: GitHub-hosted private OCI container registry storing our client and server images.</li>
-          <li><strong>SHA</strong> — <em>Secure Hash Algorithm</em>: The 40-character Git commit hash (e.g. <code>9f8a32b</code>) used as an immutable image tag.</li>
-          <li><strong>SSH</strong> — <em>Secure Shell</em>: Remote cryptographic network protocol used to run deployment commands on EC2 via dedicated deploy keys.</li>
-          <li><strong>SSM</strong> — <em>AWS Systems Manager</em>: Cloud-native management service that executes remote commands through an agent, avoiding open inbound SSH ports.</li>
-          <li><strong>OIDC</strong> — <em>OpenID Connect</em>: Token exchange protocol allowing GitHub Actions to authenticate directly with AWS IAM without static credentials.</li>
-          <li><strong>TLS</strong> — <em>Transport Layer Security</em>: Cryptographic protocol encrypting database connections between Express and Neon (port 5432).</li>
-          <li><strong>OCI</strong> — <em>Open Container Initiative</em>: Industry specification ensuring Docker images run reliably across compliant engines and registries.</li>
-          <li><strong>E2E</strong> — <em>End-to-End Testing</em>: Complete system testing (using Playwright) against the full stack rather than mocked single components.</li>
-          <li><strong>PAT</strong> — <em>Personal Access Token</em>: Scoped GitHub token used on EC2 with read-only package access.</li>
-          <li><strong>CORS</strong> — <em>Cross-Origin Resource Sharing</em>: Browser security policy bypassed in production because Nginx serves the frontend and proxies <code>/api</code> on port 80.</li>
+          <li><strong>E2E</strong> — <em>End-to-End Testing</em>: Running tests against the complete integrated application in a real headless browser.</li>
+          <li><strong>CI</strong> — <em>Continuous Integration</em>: Automated build and test workflows executed on every pull request.</li>
+          <li><strong>TCP</strong> — <em>Transmission Control Protocol</em>: Network connection protocol used to communicate with PostgreSQL socket ports.</li>
+          <li><strong>SQL</strong> — <em>Structured Query Language</em>: Relational database queries for data assertion, insertion, and truncation.</li>
+          <li><strong>tmpfs</strong> — <em>Temporary File Storage</em>: In-memory filesystem used in Docker containers to avoid persistent disk I/O.</li>
+          <li><strong>UUID</strong> — <em>Universally Unique Identifier</em>: 128-bit unique IDs used to isolate concurrent test fixtures.</li>
         </ul>
       </div>
     </div>
   </header>
 
-  <main class="container">
-    <article class="assessment-card">
-      <header class="header-banner">
-        <div class="eyebrow">Stage 1 Knowledge &amp; Weak Spot Evaluation</div>
-        <h1>Map the Todo App Delivery System</h1>
-        <p class="summary-text">
-          Select your answer for each question. After submitting, your total score will be calculated. Correct answers will be confirmed cleanly, while any incorrect answers will reveal targeted explanations to eliminate dangling misunderstandings before Stage 2.
-        </p>
-      </header>
+  <main class="shell" id="main">
+    <div class="assessment-hero">
+      <div class="hero-eyebrow">STAGE 02 · POST-STAGE EVALUATION</div>
+      <h1>Stage 2 Assessment: Test Safety &amp; Repeatability</h1>
+      <p>
+        Verify your mastery of ephemeral PostgreSQL isolation, process exit code semantics, assertion failure modes, table truncation sandboxing, and full-stack Playwright orchestration. All questions must be answered before submission.
+      </p>
+    </div>
 
-      <section class="scoreboard" id="scoreboard" aria-live="polite">
-        <div>
-          <div class="score-headline" id="score-headline">Score: --</div>
-          <div class="score-sub" id="score-sub">Assessment completed.</div>
-        </div>
-      </section>
+    <!-- Scoreboard Result Banner -->
+    <div class="scoreboard" id="scoreboard">
+      <div class="score-title" id="score-headline">Score: 0 / 8 (0%)</div>
+      <p class="score-desc" id="score-sub">Detailed feedback will display below.</p>
+    </div>
 
-      <div class="questions-wrapper" id="questions-container">
-        <!-- Questions injected via JS -->
+    <!-- Question Cards List -->
+    <div class="questions-wrapper" id="questions-container">
+      <!-- Populated dynamically by JavaScript -->
+    </div>
+
+    <!-- Submit & Progress Bar -->
+    <div class="submit-bar">
+      <span class="counter-info" id="answer-counter">0 of 8 answered</span>
+      <div class="btn-group">
+        <button class="btn-retry" id="retry-btn">Retake Assessment</button>
+        <button class="btn-submit" id="submit-btn" disabled>Submit Answers for Evaluation</button>
       </div>
-
-      <footer class="footer-actions">
-        <span class="answered-counter" id="answered-counter">0 of 5 answered</span>
-        <div class="action-btn-group">
-          <button class="btn btn-retry" id="btn-retry">Retake Assessment</button>
-          <button class="btn btn-submit" id="btn-submit" disabled>Submit Assessment</button>
-        </div>
-      </footer>
-    </article>
+    </div>
   </main>
 
   <script>
     (function() {
       "use strict";
 
-      const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-01-mcq";
+      const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-02:mcq";
 
       const questions = [
         {
           id: "q1",
-          prompt: "Why are the client and server packaged into separate container images rather than combined into a single container image running both processes?",
+          prompt: "Why is pointing integration tests at a remote cloud database (such as Neon) during CI pull-request runs considered a critical anti-pattern in continuous delivery?",
           options: [
-            "Running Nginx and Node in one container requires process managers (such as Supervisord) that mask individual process crashes and prevent Docker from routing health checks and logs cleanly.",
-            "The client is a static React build served by Nginx, while the server requires the Node runtime and database drivers; separating them keeps compilers, pnpm, and runtime dependencies completely out of the public web frontend.",
-            "Express and Nginx share identical Linux kernel socket buffers when run in one container, causing port conflicts even when binding to separate internal ports.",
-            "Docker Compose contracts forbid mounting environment files into containers that maintain persistent TCP listeners on more than one port."
+            "Cloud PostgreSQL instances do not support standard SQL schema migrations or foreign key constraint checks during automated test runs.",
+            "Parallel test workers collide on shared tables causing non-deterministic flakiness, network latency slows down CI, and destructive teardown queries risk truncating real staging or production records.",
+            "Cloud databases block connections coming from GitHub Actions runners because public runner IP addresses cannot resolve external DNS names.",
+            "Automated test suites require PostgreSQL to run in single-user mode, which is prohibited by serverless cloud providers."
           ],
           correct: 1,
-          explanation: "Client and server have fundamentally different runtime footprints. Compiling React during CI yields static files served by lightweight Nginx. Combining them forces the production web container to include Node.js, pnpm, and backend dependencies, bloating the attack surface and image size."
+          explanation: "Shared cloud databases create three catastrophic failure modes in CI: concurrent test jobs overwrite each other's test data causing flaky assertions, WAN network latency triples test execution time, and cleanup scripts (TRUNCATE / DROP) can inadvertently destroy live database tables."
         },
         {
           id: "q2",
-          prompt: "Why must pull request (PR) workflows run strictly with read-only permissions, without package-push rights to GHCR or deployment access to EC2?",
+          prompt: "When starting a PostgreSQL service container in Docker Compose for testing, why is a healthcheck using pg_isready necessary before triggering database migrations?",
           options: [
-            "GitHub Actions hosted runner IP addresses change dynamically, which causes AWS EC2 security groups to drop SSH connections initiated from pull request branches.",
-            "PR triggers represent unreviewed code from arbitrary branches or untrusted forks; granting them write tokens or SSH secrets would allow unmerged commits to overwrite verified container releases or execute arbitrary commands on the live server.",
-            "GitHub Container Registry locks package namespaces to default branches and automatically rejects image pushes originating from any Git branch other than main.",
-            "Running Playwright E2E tests and pushing Docker images in the same workflow exceeds the maximum concurrent job execution limit on standard GitHub runner tiers."
+            "Docker immediately marks the container as running once the process starts, but the PostgreSQL daemon requires several seconds to complete cluster startup and accept socket connections.",
+            "PostgreSQL will silently drop incoming TCP connection packets and log them as security breaches unless an initial healthcheck ping authenticates the superuser.",
+            "The pg_isready binary compiles TypeScript database migrations into native C binary extensions before the test suite begins.",
+            "Without an explicit healthcheck, Docker Compose automatically mounts database volumes in read-only mode to prevent disk corruption."
           ],
-          correct: 1,
-          explanation: "Pull requests represent untrusted candidate code. Following the principle of least privilege, PR workflows run tests in an isolated sandbox. Only after code is reviewed and merged into main does the pipeline gain package-write permissions and deployment keys."
+          correct: 0,
+          explanation: "There is an inherent startup latency between Docker container initialization and PostgreSQL's TCP port 5432 readiness. Without waiting for pg_isready, migrations run before the daemon accepts socket connections, causing immediate ECONNREFUSED crashes."
         },
         {
           id: "q3",
-          prompt: "Why does our deployment contract mandate tagging GHCR images with the immutable Git commit SHA instead of using the mutable ':latest' tag?",
+          prompt: "Consider a test script where an API request fails with status code 500, but the test logs console.error('Request failed') inside a catch block and completes without throwing an error. How will GitHub Actions interpret this test run?",
           options: [
-            "The ':latest' tag is only resolved during docker build, so running docker compose pull on an EC2 instance that already has an older image cached will skip pulling updated layers unless forcefully pruned.",
-            "Commit SHAs provide guaranteed 1:1 provenance with source code, eliminate Docker daemon caching ambiguity on the host, and allow instant, deterministic rollbacks by simply reverting the tag in release.env.",
-            "Git commit SHA hashes are cryptographically verified by the Docker daemon at runtime against GitHub's commit tree, preventing unauthorized image tampering.",
-            "The OCI image distribution specification enforces immutable registry layers only when image tags contain hexadecimal strings."
+            "GitHub Actions parses stdout with regex, detects the phrase 'Request failed', and marks the job as failed with a warning.",
+            "The runner pauses and prompts the user to inspect the logs before deciding whether to pass or fail the workflow.",
+            "The Node.js process exits with status code 0 ('Success'), causing GitHub Actions to mark the CI check as green despite the internal failure.",
+            "The Linux kernel traps unhandled console output and automatically converts the exit code to 137."
           ],
-          correct: 1,
-          explanation: "The ':latest' tag is merely a moving pointer: it breaks rollback tracking (you cannot roll back to a previous 'latest') and causes Docker daemon cache mismatches. Immutable SHAs guarantee that every running container maps to one exact Git commit."
+          correct: 2,
+          explanation: "CI runners rely strictly on process exit codes. If an error is caught and only logged via console.error without throwing an unhandled exception or calling process.exit(1), Node.js exits with code 0. GitHub Actions interprets exit code 0 as a successful pass, allowing broken code into main."
         },
         {
           id: "q4",
-          prompt: "Why does DATABASE_URL reside exclusively in /opt/todo-app/server.env on EC2, rather than being stored in GitHub Actions Secrets and injected during CI?",
+          prompt: "Why should ephemeral PostgreSQL containers used in CI integration testing leverage tmpfs mounts (e.g., tmpfs: /var/lib/postgresql/data) rather than persistent named Docker volumes?",
           options: [
-            "GitHub Actions runners run inside hosted cloud networks that block outbound TCP traffic on port 5432 to prevent database abuse.",
-            "GitHub Actions only packages container images and issues remote SSH orchestration commands; giving CI access to production database credentials expands the attack surface into workflow runner logs without any operational necessity.",
-            "Docker Compose ignores host environment files unless the variables are first registered as repository secrets in the upstream Git provider.",
-            "Environment variables stored in GitHub Actions secrets are automatically baked into intermediate image layers during docker build."
+            "Temporary file storage (tmpfs) resides entirely in RAM, significantly accelerating database write operations and guaranteeing complete data destruction upon container termination.",
+            "Named volumes are unsupported on Linux-based GitHub Actions runner architectures.",
+            "Mounting data on disk prevents PostgreSQL from executing transaction rollbacks and triggers memory leaks in Docker Engine.",
+            "tmpfs automatically synchronizes test records across distinct EC2 deployment hosts without requiring SSH credentials."
           ],
-          correct: 1,
-          explanation: "The CI pipeline builds generic images and triggers remote deployment—it never interacts with production data. Storing DATABASE_URL strictly on EC2 (chmod 600) ensures database secrets are never exposed to runner environments or third-party Actions."
+          correct: 0,
+          explanation: "tmpfs stores PostgreSQL data directly in volatile host memory. This delivers high write throughput for fast test cycles and ensures that as soon as the container terminates, all test artifacts are wiped instantly without leaving residual volume clutter."
         },
         {
           id: "q5",
-          prompt: "In the production Compose file, Nginx publishes port 80 to the host, but Express publishes NO host ports (internal port 5000 only). What is the operational justification for this boundary?",
+          prompt: "In an integration test suite using Node.js and the pg library, what happens if the global test teardown hook fails to call await pool.end()?",
           options: [
-            "Express can only accept incoming HTTP requests from the host if it is configured to use Unix domain sockets instead of TCP ports.",
-            "Publishing multiple container ports on an EC2 instance requires an external AWS Application Load Balancer to arbitrate port routing.",
-            "Keeping Express internal to the Docker bridge network prevents direct internet scanning and unauthorized API calls, centralizes reverse proxying and routing at Nginx, and eliminates browser CORS issues in production.",
-            "Docker bridge networks automatically drop all outbound database connections if any service exposes an unencrypted port to the public host interface."
+            "PostgreSQL terminates all existing database tables to protect data consistency.",
+            "The active TCP socket connections in the connection pool keep the Node.js event loop alive, causing the CI runner job to hang indefinitely until timeout.",
+            "Subsequent test runs automatically inherit the unclosed pool connections without re-authenticating.",
+            "Node.js detects the hanging handles and forces an immediate clean shutdown with exit code 0."
+          ],
+          correct: 1,
+          explanation: "Node.js does not terminate its process while active asynchronous network handles or open TCP sockets remain registered on the event loop. Failing to close the connection pool with pool.end() leaves sockets open, freezing the CI workflow until the runner reaches its execution timeout."
+        },
+        {
+          id: "q6",
+          prompt: "When cleaning up test state between individual integration test cases, why is 'TRUNCATE TABLE todos RESTART IDENTITY CASCADE;' preferred over dropping and recreating the entire database schema?",
+          options: [
+            "Dropping tables removes database indexes permanently, preventing foreign keys from being added back in PostgreSQL.",
+            "Truncating tables rapidly purges row data and resets auto-incrementing ID sequences in milliseconds without the heavy overhead of re-executing DDL migrations.",
+            "TRUNCATE prevents PostgreSQL write-ahead logs (WAL) from recording schema modifications to Neon.",
+            "Dropping schemas in PostgreSQL requires stopping and restarting the Docker container daemon between every single test."
+          ],
+          correct: 1,
+          explanation: "Re-running DDL migrations (drop/create table) before every single test case introduces massive I/O and schema lock overhead. TRUNCATE ... RESTART IDENTITY flushes all rows and resets sequence generators in single-digit milliseconds, providing a clean sandbox for the next test."
+        },
+        {
+          id: "q7",
+          prompt: "In a full-stack E2E test setup running Playwright against Docker containers, what is the role of the command 'docker compose -f docker-compose.test.yml down -v' at the conclusion of the test run?",
+          options: [
+            "It compresses Playwright screenshot artifacts and uploads them to GitHub Container Registry.",
+            "It shuts down the client, server, and test database containers while the -v flag removes attached Docker volumes, ensuring complete isolation for subsequent runs.",
+            "It creates a backup snapshot of the container state and deploys it to the EC2 staging environment.",
+            "The -v flag instructs Docker to validate container network security certificates before powering off."
+          ],
+          correct: 1,
+          explanation: "Running docker compose down -v ensures hermetic cleanup. Stopping containers without -v leaves behind allocated storage volumes containing stale records. The -v flag deletes both anonymous and named volumes declared in the Compose file, leaving the host filesystem in a pristine state."
+        },
+        {
+          id: "q8",
+          prompt: "Why are full-stack browser tests with Playwright required in addition to backend integration tests that verify HTTP endpoints?",
+          options: [
+            "Integration tests cannot connect to PostgreSQL databases, whereas Playwright communicates directly with database engines via WebSockets.",
+            "Playwright is required to compile React JSX components into production Nginx configuration files.",
+            "Integration tests only verify that the API server functions in isolation; Playwright verifies that the compiled frontend bundle, Nginx reverse-proxy routing, and API communication work together seamlessly in a real browser runtime.",
+            "GitHub Actions requires Playwright test output logs before it allows Docker images to be built."
           ],
           correct: 2,
-          explanation: "By keeping Express internal to the Docker bridge network, port 5000 is invisible to the public internet. Nginx acts as the solitary public gateway on port 80, serving static assets and safely forwarding /api/* requests internally."
+          explanation: "API integration tests pass even if the frontend JavaScript bundle fails to parse, client-side routing breaks, or Nginx misconfigures its reverse proxy headers. Full-stack Playwright tests validate the entire real user experience from browser DOM interaction down to container persistence."
         }
       ];
 
-      // State management
+      const letters = ["A", "B", "C", "D"];
+
       let state = {
         answers: {},
         submitted: false,
@@ -796,20 +820,23 @@
       };
 
       try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-        if (saved && typeof saved === "object") {
-          if (saved.answers) state.answers = saved.answers;
-          if (saved.submitted !== undefined) state.submitted = saved.submitted;
-          if (["system", "light", "dark"].includes(saved.theme)) state.theme = saved.theme;
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object") {
+            if (parsed.answers && typeof parsed.answers === "object") state.answers = parsed.answers;
+            if (typeof parsed.submitted === "boolean") state.submitted = parsed.submitted;
+            if (["system", "light", "dark"].includes(parsed.theme)) state.theme = parsed.theme;
+          }
         }
-      } catch (e) {
-        console.warn("Storage unavailable:", e);
+      } catch (err) {
+        console.warn("Storage error:", err);
       }
 
       const qContainer = document.getElementById("questions-container");
-      const submitBtn = document.getElementById("btn-submit");
-      const retryBtn = document.getElementById("btn-retry");
-      const counterSpan = document.getElementById("answered-counter");
+      const submitBtn = document.getElementById("submit-btn");
+      const retryBtn = document.getElementById("retry-btn");
+      const counterSpan = document.getElementById("answer-counter");
       const scoreboard = document.getElementById("scoreboard");
       const scoreHeadline = document.getElementById("score-headline");
       const scoreSub = document.getElementById("score-sub");
@@ -818,8 +845,8 @@
       function saveState() {
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch (e) {
-          console.warn("Save failed:", e);
+        } catch (err) {
+          console.warn("Save failed:", err);
         }
       }
 
@@ -834,22 +861,25 @@
 
       function renderQuestions() {
         qContainer.innerHTML = "";
-        const letters = ["A", "B", "C", "D"];
+        const isSubmitted = state.submitted;
 
         questions.forEach((q, qIndex) => {
-          const card = document.createElement("div");
-          card.className = "q-card";
-          card.id = "card-" + q.id;
+          const card = document.createElement("article");
+          card.className = "question-card";
+          card.id = `card-${q.id}`;
 
-          const isSubmitted = state.submitted;
           const userChoice = state.answers[q.id];
+          const hasAnswered = userChoice !== undefined;
           const isCorrect = userChoice === q.correct;
 
           if (isSubmitted) {
-            card.classList.add(isCorrect ? "is-correct" : "is-incorrect");
+            if (isCorrect) {
+              card.classList.add("evaluated-correct");
+            } else {
+              card.classList.add("evaluated-wrong");
+            }
           }
 
-          // Header
           const header = document.createElement("div");
           header.className = "q-header";
           
@@ -865,13 +895,11 @@
           header.appendChild(statusBadge);
           card.appendChild(header);
 
-          // Prompt
           const promptEl = document.createElement("div");
           promptEl.className = "q-prompt";
           promptEl.textContent = q.prompt;
           card.appendChild(promptEl);
 
-          // Options
           const optsList = document.createElement("div");
           optsList.className = "options-list";
 
@@ -914,7 +942,6 @@
           });
           card.appendChild(optsList);
 
-          // Explanation: ONLY rendered when submitted AND incorrect
           if (isSubmitted && !isCorrect) {
             const expBox = document.createElement("div");
             expBox.className = "incorrect-explanation";
@@ -936,7 +963,6 @@
           submitBtn.style.display = "none";
           retryBtn.classList.add("visible");
 
-          // Calculate score
           let correctCount = 0;
           questions.forEach(q => {
             if (state.answers[q.id] === q.correct) correctCount++;
@@ -948,7 +974,7 @@
 
           if (correctCount === total) {
             scoreboard.className = "scoreboard visible pass";
-            scoreSub.textContent = "Outstanding! You have mastered all Stage 1 delivery and security concepts. You are ready for Stage 2.";
+            scoreSub.textContent = "Outstanding! You have scored 100% and mastered all Stage 2 test isolation and execution principles. You are fully prepared to advance to Stage 3.";
           } else {
             scoreboard.className = "scoreboard visible review-needed";
             scoreSub.textContent = `Review the highlighted concepts for the ${total - correctCount} question(s) you missed below, then retake to achieve 100%.`;

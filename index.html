@@ -3,17 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Map the Todo App Delivery System</title>
+  <title>Make Tests Safe and Repeatable · Stage 2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     /* -------------------------------------------------------------
        ENGINEERING NOTEBOOK TOKENS & SYSTEM PALETTE
-       Restrained Blue, Amber, Slate with Dual Theme Support
+       Dual Theme Support (Light / Dark)
        ------------------------------------------------------------- */
     :root {
-      /* Light theme (default) */
       --bg-canvas: #f8fafc;
       --bg-grid: rgba(203, 213, 225, 0.4);
       --surface-card: #ffffff;
@@ -28,41 +27,34 @@
       --ink-muted: #64748b;
       --ink-faint: #94a3b8;
 
-      /* Restrained Blue (Deployment Rail & Primary Actions) */
       --blue: #2563eb;
       --blue-soft: #eff6ff;
       --blue-line: #93c5fd;
       --blue-text: #1d4ed8;
 
-      /* Restrained Amber (Secrets, Security Gates, Isolation Boundaries) */
       --amber: #d97706;
       --amber-soft: #fffbeb;
       --amber-line: #fcd34d;
       --amber-text: #b45309;
 
-      /* Restrained Slate (Structural Components, Containers, Runners) */
       --slate: #475569;
       --slate-soft: #f8fafc;
       --slate-line: #cbd5e1;
       --slate-text: #334155;
 
-      /* Emerald (Verification, Green Gates, Health Status) */
       --emerald: #059669;
       --emerald-soft: #ecfdf5;
       --emerald-line: #6ee7b7;
       --emerald-text: #047857;
 
-      /* Code Blocks */
       --code-bg: #0f172a;
       --code-ink: #f1f5f9;
       --code-border: #1e293b;
 
-      /* Shadows & Highlights */
       --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
       --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
       --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
 
-      /* Typography */
       --font-heading: "Chakra Petch", -apple-system, sans-serif;
       --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: "JetBrains Mono", SFMono-Regular, Consolas, monospace;
@@ -158,9 +150,6 @@
       --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45);
     }
 
-    /* -------------------------------------------------------------
-       BASE & RESET
-       ------------------------------------------------------------- */
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -177,10 +166,8 @@
       background-size: 24px 24px;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Skip link */
     .skip-link {
       position: absolute;
       top: -40px;
@@ -200,9 +187,7 @@
       outline: var(--focus-ring);
     }
 
-    /* -------------------------------------------------------------
-       TOP NAVIGATION & SPEC HEADER
-       ------------------------------------------------------------- */
+    /* Top Navigation */
     .topbar {
       border-bottom: 1px solid var(--line);
       background: var(--surface-card);
@@ -253,7 +238,6 @@
       padding-left: 0.75rem;
     }
 
-    /* Common Page Navigation Switcher */
     .page-nav {
       display: flex;
       align-items: center;
@@ -285,7 +269,6 @@
       color: var(--blue-text);
     }
 
-    /* Help Button and Help Panel */
     .btn-help {
       font-family: var(--font-heading);
       font-size: 0.76rem;
@@ -361,92 +344,6 @@
       color: var(--ink-primary);
     }
 
-    /* Interactive SVG Simulation Controls */
-    .sim-panel {
-      margin-bottom: 1rem;
-      background: var(--surface-subtle);
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      padding: 0.85rem 1rem;
-    }
-    .sim-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-    .sim-label {
-      font-family: var(--font-heading);
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--ink-muted);
-    }
-    .sim-btn-group {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-    }
-    .sim-btn {
-      font-family: var(--font-heading);
-      font-size: 0.76rem;
-      font-weight: 700;
-      padding: 0.35rem 0.65rem;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      background: var(--surface-card);
-      color: var(--ink-secondary);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .sim-btn:hover {
-      border-color: var(--blue-line);
-      background: var(--blue-soft);
-      color: var(--blue-text);
-    }
-    .sim-btn.active {
-      border-color: var(--blue);
-      background: var(--blue);
-      color: #ffffff;
-    }
-    .sim-status-box {
-      margin-top: 0.6rem;
-      padding-top: 0.5rem;
-      border-top: 1px dashed var(--line);
-      font-size: 0.84rem;
-      color: var(--ink-secondary);
-      line-height: 1.45;
-    }
-
-    /* Dynamic SVG Flow States */
-    .delivery-rail-svg[data-active-flow="pr"] .flow-deploy,
-    .delivery-rail-svg[data-active-flow="pr"] #svg-st3,
-    .delivery-rail-svg[data-active-flow="pr"] #svg-st4,
-    .delivery-rail-svg[data-active-flow="pr"] #svg-st5,
-    .delivery-rail-svg[data-active-flow="pr"] #svg-st6,
-    .delivery-rail-svg[data-active-flow="pr"] #svg-st7,
-    .delivery-rail-svg[data-active-flow="pr"] #svg-st8 {
-      opacity: 0.2;
-      transition: opacity 0.25s;
-    }
-    .delivery-rail-svg[data-active-flow="main"] #svg-st1 {
-      opacity: 0.25;
-      transition: opacity 0.25s;
-    }
-    .delivery-rail-svg[data-active-flow="rollback"] #svg-st1,
-    .delivery-rail-svg[data-active-flow="rollback"] #svg-st2,
-    .delivery-rail-svg[data-active-flow="rollback"] #svg-st3,
-    .delivery-rail-svg[data-active-flow="rollback"] #svg-st4 {
-      opacity: 0.2;
-      transition: opacity 0.25s;
-    }
-    .delivery-rail-svg[data-active-flow="rollback"] #svg-st5 .svg-node-box {
-      stroke: var(--amber);
-      fill: var(--amber-soft);
-      stroke-width: 2.5;
-    }
-
     .topbar-actions {
       display: flex;
       align-items: center;
@@ -474,9 +371,7 @@
       box-shadow: var(--focus-ring);
     }
 
-    /* -------------------------------------------------------------
-       LAYOUT SHELL
-       ------------------------------------------------------------- */
+    /* Layout Shell */
     .shell {
       max-width: 1400px;
       margin: 0 auto;
@@ -486,9 +381,7 @@
       gap: 2rem;
     }
 
-    /* -------------------------------------------------------------
-       SIDEBAR & PROGRESS
-       ------------------------------------------------------------- */
+    /* Sidebar */
     .sidebar {
       align-self: start;
       position: sticky;
@@ -629,9 +522,7 @@
       line-height: 1.5;
     }
 
-    /* -------------------------------------------------------------
-       MAIN ARTICLE & LESSON CARDS
-       ------------------------------------------------------------- */
+    /* Main Article */
     main {
       min-width: 0;
     }
@@ -676,6 +567,12 @@
       background: var(--amber-soft);
       font-weight: 600;
     }
+    .meta-tag.emerald {
+      color: var(--emerald-text);
+      border-color: var(--emerald-line);
+      background: var(--emerald-soft);
+      font-weight: 600;
+    }
     .lesson-header h1 {
       font-family: var(--font-heading);
       font-size: clamp(1.4rem, 2.8vw, 1.95rem);
@@ -691,7 +588,7 @@
       max-width: 74ch;
     }
 
-    /* Topic Content */
+    /* Content */
     .topic-section {
       padding: clamp(1.5rem, 3.2vw, 2.5rem);
     }
@@ -759,9 +656,64 @@
       color: var(--ink-primary);
     }
 
-    /* -------------------------------------------------------------
-       DIAGRAMS & FIGURES
-       ------------------------------------------------------------- */
+    /* Simulation and Diagrams */
+    .sim-panel {
+      margin-bottom: 1rem;
+      background: var(--surface-subtle);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+    }
+    .sim-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .sim-label {
+      font-family: var(--font-heading);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-muted);
+    }
+    .sim-btn-group {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .sim-btn {
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--surface-card);
+      color: var(--ink-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sim-btn:hover {
+      border-color: var(--blue-line);
+      background: var(--blue-soft);
+      color: var(--blue-text);
+    }
+    .sim-btn.active {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #ffffff;
+    }
+    .sim-status-box {
+      margin-top: 0.6rem;
+      padding-top: 0.5rem;
+      border-top: 1px dashed var(--line);
+      font-size: 0.84rem;
+      color: var(--ink-secondary);
+      line-height: 1.45;
+    }
+
     figure.diagram-card {
       margin: 1.75rem 0;
       border: 1px solid var(--line);
@@ -778,7 +730,7 @@
       color: var(--ink-muted);
       line-height: 1.5;
     }
-    svg.delivery-rail-svg {
+    svg.interactive-mechanism-svg {
       display: block;
       width: 100%;
       min-width: 760px;
@@ -786,12 +738,7 @@
       overflow: visible;
     }
 
-    /* SVG Themed Classes */
-    .svg-rail-bg {
-      fill: var(--surface-card);
-      stroke: var(--line);
-      stroke-width: 1;
-    }
+    /* SVG Themed Elements */
     .svg-boundary-box {
       fill: var(--surface-subtle);
       stroke: var(--line-strong);
@@ -813,18 +760,9 @@
       rx: 6px;
       transition: all 0.2s;
     }
-    .svg-node-box.blue {
-      stroke: var(--blue);
-      fill: var(--blue-soft);
-    }
-    .svg-node-box.amber {
-      stroke: var(--amber);
-      fill: var(--amber-soft);
-    }
-    .svg-node-box.emerald {
-      stroke: var(--emerald);
-      fill: var(--emerald-soft);
-    }
+    .svg-node-box.blue { stroke: var(--blue); fill: var(--blue-soft); }
+    .svg-node-box.amber { stroke: var(--amber); fill: var(--amber-soft); }
+    .svg-node-box.emerald { stroke: var(--emerald); fill: var(--emerald-soft); }
     .svg-node-title {
       font-family: var(--font-heading);
       font-size: 12px;
@@ -841,85 +779,16 @@
       stroke: var(--line-strong);
       stroke-width: 2;
     }
-    .svg-wire.active {
-      stroke: var(--blue);
-    }
-    .svg-wire.blocked {
-      stroke: var(--amber);
-      stroke-dasharray: 4 3;
-    }
+    .svg-wire.active { stroke: var(--blue); }
+    .svg-wire.danger { stroke: var(--amber); stroke-dasharray: 4 3; }
+    .svg-wire.success { stroke: var(--emerald); }
     .svg-wire-label {
       font-family: var(--font-mono);
       font-size: 9.5px;
       fill: var(--ink-muted);
     }
-    .svg-secret-badge {
-      fill: var(--amber-soft);
-      stroke: var(--amber);
-      stroke-width: 1;
-      rx: 3px;
-    }
-    .svg-secret-text {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 600;
-      fill: var(--amber-text);
-    }
-    .svg-badge-private {
-      fill: var(--amber-soft);
-      stroke: var(--amber);
-      stroke-width: 1;
-      rx: 3px;
-    }
 
-    /* Interactive Diagram Station Callout */
-    .station-inspector {
-      margin-top: 1.25rem;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--surface-card);
-      padding: 1rem;
-    }
-    .inspector-title {
-      font-family: var(--font-heading);
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--blue-text);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .inspector-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 0.75rem;
-      font-size: 0.85rem;
-    }
-    .inspector-item {
-      background: var(--surface-subtle);
-      border: 1px solid var(--line-subtle);
-      border-radius: 5px;
-      padding: 0.65rem 0.75rem;
-    }
-    .inspector-item strong {
-      display: block;
-      color: var(--ink-primary);
-      font-family: var(--font-heading);
-      font-size: 0.82rem;
-      margin-bottom: 0.2rem;
-    }
-    .inspector-item span {
-      color: var(--ink-secondary);
-      font-size: 0.82rem;
-      line-height: 1.4;
-    }
-
-    /* -------------------------------------------------------------
-       CALLOUT BOXES & HIGHLIGHTS
-       ------------------------------------------------------------- */
+    /* Callouts */
     .callout {
       margin: 1.4rem 0;
       border-left: 4px solid var(--blue);
@@ -949,9 +818,7 @@
       margin-bottom: 0;
     }
 
-    /* -------------------------------------------------------------
-       TABLES
-       ------------------------------------------------------------- */
+    /* Tables */
     .table-container {
       margin: 1.4rem 0;
       border: 1px solid var(--line);
@@ -982,13 +849,8 @@
     table.data-table tr:last-child td {
       border-bottom: none;
     }
-    table.data-table td strong {
-      color: var(--ink-primary);
-    }
 
-    /* -------------------------------------------------------------
-       CODE BLOCKS
-       ------------------------------------------------------------- */
+    /* Code Snippets */
     .code-snippet {
       margin: 1.3rem 0;
       border: 1px solid var(--code-border);
@@ -1037,9 +899,7 @@
       font-size: inherit;
     }
 
-    /* -------------------------------------------------------------
-       INTERACTIVE MCQ
-       ------------------------------------------------------------- */
+    /* Embedded Knowledge Check MCQ */
     .mcq-container {
       margin: 2rem 0 1rem;
       border: 1px solid var(--line);
@@ -1153,9 +1013,7 @@
       color: var(--amber-text);
     }
 
-    /* -------------------------------------------------------------
-       BOTTOM ACTION BAR & CONTROLS
-       ------------------------------------------------------------- */
+    /* Footer Navigation */
     .lesson-footer {
       padding: 1.25rem 2rem;
       border-top: 1px solid var(--line);
@@ -1243,21 +1101,8 @@
       margin-top: 0.75rem;
       text-align: right;
     }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
 
-    /* -------------------------------------------------------------
-       RESPONSIVE ADAPTATIONS
-       ------------------------------------------------------------- */
+    /* Responsive */
     @media (max-width: 960px) {
       .shell {
         grid-template-columns: 240px minmax(0, 1fr);
@@ -1274,7 +1119,6 @@
         max-height: none;
         margin-bottom: 1rem;
         padding: 0;
-        border: 1px solid var(--line);
       }
       .mobile-menu-btn {
         display: flex;
@@ -1298,10 +1142,7 @@
       .sidebar.is-open .sidebar-inner {
         display: block;
       }
-      .lesson-header {
-        padding: 1.25rem 1rem;
-      }
-      .topic-section {
+      .lesson-header, .topic-section {
         padding: 1.25rem 1rem;
       }
       .lesson-footer {
@@ -1325,29 +1166,19 @@
         text-align: center;
       }
     }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-      }
-    }
   </style>
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- Topbar Specification Banner with Page Nav & Help -->
+  <!-- Topbar Header -->
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand-group">
         <div class="brand-spec">
-          <span>SPEC-CI-01</span>
-          <span class="badge-rev">STAGE 01/08</span>
+          <span>SPEC-CI-02</span>
+          <span class="badge-rev">STAGE 02/08</span>
         </div>
-        <!-- Common Top Navigation Across All Three Pages -->
         <nav class="page-nav" aria-label="Page switcher">
           <a href="/index.html" class="nav-tab active" aria-current="page">Lesson</a>
           <a href="/MCQ.html" class="nav-tab">Assessment</a>
@@ -1366,24 +1197,22 @@
         </div>
       </div>
     </div>
-    <!-- Simple In-Page Acronym Help Panel -->
+    <!-- In-Page Technical Glossary -->
     <div class="help-panel" id="help-panel" hidden>
       <div class="help-content">
         <div class="help-head">
-          <h3>Stage 1 Acronym Glossary</h3>
+          <h3>Stage 2 Acronym Glossary</h3>
           <button class="help-close-btn" id="help-close" aria-label="Close Help">✕</button>
         </div>
         <ul class="acronym-list">
-          <li><strong>GHCR</strong> — <em>GitHub Container Registry</em>: GitHub-hosted private OCI container registry storing our client and server images.</li>
-          <li><strong>SHA</strong> — <em>Secure Hash Algorithm</em>: The 40-character Git commit hash (e.g. <code>9f8a32b</code>) used as an immutable image tag.</li>
-          <li><strong>SSH</strong> — <em>Secure Shell</em>: Remote cryptographic network protocol used to run deployment commands on EC2 via dedicated deploy keys.</li>
-          <li><strong>SSM</strong> — <em>AWS Systems Manager</em>: Cloud-native management service that executes remote commands through an agent, avoiding open inbound SSH ports.</li>
-          <li><strong>OIDC</strong> — <em>OpenID Connect</em>: Token exchange protocol allowing GitHub Actions to authenticate directly with AWS IAM without static credentials.</li>
-          <li><strong>TLS</strong> — <em>Transport Layer Security</em>: Cryptographic protocol encrypting database connections between Express and Neon (port 5432).</li>
-          <li><strong>OCI</strong> — <em>Open Container Initiative</em>: Industry specification ensuring Docker images run reliably across compliant engines and registries.</li>
-          <li><strong>E2E</strong> — <em>End-to-End Testing</em>: Complete system testing (using Playwright) against the full stack rather than mocked single components.</li>
-          <li><strong>PAT</strong> — <em>Personal Access Token</em>: Scoped GitHub token used on EC2 with read-only package access.</li>
-          <li><strong>CORS</strong> — <em>Cross-Origin Resource Sharing</em>: Browser security policy bypassed in production because Nginx serves the frontend and proxies <code>/api</code> on port 80.</li>
+          <li><strong>E2E</strong> — <em>End-to-End Testing</em>: Complete full-stack verification where an automated browser clicks real UI elements wired to live containers.</li>
+          <li><strong>CI</strong> — <em>Continuous Integration</em>: The automated practice of running unit, integration, and E2E suites on every pull request before code merges.</li>
+          <li><strong>TCP</strong> — <em>Transmission Control Protocol</em>: The underlying networking protocol over which the test runner connects to PostgreSQL port 5432 or 5433.</li>
+          <li><strong>FIFO</strong> — <em>First-In, First-Out</em>: Sequential ordering guarantee essential when processing database seed queues or teardown hooks.</li>
+          <li><strong>UUID</strong> — <em>Universally Unique Identifier</em>: Random 128-bit labels used to isolate test records so parallel test workers never overwrite each other.</li>
+          <li><strong>SQL</strong> — <em>Structured Query Language</em>: Database command language used for migrations, seed data, and table truncation during cleanup.</li>
+          <li><strong>ORM</strong> — <em>Object-Relational Mapping</em>: Database abstraction layer (like Prisma or Drizzle) that handles schema migrations and test queries.</li>
+          <li><strong>HTTP</strong> — <em>Hypertext Transfer Protocol</em>: Request-response protocol validated by assertion checks on status codes like 200, 201, 400, or 404.</li>
         </ul>
       </div>
     </div>
@@ -1399,560 +1228,498 @@
 
       <div class="sidebar-inner" id="sidebar-inner">
         <div class="sidebar-head">
-          <span class="stage-tag">Curriculum Stage 1</span>
-          <h2 class="stage-name">Map the Delivery System</h2>
+          <span class="stage-tag">Curriculum Stage 2</span>
+          <h2 class="stage-name">Make Tests Safe and Repeatable</h2>
           
           <div class="progress-box">
             <div class="progress-labels">
               <span>Stage Progress</span>
-              <span id="progress-text">0 / 4 complete</span>
+              <span id="progress-text">0 / 5 complete</span>
             </div>
-            <div class="progress-track" role="progressbar" aria-label="Stage 1 completion" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0">
+            <div class="progress-track" role="progressbar" aria-label="Stage 2 completion" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
               <span class="progress-bar-fill" id="progress-bar"></span>
             </div>
           </div>
         </div>
 
         <nav class="topic-nav" aria-label="Stage Topics" id="topic-nav-container">
-          <!-- Dynamically generated topic buttons -->
+          <!-- Dynamically generated topic navigation buttons -->
         </nav>
 
         <div class="sidebar-footnote">
-          <strong>Explicit Completion Rule:</strong> Browsing a topic does not mark it complete. Click the completion button when you're confident with the concepts.
+          <strong>Explicit Completion Rule:</strong> Visiting a topic does not complete it. Click "Mark Topic Complete" when you understand the isolation and test execution mechanics.
         </div>
       </div>
     </aside>
 
-    <!-- Main Lesson Container -->
+    <!-- Main Lesson Articles -->
     <main id="main">
       <article class="lesson-frame">
         <header class="lesson-header">
           <div class="lesson-meta">
             <span class="meta-tag primary">CAPSTONE: DOCKER TODO APP</span>
-            <span class="meta-tag amber">SECURITY BOUNDARY DESIGN</span>
-            <span class="meta-tag">TARGET: AWS EC2</span>
+            <span class="meta-tag emerald">HERMETIC TEST PIPELINE</span>
+            <span class="meta-tag amber">POSTGRESQL &amp; PLAYWRIGHT</span>
           </div>
-          <h1>Map the Todo App Delivery System</h1>
+          <h1>Make Tests Safe and Repeatable</h1>
           <p class="lesson-summary">
-            Before writing a single GitHub Actions line or launching an EC2 instance, you must trace how this specific Todo app travels from a local feature branch to a live container stack.
+            A CI test suite is useless if it pollutes production databases, passes silently on broken code, or leaves orphaned containers behind. Learn how to build an isolated, disposable testing environment from scratch.
           </p>
         </header>
 
-        <!-- TOPIC 1: THE DELIVERY RAIL OVERVIEW -->
-        <section class="topic-section" data-id="rail-overview" data-title="The Eight-Station Delivery Rail">
-          <div class="topic-eyebrow">01 / System Map · The Eight Stations</div>
-          <h2 class="topic-heading" tabindex="-1">The Complete Delivery Highway: From Branch to Container</h2>
-          
+        <!-- TOPIC 1: THE DANGER OF SHARED DATABASES -->
+        <section class="topic-section" data-id="shared-db-danger" data-title="The Danger of Shared Test Databases">
+          <div class="topic-eyebrow">01 / Hermetic Boundaries · The Blast Radius</div>
+          <h2 class="topic-heading" tabindex="-1">Why Tests Must Never Touch Neon Production Data</h2>
+
           <p class="lead-paragraph">
-            Continuous Integration (CI) and Continuous Deployment (CD) are not abstract automation scripts. For our Todo application, they form a strict, one-way assembly line that packages source code into immutable containers and lands them safely on AWS EC2.
+            In naive beginner projects, integration tests often read from the same <code>DATABASE_URL</code> configured in the developer's <code>.env</code> file. If that environment points to Neon cloud storage, running a test suite becomes an active operational hazard.
           </p>
 
           <p>
-            In your local development environment, you edit files directly in <code>client/</code> and <code>server/</code>, running Vite or <code>tsx</code> with source mounts. In production, <strong>source code is never shipped or compiled on the host</strong>. Instead, pre-built OCI container images are produced in the cloud, sealed with immutable version tags, and pulled onto the host server as ready-to-run black boxes.
+            When automated tests interact with a shared or live cloud database, three critical failures occur immediately:
           </p>
 
-          <!-- Interactive Delivery Rail State Controls -->
+          <ul>
+            <li><strong>Production Data Corruption:</strong> If a test runs <code>DELETE FROM todos</code> or truncates tables during teardown, real user records or staging data disappear.</li>
+            <li><strong>Race Conditions &amp; Flakiness:</strong> When two developers (or two parallel GitHub Action runner jobs) run tests simultaneously, their inserts and deletes collide. Test A expects 3 todos, but finds 7 because Test B just ran.</li>
+            <li><strong>Network Latency &amp; Rate Limits:</strong> Hitting a remote cloud database across the internet introduces TLS handshakes, network jitter, connection pool exhaustion, and serverless cold starts that double test execution time.</li>
+          </ul>
+
+          <!-- Interactive SVG Simulation Controls -->
           <div class="sim-panel">
             <div class="sim-header">
-              <span class="sim-label">Delivery Mechanism:</span>
-              <div class="sim-btn-group" role="group" aria-label="Delivery rail flow simulation">
-                <button class="sim-btn active" data-flow="all">Complete Rail</button>
-                <button class="sim-btn" data-flow="pr">PR Flow (Tests Only)</button>
-                <button class="sim-btn" data-flow="main">Main Release (Deploy)</button>
-                <button class="sim-btn" data-flow="rollback">Rollback (Failure)</button>
+              <span class="sim-label">Test Architecture Comparison:</span>
+              <div class="sim-btn-group" role="group" aria-label="Architecture simulation mode">
+                <button class="sim-btn active" data-flow="shared">Shared DB (Dangerous)</button>
+                <button class="sim-btn" data-flow="ephemeral">Disposable Container (Safe)</button>
+                <button class="sim-btn" data-flow="playwright">Full-Stack E2E Flow</button>
               </div>
             </div>
             <div class="sim-status-box" id="sim-status-box">
-              <strong>Active Flow: Complete Delivery Rail</strong> — Displays all 8 stations along the pipeline from feature branch to production Neon database.
+              <strong>Scenario: Shared Database Pitfall</strong> — Test runners collide against the same remote cloud database. Data leaks, tests intermittently fail, and production tables are exposed to destructive teardown queries.
             </div>
           </div>
 
-          <!-- SVG DELIVERY RAIL FIGURE -->
+          <!-- Interactive Architectural SVG -->
           <figure class="diagram-card">
-            <svg class="delivery-rail-svg" id="delivery-rail-svg" data-active-flow="all" viewBox="0 0 1020 460" role="img" aria-labelledby="rail-svg-title rail-svg-desc">
-              <title id="rail-svg-title">Todo App CI/CD Eight-Station Delivery Rail</title>
-              <desc id="rail-svg-desc">
-                An architectural flow diagram connecting Developer Workstation, GitHub Actions CI Runner, GitHub Container Registry, AWS EC2 Instance, and Neon Cloud PostgreSQL across 8 distinct stations.
-              </desc>
+            <svg class="interactive-mechanism-svg" id="mechanism-svg" viewBox="0 0 960 360" role="img" aria-labelledby="mech-title mech-desc">
+              <title id="mech-title">Test Environment Isolation Architecture</title>
+              <desc id="mech-desc">Diagram comparing shared external database anti-pattern against isolated local ephemeral Docker PostgreSQL containers and Playwright E2E orchestration.</desc>
 
-              <!-- ZONE BOUNDARIES -->
-              <!-- Zone 1: Developer -->
-              <rect class="svg-boundary-box" x="15" y="40" width="165" height="395" rx="8" />
-              <text class="svg-boundary-label" x="25" y="60">1. Developer Workstation</text>
-
-              <!-- Zone 2: GitHub Cloud -->
-              <rect class="svg-boundary-box" x="200" y="40" width="370" height="395" rx="8" />
-              <text class="svg-boundary-label" x="210" y="60">2. GitHub Actions &amp; GHCR</text>
-
-              <!-- Zone 3: AWS EC2 -->
-              <rect class="svg-boundary-box" x="590" y="40" width="265" height="395" rx="8" />
-              <text class="svg-boundary-label" x="600" y="60">3. AWS EC2 Host (/opt/todo-app)</text>
-
-              <!-- Zone 4: Neon DB Cloud -->
-              <rect class="svg-boundary-box" x="875" y="40" width="130" height="395" rx="8" />
-              <text class="svg-boundary-label" x="885" y="60">4. Neon Managed DB</text>
-
-              <!-- CONNECTING WIRES / ARROWS -->
               <defs>
-                <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <marker id="m-arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
                   <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--blue)" />
                 </marker>
-                <marker id="arrow-slate" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-                  <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--line-strong)" />
-                </marker>
-                <marker id="arrow-amber" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <marker id="m-arrow-amber" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
                   <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--amber)" />
+                </marker>
+                <marker id="m-arrow-emerald" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                  <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--emerald)" />
                 </marker>
               </defs>
 
-              <!-- Station 1: Feature Branch -->
-              <g id="svg-st1" transform="translate(30, 95)">
-                <rect class="svg-node-box" x="0" y="0" width="135" height="68" />
-                <text class="svg-node-title" x="10" y="24">1. Feature Branch</text>
-                <text class="svg-node-sub" x="10" y="42">git commit</text>
-                <text class="svg-node-sub" x="10" y="56">git push origin</text>
+              <!-- Left Container: Test Runner -->
+              <rect class="svg-boundary-box" x="20" y="30" width="260" height="300" rx="8" />
+              <text class="svg-boundary-label" x="35" y="55">CI Test Runner / Local CLI</text>
+
+              <!-- Node: Test Job A -->
+              <g transform="translate(40, 80)">
+                <rect class="svg-node-box blue" x="0" y="0" width="220" height="60" />
+                <text class="svg-node-title" x="12" y="24">Test Worker #1</text>
+                <text class="svg-node-sub" x="12" y="44">pnpm test:integration (PR #104)</text>
               </g>
 
-              <!-- Wire 1 -> 2 (PR open) -->
-              <path class="svg-wire active" d="M 165 129 H 220" marker-end="url(#arrow-blue)" />
-              <text class="svg-wire-label" x="168" y="122">Pull Request</text>
-
-              <!-- Station 2: PR CI Checks -->
-              <g id="svg-st2" transform="translate(225, 95)">
-                <rect class="svg-node-box emerald" x="0" y="0" width="145" height="68" />
-                <text class="svg-node-title" x="10" y="24">2. PR CI Gates</text>
-                <text class="svg-node-sub" x="10" y="42">Lint · Build · Unit</text>
-                <text class="svg-node-sub" x="10" y="56">Ephemeral DB Tests</text>
+              <!-- Node: Test Job B -->
+              <g transform="translate(40, 180)">
+                <rect class="svg-node-box blue" x="0" y="0" width="220" height="60" />
+                <text class="svg-node-title" x="12" y="24">Test Worker #2</text>
+                <text class="svg-node-sub" x="12" y="44">pnpm test:integration (PR #105)</text>
               </g>
 
-              <!-- Wire 2 -> 3 (Merge to main) -->
-              <path class="svg-wire active" d="M 370 129 H 410" marker-end="url(#arrow-blue)" />
-              <text class="svg-wire-label" x="373" y="122">PR Merged</text>
-
-              <!-- Station 3: Trusted main branch -->
-              <g id="svg-st3" transform="translate(415, 95)">
-                <rect class="svg-node-box blue" x="0" y="0" width="135" height="68" />
-                <text class="svg-node-title" x="10" y="24">3. Trusted main</text>
-                <text class="svg-node-sub" x="10" y="42">Release trigger</text>
-                <text class="svg-node-sub" x="10" y="56">SHA = $GITHUB_SHA</text>
+              <!-- MIDDLE / RIGHT SWITCHABLE NODES -->
+              <!-- Group: Shared Neon DB (Active in 'shared' flow) -->
+              <g id="svg-shared-group" transform="translate(560, 90)">
+                <rect class="svg-node-box amber" x="0" y="0" width="340" height="170" />
+                <text class="svg-node-title" x="20" y="35" fill="var(--amber-text)">Shared Cloud Neon Database</text>
+                <text class="svg-node-sub" x="20" y="60">postgresql://user:pass@ep-cool-123.neon.tech/prod</text>
+                <text class="svg-node-sub" x="20" y="85">⚠️ Test A truncates tables while Test B executes query</text>
+                <text class="svg-node-sub" x="20" y="110">⚠️ High latency over WAN + connection exhaustion</text>
+                <text class="svg-node-sub" x="20" y="135" font-weight="700">RESULT: Flaky tests, false positives, corrupted state</text>
               </g>
 
-              <!-- Wire 3 down to 4 (Publish images) -->
-              <path class="svg-wire active" d="M 482 163 V 240" marker-end="url(#arrow-blue)" />
-              <text class="svg-wire-label" x="490" y="205">Publish Images</text>
+              <!-- Group: Ephemeral DB (Active in 'ephemeral' flow) -->
+              <g id="svg-ephemeral-group" transform="translate(440, 50)" style="display: none;">
+                <rect class="svg-boundary-box" x="0" y="0" width="480" height="260" rx="8" />
+                <text class="svg-boundary-label" x="20" y="25">Isolated Docker Network (Ephemeral)</text>
 
-              <!-- Station 4: GHCR Registry -->
-              <g id="svg-st4" transform="translate(225, 245)">
-                <rect class="svg-node-box" x="0" y="0" width="325" height="85" />
-                <text class="svg-node-title" x="12" y="24">4. GitHub Container Registry (GHCR)</text>
-                <text class="svg-node-sub" x="12" y="44">ghcr.io/s3nsh1-dev/...-client:&lt;commit-sha&gt;</text>
-                <text class="svg-node-sub" x="12" y="60">ghcr.io/s3nsh1-dev/...-server:&lt;commit-sha&gt;</text>
-                <rect class="svg-secret-badge" x="12" y="67" width="135" height="15" />
-                <text class="svg-secret-text" x="16" y="78">Private Image Access</text>
+                <rect class="svg-node-box emerald" x="20" y="45" width="200" height="90" />
+                <text class="svg-node-title" x="32" y="70">Throwaway Postgres #1</text>
+                <text class="svg-node-sub" x="32" y="90">Port: 127.0.0.1:5433</text>
+                <text class="svg-node-sub" x="32" y="110">Volume: in-memory tmpfs</text>
+
+                <rect class="svg-node-box emerald" x="20" y="150" width="200" height="90" />
+                <text class="svg-node-title" x="32" y="175">Throwaway Postgres #2</text>
+                <text class="svg-node-sub" x="32" y="195">Port: 127.0.0.1:5434</text>
+                <text class="svg-node-sub" x="32" y="215">Volume: in-memory tmpfs</text>
+
+                <rect class="svg-node-box" x="250" y="90" width="200" height="85" />
+                <text class="svg-node-title" x="262" y="115">Complete Lifecycle</text>
+                <text class="svg-node-sub" x="262" y="135">1. Start container &amp; seed</text>
+                <text class="svg-node-sub" x="262" y="155">2. Run tests &amp; destroy with -v</text>
               </g>
 
-              <!-- Wire 4 -> 5 (Deploy via SSH) -->
-              <path class="svg-wire active" d="M 550 287 H 605" marker-end="url(#arrow-blue)" />
-              <text class="svg-wire-label" x="555" y="278">SSH Deploy</text>
+              <!-- Group: Playwright E2E Flow (Active in 'playwright' flow) -->
+              <g id="svg-playwright-group" transform="translate(360, 40)" style="display: none;">
+                <rect class="svg-boundary-box" x="0" y="0" width="570" height="280" rx="8" />
+                <text class="svg-boundary-label" x="20" y="25">Dockerized Full Stack (E2E Test Run)</text>
 
-              <!-- Station 5: EC2 Compose -->
-              <g id="svg-st5" transform="translate(610, 85)">
-                <rect class="svg-node-box" x="0" y="0" width="225" height="80" />
-                <text class="svg-node-title" x="10" y="22">5. EC2 Compose Coordinator</text>
-                <text class="svg-node-sub" x="10" y="38">Path: /opt/todo-app</text>
-                <text class="svg-node-sub" x="10" y="52">docker-compose.prod.yml</text>
-                <text class="svg-node-sub" x="10" y="66">Reads IMAGE_TAG from release.env</text>
+                <rect class="svg-node-box blue" x="20" y="50" width="150" height="80" />
+                <text class="svg-node-title" x="30" y="75">Playwright</text>
+                <text class="svg-node-sub" x="30" y="95">Headless Chromium</text>
+                <text class="svg-node-sub" x="30" y="112">clicks buttons</text>
+
+                <rect class="svg-node-box" x="200" y="50" width="160" height="80" />
+                <text class="svg-node-title" x="210" y="75">Client (Nginx)</text>
+                <text class="svg-node-sub" x="210" y="95">Port 80 -&gt; React dist</text>
+                <text class="svg-node-sub" x="210" y="112">proxies /api/*</text>
+
+                <rect class="svg-node-box amber" x="390" y="50" width="160" height="80" />
+                <text class="svg-node-title" x="400" y="75">Express API</text>
+                <text class="svg-node-sub" x="400" y="95">Port 5000 (Internal)</text>
+                <text class="svg-node-sub" x="400" y="112">Node.js backend</text>
+
+                <rect class="svg-node-box emerald" x="200" y="170" width="350" height="75" />
+                <text class="svg-node-title" x="215" y="195">Disposable PostgreSQL Container</text>
+                <text class="svg-node-sub" x="215" y="215">Database: test_todo_db · Destroyed on exit</text>
               </g>
 
-              <!-- Internal Docker Network Box inside EC2 -->
-              <rect x="605" y="180" width="235" height="235" rx="6" fill="rgba(37, 99, 235, 0.04)" stroke="var(--blue-line)" stroke-dasharray="3 3" />
-              <text x="615" y="196" font-family="var(--font-mono)" font-size="9.5" fill="var(--blue-text)" font-weight="600">Docker Network: todo-network</text>
-
-              <!-- Wire Compose -> Containers -->
-              <path class="svg-wire" d="M 722 165 V 205" marker-end="url(#arrow-slate)" />
-
-              <!-- Station 6: Nginx Container -->
-              <g id="svg-st6" transform="translate(615, 215)">
-                <rect class="svg-node-box blue" x="0" y="0" width="215" height="70" />
-                <text class="svg-node-title" x="10" y="22">6. Client (Nginx)</text>
-                <text class="svg-node-sub" x="10" y="38">Public Host Port: 80 -&gt; 80</text>
-                <text class="svg-node-sub" x="10" y="52">Static React Dist + Reverse Proxy</text>
-              </g>
-
-              <!-- Wire Nginx -> Express (Internal only) -->
-              <path class="svg-wire active" d="M 722 285 V 315" marker-end="url(#arrow-blue)" />
-              <text class="svg-wire-label" x="726" y="303">proxy /api/*</text>
-
-              <!-- Station 7: Express API Container -->
-              <g id="svg-st7" transform="translate(615, 320)">
-                <rect class="svg-node-box amber" x="0" y="0" width="215" height="85" />
-                <text class="svg-node-title" x="10" y="20">7. Express API Server</text>
-                <text class="svg-node-sub" x="10" y="36">Internal Port: 5000 (NO HOST PORT)</text>
-                <text class="svg-node-sub" x="10" y="50">Reads /opt/todo-app/server.env</text>
-                <rect class="svg-badge-private" x="10" y="58" width="195" height="18" />
-                <text class="svg-secret-text" x="14" y="70">ISOLATED: Internal bridge only</text>
-              </g>
-
-              <!-- Wire Express -> Neon (External cloud query) -->
-              <path class="svg-wire active" d="M 830 362 H 885" marker-end="url(#arrow-blue)" />
-              <text class="svg-wire-label" x="834" y="354">TLS Port 5432</text>
-
-              <!-- Station 8: Neon PostgreSQL -->
-              <g id="svg-st8" transform="translate(890, 320)">
-                <rect class="svg-node-box emerald" x="0" y="0" width="105" height="85" />
-                <text class="svg-node-title" x="8" y="22">8. Neon DB</text>
-                <text class="svg-node-sub" x="8" y="40">PostgreSQL</text>
-                <text class="svg-node-sub" x="8" y="54">Cloud Serverless</text>
-                <text class="svg-node-sub" x="8" y="70">Prod Data</text>
-              </g>
+              <!-- Dynamic Wires -->
+              <path id="svg-wire-1" class="svg-wire danger" d="M 260 110 H 560" marker-end="url(#m-arrow-amber)" />
+              <path id="svg-wire-2" class="svg-wire danger" d="M 260 210 H 560" marker-end="url(#m-arrow-amber)" />
             </svg>
             <figcaption>
-              Figure 1.1: The Eight-Station Delivery Rail for the Docker Todo App. Traffic moves strictly left-to-right from development branches through the PR CI gate, onto the trusted main branch, through immutable image publication, and into the single EC2 host with an internally isolated Express container.
+              Figure 2.1: Architectural diagram showing why shared databases fail in CI pipelines, and how isolated disposable container environments establish absolute hermetic test boundaries.
             </figcaption>
           </figure>
 
-          <h3>The Eight Stations Broken Down</h3>
-          <p>
-            Each station along this rail performs one isolated responsibility:
-          </p>
-          <ol>
-            <li><strong>Feature Branch:</strong> Where code begins. Developers work on localized branches. Changes trigger checks but have zero authority over production.</li>
-            <li><strong>PR CI Gates:</strong> Automated test runner that executes quality linters, frontend builds, and backend integration tests against a <em>disposable</em> PostgreSQL container.</li>
-            <li><strong>Trusted Main Branch:</strong> The single release truth. Only code reviewed and merged into <code>main</code> can ever initiate package publication or deployment.</li>
-            <li><strong>GitHub Container Registry (GHCR):</strong> Hosts private, versioned container images. Every build is tagged with the exact immutable Git commit SHA.</li>
-            <li><strong>EC2 Compose Coordinator:</strong> A single directory on the server (<code>/opt/todo-app</code>) containing the production Compose contract and release pointers.</li>
-            <li><strong>Nginx Client Gateway:</strong> The sole container exposing a public port (port 80). It serves optimized React static assets and intercepts <code>/api/*</code> requests.</li>
-            <li><strong>Express API Server:</strong> The application backend. It runs purely on the internal Docker bridge network without any host port mapping.</li>
-            <li><strong>Neon PostgreSQL:</strong> Managed cloud database. Accessible only over TLS by the Express backend using credentials provisioned directly on the EC2 host.</li>
-          </ol>
-
-          <div class="callout">
-            <div class="callout-title">Architecture Takeaway</div>
+          <div class="callout emerald">
+            <div class="callout-title">The Principle of Hermetic Testing</div>
             <p>
-              The client and server are published as two distinct images because they have fundamentally different runtimes: the client is a static Nginx web server, while the backend is a persistent Node/Express API process connected to Neon.
+              A test suite is <strong>hermetic</strong> when it is completely self-contained. It brings up its own isolated database, seeds its own schema, runs its tests, and tears down all resources without relying on or affecting anything in the outside world.
             </p>
           </div>
         </section>
 
-        <!-- TOPIC 2: TWO DISTINCT LANES -->
-        <section class="topic-section" data-id="two-lanes" data-title="Two Lanes: Untrusted PRs vs Main Releases" hidden>
-          <div class="topic-eyebrow">02 / Workflow Boundaries · The Release Gate</div>
-          <h2 class="topic-heading" tabindex="-1">Two Strict Lanes: Untrusted PRs vs. Trusted Main Releases</h2>
+        <!-- TOPIC 2: EPHEMERAL POSTGRESQL -->
+        <section class="topic-section" data-id="ephemeral-postgres" data-title="Ephemeral PostgreSQL with Docker Compose" hidden>
+          <div class="topic-eyebrow">02 / Infrastructure · Disposable Containers</div>
+          <h2 class="topic-heading" tabindex="-1">Provisioning Throwaway Databases with Docker Compose</h2>
 
           <p class="lead-paragraph">
-            A catastrophic mistake in naive CI/CD setups is treating every Git push alike. In a production-grade system, pull requests and main pushes run on entirely separate security tracks.
+            The word <strong>ephemeral</strong> means "lasting for a very short time." In our CI/CD pipeline, an ephemeral database exists only for the duration of the test job and is completely wiped clean when the test finishes.
           </p>
 
           <p>
-            Anyone with repository access (or fork access in open-source projects) can create a pull request with arbitrary code. If PR workflows possessed deployment credentials or registry publishing rights, an unreviewed PR could deploy broken code, overwrite official container images, or exfiltrate private database credentials.
+            Instead of installing PostgreSQL on the host machine or relying on remote services, we use a dedicated test Compose file (<code>docker-compose.test.yml</code>) or Docker command that runs an official <code>postgres:16-alpine</code> container.
           </p>
 
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Dimension</th>
-                  <th>Lane 1: Pull Request Gate (Untrusted)</th>
-                  <th>Lane 2: Main Push Pipeline (Trusted)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Trigger</strong></td>
-                  <td><code>pull_request: [opened, synchronize]</code></td>
-                  <td><code>push: branches: [main]</code></td>
-                </tr>
-                <tr>
-                  <td><strong>Secrets Access</strong></td>
-                  <td>None. Deployment secrets are withheld.</td>
-                  <td>Full access to <code>EC2_SSH_PRIVATE_KEY</code>, etc.</td>
-                </tr>
-                <tr>
-                  <td><strong>GITHUB_TOKEN</strong></td>
-                  <td>Default read-only permissions.</td>
-                  <td>Explicitly granted <code>packages: write</code>.</td>
-                </tr>
-                <tr>
-                  <td><strong>Database Used</strong></td>
-                  <td>Disposable, ephemeral PostgreSQL container.</td>
-                  <td>Disposable for tests; EC2 runs against Neon.</td>
-                </tr>
-                <tr>
-                  <td><strong>Artifact Output</strong></td>
-                  <td>Test reports &amp; lint logs only. Nothing published.</td>
-                  <td>Two immutable images pushed to GHCR with commit SHA.</td>
-                </tr>
-                <tr>
-                  <td><strong>EC2 Impact</strong></td>
-                  <td>Zero. PRs never touch the network or EC2.</td>
-                  <td>SSH deploy triggered; containers refreshed.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>Why We Reject the <code>:latest</code> Tag in Favor of Immutable SHAs</h3>
+          <h3>The PostgreSQL Readiness Race Condition</h3>
           <p>
-            Many tutorials tag images with <code>:latest</code>. In professional software delivery, <strong>the <code>:latest</code> tag is an anti-pattern</strong> for three critical reasons:
+            A common trap when launching a database container in CI is trying to connect immediately. When Docker starts the PostgreSQL container, Docker reports the container as "running" within milliseconds. However, the internal PostgreSQL database daemon needs several seconds to initialize database clusters and open socket listeners.
           </p>
-          <ul>
-            <li><strong>Loss of Provenance:</strong> If a container on EC2 crashes, checking <code>todo-server:latest</code> tells you nothing about which Git commit caused the failure. An immutable SHA tag (e.g. <code>ghcr.io/.../server:9f8a32b</code>) points unambiguously to one exact line of Git history.</li>
-            <li><strong>Docker Daemon Cache Pitfalls:</strong> The Docker daemon caches images. If your server already has an image labeled <code>:latest</code>, running <code>docker compose up -d</code> may silently skip pulling newer layers unless forced with explicit pull flags.</li>
-            <li><strong>Impossible Rollback:</strong> When a deployment breaks, how do you roll back a <code>:latest</code> tag? You cannot tell Docker to "use the previous latest". With immutable commit SHAs, rolling back is as trivial as updating <code>IMAGE_TAG</code> to the previous SHA!</li>
-          </ul>
+
+          <p>
+            If your test script runs <code>pnpm db:migrate</code> before the database is ready, the migration immediately crashes with:
+          </p>
 
           <div class="code-snippet">
             <div class="code-top">
-              <span>Proposed GitHub Actions Trigger Shape · delivery.yml</span>
+              <span>Terminal Error · Connection Refused Race Condition</span>
               <button class="copy-btn">Copy</button>
             </div>
-            <pre><code>name: Delivery Pipeline
+            <pre><code>Error: connect ECONNREFUSED 127.0.0.1:5433
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1606:16)
+    at runMigrations (src/db/migrate.ts:14:9)
+Process exited with code 1</code></pre>
+          </div>
 
-on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
+          <p>
+            To prevent this race condition, we must wait for PostgreSQL's built-in <code>pg_isready</code> health tool before starting the test runner:
+          </p>
 
-jobs:
-  # Check gates run for BOTH PRs and main
-  test-and-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      # ... runs client lint, server integration tests with ephemeral Postgres ...
+          <div class="code-snippet">
+            <div class="code-top">
+              <span>Compose Service Definition · docker-compose.test.yml</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>version: "3.8"
 
-  # Publishing runs ONLY after tests pass AND only on main
-  publish-images:
-    needs: test-and-lint
-    if: github.ref == 'refs/heads/main' &amp;&amp; github.event_name == 'push'
-    permissions:
-      contents: read
-      packages: write
-    # ... builds and pushes client &amp; server images tagged with github.sha ...</code></pre>
+services:
+  test-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: todo_test_db
+    ports:
+      # Map to custom host port 5433 to avoid clashing with local Postgres (5432)
+      - "5433:5432"
+    # In-memory tmpfs makes tests 5x faster and leaves no disk artifacts
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d todo_test_db"]
+      interval: 2s
+      timeout: 2s
+      retries: 10</code></pre>
           </div>
 
           <div class="callout amber">
-            <div class="callout-title">The Principle of Least Privilege</div>
+            <div class="callout-title">Why tmpfs (In-Memory Storage) Matters for Tests</div>
             <p>
-              By scoping <code>packages: write</code> strictly to the publishing job on <code>main</code>, pull requests are mathematically incapable of modifying your registry packages, even if someone attempts a malicious workflow modification.
+              By mounting <code>tmpfs: /var/lib/postgresql/data</code>, PostgreSQL writes database records directly to RAM instead of writing to disk. This speeds up test transactions significantly and guarantees that when the container exits, all data vanishes with zero disk cleanup required.
             </p>
           </div>
         </section>
 
-        <!-- TOPIC 3: SECRETS AND NETWORK BOUNDARIES -->
-        <section class="topic-section" data-id="secrets-boundaries" data-title="Secrets &amp; Network Boundaries" hidden>
-          <div class="topic-eyebrow">03 / Security Architecture · Zero-Leak Boundary Model</div>
-          <h2 class="topic-heading" tabindex="-1">Secrets &amp; Network Boundaries: What Lives Where</h2>
+        <!-- TOPIC 3: ASSERTIONS THAT ACTUALLY FAIL -->
+        <section class="topic-section" data-id="failing-assertions" data-title="Assertions That Actually Fail" hidden>
+          <div class="topic-eyebrow">03 / Quality Assurance · The Exit Code Contract</div>
+          <h2 class="topic-heading" tabindex="-1">Replacing Console-Only Logs with True Failing Assertions</h2>
 
           <p class="lead-paragraph">
-            The foundation of secure deployment is knowing exactly which system stores each secret, and ensuring no credential crosses into an environment where it does not belong.
+            The single most dangerous test suite is one that logs errors to the screen but still exits with status code 0 ("Success"). In CI/CD, if your test script does not return an exit code other than 0, GitHub Actions considers the job green and passes the pull request!
           </p>
 
-          <h3>The Three Storage Tiers</h3>
+          <h3>The "Silent Pass" Anti-Pattern</h3>
           <p>
-            In our capstone track, credentials and configurations are strictly separated across three isolated tiers:
+            Look at how naive integration tests are frequently written:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-top">
+              <span>Broken Test Script · Logs Errors but Exits with 0</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>// ❌ ANTI-PATTERN: Silent Pass
+async function testCreateTodo() {
+  try {
+    const res = await fetch("http://localhost:5000/api/todos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "" }) // Invalid payload!
+    });
+    const data = await res.json();
+    
+    if (res.status !== 201) {
+      console.log("Failed to create todo: status was " + res.status);
+      return; // ⚠️ Function returns normally, exit code remains 0!
+    }
+  } catch (err) {
+    console.error("Test encountered error:", err);
+    // ⚠️ Error is swallowed! Node process finishes with exit 0.
+  }
+}
+testCreateTodo();</code></pre>
+          </div>
+
+          <p>
+            When GitHub Actions executes the script above, it looks only at the Node.js process exit status. Because the error was caught and logged, the process exits with code <code>0</code>. GitHub Actions paints a green checkmark next to the PR, completely unaware that the API failed!
+          </p>
+
+          <h3>The True Assertion Contract</h3>
+          <p>
+            Proper assertions must verify three distinct aspects of every operation and throw unhandled errors or call <code>assert</code> / <code>expect</code> so the process exits with code <code>1</code> on failure:
           </p>
 
           <div class="table-container">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Storage Location</th>
-                  <th>Secrets Stored Here</th>
-                  <th>What Is Explicitly FORBIDDEN Here</th>
+                  <th>Validation Layer</th>
+                  <th>What Must Be Asserted</th>
+                  <th>Example Assertion</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>GitHub Actions Secrets</strong></td>
-                  <td>
-                    <code>EC2_HOST</code><br>
-                    <code>EC2_USER</code><br>
-                    <code>EC2_SSH_PORT</code><br>
-                    <code>EC2_SSH_PRIVATE_KEY</code><br>
-                    <code>EC2_KNOWN_HOSTS</code>
-                  </td>
-                  <td>
-                    <strong>NO <code>DATABASE_URL</code>!</strong><br>
-                    <strong>NO GHCR pull tokens!</strong><br>
-                    GitHub Actions deploys infrastructure; it does not connect to the production Neon database.
-                  </td>
+                  <td><strong>HTTP Status Code</strong></td>
+                  <td>Ensure exact status code semantics (e.g. 201 Created vs 200 OK vs 400 Bad Request).</td>
+                  <td><code>assert.strictEqual(res.status, 201);</code></td>
                 </tr>
                 <tr>
-                  <td><strong>EC2 Host Filesystem (<code>/opt/todo-app/server.env</code>)</strong></td>
-                  <td>
-                    <code>PORT=5000</code><br>
-                    <code>DATABASE_URL=postgresql://...neon.tech/...</code>
-                  </td>
-                  <td>
-                    <strong>NEVER committed to Git.</strong><br>
-                    <strong>NEVER baked into Docker images.</strong><br>
-                    Owned by deploy user, restricted with <code>chmod 600</code>.
-                  </td>
+                  <td><strong>Response Payload</strong></td>
+                  <td>Validate shape, data types, and returned fields (including generated IDs).</td>
+                  <td><code>assert.ok(data.id, "Expected returned todo to have an id");</code></td>
                 </tr>
                 <tr>
-                  <td><strong>EC2 Docker Credential Store (<code>~/.docker/config.json</code>)</strong></td>
-                  <td>
-                    One-time GitHub Personal Access Token (PAT) with <code>read:packages</code> scope.
-                  </td>
-                  <td>
-                    Cannot push or overwrite packages. Used only by the host daemon to pull private images.
-                  </td>
+                  <td><strong>Database Persistence</strong></td>
+                  <td>Directly query the database to confirm the record was actually written to the table.</td>
+                  <td><code>const row = await db.query("SELECT * FROM todos WHERE id = $1", [data.id]);<br>assert.strictEqual(row.rows.length, 1);</code></td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <h3>Why the Express API Has No Public Host Port</h3>
-          <p>
-            Inspect the production Compose contract: Nginx maps <code>80:80</code>, but Express uses <code>expose: ["5000"]</code> (or no port publishing at all). Why?
+          <div class="code-snippet">
+            <div class="code-top">
+              <span>Robust Integration Test · Fails Fast with Strict Assertions</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>import assert from "node:assert/strict";
+import { pool } from "../src/db.js";
+
+export async function runIntegrationTests() {
+  console.log("▶ Testing POST /api/todos creation...");
+
+  const res = await fetch("http://localhost:5000/api/todos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: "Walk the dog" })
+  });
+
+  // 1. Assert HTTP Status
+  assert.strictEqual(res.status, 201, `Expected status 201, got ${res.status}`);
+
+  const body = await res.json();
+  
+  // 2. Assert Body Structure
+  assert.ok(typeof body.id === "string" || typeof body.id === "number", "Todo must have a valid ID");
+  assert.strictEqual(body.title, "Walk the dog", "Todo title must match payload");
+  assert.strictEqual(body.completed, false, "Todo must initialize as uncompleted");
+
+  // 3. Assert Database Persistence
+  const dbCheck = await pool.query("SELECT * FROM todos WHERE id = $1", [body.id]);
+  assert.strictEqual(dbCheck.rows.length, 1, "Todo record must exist in PostgreSQL table");
+
+  console.log("✔ POST /api/todos passed cleanly.");
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- TOPIC 4: DETERMINISTIC STATE & CLEANUP GUARANTEES -->
+        <section class="topic-section" data-id="cleanup-guarantees" data-title="Deterministic State &amp; Cleanup Guarantees" hidden>
+          <div class="topic-eyebrow">04 / Lifecycle · Repeatability</div>
+          <h2 class="topic-heading" tabindex="-1">Deterministic Test State: Sandboxes and Cleanup Hooks</h2>
+
+          <p class="lead-paragraph">
+            A test suite must be able to run 100 times in a row and produce the exact same result every time. If running a test suite leaves leftover records in the database, the second test run will behave differently from the first.
           </p>
+
+          <h3>Before, Each, and After: The Lifecycle Triangle</h3>
           <p>
-            When a port is mapped with <code>ports: ["5000:5000"]</code>, Docker binds that port to the host's network interfaces. Anyone who knows your EC2 public IP can send requests directly to Express, bypassing Nginx entirely.
+            Repeatable testing relies on strict lifecycle hooks:
           </p>
-          <p>
-            By keeping Express on the internal Docker bridge network:
-          </p>
-          <ul>
-            <li><strong>Direct Scanning is Blocked:</strong> Automated scanners on the internet only see port 80. Port 5000 does not exist to the outside world.</li>
-            <li><strong>Single Ingress Policy:</strong> Nginx serves static client assets directly from disk and proxies <code>/api/*</code> calls to <code>http://server:5000</code> internally. Nginx enforces request limits, headers, and routing.</li>
-            <li><strong>CORS Simplification:</strong> Because Nginx serves both the frontend and proxies <code>/api</code> on the same origin (port 80), the browser never encounters cross-origin complications in production!</li>
-          </ul>
+
+          <ol>
+            <li><strong>Global Setup (<code>beforeAll</code>):</strong> Wait for database readiness, run SQL schema migrations, and prepare fresh tables.</li>
+            <li><strong>Per-Test Sandbox (<code>beforeEach</code>):</strong> Truncate tables or clear records so every single test case begins with a pristine, predictable table state.</li>
+            <li><strong>Per-Test Teardown (<code>afterEach</code>):</strong> Cancel ongoing async handles, close open sockets, and ensure no pending promises keep Node alive.</li>
+            <li><strong>Global Teardown (<code>afterAll</code>):</strong> Close the database connection pool (<code>pool.end()</code>). If you don't close the pool, the Node process will hang indefinitely waiting for the open socket!</li>
+          </ol>
 
           <div class="code-snippet">
             <div class="code-top">
-              <span>Nginx Ingress Reverse-Proxy Contract · nginx.conf</span>
+              <span>Database Cleanup Hook · src/tests/setup.ts</span>
               <button class="copy-btn">Copy</button>
             </div>
-            <pre><code>server {
-    listen 80;
-    server_name localhost;
+            <pre><code>import { pool } from "../db.js";
 
-    # Serve static React client files
-    location / {
-        root /usr/share/nginx/html;
-        index index.html index.htm;
-        try_files $uri $uri/ /index.html;
-    }
+// Truncate tables before each test case for isolation
+export async function cleanDatabase() {
+  await pool.query("TRUNCATE TABLE todos RESTART IDENTITY CASCADE;");
+}
 
-    # Proxy API requests to Express across internal Docker bridge
-    location /api/ {
-        proxy_pass http://server:5000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
+// Global teardown hook to prevent hanging process
+export async function closeDatabase() {
+  await pool.end(); // Closes all active client connections in the pool
 }</code></pre>
           </div>
 
-          <h3>The SSH Beginner Compromise vs. AWS Systems Manager (SSM)</h3>
           <div class="callout amber">
-            <div class="callout-title">Deliberate Educational Compromise</div>
+            <div class="callout-title">The "Hanging CI Job" Pitfall</div>
             <p>
-              GitHub-hosted runner IPs come from large, dynamic public cloud ranges that change daily. You cannot easily restrict your EC2 Security Group port 22 to a single static IP without complex IP synchronizer scripts.
-            </p>
-            <p>
-              <strong>Our Hardened Compromise:</strong> We use direct SSH because it is the most approachable, transparent way to learn remote execution. We harden it by enforcing <em>key-only authentication</em> (disabling passwords completely), using a dedicated single-purpose deploy key, and verifying host keys with <code>EC2_KNOWN_HOSTS</code> to prevent man-in-the-middle attacks.
-            </p>
-            <p>
-              <strong>The Enterprise Alternative (AWS SSM):</strong> In larger production systems, teams replace SSH with AWS Systems Manager (SSM) and GitHub Actions OpenID Connect (OIDC). Actions requests a short-lived IAM token from AWS and sends commands over the AWS internal agent bus with <em>zero open inbound ports</em> on EC2. We keep SSH here so the remote execution steps remain visible and debuggable.
+              In Node.js, an open database connection pool keeps an active event loop socket open. If your test runner finishes all assertions but never invokes <code>await pool.end()</code>, the test process will sit frozen in GitHub Actions until the runner hits its 6-hour timeout limit!
             </p>
           </div>
         </section>
 
-        <!-- TOPIC 4: DEPLOYMENT CONTRACT & STAGE 1 REVIEW -->
-        <section class="topic-section" data-id="deploy-review" data-title="Deployment Contract &amp; Stage 1 Review" hidden>
-          <div class="topic-eyebrow">04 / Release Engineering · Safe Execution &amp; Review</div>
-          <h2 class="topic-heading" tabindex="-1">The Deployment Contract: Health Checks, Rollback &amp; Stage 1 Gate</h2>
+        <!-- TOPIC 5: FULL-STACK PLAYWRIGHT & STAGE 2 REVIEW -->
+        <section class="topic-section" data-id="playwright-review" data-title="Full-Stack Playwright &amp; Stage 2 Review" hidden>
+          <div class="topic-eyebrow">05 / End-to-End · Docker Orchestration &amp; Assessment</div>
+          <h2 class="topic-heading" tabindex="-1">Running Playwright Against the Dockerized Stack</h2>
 
           <p class="lead-paragraph">
-            Deployment is not complete when containers start. A release is only complete when an automated health probe proves the new application responds successfully.
+            Unit tests verify individual JavaScript functions. Integration tests verify that Express talks to PostgreSQL. But only End-to-End (E2E) tests verify that the real browser can load the React bundle from Nginx, submit a todo via <code>/api</code>, and see it rendered on screen.
           </p>
 
-          <h3>The Six-Step Deployment Dance</h3>
+          <h3>The Test Execution Pipeline Script</h3>
           <p>
-            When code merges into <code>main</code>, GitHub Actions carries out these exact commands over SSH:
+            In Stage 2, our end-to-end test runner follows this exact sequence from a clean Git checkout:
           </p>
+
           <ol>
-            <li><strong>Concurrency Lock:</strong> Workflow sets <code>concurrency: production-deploy</code> so two merges cannot execute simultaneously and overwrite release files.</li>
-            <li><strong>Preserve Previous State:</strong> Back up current <code>release.env</code> to <code>release.env.bak</code> on EC2.</li>
-            <li><strong>Write New Release Contract:</strong> Transfer <code>docker-compose.prod.yml</code> and write the new commit SHA to <code>release.env</code> (e.g. <code>IMAGE_TAG=3a4b5c6</code>).</li>
-            <li><strong>Pre-Pull Images:</strong> Run <code>docker compose -f docker-compose.prod.yml pull</code> to pull both private GHCR images before taking any container down.</li>
-            <li><strong>Recreate Services:</strong> Run <code>docker compose -f docker-compose.prod.yml up -d</code>. (Acceptable brief restart downtime as containers swap).</li>
-            <li><strong>Poll Health Endpoint:</strong> Loop <code>curl -f http://localhost/api/health</code> over SSH with retries and a timeout.</li>
+            <li><strong>Build &amp; Start Containers:</strong> Run <code>docker compose -f docker-compose.test.yml up -d --build</code> to launch Client, Express API, and Ephemeral PostgreSQL on test ports.</li>
+            <li><strong>Poll Health Endpoint:</strong> Wait for <code>http://localhost:8080/api/health</code> to respond with 200 OK before launching the browser.</li>
+            <li><strong>Run Playwright Headlessly:</strong> Playwright spins up headless Chromium, navigates to <code>http://localhost:8080</code>, types "Buy milk", presses Enter, and asserts that the new todo item appears in the DOM.</li>
+            <li><strong>Tear Down &amp; Wipe Volumes:</strong> Run <code>docker compose -f docker-compose.test.yml down -v</code>. The <code>-v</code> flag is critical: it removes anonymous and named Docker volumes so no leftover database state persists on disk!</li>
           </ol>
-
-          <h3>Automated Rollback Mechanics</h3>
-          <p>
-            If the health check fails (e.g. the server crashes on startup, a migration failed, or Neon rejected credentials), the deploy job does not abandon the broken container. It triggers an automated rollback script:
-          </p>
 
           <div class="code-snippet">
             <div class="code-top">
-              <span>Automatic Rollback Concept · Deploy Step Script</span>
+              <span>Full Test Pipeline Runner · package.json script</span>
               <button class="copy-btn">Copy</button>
             </div>
-            <pre><code># Attempt health polling over SSH
-if ! ssh $EC2_USER@$EC2_HOST "for i in {1..10}; do curl -f http://localhost/api/health && exit 0; sleep 3; done; exit 1"; then
-  echo "::error::Health check failed! Initiating automatic rollback..."
-  
-  # Restore previous release tag and restart
-  ssh $EC2_USER@$EC2_HOST "
-    cd /opt/todo-app
-    cp release.env.bak release.env
-    docker compose -f docker-compose.prod.yml up -d
-  "
-  echo "::notice::Rolled back to previous release tag successfully."
-  exit 1
-fi</code></pre>
+            <pre><code># Executed by CI runner or developer terminal
+"test:e2e": "docker compose -f docker-compose.test.yml up -d --wait && playwright test && docker compose -f docker-compose.test.yml down -v"</code></pre>
           </div>
 
-          <!-- INTERACTIVE STAGE 1 KNOWLEDGE CHECK (ELI5 MCQ) -->
+          <!-- Embedded Knowledge Check MCQ -->
           <div class="mcq-container">
-            <div class="mcq-head">Stage 1 Knowledge Check · ELI5</div>
+            <div class="mcq-head">Stage 2 Knowledge Check · ELI5</div>
             <div class="mcq-question" id="mcq-q-text">
-              1. Why should the production database password (DATABASE_URL) live only in /opt/todo-app/server.env on EC2, rather than in GitHub Actions Secrets?
+              Why must the CI test teardown command execute `docker compose down -v` with the `-v` flag instead of just `docker compose down`?
             </div>
             <div class="mcq-options" id="mcq-options-container">
               <button class="mcq-opt-btn" data-index="0">
                 <span class="mcq-opt-badge">A</span>
-                <span>Because GitHub Actions runners are physically unable to send network requests to cloud database services.</span>
+                <span>The -v flag tells Docker to print verbose logging output to stdout so test failures can be audited.</span>
               </button>
               <button class="mcq-opt-btn" data-index="1">
                 <span class="mcq-opt-badge">B</span>
-                <span>Because GitHub Actions only builds images and coordinates SSH commands; giving CI the DB password unnecessarily increases leak risk and violates least privilege.</span>
+                <span>The -v flag deletes associated storage volumes, ensuring old test records do not persist and contaminate subsequent test runs.</span>
               </button>
               <button class="mcq-opt-btn" data-index="2">
                 <span class="mcq-opt-badge">C</span>
-                <span>Because Docker images automatically inject host environment variables into their build layers when compiled on GitHub.</span>
+                <span>The -v flag verifies that the PostgreSQL container image signature matches official OCI standards.</span>
               </button>
             </div>
             <div class="mcq-feedback" id="mcq-feedback"></div>
           </div>
 
-          <h3>Stage 1 Acceptance Criteria Checklist</h3>
+          <h3>Stage 2 Acceptance Criteria Checklist</h3>
           <p>
-            Before advancing to Stage 2, verify you have internalized the acceptance criteria:
+            Verify that your test implementation meets all Stage 2 capstone requirements:
           </p>
           <ul>
-            <li>✓ You can trace the 8 stations of the delivery rail from developer branch to Neon.</li>
-            <li>✓ You understand why pull requests run untrusted tests and never publish images or reach EC2.</li>
-            <li>✓ You can explain why immutable Git commit SHAs are required for deterministic releases and instant rollbacks.</li>
-            <li>✓ You know why <code>DATABASE_URL</code> stays on EC2 and why Express has no public host port.</li>
-            <li>✓ You understand the direct SSH trade-off and the AWS SSM alternative.</li>
+            <li>✓ Tests never connect to or write against the production Neon database.</li>
+            <li>✓ PostgreSQL is run in an isolated ephemeral container with tmpfs or volume wiping.</li>
+            <li>✓ All assertions fail with non-zero exit codes when endpoints return unexpected statuses or shapes.</li>
+            <li>✓ Database pools are closed cleanly so tests do not hang the CI process.</li>
+            <li>✓ Playwright tests successfully execute against the full Dockerized stack (Client + Server + Ephemeral DB).</li>
+            <li>✓ <code>docker compose down -v</code> leaves no orphaned containers or lingering volumes behind.</li>
           </ul>
 
           <div class="callout emerald">
-            <div class="callout-title">Ready for Stage 2</div>
+            <div class="callout-title">Ready for Stage 2 Assessment</div>
             <p>
-              In Stage 2, we will take our first code step in <code>docker-beginner-simulation</code>: making tests safe and repeatable by replacing the shared Neon integration test with disposable PostgreSQL and wiring full-stack Playwright checks!
+              Once you have marked all topics complete, proceed to <strong><a href="/MCQ.html" style="color: inherit; text-decoration: underline;">Assessment (MCQ.html)</a></strong> to test your mastery of disposable test databases, assertion mechanics, and E2E orchestration.
             </p>
           </div>
         </section>
 
-        <!-- FOOTER ACTIONS -->
+        <!-- Footer Actions -->
         <footer class="lesson-footer">
           <button class="btn-complete" id="complete-btn" aria-pressed="false">
             <span class="btn-check-icon" aria-hidden="true">✓</span>
@@ -1970,25 +1737,19 @@ fi</code></pre>
         </footer>
       </article>
 
-      <div class="status-announcer" id="status-announcer" aria-live="polite">
-        <!-- Live screen reader announcements -->
-      </div>
+      <div class="status-announcer" id="status-announcer" aria-live="polite"></div>
     </main>
   </div>
 
-  <!-- -------------------------------------------------------------
-       CLIENT LOGIC & LOCAL STORAGE STATE
-       Namespaced to learning-ai:cicd-ghcr-ec2:stage-01
-       ------------------------------------------------------------- -->
+  <!-- Client State & Logic -->
   <script>
     (function() {
       "use strict";
 
-      const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-01";
+      const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-02";
       const sections = Array.from(document.querySelectorAll(".topic-section[data-id]"));
       const topicIds = sections.map(s => s.dataset.id);
 
-      // Default state
       let state = {
         current: topicIds[0],
         done: [],
@@ -1996,7 +1757,6 @@ fi</code></pre>
         mcqAnswer: null
       };
 
-      // Load saved state from localStorage
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
@@ -2007,7 +1767,7 @@ fi</code></pre>
           if (parsed.mcqAnswer !== undefined) state.mcqAnswer = parsed.mcqAnswer;
         }
       } catch (err) {
-        console.warn("localStorage unavailable or corrupted:", err);
+        console.warn("localStorage unavailable:", err);
       }
 
       const doneSet = new Set(state.done);
@@ -2026,7 +1786,6 @@ fi</code></pre>
       const mobileToggle = document.getElementById("mobile-toggle");
       const sidebar = document.querySelector(".sidebar");
 
-      // MCQ Elements
       const mcqButtons = Array.from(document.querySelectorAll(".mcq-opt-btn"));
       const mcqFeedback = document.getElementById("mcq-feedback");
       const CORRECT_MCQ_INDEX = 1; // Option B
@@ -2036,7 +1795,7 @@ fi</code></pre>
           state.done = Array.from(doneSet);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (err) {
-          console.warn("Unable to save to localStorage:", err);
+          console.warn("Unable to save state:", err);
         }
       }
 
@@ -2049,7 +1808,7 @@ fi</code></pre>
         themeSelect.value = state.theme;
       }
 
-      // Build Sidebar Topic Navigation
+      // Build Sidebar Nav
       sections.forEach((sec, idx) => {
         const btn = document.createElement("button");
         btn.className = "topic-btn";
@@ -2083,13 +1842,10 @@ fi</code></pre>
       function render() {
         const currentIdx = topicIds.indexOf(state.current);
 
-        // Update Sections visibility
         sections.forEach(sec => {
-          const isActive = sec.dataset.id === state.current;
-          sec.hidden = !isActive;
+          sec.hidden = sec.dataset.id !== state.current;
         });
 
-        // Update Sidebar items
         Array.from(navContainer.children).forEach(btn => {
           const id = btn.dataset.id;
           const isActive = id === state.current;
@@ -2106,7 +1862,6 @@ fi</code></pre>
           btn.setAttribute("aria-label", `${title}${isDone ? ", complete" : ", incomplete"}`);
         });
 
-        // Update Progress
         const count = doneSet.size;
         const total = topicIds.length;
         const pct = Math.round((count / total) * 100);
@@ -2115,19 +1870,15 @@ fi</code></pre>
         progressBar.style.width = `${pct}%`;
         progressTrack.setAttribute("aria-valuenow", String(count));
 
-        // Update Navigation buttons
         prevBtn.disabled = currentIdx === 0;
         nextBtn.disabled = currentIdx === topicIds.length - 1;
 
-        // Update Complete button
         const isCurrentDone = doneSet.has(state.current);
         completeBtn.setAttribute("aria-pressed", String(isCurrentDone));
         completeLabel.textContent = isCurrentDone ? "Mark Topic Incomplete" : "Mark Topic Complete";
 
-        // Status Announcer
-        statusAnnouncer.textContent = `Topic ${currentIdx + 1} of ${total}: ${sections[currentIdx].dataset.title}. Progress saved.`;
+        statusAnnouncer.textContent = `Topic ${currentIdx + 1} of ${total}: ${sections[currentIdx].dataset.title}.`;
 
-        // Update MCQ if on review topic
         renderMCQ();
       }
 
@@ -2149,10 +1900,10 @@ fi</code></pre>
           mcqFeedback.textContent = "";
         } else if (state.mcqAnswer === CORRECT_MCQ_INDEX) {
           mcqFeedback.className = "mcq-feedback is-correct";
-          mcqFeedback.textContent = "Correct! GitHub Actions only builds images and coordinates SSH commands. Giving CI runner environments access to the production database password unnecessarily expands the blast radius and violates the principle of least privilege.";
+          mcqFeedback.textContent = "Correct! The -v flag wipes attached Docker volumes. Without -v, database tables and inserted test records remain on disk inside the volume, causing state pollution in future test runs.";
         } else {
           mcqFeedback.className = "mcq-feedback is-incorrect";
-          mcqFeedback.textContent = "Not quite. Option B is correct: the CI runner has no reason to connect to Neon. Storing DATABASE_URL strictly on the EC2 host ensures database credentials never risk exposure in CI runner logs or temporary job environments.";
+          mcqFeedback.textContent = "Incorrect. Option B is correct: the -v flag instructs Docker Compose to remove named and anonymous volumes declared in the Compose file, guaranteeing that no test records persist on disk.";
         }
       }
 
@@ -2162,7 +1913,6 @@ fi</code></pre>
         saveState();
         render();
 
-        // Close mobile drawer if open
         if (sidebar.classList.contains("is-open")) {
           sidebar.classList.remove("is-open");
           mobileToggle.setAttribute("aria-expanded", "false");
@@ -2181,7 +1931,6 @@ fi</code></pre>
         }
       }
 
-      // Event Listeners
       completeBtn.addEventListener("click", () => {
         if (doneSet.has(state.current)) {
           doneSet.delete(state.current);
@@ -2194,16 +1943,12 @@ fi</code></pre>
 
       prevBtn.addEventListener("click", () => {
         const idx = topicIds.indexOf(state.current);
-        if (idx > 0) {
-          navigateToTopic(topicIds[idx - 1], true);
-        }
+        if (idx > 0) navigateToTopic(topicIds[idx - 1], true);
       });
 
       nextBtn.addEventListener("click", () => {
         const idx = topicIds.indexOf(state.current);
-        if (idx < topicIds.length - 1) {
-          navigateToTopic(topicIds[idx + 1], true);
-        }
+        if (idx < topicIds.length - 1) navigateToTopic(topicIds[idx + 1], true);
       });
 
       themeSelect.addEventListener("change", (e) => {
@@ -2218,7 +1963,7 @@ fi</code></pre>
         mobileToggle.querySelector(".mobile-icon").textContent = isOpen ? "−" : "+";
       });
 
-      // Help Panel Toggle
+      // Help Toggle
       const helpToggle = document.getElementById("help-toggle");
       const helpPanel = document.getElementById("help-panel");
       const helpClose = document.getElementById("help-close");
@@ -2236,25 +1981,59 @@ fi</code></pre>
         helpClose.addEventListener("click", () => toggleHelp(false));
       }
 
-      // Interactive Delivery Rail Simulation
+      // Interactive SVG Flow Switcher
       const simButtons = Array.from(document.querySelectorAll(".sim-btn"));
       const simStatusBox = document.getElementById("sim-status-box");
-      const deliverySvg = document.getElementById("delivery-rail-svg");
+      const sharedGroup = document.getElementById("svg-shared-group");
+      const ephemeralGroup = document.getElementById("svg-ephemeral-group");
+      const playwrightGroup = document.getElementById("svg-playwright-group");
+      const wire1 = document.getElementById("svg-wire-1");
+      const wire2 = document.getElementById("svg-wire-2");
 
-      const flowDescriptions = {
-        all: "<strong>Active View: Complete Delivery Rail</strong> — All 8 stations from local feature branch to production Neon database.",
-        pr: "<strong>Active View: PR CI Gates</strong> — Feature branch pushes to PR runner. Tests run with disposable PostgreSQL. GITHUB_TOKEN has read-only scope. <em>Deployment secrets are blocked; nothing reaches EC2.</em>",
-        main: "<strong>Active View: Main Release Flow</strong> — Merged commit on main builds and publishes immutable SHA images to GHCR with package-write scope, then initiates SSH deployment to EC2.",
-        rollback: "<strong>Active View: Rollback Mechanism</strong> — If the health check fails on EC2, the deploy runner immediately restores <code>release.env.bak</code> and recreates containers with the previous working SHA."
+      const simDescriptions = {
+        shared: "<strong>Scenario: Shared Database Pitfall</strong> — Test runners collide against the same remote cloud database. Data leaks, tests intermittently fail, and production tables are exposed to destructive teardown queries.",
+        ephemeral: "<strong>Scenario: Ephemeral Docker Postgres</strong> — Each test job launches its own disposable container with tmpfs in-memory storage. Complete isolation, instant cleanup, and zero cloud latency.",
+        playwright: "<strong>Scenario: Full-Stack E2E Flow</strong> — Playwright controls a headless browser hitting the Nginx container, which proxies /api requests to Express and stores records in ephemeral PostgreSQL."
       };
 
       simButtons.forEach(btn => {
         btn.addEventListener("click", () => {
           const flow = btn.dataset.flow;
           simButtons.forEach(b => b.classList.toggle("active", b === btn));
-          if (deliverySvg) deliverySvg.dataset.activeFlow = flow;
-          if (simStatusBox && flowDescriptions[flow]) {
-            simStatusBox.innerHTML = flowDescriptions[flow];
+          if (simStatusBox && simDescriptions[flow]) {
+            simStatusBox.innerHTML = simDescriptions[flow];
+          }
+
+          if (flow === "shared") {
+            sharedGroup.style.display = "block";
+            ephemeralGroup.style.display = "none";
+            playwrightGroup.style.display = "none";
+            wire1.setAttribute("d", "M 260 110 H 560");
+            wire1.className.baseVal = "svg-wire danger";
+            wire1.setAttribute("marker-end", "url(#m-arrow-amber)");
+            wire2.setAttribute("d", "M 260 210 H 560");
+            wire2.className.baseVal = "svg-wire danger";
+            wire2.setAttribute("marker-end", "url(#m-arrow-amber)");
+          } else if (flow === "ephemeral") {
+            sharedGroup.style.display = "none";
+            ephemeralGroup.style.display = "block";
+            playwrightGroup.style.display = "none";
+            wire1.setAttribute("d", "M 260 110 H 460");
+            wire1.className.baseVal = "svg-wire success";
+            wire1.setAttribute("marker-end", "url(#m-arrow-emerald)");
+            wire2.setAttribute("d", "M 260 210 H 460");
+            wire2.className.baseVal = "svg-wire success";
+            wire2.setAttribute("marker-end", "url(#m-arrow-emerald)");
+          } else if (flow === "playwright") {
+            sharedGroup.style.display = "none";
+            ephemeralGroup.style.display = "none";
+            playwrightGroup.style.display = "block";
+            wire1.setAttribute("d", "M 260 110 H 380");
+            wire1.className.baseVal = "svg-wire active";
+            wire1.setAttribute("marker-end", "url(#m-arrow-blue)");
+            wire2.setAttribute("d", "M 260 210 H 380");
+            wire2.className.baseVal = "svg-wire active";
+            wire2.setAttribute("marker-end", "url(#m-arrow-blue)");
           }
         });
       });
@@ -2268,11 +2047,10 @@ fi</code></pre>
         });
       });
 
-      // Keyboard Controls (Arrow navigation)
+      // Keyboard navigation
       document.addEventListener("keydown", (e) => {
-        if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA") return;
+        if (["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)) return;
         const idx = topicIds.indexOf(state.current);
-
         if ((e.key === "ArrowRight" || e.key === "PageDown") && e.altKey) {
           if (idx < topicIds.length - 1) {
             e.preventDefault();
@@ -2286,7 +2064,7 @@ fi</code></pre>
         }
       });
 
-      // Code Copy Buttons
+      // Code copy button
       document.querySelectorAll(".copy-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
           const pre = btn.closest(".code-snippet").querySelector("pre code");
@@ -2295,14 +2073,13 @@ fi</code></pre>
             await navigator.clipboard.writeText(pre.textContent);
             btn.textContent = "Copied!";
             setTimeout(() => { btn.textContent = "Copy"; }, 1800);
-          } catch (err) {
+          } catch {
             btn.textContent = "Failed";
             setTimeout(() => { btn.textContent = "Copy"; }, 1800);
           }
         });
       });
 
-      // Initialize
       applyTheme();
       render();
     })();
