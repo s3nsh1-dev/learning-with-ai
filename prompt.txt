@@ -1,1 +1,1 @@
-Stage 2: Make tests safe and repeatable
+Stage 2, 3 & 4: Make tests safe, build the PR gate, and publish immutable images to GHCR

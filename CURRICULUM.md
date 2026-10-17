@@ -67,7 +67,7 @@ is safer than `latest` for deployment.
 
 ## Stage 2: Make tests safe and repeatable
 
-**Status:** Current
+**Status:** Current (Combined with Stages 3 & 4 per user request)
 
 Turn the existing checks into reliable CI inputs. The current server test
 writes to its configured database, and the browser tests need a full stack.
@@ -84,6 +84,8 @@ guarantees, and full-stack Dockerized test execution.
 a clean checkout, and leave no containers or test data behind.
 
 ## Stage 3: Build the pull-request CI gate
+
+**Status:** Current (Combined with Stages 2 & 4 per user request)
 
 Create the first version of the GitHub Actions workflow. Learn triggers,
 jobs, permissions, dependency caching, service containers, artifacts, and
@@ -102,6 +104,8 @@ GitHub before it can be merged, while a green pull request has not published
 or deployed anything.
 
 ## Stage 4: Publish immutable images to GHCR
+
+**Status:** Current (Combined with Stages 2 & 3 per user request)
 
 Package the client and server only after trusted checks pass. Learn registry
 authentication, job permissions, build cache, image labels, and immutable

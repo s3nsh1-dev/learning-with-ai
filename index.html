@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Make Tests Safe and Repeatable · Stage 2</title>
+  <title>Make Tests Safe, Build the PR Gate &amp; Publish to GHCR · Stages 2, 3 &amp; 4</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+
     /* -------------------------------------------------------------
        ENGINEERING NOTEBOOK TOKENS & SYSTEM PALETTE
        Dual Theme Support (Light / Dark)
@@ -1166,18 +1167,116 @@
         text-align: center;
       }
     }
+  
+  /* Stage 3 & 4 Tokens and Components */
+  :root {
+    --rose: #e11d48;
+    --rose-soft: #fff1f2;
+    --rose-line: #fda4af;
+    --rose-text: #be123c;
+
+    --purple: #7c3aed;
+    --purple-soft: #f5f3ff;
+    --purple-line: #c4b5fd;
+    --purple-text: #6d28d9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --rose: #f43f5e;
+      --rose-soft: rgba(244, 63, 94, 0.12);
+      --rose-line: #9f1239;
+      --rose-text: #fda4af;
+
+      --purple: #a855f7;
+      --purple-soft: rgba(168, 85, 247, 0.12);
+      --purple-line: #6b21a8;
+      --purple-text: #d8b4fe;
+    }
+  }
+  :root[data-theme="dark"] {
+    --rose: #f43f5e;
+    --rose-soft: rgba(244, 63, 94, 0.12);
+    --rose-line: #9f1239;
+    --rose-text: #fda4af;
+
+    --purple: #a855f7;
+    --purple-soft: rgba(168, 85, 247, 0.12);
+    --purple-line: #6b21a8;
+    --purple-text: #d8b4fe;
+  }
+
+  .meta-tag.purple {
+    background: var(--purple-soft);
+    border-color: var(--purple-line);
+    color: var(--purple-text);
+  }
+  .callout.danger {
+    border-color: var(--rose);
+    background: var(--rose-soft);
+    color: var(--rose-text);
+  }
+  .callout.danger p {
+    color: var(--ink-secondary);
+  }
+  .callout.info {
+    border-color: var(--blue);
+    background: var(--blue-soft);
+    color: var(--blue-text);
+  }
+  .callout.info p {
+    color: var(--ink-secondary);
+  }
+
+  .svg-node-box.rose { stroke: var(--rose); }
+  .svg-node-box.purple { stroke: var(--purple); }
+  .svg-wire.active { stroke: var(--blue); stroke-width: 2.5; }
+  .svg-wire.success { stroke: var(--emerald); stroke-width: 2.5; }
+  .svg-wire.danger { stroke: var(--rose); stroke-width: 2.5; }
+  .svg-wire.blocked { stroke: var(--line); stroke-dasharray: 4 4; stroke-width: 1.5; }
+
+  .pipe-sim-btn {
+    font-family: var(--font-heading);
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--surface-card);
+    color: var(--ink-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pipe-sim-btn:hover {
+    border-color: var(--blue-line);
+    background: var(--blue-soft);
+    color: var(--blue-text);
+  }
+  .pipe-sim-btn.active {
+    border-color: var(--blue);
+    background: var(--blue);
+    color: #ffffff;
+  }
+
+  .pipe-sim-status-box {
+    margin-top: 0.6rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--line);
+    font-size: 0.86rem;
+    color: var(--ink-secondary);
+    line-height: 1.45;
+  }
+
   </style>
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- Topbar Header -->
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand-group">
         <div class="brand-spec">
-          <span>SPEC-CI-02</span>
-          <span class="badge-rev">STAGE 02/08</span>
+          <span>SPEC-CI-02-04</span>
+          <span class="badge-rev">STAGES 02, 03 &amp; 04 / 08</span>
         </div>
         <nav class="page-nav" aria-label="Page switcher">
           <a href="/index.html" class="nav-tab active" aria-current="page">Lesson</a>
@@ -1201,12 +1300,20 @@
     <div class="help-panel" id="help-panel" hidden>
       <div class="help-content">
         <div class="help-head">
-          <h3>Stage 2 Acronym Glossary</h3>
+          <h3>Stages 2, 3 &amp; 4 Technical Glossary</h3>
           <button class="help-close-btn" id="help-close" aria-label="Close Help">✕</button>
         </div>
         <ul class="acronym-list">
           <li><strong>E2E</strong> — <em>End-to-End Testing</em>: Complete full-stack verification where an automated browser clicks real UI elements wired to live containers.</li>
           <li><strong>CI</strong> — <em>Continuous Integration</em>: The automated practice of running unit, integration, and E2E suites on every pull request before code merges.</li>
+          <li><strong>CD</strong> — <em>Continuous Delivery</em>: The automated packaging and deployment of verified code to registry and staging or production servers.</li>
+          <li><strong>PR</strong> — <em>Pull Request</em>: A proposed code change from a branch or fork waiting for automated verification and peer review before merge.</li>
+          <li><strong>GHCR</strong> — <em>GitHub Container Registry</em>: GitHub's private OCI registry hosted at <code>ghcr.io</code> for storing and distributing versioned Docker images.</li>
+          <li><strong>OCI</strong> — <em>Open Container Initiative</em>: Open industry standards for container image formats, layers, and registry distribution specifications.</li>
+          <li><strong>SHA</strong> — <em>Commit Hash (40-char)</em>: The cryptographic unique identifier of a specific Git commit; used for immutable container image tags.</li>
+          <li><strong>GHA</strong> — <em>GitHub Actions</em>: GitHub's workflow automation runner system executing jobs inside isolated Linux virtual machines.</li>
+          <li><strong>GITHUB_TOKEN</strong> — <em>Automatic Scoped Token</em>: A temporary credentials token generated per workflow run with granular, explicit permissions.</li>
+          <li><strong>Buildx</strong> — <em>Docker BuildKit CLI</em>: Docker's advanced builder offering parallel multi-stage building, cross-platform compilation, and cache backends.</li>
           <li><strong>TCP</strong> — <em>Transmission Control Protocol</em>: The underlying networking protocol over which the test runner connects to PostgreSQL port 5432 or 5433.</li>
           <li><strong>FIFO</strong> — <em>First-In, First-Out</em>: Sequential ordering guarantee essential when processing database seed queues or teardown hooks.</li>
           <li><strong>UUID</strong> — <em>Universally Unique Identifier</em>: Random 128-bit labels used to isolate test records so parallel test workers never overwrite each other.</li>
@@ -1228,15 +1335,15 @@
 
       <div class="sidebar-inner" id="sidebar-inner">
         <div class="sidebar-head">
-          <span class="stage-tag">Curriculum Stage 2</span>
-          <h2 class="stage-name">Make Tests Safe and Repeatable</h2>
+          <span class="stage-tag">Curriculum Stages 2, 3 &amp; 4</span>
+          <h2 class="stage-name">Safe Tests, PR Gate &amp; GHCR Release</h2>
           
           <div class="progress-box">
             <div class="progress-labels">
-              <span>Stage Progress</span>
-              <span id="progress-text">0 / 5 complete</span>
+              <span>Overall Progress</span>
+              <span id="progress-text">0 / 12 complete</span>
             </div>
-            <div class="progress-track" role="progressbar" aria-label="Stage 2 completion" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
+            <div class="progress-track" role="progressbar" aria-label="Stages 2, 3 & 4 completion" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0">
               <span class="progress-bar-fill" id="progress-bar"></span>
             </div>
           </div>
@@ -1247,7 +1354,7 @@
         </nav>
 
         <div class="sidebar-footnote">
-          <strong>Explicit Completion Rule:</strong> Visiting a topic does not complete it. Click "Mark Topic Complete" when you understand the isolation and test execution mechanics.
+          <strong>Explicit Completion Rule:</strong> Visiting a topic does not complete it. Click "Mark Topic Complete" when you understand the mechanics.
         </div>
       </div>
     </aside>
@@ -1258,16 +1365,15 @@
         <header class="lesson-header">
           <div class="lesson-meta">
             <span class="meta-tag primary">CAPSTONE: DOCKER TODO APP</span>
-            <span class="meta-tag emerald">HERMETIC TEST PIPELINE</span>
-            <span class="meta-tag amber">POSTGRESQL &amp; PLAYWRIGHT</span>
+            <span class="meta-tag emerald">STAGE 02: SAFE TESTS</span>
+            <span class="meta-tag purple">STAGE 03: PR CI GATE</span>
+            <span class="meta-tag amber">STAGE 04: GHCR RELEASE</span>
           </div>
-          <h1>Make Tests Safe and Repeatable</h1>
+          <h1>Make Tests Safe, Build the PR Gate &amp; Publish to GHCR</h1>
           <p class="lesson-summary">
-            A CI test suite is useless if it pollutes production databases, passes silently on broken code, or leaves orphaned containers behind. Learn how to build an isolated, disposable testing environment from scratch.
+            A comprehensive, hands-on engineering track: from isolating local tests in disposable PostgreSQL containers and building deterministic Playwright checks (Stage 2), to constructing the automated GitHub Actions PR verification gate (Stage 3), and publishing immutable, SHA-tagged images to GitHub Container Registry (Stage 4).
           </p>
         </header>
-
-        <!-- TOPIC 1: THE DANGER OF SHARED DATABASES -->
         <section class="topic-section" data-id="shared-db-danger" data-title="The Danger of Shared Test Databases">
           <div class="topic-eyebrow">01 / Hermetic Boundaries · The Blast Radius</div>
           <h2 class="topic-heading" tabindex="-1">Why Tests Must Never Touch Neon Production Data</h2>
@@ -1712,12 +1818,887 @@ export async function closeDatabase() {
           </ul>
 
           <div class="callout emerald">
-            <div class="callout-title">Ready for Stage 2 Assessment</div>
+    <div class="callout-title">Stage 2 Milestone Reached · Advancing to the Pull-Request CI Gate</div>
+    <p>
+      Now that our tests are hermetic, disposable, and repeatable locally, we move directly to <strong>Stage 3: Building the Pull-Request CI Gate</strong> to run these checks automatically on every proposed commit in GitHub Actions.
+    </p>
+  </div>
+        </section>
+        <!-- TOPIC 1: PR GATE & TRIGGER ARCHITECTURE -->
+        <section class="topic-section" data-id="trigger-architecture" data-title="PR Gate &amp; Trigger Architecture">
+          <div class="topic-eyebrow">01 / Stage 3 · Trust Boundaries</div>
+          <h2 class="topic-heading" tabindex="-1">The Pull-Request Gate &amp; Workflow Triggers</h2>
+
+          <p class="lead-paragraph">
+            Continuous Integration exists for one non-negotiable reason: <strong>unverified code must never enter the main branch</strong>. Before a single line of JavaScript or Docker configuration is merged, an automated gate must run every test in complete isolation.
+          </p>
+
+          <p>
+            In GitHub Actions, this boundary starts with workflow triggers in <code>.github/workflows/ci-cd.yml</code>. A common security and operational flaw in early pipelines is triggering the exact same jobs for pull requests and pushes to <code>main</code>. If an untrusted fork opens a pull request, running deployment credentials or pushing container tags would allow an external attacker to hijack your production release.
+          </p>
+
+          <div class="callout warning">
+            <div class="callout-title">⚠️ The First Law of Pipeline Security</div>
             <p>
-              Once you have marked all topics complete, proceed to <strong><a href="/MCQ.html" style="color: inherit; text-decoration: underline;">Assessment (MCQ.html)</a></strong> to test your mastery of disposable test databases, assertion mechanics, and E2E orchestration.
+              Pull requests from feature branches or external forks must run strictly in read-only verification mode. They must never receive registry publishing rights, SSH keys, or cloud infrastructure credentials.
+            </p>
+          </div>
+
+          <h3>The Interactive Pipeline Mechanism</h3>
+          <p>
+            Explore how the pipeline reacts across three distinct lifecycle events: a standard verification PR, an approved push to <code>main</code>, and a failing pull request that triggers the CI gate brake.
+          </p>
+
+          <!-- Interactive SVG Simulation Controls -->
+          <div class="sim-panel">
+            <div class="sim-header">
+              <span class="sim-label">Pipeline Execution Mode:</span>
+              <div class="pipe-sim-btn-group" role="group" aria-label="Pipeline simulation mode">
+                <button class="pipe-pipe-sim-btn active" data-flow="pr-gate">1. PR Gate (Verify Only)</button>
+                <button class="pipe-sim-btn" data-flow="main-publish">2. Main Merge (Publish to GHCR)</button>
+                <button class="pipe-sim-btn" data-flow="pr-broken">3. Broken PR (Gate Blocks Merge)</button>
+              </div>
+            </div>
+            <div class="sim-status-box" id="pipe-sim-status-box">
+              <strong>Scenario: Pull-Request CI Gate</strong> — A developer opens PR #42. GitHub Actions triggers parallel verification jobs (lint, typecheck, integration tests with ephemeral Postgres, Playwright E2E). Status reports Green to GitHub UI. <em>Publish and Deploy jobs are completely locked.</em>
+            </div>
+          </div>
+
+          <!-- Interactive Architectural SVG -->
+          <figure class="diagram-card">
+            <svg class="interactive-mechanism-svg" id="pipe-pipeline-svg" viewBox="0 0 960 380" role="img" aria-labelledby="pipe-title pipe-desc">
+              <title id="pipe-title">CI/CD Dual-Stage Delivery Mechanism</title>
+              <desc id="pipe-desc">Architectural diagram displaying GitHub Actions PR verification gate, Ephemeral PostgreSQL service container, conditional GHCR publishing step, and immutable SHA tagging.</desc>
+
+              <defs>
+                <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                  <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--blue)" />
+                </marker>
+                <marker id="arrow-emerald" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                  <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--emerald)" />
+                </marker>
+                <marker id="arrow-rose" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                  <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--rose)" />
+                </marker>
+                <marker id="arrow-slate" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                  <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--line-strong)" />
+                </marker>
+              </defs>
+
+              <!-- ZONE 1: TRIGGER & SOURCE -->
+              <rect class="svg-boundary-box" x="20" y="30" width="230" height="320" rx="8" />
+              <text class="svg-boundary-label" x="35" y="55">1. Git Trigger Source</text>
+
+              <g id="svg-trigger-node" transform="translate(40, 80)">
+                <rect class="svg-node-box blue" id="pipe-trigger-box" x="0" y="0" width="190" height="75" />
+                <text class="svg-node-title" id="pipe-trigger-title" x="14" y="28">pull_request Event</text>
+                <text class="svg-node-sub" id="pipe-trigger-sub1" x="14" y="48">Branch: feature/auth-gate</text>
+                <text class="svg-node-sub" id="pipe-trigger-sub2" x="14" y="64">Target: main (SHA: e8f91c0)</text>
+              </g>
+
+              <g transform="translate(40, 190)">
+                <rect class="svg-node-box" x="0" y="0" width="190" height="135" />
+                <text class="svg-node-title" x="14" y="28">Concurrency Control</text>
+                <text class="svg-node-sub" x="14" y="50">concurrency:</text>
+                <text class="svg-node-sub" x="14" y="68">  group: ${{ github.ref }}</text>
+                <text class="svg-node-sub" x="14" y="86">  cancel-in-progress: true</text>
+                <text class="svg-node-sub" x="14" y="112" fill="var(--emerald-text)">✓ Cancels obsolete runs</text>
+              </g>
+
+              <!-- ZONE 2: VERIFICATION GATE (STAGE 3) -->
+              <rect class="svg-boundary-box" x="280" y="30" width="360" height="320" rx="8" />
+              <text class="svg-boundary-label" x="295" y="55">2. Verification Gate (GHA Runners)</text>
+
+              <!-- Job 1: Client Checks -->
+              <g transform="translate(300, 75)">
+                <rect class="svg-node-box blue" id="pipe-job-client-box" x="0" y="0" width="320" height="65" />
+                <text class="svg-node-title" x="14" y="25">Job: test-client</text>
+                <text class="svg-node-sub" x="14" y="44">pnpm lint · pnpm build (Vite SPA)</text>
+                <rect x="235" y="12" width="70" height="20" rx="4" fill="var(--blue-soft)" id="client-badge-bg" />
+                <text x="242" y="26" font-family="var(--font-heading)" font-size="10" font-weight="700" fill="var(--blue-text)" id="client-badge-txt">CACHED</text>
+              </g>
+
+              <!-- Job 2: Server Checks + Ephemeral Service -->
+              <g transform="translate(300, 155)">
+                <rect class="svg-node-box blue" id="pipe-job-server-box" x="0" y="0" width="320" height="85" />
+                <text class="svg-node-title" x="14" y="24">Job: test-server</text>
+                <text class="svg-node-sub" x="14" y="42">services: postgres:16-alpine (tmpfs)</text>
+                <text class="svg-node-sub" x="14" y="58">pnpm typecheck · pnpm test:integration</text>
+                <text class="svg-node-sub" id="pipe-server-status-txt" x="14" y="74" fill="var(--emerald-text)">✓ Ephemeral DB on localhost:5432</text>
+              </g>
+
+              <!-- Job 3: E2E Playwright -->
+              <g transform="translate(300, 255)">
+                <rect class="svg-node-box blue" id="pipe-job-e2e-box" x="0" y="0" width="320" height="75" />
+                <text class="svg-node-title" x="14" y="24">Job: test-e2e (Playwright)</text>
+                <text class="svg-node-sub" x="14" y="42">Headless Chromium hitting client+server</text>
+                <text class="svg-node-sub" id="pipe-e2e-status-txt" x="14" y="60">Uploads traces on failure</text>
+              </g>
+
+              <!-- ZONE 3: PUBLISH TO GHCR (STAGE 4) -->
+              <rect class="svg-boundary-box" x="670" y="30" width="270" height="320" rx="8" />
+              <text class="svg-boundary-label" x="685" y="55">3. Immutable GHCR Release</text>
+
+              <g id="svg-publish-group" transform="translate(690, 80)">
+                <rect class="svg-node-box" id="pipe-publish-box" x="0" y="0" width="230" height="150" />
+                <text class="svg-node-title" id="pipe-publish-title" x="16" y="30" fill="var(--ink-muted)">Job: publish-images</text>
+                <text class="svg-node-sub" id="publish-cond" x="16" y="52">if: github.ref == 'refs/heads/main'</text>
+                <text class="svg-node-sub" id="publish-token" x="16" y="72">permissions: packages:write</text>
+                <text class="svg-node-sub" id="publish-target1" x="16" y="96">ghcr.io/...-client:sha-e8f91c0</text>
+                <text class="svg-node-sub" id="publish-target2" x="16" y="114">ghcr.io/...-server:sha-e8f91c0</text>
+                <text class="svg-node-sub" id="pipe-publish-status" x="16" y="136" font-weight="700" fill="var(--ink-muted)">STATUS: SKIPPED (PR Only)</text>
+              </g>
+
+              <g transform="translate(690, 250)">
+                <rect class="svg-node-box" id="deploy-preview-box" x="0" y="0" width="230" height="80" />
+                <text class="svg-node-title" x="16" y="28">Stage 5-7 Preview</text>
+                <text class="svg-node-sub" x="16" y="48">EC2 Production Host</text>
+                <text class="svg-node-sub" x="16" y="66">Pulls exact immutable SHA</text>
+              </g>
+
+              <!-- INTERCONNECT WIRES -->
+              <!-- Trigger to Verifications -->
+              <path id="wire-trigger-client" class="svg-wire active" d="M 230 115 H 300" marker-end="url(#arrow-blue)" />
+              <path id="wire-trigger-server" class="svg-wire active" d="M 230 115 C 260 115, 260 195, 300 195" marker-end="url(#arrow-blue)" />
+              <path id="wire-trigger-e2e" class="svg-wire active" d="M 230 115 C 260 115, 260 290, 300 290" marker-end="url(#arrow-blue)" />
+
+              <!-- Verification to Publish -->
+              <path id="pipe-wire-verify-publish" class="svg-wire blocked" d="M 620 195 C 655 195, 655 155, 690 155" marker-end="url(#arrow-slate)" />
+            </svg>
+            <figcaption>
+              Figure 1.1: Complete structural flow of the CI/CD pipeline across Stages 3 and 4. Toggle the execution modes above to observe how GitHub Actions evaluates branch conditions and blocks unauthorized release attempts.
+            </figcaption>
+          </figure>
+
+          <h3>Trigger Configuration in YAML</h3>
+          <p>
+            Here is the foundation of our production pipeline configuration. It declares triggers for both pull requests (any branch targeting <code>main</code>) and direct pushes to <code>main</code> (such as when a PR is merged):
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-header">
+              <span class="code-file">.github/workflows/ci-cd.yml (Triggers &amp; Concurrency)</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Cancel in-progress runs when a new commit is pushed to the same PR branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Default runner to zero permissions unless explicitly granted per job
+permissions: {}</code></pre>
+          </div>
+
+          <div class="callout info">
+            <div class="callout-title">💡 Why <code>cancel-in-progress</code> Matters</div>
+            <p>
+              When a software engineer pushes three rapid commits to a pull request, running three full suites of headless Playwright tests costs compute time and burns runner concurrency. The <code>concurrency</code> block cancels the superseded runs immediately.
             </p>
           </div>
         </section>
+
+        <!-- TOPIC 2: FAST PARALLEL CHECKS & DEPENDENCY CACHING -->
+        <section class="topic-section" data-id="parallel-checks-caching" data-title="Parallel Checks &amp; Caching" hidden>
+          <div class="topic-eyebrow">02 / Stage 3 · Execution Velocity</div>
+          <h2 class="topic-heading" tabindex="-1">Fast Parallel Checks &amp; Dependency Caching</h2>
+
+          <p class="lead-paragraph">
+            A CI pipeline that takes 15 minutes to run is a pipeline developers will bypass. High-performing engineering teams organize verification into <strong>parallel independent jobs</strong> and leverage <strong>deterministic dependency caching</strong>.
+          </p>
+
+          <p>
+            In our Todo application, the frontend React Vite client and backend Express server live in the same repository, but have completely separate dependency trees. Rather than running linting, typechecking, and building in one monolithic serial script, we split them into parallel runner jobs.
+          </p>
+
+          <h3>Why We Cache the pnpm Virtual Store</h3>
+          <p>
+            Running <code>pnpm install</code> from scratch on every commit downloads hundreds of megabytes of packages over the internet. GitHub Actions provides <code>actions/setup-node</code> with built-in caching support keyed on <code>pnpm-lock.yaml</code>:
+          </p>
+
+          <div class="table-container">
+            <table class="spec-table">
+              <thead>
+                <tr>
+                  <th>Execution Phase</th>
+                  <th>Cold Run (No Cache)</th>
+                  <th>Warm Run (GHA Cache Hit)</th>
+                  <th>Engineering Impact</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>pnpm install</code></td>
+                  <td>~140 seconds</td>
+                  <td>~6 seconds</td>
+                  <td>Restores packages from GitHub Actions internal cache SSD</td>
+                </tr>
+                <tr>
+                  <td><code>pnpm lint &amp;&amp; build</code></td>
+                  <td>~35 seconds</td>
+                  <td>~32 seconds</td>
+                  <td>Vite compiles production client bundles to <code>dist/</code></td>
+                </tr>
+                <tr>
+                  <td><strong>Total Feedback Latency</strong></td>
+                  <td><strong>~3 minutes</strong></td>
+                  <td><strong>&lt; 40 seconds</strong></td>
+                  <td>Developer gets immediate pull request feedback</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>The Client Verification Job</h3>
+          <p>
+            Notice the precise sequence: install pnpm via <code>pnpm/action-setup</code>, configure Node 24 with cache path, restore dependencies, and execute typecheck and build:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-header">
+              <span class="code-file">.github/workflows/ci-cd.yml (Client Verification Job)</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>jobs:
+  test-client:
+    name: Verify Client
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 12.4.2
+
+      - name: Setup Node 24 with pnpm Cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+          cache-dependency-path: client/pnpm-lock.yaml
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Client Linter
+        run: pnpm lint
+
+      - name: Compile Client Bundle
+        run: pnpm build</code></pre>
+          </div>
+
+          <div class="callout warning">
+            <div class="callout-title">⚠️ The <code>--frozen-lockfile</code> Guarantee</div>
+            <p>
+              In CI, always use <code>pnpm install --frozen-lockfile</code>. If a package was added to <code>package.json</code> without committing the updated <code>pnpm-lock.yaml</code>, the build fails immediately rather than silently resolving nondeterministic versions.
+            </p>
+          </div>
+        </section>
+
+        <!-- TOPIC 3: EPHEMERAL SERVICE CONTAINERS -->
+        <section class="topic-section" data-id="service-containers" data-title="Ephemeral PostgreSQL in Actions" hidden>
+          <div class="topic-eyebrow">03 / Stage 3 · Test Isolation</div>
+          <h2 class="topic-heading" tabindex="-1">CI Service Containers: Ephemeral PostgreSQL in Actions</h2>
+
+          <p class="lead-paragraph">
+            In Stage 2, we learned why integration tests must never touch a shared cloud database like Neon. In GitHub Actions, instead of writing complex shell scripts to start and stop Docker containers manually, we declare native <strong>Service Containers</strong>.
+          </p>
+
+          <p>
+            GitHub Actions provides a top-level <code>services:</code> definition within any job. When configured, the runner starts the specified Docker container before any job step executes, bridges network ports, runs a health check, and automatically terminates the container when the job finishes.
+          </p>
+
+          <h3>Runner Networking &amp; Health Probes</h3>
+          <p>
+            Because our runner jobs execute directly on the <code>ubuntu-latest</code> VM host, mapped service ports are reachable on <code>localhost:5432</code>. But databases require several seconds to initialize their internal tables and listen on their socket. If the test runner attempts to connect before PostgreSQL is ready, the job crashes immediately.
+          </p>
+
+          <p>
+            We eliminate this race condition using a native Docker health check:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-header">
+              <span class="code-file">.github/workflows/ci-cd.yml (PostgreSQL Service Definition)</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>  test-server:
+    name: Verify Server
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: todo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+          --tmpfs /var/lib/postgresql/data
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 12.4.2
+
+      - name: Setup Node 24 with Cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+          cache-dependency-path: server/pnpm-lock.yaml
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck Server
+        run: pnpm typecheck
+
+      - name: Run Integration Tests
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/todo_test
+        run: pnpm test:integration</code></pre>
+          </div>
+
+          <div class="callout info">
+            <div class="callout-title">💡 The <code>--tmpfs</code> Performance Optimization</div>
+            <p>
+              Notice the <code>--tmpfs /var/lib/postgresql/data</code> option. It mounts the database storage directly in runner RAM instead of virtual disk. In-memory PostgreSQL writes are 4x faster, and every row vanishes into thin air when the job ends.
+            </p>
+          </div>
+        </section>
+
+        <!-- TOPIC 4: FULL-STACK PLAYWRIGHT E2E -->
+        <section class="topic-section" data-id="playwright-e2e-gate" data-title="Playwright E2E &amp; Failure Artifacts" hidden>
+          <div class="topic-eyebrow">04 / Stage 3 · Automated Acceptance</div>
+          <h2 class="topic-heading" tabindex="-1">Full-Stack Playwright E2E &amp; Diagnostic Artifacts</h2>
+
+          <p class="lead-paragraph">
+            Unit and integration tests prove that isolated functions and SQL queries work. But they cannot prove that the React client can actually render items fetched from the Express API in a real browser. The ultimate CI gate is an <strong>End-to-End (E2E) browser suite</strong>.
+          </p>
+
+          <p>
+            In Stage 2, we built Playwright tests that drive a headless Chromium browser against our containers. In GitHub Actions, we orchestrate the full stack directly inside the runner, verify the live health endpoint, execute the tests, and preserve diagnostic artifacts if any assertion fails.
+          </p>
+
+          <h3>Orchestrating the Stack in CI</h3>
+          <p>
+            The E2E job requires three coordinated components running simultaneously:
+          </p>
+          <ol>
+            <li><strong>PostgreSQL Service Container:</strong> Provides the clean database.</li>
+            <li><strong>Background API Server:</strong> Express running on port 5000 with <code>pnpm start &amp;</code>.</li>
+            <li><strong>Playwright Test Runner:</strong> Spins up headless Chromium, hits port 5000 / 3000, and verifies user journeys.</li>
+          </ol>
+
+          <div class="code-snippet">
+            <div class="code-header">
+              <span class="code-file">.github/workflows/ci-cd.yml (Playwright E2E Job)</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>  test-e2e:
+    name: Full-Stack E2E
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: todo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+          --tmpfs /var/lib/postgresql/data
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm &amp; Node
+        uses: pnpm/action-setup@v3
+        with:
+          version: 12.4.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Server &amp; Client Dependencies
+        run: |
+          cd server && pnpm install --frozen-lockfile
+          cd ../client && pnpm install --frozen-lockfile
+          cd ..
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Start Server in Background
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/todo_test
+          PORT: 5000
+        run: |
+          cd server
+          pnpm start &amp;
+          npx wait-on http://localhost:5000/api/health --timeout 20000
+
+      - name: Run Playwright Tests
+        run: npx playwright test
+
+      - name: Upload Diagnostic Artifacts on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-report
+          path: playwright-report/
+          retention-days: 7</code></pre>
+          </div>
+
+          <div class="callout danger">
+            <div class="callout-title">🚨 The Diagnostic Failure Boundary</div>
+            <p>
+              Notice <code>if: failure()</code> on the artifact upload step. When an E2E test fails in headless CI, you cannot look at the screen. Uploading the Playwright trace zip and screenshots gives the engineer video recordings and DOM snapshots of the exact instant the assertion failed.
+            </p>
+          </div>
+        </section>
+
+        <!-- TOPIC 5: GHCR AUTH & LEAST PRIVILEGE -->
+        <section class="topic-section" data-id="ghcr-auth-security" data-title="Publishing to GHCR &amp; Permissions" hidden>
+          <div class="topic-eyebrow">05 / Stage 4 · Continuous Delivery</div>
+          <h2 class="topic-heading" tabindex="-1">Publishing to GHCR: Credentials &amp; Least Privilege</h2>
+
+          <p class="lead-paragraph">
+            Once Stage 3's verification jobs pass, we transition from Continuous Integration (testing) to Continuous Delivery (publishing release artifacts). We publish our private client and server images to <strong>GitHub Container Registry (GHCR)</strong> at <code>ghcr.io</code>.
+          </p>
+
+          <p>
+            In legacy setups, developers frequently created long-lived Personal Access Tokens (PATs) and pasted them into repository secrets. This is an enormous security liability: if leaked, a PAT grants access to everything the developer owns. In modern GitHub Actions, we use the automatic, ephemeral <strong><code>GITHUB_TOKEN</code></strong> with granular, explicit permissions.
+          </p>
+
+          <h3>The Principle of Least Privilege in CI/CD</h3>
+          <p>
+            By default, we set top-level <code>permissions: {}</code>. In the publishing job, we grant only the two exact permissions required to pull the Git commit and publish container packages:
+          </p>
+
+          <div class="table-container">
+            <table class="spec-table">
+              <thead>
+                <tr>
+                  <th>Permission Scope</th>
+                  <th>Granted Level</th>
+                  <th>Technical Rationale</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>contents</code></td>
+                  <td><code>read</code></td>
+                  <td>Allows checking out the merged commit code to build the Dockerfile</td>
+                </tr>
+                <tr>
+                  <td><code>packages</code></td>
+                  <td><code>write</code></td>
+                  <td>Authorizes pushing image layers and manifests to <code>ghcr.io</code></td>
+                </tr>
+                <tr>
+                  <td><code>id-token</code>, <code>deployments</code>, etc.</td>
+                  <td><code>none</code></td>
+                  <td>Eliminates unnecessary privilege attack vectors</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>The Release Boundary Condition</h3>
+          <p>
+            The publishing job must declare two guardrails: it must wait for all test jobs to succeed (<code>needs: [...]</code>), and it must execute only when code is merged into the trusted <code>main</code> branch:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-header">
+              <span class="code-file">.github/workflows/ci-cd.yml (GHCR Authentication &amp; Guardrails)</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>  publish-images:
+    name: Build &amp; Publish GHCR Images
+    runs-on: ubuntu-latest
+    needs: [test-client, test-server, test-e2e]
+    if: github.event_name == 'push' &amp;&amp; github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout Merged Code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}</code></pre>
+          </div>
+
+          <div class="callout info">
+            <div class="callout-title">💡 Why <code>needs: [...]</code> is Critical</div>
+            <p>
+              If you omit <code>needs: [test-client, test-server, test-e2e]</code>, GitHub Actions will run the <code>publish-images</code> job in parallel with your tests! Broken code could be packaged and pushed to the registry before the test failure even registers.
+            </p>
+          </div>
+        </section>
+
+        <!-- TOPIC 6: BUILDX & OCI METADATA -->
+        <section class="topic-section" data-id="buildx-layer-caching" data-title="Docker Buildx &amp; OCI Metadata" hidden>
+          <div class="topic-eyebrow">06 / Stage 4 · Build Engineering</div>
+          <h2 class="topic-heading" tabindex="-1">Docker Buildx Layer Caching &amp; OCI Metadata</h2>
+
+          <p class="lead-paragraph">
+            Building a Docker image from scratch inside CI is slow. If a developer only changed one line of CSS in the client, why should the runner re-download the Node base image and re-execute <code>pnpm install</code>?
+          </p>
+
+          <p>
+            With <strong>Docker Buildx</strong> and BuildKit, GitHub Actions can cache intermediate Dockerfile build layers directly inside GitHub's caching backend using <code>type=gha</code>. Subsequent runs reuse unchanged layers, reducing image build times from 3 minutes to 15 seconds.
+          </p>
+
+          <h3>Standard OCI Labels &amp; Traceability</h3>
+          <p>
+            Every container image published to production should be self-documenting. Using <code>docker/metadata-action</code>, we extract Git metadata and embed standard <strong>OCI (Open Container Initiative)</strong> annotations:
+          </p>
+          <ul>
+            <li><code>org.opencontainers.image.source</code>: Links the image directly back to the GitHub repo URL.</li>
+            <li><code>org.opencontainers.image.revision</code>: Contains the exact 40-character Git commit SHA.</li>
+            <li><code>org.opencontainers.image.created</code>: Timestamp of the build.</li>
+          </ul>
+
+          <div class="code-snippet">
+            <div class="code-header">
+              <span class="code-file">.github/workflows/ci-cd.yml (Buildx Layer Caching &amp; Metadata)</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract OCI Metadata for Client
+        id: meta-client
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}-client
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and Push Client Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: true
+          tags: ${{ steps.meta-client.outputs.tags }}
+          labels: ${{ steps.meta-client.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max</code></pre>
+          </div>
+
+          <div class="callout info">
+            <div class="callout-title">💡 What <code>mode=max</code> Does</div>
+            <p>
+              Standard Docker caching only saves the final exported image layer. Specifying <code>cache-to: type=gha,mode=max</code> instructs BuildKit to cache layers from intermediate multi-stage build stages (such as the pnpm compilation container), maximizing cache hits on future commits.
+            </p>
+          </div>
+        </section>
+
+        <!-- TOPIC 7: IMMUTABLE TAGS & FULL YAML PIPELINE -->
+        <section class="topic-section" data-id="immutable-tags-pipeline" data-title="Immutable SHA Tags &amp; Pipeline Review" hidden>
+          <div class="topic-eyebrow">07 / Stage 4 · Production Rigor</div>
+          <h2 class="topic-heading" tabindex="-1">Immutable Commit SHA Tags &amp; Pipeline Review</h2>
+
+          <p class="lead-paragraph">
+            The single most dangerous anti-pattern in container deployment is deploying <strong><code>:latest</code></strong>. In this final topic, we establish why <strong>immutable commit SHA tags</strong> are essential, and review the complete, unified delivery pipeline.
+          </p>
+
+          <h3>The "Latest" Trap vs Immutable Releases</h3>
+          <p>
+            When you tag a Docker image as <code>latest</code>, you are creating a mutable, moving target:
+          </p>
+
+          <div class="table-container">
+            <table class="spec-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>The <code>:latest</code> Anti-Pattern</th>
+                  <th>Immutable SHA Tag (<code>:sha-e8f91c0</code>)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Determinism</strong></td>
+                  <td>Ambiguous. Which Git commit does this container run? Nobody knows without running inspection commands.</td>
+                  <td>Cryptographically absolute. The tag matches the exact Git commit SHA in the repository history.</td>
+                </tr>
+                <tr>
+                  <td><strong>Rollback Safety</strong></td>
+                  <td>Impossible. Rolling back means re-tagging or guessing which version was previously deployed.</td>
+                  <td>Instant. Changing one environment variable (<code>IMAGE_TAG=sha-a1b2c3d</code>) rolls back cleanly.</td>
+                </tr>
+                <tr>
+                  <td><strong>Docker Daemon Caching</strong></td>
+                  <td>Host may skip pulling if a local image tagged <code>latest</code> already exists on disk.</td>
+                  <td>Every commit is a brand-new unique tag. <code>docker compose pull</code> always retrieves the exact release.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>The Complete Unified CI/CD Pipeline</h3>
+          <p>
+            Below is the full, battle-tested <code>.github/workflows/ci-cd.yml</code> implementing every Stage 3 and Stage 4 requirement:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-header">
+              <span class="code-file">.github/workflows/ci-cd.yml (Unified Stage 3 &amp; 4 Workflow)</span>
+              <button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  # =========================================================================
+  # STAGE 3: PULL REQUEST VERIFICATION GATE
+  # =========================================================================
+  test-client:
+    name: Verify Client
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 12.4.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+          cache-dependency-path: client/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm build
+
+  test-server:
+    name: Verify Server
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: todo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+          --tmpfs /var/lib/postgresql/data
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 12.4.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+          cache-dependency-path: server/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/todo_test
+        run: pnpm test:integration
+
+  test-e2e:
+    name: Full-Stack E2E
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: todo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+          --tmpfs /var/lib/postgresql/data
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 12.4.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install All Dependencies
+        run: |
+          cd server && pnpm install --frozen-lockfile
+          cd ../client && pnpm install --frozen-lockfile
+      - run: npx playwright install --with-deps chromium
+      - name: Run Stack &amp; Playwright
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/todo_test
+          PORT: 5000
+        run: |
+          cd server && pnpm start &amp;
+          npx wait-on http://localhost:5000/api/health --timeout 20000
+          cd .. && npx playwright test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-report
+          path: playwright-report/
+          retention-days: 7
+
+  # =========================================================================
+  # STAGE 4: PUBLISH IMMUTABLE IMAGES TO GHCR
+  # =========================================================================
+  publish-images:
+    name: Build &amp; Publish GHCR Images
+    runs-on: ubuntu-latest
+    needs: [test-client, test-server, test-e2e]
+    if: github.event_name == 'push' &amp;&amp; github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+
+      # Client Image Metadata &amp; Build
+      - id: meta-client
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}-client
+          tags: |
+            type=sha,prefix=sha-,format=short
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: true
+          tags: ${{ steps.meta-client.outputs.tags }}
+          labels: ${{ steps.meta-client.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Server Image Metadata &amp; Build
+      - id: meta-server
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}-server
+          tags: |
+            type=sha,prefix=sha-,format=short
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          push: true
+          tags: ${{ steps.meta-server.outputs.tags }}
+          labels: ${{ steps.meta-server.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max</code></pre>
+          </div>
+
+          <!-- In-Page Comprehension Check -->
+          <div class="mini-quiz">
+            <div class="mini-quiz-title">
+              <span>🎯 Quick Check: Continuous Integration &amp; Release Boundary</span>
+            </div>
+            <div class="mini-quiz-question">
+              A pull request from an external contributor passes all verification tests. Why is the <code>publish-images</code> job configured NOT to run for this pull request?
+            </div>
+            <div class="mcq-options" id="mcq-options-container-st4">
+              <button class="mcq-opt-btn" data-opt="0">
+                <span>A</span>
+                <span>GitHub Actions cannot access the internet during pull requests.</span>
+              </button>
+              <button class="mcq-opt-btn" data-opt="1">
+                <span>B</span>
+                <span>Pull requests must never receive package write privileges or push release artifacts until the code is formally approved and merged into <code>main</code>.</span>
+              </button>
+              <button class="mcq-opt-btn" data-opt="2">
+                <span>C</span>
+                <span>Docker Buildx is incompatible with branches that are not named <code>main</code>.</span>
+              </button>
+            </div>
+            <div class="mcq-feedback" id="mcq-feedback-st4"></div>
+          </div>
+        </section>
+
 
         <!-- Footer Actions -->
         <footer class="lesson-footer">
@@ -1741,12 +2722,11 @@ export async function closeDatabase() {
     </main>
   </div>
 
-  <!-- Client State & Logic -->
   <script>
     (function() {
       "use strict";
 
-      const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-02";
+      const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-02-03-04";
       const sections = Array.from(document.querySelectorAll(".topic-section[data-id]"));
       const topicIds = sections.map(s => s.dataset.id);
 
@@ -1754,7 +2734,8 @@ export async function closeDatabase() {
         current: topicIds[0],
         done: [],
         theme: "system",
-        mcqAnswer: null
+        mcqAnswerStage2: null,
+        mcqAnswerStage4: null
       };
 
       try {
@@ -1764,7 +2745,8 @@ export async function closeDatabase() {
           if (topicIds.includes(parsed.current)) state.current = parsed.current;
           if (Array.isArray(parsed.done)) state.done = parsed.done.filter(id => topicIds.includes(id));
           if (["system", "light", "dark"].includes(parsed.theme)) state.theme = parsed.theme;
-          if (parsed.mcqAnswer !== undefined) state.mcqAnswer = parsed.mcqAnswer;
+          if (parsed.mcqAnswerStage2 !== undefined) state.mcqAnswerStage2 = parsed.mcqAnswerStage2;
+          if (parsed.mcqAnswerStage4 !== undefined) state.mcqAnswerStage4 = parsed.mcqAnswerStage4;
         }
       } catch (err) {
         console.warn("localStorage unavailable:", err);
@@ -1785,10 +2767,6 @@ export async function closeDatabase() {
       const statusAnnouncer = document.getElementById("status-announcer");
       const mobileToggle = document.getElementById("mobile-toggle");
       const sidebar = document.querySelector(".sidebar");
-
-      const mcqButtons = Array.from(document.querySelectorAll(".mcq-opt-btn"));
-      const mcqFeedback = document.getElementById("mcq-feedback");
-      const CORRECT_MCQ_INDEX = 1; // Option B
 
       function saveState() {
         try {
@@ -1879,15 +2857,21 @@ export async function closeDatabase() {
 
         statusAnnouncer.textContent = `Topic ${currentIdx + 1} of ${total}: ${sections[currentIdx].dataset.title}.`;
 
-        renderMCQ();
+        renderMCQStage2();
+        renderMCQStage4();
       }
 
-      function renderMCQ() {
-        if (!mcqFeedback) return;
-        mcqButtons.forEach((btn, idx) => {
+      // Stage 2 MCQ
+      const mcq2Buttons = Array.from(document.querySelectorAll("#mcq-options-container .mcq-opt-btn"));
+      const mcq2Feedback = document.getElementById("mcq-feedback");
+      const CORRECT_MCQ2_INDEX = 1; // Option B
+
+      function renderMCQStage2() {
+        if (!mcq2Feedback) return;
+        mcq2Buttons.forEach((btn, idx) => {
           btn.classList.remove("selected-correct", "selected-incorrect");
-          if (state.mcqAnswer !== null && state.mcqAnswer === idx) {
-            if (idx === CORRECT_MCQ_INDEX) {
+          if (state.mcqAnswerStage2 !== null && state.mcqAnswerStage2 === idx) {
+            if (idx === CORRECT_MCQ2_INDEX) {
               btn.classList.add("selected-correct");
             } else {
               btn.classList.add("selected-incorrect");
@@ -1895,17 +2879,63 @@ export async function closeDatabase() {
           }
         });
 
-        if (state.mcqAnswer === null) {
-          mcqFeedback.className = "mcq-feedback";
-          mcqFeedback.textContent = "";
-        } else if (state.mcqAnswer === CORRECT_MCQ_INDEX) {
-          mcqFeedback.className = "mcq-feedback is-correct";
-          mcqFeedback.textContent = "Correct! The -v flag wipes attached Docker volumes. Without -v, database tables and inserted test records remain on disk inside the volume, causing state pollution in future test runs.";
+        if (state.mcqAnswerStage2 === null) {
+          mcq2Feedback.className = "mcq-feedback";
+          mcq2Feedback.textContent = "";
+        } else if (state.mcqAnswerStage2 === CORRECT_MCQ2_INDEX) {
+          mcq2Feedback.className = "mcq-feedback is-correct";
+          mcq2Feedback.textContent = "Correct! The -v flag wipes attached Docker volumes. Without -v, database tables and inserted test records remain on disk inside the volume, causing state pollution in future test runs.";
         } else {
-          mcqFeedback.className = "mcq-feedback is-incorrect";
-          mcqFeedback.textContent = "Incorrect. Option B is correct: the -v flag instructs Docker Compose to remove named and anonymous volumes declared in the Compose file, guaranteeing that no test records persist on disk.";
+          mcq2Feedback.className = "mcq-feedback is-incorrect";
+          mcq2Feedback.textContent = "Incorrect. Option B is correct: the -v flag instructs Docker Compose to remove named and anonymous volumes declared in the Compose file, guaranteeing that no test records persist on disk.";
         }
       }
+
+      mcq2Buttons.forEach((btn, idx) => {
+        btn.addEventListener("click", () => {
+          state.mcqAnswerStage2 = idx;
+          saveState();
+          renderMCQStage2();
+        });
+      });
+
+      // Stage 4 MCQ
+      const mcq4Buttons = Array.from(document.querySelectorAll("#mcq-options-container-st4 .mcq-opt-btn"));
+      const mcq4Feedback = document.getElementById("mcq-feedback-st4");
+      const CORRECT_MCQ4_INDEX = 1; // Option B
+
+      function renderMCQStage4() {
+        if (!mcq4Feedback) return;
+        mcq4Buttons.forEach((btn, idx) => {
+          btn.classList.remove("selected-correct", "selected-incorrect");
+          if (state.mcqAnswerStage4 !== null && state.mcqAnswerStage4 === idx) {
+            if (idx === CORRECT_MCQ4_INDEX) {
+              btn.classList.add("selected-correct");
+            } else {
+              btn.classList.add("selected-incorrect");
+            }
+          }
+        });
+
+        if (state.mcqAnswerStage4 === null) {
+          mcq4Feedback.className = "mcq-feedback";
+          mcq4Feedback.textContent = "";
+        } else if (state.mcqAnswerStage4 === CORRECT_MCQ4_INDEX) {
+          mcq4Feedback.className = "mcq-feedback is-correct";
+          mcq4Feedback.textContent = "Correct! Pull requests run strictly in read-only verification mode. Allowing untrusted pull requests to publish images or access registry write tokens would permit malicious code injection into your container registry.";
+        } else {
+          mcq4Feedback.className = "mcq-feedback is-incorrect";
+          mcq4Feedback.textContent = "Incorrect. Option B is correct: PR verification must run in least-privilege mode. Only approved commits merged into main are authorized to publish immutable release images to GHCR.";
+        }
+      }
+
+      mcq4Buttons.forEach((btn, idx) => {
+        btn.addEventListener("click", () => {
+          state.mcqAnswerStage4 = idx;
+          saveState();
+          renderMCQStage4();
+        });
+      });
 
       function navigateToTopic(id, shouldFocus) {
         if (!topicIds.includes(id)) return;
@@ -1981,7 +3011,7 @@ export async function closeDatabase() {
         helpClose.addEventListener("click", () => toggleHelp(false));
       }
 
-      // Interactive SVG Flow Switcher
+      // Stage 2 Interactive SVG Flow Switcher
       const simButtons = Array.from(document.querySelectorAll(".sim-btn"));
       const simStatusBox = document.getElementById("sim-status-box");
       const sharedGroup = document.getElementById("svg-shared-group");
@@ -2004,7 +3034,7 @@ export async function closeDatabase() {
             simStatusBox.innerHTML = simDescriptions[flow];
           }
 
-          if (flow === "shared") {
+          if (flow === "shared" && sharedGroup && ephemeralGroup && playwrightGroup && wire1 && wire2) {
             sharedGroup.style.display = "block";
             ephemeralGroup.style.display = "none";
             playwrightGroup.style.display = "none";
@@ -2014,7 +3044,7 @@ export async function closeDatabase() {
             wire2.setAttribute("d", "M 260 210 H 560");
             wire2.className.baseVal = "svg-wire danger";
             wire2.setAttribute("marker-end", "url(#m-arrow-amber)");
-          } else if (flow === "ephemeral") {
+          } else if (flow === "ephemeral" && sharedGroup && ephemeralGroup && playwrightGroup && wire1 && wire2) {
             sharedGroup.style.display = "none";
             ephemeralGroup.style.display = "block";
             playwrightGroup.style.display = "none";
@@ -2024,7 +3054,7 @@ export async function closeDatabase() {
             wire2.setAttribute("d", "M 260 210 H 460");
             wire2.className.baseVal = "svg-wire success";
             wire2.setAttribute("marker-end", "url(#m-arrow-emerald)");
-          } else if (flow === "playwright") {
+          } else if (flow === "playwright" && sharedGroup && ephemeralGroup && playwrightGroup && wire1 && wire2) {
             sharedGroup.style.display = "none";
             ephemeralGroup.style.display = "none";
             playwrightGroup.style.display = "block";
@@ -2038,12 +3068,101 @@ export async function closeDatabase() {
         });
       });
 
-      // MCQ Selection
-      mcqButtons.forEach((btn, idx) => {
+      // Stage 3 & 4 Interactive Mechanism Switcher
+      const pipeSimButtons = Array.from(document.querySelectorAll(".pipe-sim-btn"));
+      const pipeSimStatusBox = document.getElementById("pipe-sim-status-box");
+      const pipeTriggerBox = document.getElementById("pipe-trigger-box");
+      const pipeTriggerTitle = document.getElementById("pipe-trigger-title");
+      const pipeTriggerSub1 = document.getElementById("pipe-trigger-sub1");
+      const pipeTriggerSub2 = document.getElementById("pipe-trigger-sub2");
+      const pipeJobClientBox = document.getElementById("pipe-job-client-box");
+      const pipeJobServerBox = document.getElementById("pipe-job-server-box");
+      const pipeJobE2EBox = document.getElementById("pipe-job-e2e-box");
+      const pipeServerStatusTxt = document.getElementById("pipe-server-status-txt");
+      const pipeE2EStatusTxt = document.getElementById("pipe-e2e-status-txt");
+      const pipePublishBox = document.getElementById("pipe-publish-box");
+      const pipePublishTitle = document.getElementById("pipe-publish-title");
+      const pipePublishStatus = document.getElementById("pipe-publish-status");
+      const pipeWireVerifyPublish = document.getElementById("pipe-wire-verify-publish");
+
+      const pipeSimDescriptions = {
+        "pr-gate": "<strong>Scenario: Pull-Request CI Gate</strong> — A developer opens PR #42. GitHub Actions triggers parallel verification jobs (lint, typecheck, integration tests with ephemeral Postgres, Playwright E2E). Status reports Green to GitHub UI. <em>Publish and Deploy jobs are completely locked.</em>",
+        "main-publish": "<strong>Scenario: Merged to Main (Release)</strong> — PR #42 is merged into main. The full test gate runs again on the unified commit. All tests pass, unlocking the conditional publish job. GHA authenticates with GITHUB_TOKEN, builds with Buildx, and pushes immutable :sha-e8f91c0 images to GHCR.",
+        "pr-broken": "<strong>Scenario: Broken Pull Request (Gate Engaged)</strong> — A PR contains a failing assertion or broken migration. The server integration test or Playwright fails immediately. The job halts, uploads diagnostic trace artifacts, marks GitHub PR check RED, and strictly BLOCKS merging."
+      };
+
+      pipeSimButtons.forEach(btn => {
         btn.addEventListener("click", () => {
-          state.mcqAnswer = idx;
-          saveState();
-          renderMCQ();
+          const flow = btn.dataset.flow;
+          pipeSimButtons.forEach(b => b.classList.toggle("active", b === btn));
+          if (pipeSimStatusBox && pipeSimDescriptions[flow]) {
+            pipeSimStatusBox.innerHTML = pipeSimDescriptions[flow];
+          }
+
+          if (flow === "pr-gate" && pipeTriggerBox) {
+            pipeTriggerBox.setAttribute("class", "svg-node-box blue");
+            pipeTriggerTitle.textContent = "pull_request Event";
+            pipeTriggerSub1.textContent = "Branch: feature/auth-gate";
+            pipeTriggerSub2.textContent = "Target: main (SHA: e8f91c0)";
+
+            pipeJobClientBox.setAttribute("class", "svg-node-box blue");
+            pipeJobServerBox.setAttribute("class", "svg-node-box blue");
+            pipeJobE2EBox.setAttribute("class", "svg-node-box blue");
+            pipeServerStatusTxt.textContent = "✓ Ephemeral DB on localhost:5432";
+            pipeServerStatusTxt.setAttribute("fill", "var(--emerald-text)");
+            pipeE2EStatusTxt.textContent = "✓ All 8 browser journeys passing";
+            pipeE2EStatusTxt.setAttribute("fill", "var(--emerald-text)");
+
+            pipePublishBox.setAttribute("class", "svg-node-box");
+            pipePublishTitle.setAttribute("fill", "var(--ink-muted)");
+            pipePublishStatus.textContent = "STATUS: SKIPPED (PR Only)";
+            pipePublishStatus.setAttribute("fill", "var(--ink-muted)");
+
+            pipeWireVerifyPublish.setAttribute("class", "svg-wire blocked");
+            pipeWireVerifyPublish.setAttribute("marker-end", "url(#arrow-slate)");
+          } else if (flow === "main-publish" && pipeTriggerBox) {
+            pipeTriggerBox.setAttribute("class", "svg-node-box emerald");
+            pipeTriggerTitle.textContent = "push Event (Merged)";
+            pipeTriggerSub1.textContent = "Branch: refs/heads/main";
+            pipeTriggerSub2.textContent = "Commit: sha-e8f91c0";
+
+            pipeJobClientBox.setAttribute("class", "svg-node-box emerald");
+            pipeJobServerBox.setAttribute("class", "svg-node-box emerald");
+            pipeJobE2EBox.setAttribute("class", "svg-node-box emerald");
+            pipeServerStatusTxt.textContent = "✓ Verification PASSED";
+            pipeServerStatusTxt.setAttribute("fill", "var(--emerald-text)");
+            pipeE2EStatusTxt.textContent = "✓ Gate Unlocks CD Release";
+            pipeE2EStatusTxt.setAttribute("fill", "var(--emerald-text)");
+
+            pipePublishBox.setAttribute("class", "svg-node-box emerald");
+            pipePublishTitle.setAttribute("fill", "var(--emerald-text)");
+            pipePublishStatus.textContent = "STATUS: PUSHED TO GHCR ✓";
+            pipePublishStatus.setAttribute("fill", "var(--emerald-text)");
+
+            pipeWireVerifyPublish.setAttribute("class", "svg-wire success");
+            pipeWireVerifyPublish.setAttribute("marker-end", "url(#arrow-emerald)");
+          } else if (flow === "pr-broken" && pipeTriggerBox) {
+            pipeTriggerBox.setAttribute("class", "svg-node-box amber");
+            pipeTriggerTitle.textContent = "pull_request (Broken)";
+            pipeTriggerSub1.textContent = "Branch: bug/flaky-test";
+            pipeTriggerSub2.textContent = "Target: main";
+
+            pipeJobClientBox.setAttribute("class", "svg-node-box blue");
+            pipeJobServerBox.setAttribute("class", "svg-node-box rose");
+            pipeJobE2EBox.setAttribute("class", "svg-node-box rose");
+            pipeServerStatusTxt.textContent = "✗ Assertion Failure in test:integration";
+            pipeServerStatusTxt.setAttribute("fill", "var(--rose-text)");
+            pipeE2EStatusTxt.textContent = "✗ Playwright aborted; trace uploaded";
+            pipeE2EStatusTxt.setAttribute("fill", "var(--rose-text)");
+
+            pipePublishBox.setAttribute("class", "svg-node-box rose");
+            pipePublishTitle.setAttribute("fill", "var(--rose-text)");
+            pipePublishStatus.textContent = "STATUS: MERGE BLOCKED 🛑";
+            pipePublishStatus.setAttribute("fill", "var(--rose-text)");
+
+            pipeWireVerifyPublish.setAttribute("class", "svg-wire danger");
+            pipeWireVerifyPublish.setAttribute("marker-end", "url(#arrow-rose)");
+          }
         });
       });
 
