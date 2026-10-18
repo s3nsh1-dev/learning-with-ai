@@ -6,261 +6,302 @@
   <title>Scratchpad &amp; Ad-Hoc Reviews</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg-canvas: #f8fafc;
-      --bg-grid: rgba(203, 213, 225, 0.4);
-      --surface-card: #ffffff;
-      --surface-subtle: #f1f5f9;
-      --line: #cbd5e1;
-      --line-subtle: #e2e8f0;
+/* ==================================================================
+   Learning reader — minimal reading-first stylesheet (Scratchpad page).
+   Lexend for reading and UI controls, flat hairline surfaces.
+   Full-width layout: topic sidebar + fluid content, no centered shell.
+   ================================================================== */
 
-      --ink-primary: #0f172a;
-      --ink-secondary: #334155;
-      --ink-muted: #64748b;
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --surface-2: #f2f1ea;
+  --ink: #21201b;
+  --ink-2: #474440;
+  --ink-muted: #6f6b63;
+  --ink-faint: #9d988d;
+  --line: #e4e2da;
+  --line-strong: #b8b4a9;
 
-      --blue: #2563eb;
-      --blue-soft: #eff6ff;
-      --blue-line: #93c5fd;
-      --blue-text: #1d4ed8;
+  --blue: #1e5fbf;
+  --blue-soft: #edf3fc;
+  --blue-line: #c3d6f1;
+  --blue-text: #17479c;
 
-      --amber: #d97706;
-      --amber-soft: #fffbeb;
-      --amber-line: #fcd34d;
-      --amber-text: #b45309;
+  --emerald: #147a52;
+  --emerald-soft: #ecf4ee;
+  --emerald-line: #b9dfd0;
+  --emerald-text: #116340;
 
-      --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-      --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+  --amber: #96650a;
+  --amber-soft: #faf3e1;
+  --amber-line: #e6d6ac;
+  --amber-text: #775105;
 
-      --font-heading: "Chakra Petch", -apple-system, sans-serif;
-      --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-mono: "JetBrains Mono", monospace;
-    }
+  --code-bg: #f5f4ef;
+  --code-ink: #26251f;
+  --code-border: #e4e2da;
 
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --bg-canvas: #090d16;
-        --bg-grid: rgba(30, 41, 59, 0.6);
-        --surface-card: #0f172a;
-        --surface-subtle: #141e33;
-        --line: #1e293b;
-        --line-subtle: #162032;
+  --font-body: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-ui: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-heading: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
 
-        --ink-primary: #f1f5f9;
-        --ink-secondary: #cbd5e1;
-        --ink-muted: #94a3b8;
+  --measure: 80ch;
+  --pad-x: clamp(1rem, 2.5vw, 2rem);
+}
 
-        --blue: #3b82f6;
-        --blue-soft: rgba(59, 130, 246, 0.12);
-        --blue-line: #1d4ed8;
-        --blue-text: #93c5fd;
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16171b;
+    --surface: #1c1e23;
+    --surface-2: #24262c;
+    --ink: #e7e5df;
+    --ink-2: #c5c2ba;
+    --ink-muted: #9a968e;
+    --ink-faint: #6d6a64;
+    --line: #2b2d34;
+    --line-strong: #4a4d55;
 
-        --amber: #f59e0b;
-        --amber-soft: rgba(245, 158, 11, 0.12);
-        --amber-line: #b45309;
-        --amber-text: #fcd34d;
+    --blue: #7dabef;
+    --blue-soft: rgba(125, 171, 239, 0.13);
+    --blue-line: #33517f;
+    --blue-text: #a3c4f5;
 
-        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-        --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45);
-      }
-    }
+    --emerald: #4cc289;
+    --emerald-soft: rgba(76, 194, 137, 0.12);
+    --emerald-line: #2b6148;
+    --emerald-text: #7fd3a6;
 
-    :root[data-theme="dark"] {
-      --bg-canvas: #090d16;
-      --bg-grid: rgba(30, 41, 59, 0.6);
-      --surface-card: #0f172a;
-      --surface-subtle: #141e33;
-      --line: #1e293b;
-      --line-subtle: #162032;
+    --amber: #dcaf4a;
+    --amber-soft: rgba(220, 175, 74, 0.12);
+    --amber-line: #6e5722;
+    --amber-text: #e3c377;
 
-      --ink-primary: #f1f5f9;
-      --ink-secondary: #cbd5e1;
-      --ink-muted: #94a3b8;
+    --code-bg: #101217;
+    --code-ink: #dcdad2;
+    --code-border: #2b2d34;
+  }
+}
 
-      --blue: #3b82f6;
-      --blue-soft: rgba(59, 130, 246, 0.12);
-      --blue-line: #1d4ed8;
-      --blue-text: #93c5fd;
+:root[data-theme="dark"] {
+  --bg: #16171b;
+  --surface: #1c1e23;
+  --surface-2: #24262c;
+  --ink: #e7e5df;
+  --ink-2: #c5c2ba;
+  --ink-muted: #9a968e;
+  --ink-faint: #6d6a64;
+  --line: #2b2d34;
+  --line-strong: #4a4d55;
 
-      --amber: #f59e0b;
-      --amber-soft: rgba(245, 158, 11, 0.12);
-      --amber-line: #b45309;
-      --amber-text: #fcd34d;
+  --blue: #7dabef;
+  --blue-soft: rgba(125, 171, 239, 0.13);
+  --blue-line: #33517f;
+  --blue-text: #a3c4f5;
 
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-      --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.45);
-    }
+  --emerald: #4cc289;
+  --emerald-soft: rgba(76, 194, 137, 0.12);
+  --emerald-line: #2b6148;
+  --emerald-text: #7fd3a6;
 
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  --amber: #dcaf4a;
+  --amber-soft: rgba(220, 175, 74, 0.12);
+  --amber-line: #6e5722;
+  --amber-text: #e3c377;
 
-    body {
-      font-family: var(--font-body);
-      font-size: 16px;
-      line-height: 1.6;
-      color: var(--ink-primary);
-      background-color: var(--bg-canvas);
-      background-image: radial-gradient(circle, var(--bg-grid) 1px, transparent 1px);
-      background-size: 24px 24px;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
+  --code-bg: #101217;
+  --code-ink: #dcdad2;
+  --code-border: #2b2d34;
+}
 
-    .topbar {
-      border-bottom: 1px solid var(--line);
-      background: var(--surface-card);
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      box-shadow: var(--shadow-sm);
-    }
-    .topbar-inner {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0.75rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-    .brand-spec {
-      font-family: var(--font-heading);
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--blue-text);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .badge-label {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      background: var(--surface-subtle);
-      border: 1px solid var(--line);
-      padding: 0.15rem 0.45rem;
-      border-radius: 3px;
-      color: var(--ink-muted);
-    }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    .page-nav {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      border-left: 1px solid var(--line);
-      padding-left: 0.75rem;
-      margin-left: 0.25rem;
-    }
-    .nav-tab {
-      font-family: var(--font-heading);
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
-      color: var(--ink-muted);
-      border: 1px solid transparent;
-      transition: all 0.15s;
-    }
-    .nav-tab:hover {
-      background: var(--surface-subtle);
-      color: var(--ink-primary);
-    }
-    .nav-tab.active {
-      background: var(--blue-soft);
-      border-color: var(--blue-line);
-      color: var(--blue-text);
-    }
+body {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--bg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
 
-    .theme-picker {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.78rem;
-      color: var(--ink-muted);
-    }
-    .theme-select {
-      font-family: var(--font-body);
-      font-size: 0.78rem;
-      padding: 0.35rem 0.6rem;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      background: var(--surface-card);
-      color: var(--ink-primary);
-      cursor: pointer;
-    }
+code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0.06em 0.32em;
+  color: var(--ink);
+}
 
-    .container {
-      max-width: 900px;
-      margin: 2rem auto 4rem;
-      padding: 0 1.25rem;
-    }
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
 
-    .scratchpad-card {
-      background: var(--surface-card);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      box-shadow: var(--shadow-sm);
-      padding: 2.5rem 2rem;
-    }
+/* ------------------------------ Top bar ------------------------------ */
 
-    .eyebrow {
-      font-family: var(--font-heading);
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--blue-text);
-      margin-bottom: 0.4rem;
-    }
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
 
-    h1 {
-      font-family: var(--font-heading);
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--ink-primary);
-      margin-bottom: 1rem;
-    }
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  padding: 0.55rem var(--pad-x);
+}
 
-    p {
-      color: var(--ink-secondary);
-      margin-bottom: 1.2rem;
-      line-height: 1.6;
-    }
+.brand-spec {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-muted);
+}
 
-    .empty-state {
-      border: 2px dashed var(--line);
-      border-radius: 8px;
-      padding: 3rem 1.5rem;
-      text-align: center;
-      background: var(--surface-subtle);
-      margin-top: 1.5rem;
-    }
-    .empty-icon {
-      font-size: 2rem;
-      margin-bottom: 0.75rem;
-      color: var(--ink-muted);
-    }
-    .empty-title {
-      font-family: var(--font-heading);
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--ink-primary);
-      margin-bottom: 0.5rem;
-    }
-    .empty-desc {
-      font-size: 0.92rem;
-      color: var(--ink-muted);
-      max-width: 48ch;
-      margin: 0 auto;
-    }
+.badge-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  padding: 0.14rem 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--ink-faint);
+}
+
+.page-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  border-left: 1px solid var(--line);
+  padding-left: 0.9rem;
+  margin-left: 0.25rem;
+}
+
+.nav-tab {
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  text-decoration: none;
+  padding: 0.32rem 0.65rem;
+  border-radius: 3px;
+  color: var(--ink-muted);
+}
+.nav-tab:hover {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+.nav-tab.active {
+  color: var(--ink);
+  background: var(--surface-2);
+  font-weight: 600;
+}
+
+.theme-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+.theme-select {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  padding: 0.3rem 0.45rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/* ------------------------------ Content ------------------------------ */
+
+.container {
+  padding: 2.5rem var(--pad-x) 4rem;
+}
+
+.scratchpad-card {
+  max-width: var(--measure);
+}
+
+.eyebrow {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 0.45rem;
+}
+
+h1 {
+  font-family: var(--font-body);
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 0.9rem;
+}
+
+p {
+  color: var(--ink-2);
+  margin-bottom: 1.1rem;
+  line-height: 1.65;
+}
+
+.empty-state {
+  margin-top: 2rem;
+  padding: 2.75rem 1.5rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 4px;
+  text-align: center;
+  background: var(--surface);
+}
+
+.empty-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  margin-bottom: 0.7rem;
+  color: var(--ink-muted);
+}
+
+.empty-title {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.45rem;
+}
+
+.empty-desc {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  max-width: 52ch;
+  margin: 0 auto;
+}
   </style>
 </head>
 <body>

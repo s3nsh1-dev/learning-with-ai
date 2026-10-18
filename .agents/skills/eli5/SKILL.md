@@ -60,6 +60,21 @@ destination rules in `AGENTS.md`; a course does not authorize a page rewrite for
   [artifact-diagramming](../artifact-diagramming/SKILL.md), and
   [frontend-design](../frontend-design/SKILL.md) skills when creating or redesigning a page.
   For a content update, preserve the existing visual design unless the user requests a redesign.
+- **Standard Typography (Lexend)**:
+  - Always use **Lexend** as the required standard typeface for reading (`--font-body`), interface controls (`--font-ui`), and headings (`--font-heading`) across all pages (`index.html`, `MCQ.html`, and `disposable.html`).
+  - Preconnect and load Lexend from Google Fonts in the `<head>` of every page:
+    ```html
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    ```
+  - Define standard font stack CSS variables in `:root`:
+    ```css
+    --font-body: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-ui: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-heading: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+    ```
 - **Common Cross-Page Navigation**: Every page (`index.html`, `MCQ.html`, and `disposable.html`) must include a persistent top navigation bar linking between Lesson, Assessment, and Scratchpad.
 - **Topbar Help Button**: Include a `[HELP]` button in the topbar that toggles an in-page panel displaying the full form and a 1-sentence plain-English explanation for every technical acronym introduced on that page.
 - **Interactive SVG for Mechanisms**: Support explanations with hand-authored inline SVG. When explaining mechanisms with multiple states, paths, or failure modes (e.g. PR checks vs. main release, normal vs. rollback), provide simple buttons to toggle SVG states so visual learners see how the system reacts. Avoid decorative or redundant figures.
