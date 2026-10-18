@@ -206,4 +206,3 @@ The deployment lesson uses SSH because it is the most approachable route for
 this small project. It still uses key-only login, a dedicated deploy key, and
 a verified host key. A later advanced track can replace this with AWS Systems
 Manager and GitHub OIDC to avoid automation over public SSH.
-
