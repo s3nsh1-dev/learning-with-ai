@@ -75,6 +75,12 @@ destination rules in `AGENTS.md`; a course does not authorize a page rewrite for
     --font-heading: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
     ```
+- **Full-Width Fluid Layout (Strictly No Centered Shells, Margin Auto, or Artificial Max-Widths)**:
+  - All pages (`index.html`, `MCQ.html`, `disposable.html`) must use a fluid, full-width layout stretching across the screen (`padding: ... var(--pad-x)` only).
+  - Never use `margin: 0 auto`, `margin: auto`, or artificial container `max-width` (e.g. `max-width: 1040px`, `max-width: 1440px`, or `max-width: 65ch/70ch/80ch` on body text/containers). Content must freely use the full width to display.
+- **Collapsible Sidebar**:
+  - The lesson page (`index.html`) includes a collapsible topic sidebar with a dedicated toggle button in the topbar (`#sidebar-toggle-btn`) and inside the sidebar header (`#sidebar-close-btn`).
+  - Toggling collapses or expands the sidebar on desktop and mobile without centering the main content.
 - **Common Cross-Page Navigation**: Every page (`index.html`, `MCQ.html`, and `disposable.html`) must include a persistent top navigation bar linking between Lesson, Assessment, and Scratchpad.
 - **Topbar Help Button**: Include a `[HELP]` button in the topbar that toggles an in-page panel displaying the full form and a 1-sentence plain-English explanation for every technical acronym introduced on that page.
 - **Interactive SVG for Mechanisms**: Support explanations with hand-authored inline SVG. When explaining mechanisms with multiple states, paths, or failure modes (e.g. PR checks vs. main release, normal vs. rollback), provide simple buttons to toggle SVG states so visual learners see how the system reacts. Avoid decorative or redundant figures.
