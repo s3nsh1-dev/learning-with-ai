@@ -691,6 +691,34 @@ code {
   cursor: not-allowed;
 }
 
+/* ------------------------ Per-stage submission ------------------------ */
+
+.stage-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 1.6rem 0 2.6rem;
+  padding: 1.15rem 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+}
+.stage-footer .scoreboard {
+  margin-bottom: 0;
+}
+.stage-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.7rem 1rem;
+}
+.stage-counter {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
 /* ----------------------------- Responsive ---------------------------- */
 
 @media (max-width: 640px) {
@@ -796,7 +824,6 @@ code {
       <span class="counter-info" id="answer-counter">0 of 20 answered</span>
       <div class="btn-group">
         <button class="btn-retry" id="retry-btn">Retake Assessment</button>
-        <button class="btn-submit" id="submit-btn" disabled>Submit Answers for Evaluation</button>
       </div>
     </div>
   </main>
@@ -1123,9 +1150,13 @@ code {
 
       const letters = ["A", "B", "C", "D"];
 
+      const stageNumbers = [...new Set(questions.map((q) => q.stage))];
+      const questionsForStage = (s) => questions.filter((q) => q.stage === s);
+      const isStageSubmitted = (s) => !!state.submittedStages[s];
+
       let state = {
         answers: {},
-        submitted: false,
+        submittedStages: {},
         theme: "system"
       };
 
@@ -1135,7 +1166,15 @@ code {
           const parsed = JSON.parse(raw);
           if (parsed && typeof parsed === "object") {
             if (parsed.answers && typeof parsed.answers === "object") state.answers = parsed.answers;
-            if (typeof parsed.submitted === "boolean") state.submitted = parsed.submitted;
+            // Migration: the old format graded all stages with a single flag
+            if (parsed.submitted === true) {
+              stageNumbers.forEach((s) => { state.submittedStages[s] = true; });
+            }
+            if (parsed.submittedStages && typeof parsed.submittedStages === "object") {
+              stageNumbers.forEach((s) => {
+                if (parsed.submittedStages[s]) state.submittedStages[s] = true;
+              });
+            }
             if (["system", "light", "dark"].includes(parsed.theme)) state.theme = parsed.theme;
           }
         }
@@ -1144,7 +1183,6 @@ code {
       }
 
       const qContainer = document.getElementById("questions-container");
-      const submitBtn = document.getElementById("submit-btn");
       const retryBtn = document.getElementById("retry-btn");
       const counterSpan = document.getElementById("answer-counter");
       const scoreboard = document.getElementById("scoreboard");
@@ -1171,7 +1209,6 @@ code {
 
       function renderQuestions() {
         qContainer.innerHTML = "";
-        const isSubmitted = state.submitted;
         let lastStage = null;
 
         questions.forEach((q, qIndex) => {
@@ -1201,6 +1238,7 @@ code {
           const userChoice = state.answers[q.id];
           const hasAnswered = userChoice !== undefined;
           const isCorrect = userChoice === q.correct;
+          const isSubmitted = isStageSubmitted(q.stage);
 
           if (isSubmitted) {
             if (isCorrect) {
@@ -1280,17 +1318,108 @@ code {
           }
 
           qContainer.appendChild(card);
+
+          // Close the stage section with its own submit / result footer
+          const next = questions[qIndex + 1];
+          if (!next || next.stage !== q.stage) {
+            qContainer.appendChild(buildStageFooter(q.stage));
+          }
         });
+      }
+
+      function buildStageFooter(stage) {
+        const sQuestions = questionsForStage(stage);
+        const answered = sQuestions.filter((q) => state.answers[q.id] !== undefined).length;
+        const submitted = isStageSubmitted(stage);
+
+        const footer = document.createElement("div");
+        footer.className = "stage-footer";
+
+        if (submitted) {
+          const correct = sQuestions.filter((q) => state.answers[q.id] === q.correct).length;
+          const total = sQuestions.length;
+          const pct = Math.round((correct / total) * 100);
+
+          const banner = document.createElement("div");
+          banner.className = `scoreboard visible ${correct === total ? "pass" : "review-needed"}`;
+          banner.id = `stage-scoreboard-${stage}`;
+
+          const head = document.createElement("div");
+          head.className = "score-title";
+          head.textContent = `Stage 0${stage} result: ${correct} / ${total} (${pct}%)`;
+
+          const sub = document.createElement("p");
+          sub.className = "score-desc";
+          sub.textContent = correct === total
+            ? `Stage 0${stage} mastered — every concept in this section is solid. You can move on to the next stage whenever you are ready.`
+            : `Review the highlighted Stage 0${stage} questions above, then retake just this stage.`;
+
+          banner.appendChild(head);
+          banner.appendChild(sub);
+          footer.appendChild(banner);
+
+          const row = document.createElement("div");
+          row.className = "stage-footer-row";
+
+          const info = document.createElement("span");
+          info.className = "stage-counter";
+          info.textContent = `Stage 0${stage} is graded and locked.`;
+
+          const retake = document.createElement("button");
+          retake.type = "button";
+          retake.className = "btn-retry visible";
+          retake.textContent = `Retake Stage 0${stage}`;
+          retake.addEventListener("click", () => {
+            sQuestions.forEach((q) => { delete state.answers[q.id]; });
+            delete state.submittedStages[stage];
+            saveState();
+            render();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+
+          row.appendChild(info);
+          row.appendChild(retake);
+          footer.appendChild(row);
+        } else {
+          const row = document.createElement("div");
+          row.className = "stage-footer-row";
+
+          const info = document.createElement("span");
+          info.className = "stage-counter";
+          info.textContent = `Stage 0${stage}: ${answered} of ${sQuestions.length} answered`;
+
+          const submitStage = document.createElement("button");
+          submitStage.type = "button";
+          submitStage.className = "btn-submit";
+          submitStage.id = `submit-stage-${stage}`;
+          submitStage.textContent = `Submit Stage 0${stage} Answers`;
+          submitStage.disabled = answered < sQuestions.length;
+          submitStage.addEventListener("click", () => {
+            if (answered < sQuestions.length) return;
+            state.submittedStages[stage] = true;
+            saveState();
+            render();
+            const banner = document.getElementById(`stage-scoreboard-${stage}`);
+            if (banner) banner.scrollIntoView({ behavior: "smooth", block: "center" });
+          });
+
+          row.appendChild(info);
+          row.appendChild(submitStage);
+          footer.appendChild(row);
+        }
+
+        return footer;
       }
 
       function updateControls() {
         const answeredCount = Object.keys(state.answers).length;
         const total = questions.length;
-        counterSpan.textContent = `${answeredCount} of ${total} answered`;
+        const gradedStages = stageNumbers.filter(isStageSubmitted).length;
+        counterSpan.textContent = `${answeredCount} of ${total} answered · ${gradedStages} of ${stageNumbers.length} stages graded`;
 
-        if (state.submitted) {
-          submitBtn.disabled = true;
-          submitBtn.style.display = "none";
+        // The top scoreboard is the final aggregate: it only appears once
+        // every stage has been submitted individually.
+        if (gradedStages === stageNumbers.length) {
           retryBtn.classList.add("visible");
 
           let correctCount = 0;
@@ -1300,18 +1429,16 @@ code {
 
           scoreboard.classList.add("visible");
           const pct = Math.round((correctCount / total) * 100);
-          scoreHeadline.textContent = `Score: ${correctCount} / ${total} (${pct}%)`;
+          scoreHeadline.textContent = `Final score: ${correctCount} / ${total} (${pct}%)`;
 
           if (correctCount === total) {
             scoreboard.className = "scoreboard visible pass";
             scoreSub.textContent = "Outstanding! You scored 100% (20/20) and demonstrated mastery of test safety (Stage 2), pull-request CI verification gates (Stage 3), and immutable GHCR container releases (Stage 4). You are fully prepared to advance to Stage 5: Production Compose Contract!";
           } else {
             scoreboard.className = "scoreboard visible review-needed";
-            scoreSub.textContent = `Review the highlighted concepts for the ${total - correctCount} question(s) you missed below, then retake to achieve 100%.`;
+            scoreSub.textContent = `Review the highlighted concepts for the ${total - correctCount} question(s) you missed below, then retake the stages you want to improve.`;
           }
         } else {
-          submitBtn.style.display = "inline-block";
-          submitBtn.disabled = answeredCount < total;
           retryBtn.classList.remove("visible");
           scoreboard.classList.remove("visible");
         }
@@ -1322,17 +1449,9 @@ code {
         updateControls();
       }
 
-      submitBtn.addEventListener("click", () => {
-        if (Object.keys(state.answers).length < questions.length) return;
-        state.submitted = true;
-        saveState();
-        render();
-        scoreboard.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-
       retryBtn.addEventListener("click", () => {
         state.answers = {};
-        state.submitted = false;
+        state.submittedStages = {};
         saveState();
         render();
         window.scrollTo({ top: 0, behavior: "smooth" });

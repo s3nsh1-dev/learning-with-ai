@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scratchpad &amp; Ad-Hoc Reviews</title>
+  <title>Stage 2 Runbook &middot; Execute &middot; docker-beginner-simulation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
 /* ==================================================================
-   Learning reader — minimal reading-first stylesheet (Scratchpad page).
-   Lexend for reading and UI controls, flat hairline surfaces.
-   Full-width layout: topic sidebar + fluid content, no centered shell.
+   Learning reader — Scratchpad page (Stage 2 execution runbook).
+   Same design system as index.html / MCQ.html: Lexend, hairline
+   surfaces, full-width fluid layout, no centered shell.
    ================================================================== */
 
 :root {
@@ -40,6 +40,16 @@
   --amber-line: #e6d6ac;
   --amber-text: #775105;
 
+  --rose: #b3384e;
+  --rose-soft: #faecee;
+  --rose-line: #e8c2ca;
+  --rose-text: #8f2c3e;
+
+  --purple: #5b4a9e;
+  --purple-soft: #f0edf9;
+  --purple-line: #cfc7ec;
+  --purple-text: #493a85;
+
   --code-bg: #f5f4ef;
   --code-ink: #26251f;
   --code-border: #e4e2da;
@@ -49,7 +59,6 @@
   --font-heading: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
 
-  --measure: 80ch;
   --pad-x: clamp(1rem, 2.5vw, 2rem);
 }
 
@@ -79,6 +88,16 @@
     --amber-soft: rgba(220, 175, 74, 0.12);
     --amber-line: #6e5722;
     --amber-text: #e3c377;
+
+    --rose: #e58799;
+    --rose-soft: rgba(229, 135, 153, 0.12);
+    --rose-line: #6e3542;
+    --rose-text: #eba7b4;
+
+    --purple: #a795ec;
+    --purple-soft: rgba(167, 149, 236, 0.12);
+    --purple-line: #4d4275;
+    --purple-text: #c0b4f3;
 
     --code-bg: #101217;
     --code-ink: #dcdad2;
@@ -112,6 +131,16 @@
   --amber-line: #6e5722;
   --amber-text: #e3c377;
 
+  --rose: #e58799;
+  --rose-soft: rgba(229, 135, 153, 0.12);
+  --rose-line: #6e3542;
+  --rose-text: #eba7b4;
+
+  --purple: #a795ec;
+  --purple-soft: rgba(167, 149, 236, 0.12);
+  --purple-line: #4d4275;
+  --purple-text: #c0b4f3;
+
   --code-bg: #101217;
   --code-ink: #dcdad2;
   --code-border: #2b2d34;
@@ -141,6 +170,7 @@ code {
   border-radius: 3px;
   padding: 0.06em 0.32em;
   color: var(--ink);
+  word-break: break-all;
 }
 
 :focus-visible {
@@ -214,6 +244,31 @@ code {
   font-weight: 600;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.help-toggle {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+.help-toggle:hover { color: var(--ink); background: var(--surface-2); }
+.help-toggle[aria-expanded="true"] {
+  color: var(--blue-text);
+  border-color: var(--blue-line);
+  background: var(--blue-soft);
+}
+
 .theme-picker {
   display: flex;
   align-items: center;
@@ -234,13 +289,45 @@ code {
   cursor: pointer;
 }
 
+.help-panel {
+  display: none;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  padding: 1.1rem var(--pad-x) 1.3rem;
+}
+.help-panel.open { display: block; }
+
+.help-panel h2 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 0.7rem;
+}
+
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.45rem 1.4rem;
+}
+
+.help-item {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.help-item strong {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink);
+  margin-right: 0.35rem;
+}
+
 /* ------------------------------ Content ------------------------------ */
 
 .container {
-  padding: 2.5rem var(--pad-x) 4rem;
-}
-
-.scratchpad-card {
+  padding: 2.5rem var(--pad-x) 4.5rem;
 }
 
 .eyebrow {
@@ -254,8 +341,8 @@ code {
 }
 
 h1 {
-  font-family: var(--font-body);
-  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 2.6vw, 2.05rem);
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.01em;
@@ -263,44 +350,263 @@ h1 {
   margin-bottom: 0.9rem;
 }
 
-p {
-  color: var(--ink-2);
-  margin-bottom: 1.1rem;
-  line-height: 1.65;
+h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+  margin: 2.4rem 0 0.4rem;
 }
 
-.empty-state {
-  margin-top: 2rem;
-  padding: 2.75rem 1.5rem;
-  border: 1px dashed var(--line-strong);
+p { color: var(--ink-2); margin-bottom: 1.1rem; line-height: 1.65; }
+p strong { color: var(--ink); font-weight: 600; }
+
+.intro-card {
+  border: 1px solid var(--blue-line);
+  border-left: 3px solid var(--blue);
   border-radius: 4px;
-  text-align: center;
+  background: var(--blue-soft);
+  padding: 1.1rem 1.3rem;
+  margin: 1.4rem 0 0.5rem;
+}
+.intro-card p { margin-bottom: 0.4rem; color: var(--ink-2); }
+.intro-card p:last-child { margin-bottom: 0; }
+.intro-card strong { color: var(--ink); }
+
+/* Progress tracker */
+.progress-shell {
+  position: sticky;
+  top: 0;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.55rem var(--pad-x);
   background: var(--surface);
+  border-bottom: 1px solid var(--line);
 }
-
-.empty-icon {
-  font-size: 1.6rem;
-  line-height: 1;
-  margin-bottom: 0.7rem;
+.progress-count {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
   color: var(--ink-muted);
+  white-space: nowrap;
 }
+.progress-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--emerald);
+  transition: width 0.25s ease;
+}
+.progress-fill.complete { background: var(--emerald-text); }
+.progress-reset {
+  flex: none;
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+.progress-reset:hover { color: var(--ink); background: var(--surface-2); }
 
-.empty-title {
+/* Phase banner */
+.phase-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  margin: 2.6rem 0 0.3rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--line);
+}
+.phase-head:first-of-type { margin-top: 1.2rem; }
+.phase-tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.18rem 0.55rem;
+  border-radius: 3px;
+}
+.phase-tag.a { color: var(--purple-text); background: var(--purple-soft); border: 1px solid var(--purple-line); }
+.phase-tag.b { color: var(--amber-text); background: var(--amber-soft); border: 1px solid var(--amber-line); }
+.phase-sub { font-size: 0.92rem; color: var(--ink-muted); margin: 0.15rem 0 1.4rem; }
+
+/* Runbook step */
+.runbook-step {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface);
+  margin-bottom: 1.3rem;
+  overflow: hidden;
+}
+.runbook-step.done { border-color: var(--emerald-line); }
+
+.step-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.2rem;
+  cursor: pointer;
+  user-select: none;
+}
+.step-head:hover { background: var(--surface-2); }
+.step-head input[type="checkbox"] {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--emerald);
+  cursor: pointer;
+  flex: none;
+}
+.step-no {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.7rem;
+  height: 1.7rem;
+  padding: 0 0.3rem;
+  border: 1px solid var(--blue-line);
+  border-radius: 3px;
+  background: var(--blue-soft);
+  color: var(--blue-text);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.step-title {
   font-family: var(--font-ui);
   font-size: 1rem;
   font-weight: 600;
   color: var(--ink);
-  margin-bottom: 0.45rem;
 }
+.runbook-step.done .step-title {
+  color: var(--ink-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--emerald-line);
+}
+.step-body {
+  padding: 0.2rem 1.35rem 1.25rem;
+  border-top: 1px dashed var(--line);
+}
+.step-body p { margin: 0.85rem 0 0.9rem; font-size: 0.95rem; }
 
-.empty-desc {
+/* Code blocks with header + copy */
+.code-wrap {
+  margin: 0.9rem 0 1rem;
+  border: 1px solid var(--code-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--code-border);
+}
+.code-path {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-muted);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.copy-btn {
+  flex: none;
   font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+.copy-btn:hover { color: var(--ink); background: var(--bg); }
+.copy-btn.copied { color: var(--emerald-text); border-color: var(--emerald-line); }
+
+.code-block {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--code-ink);
+  background: var(--code-bg);
+  padding: 0.9rem 1.1rem;
+  overflow-x: auto;
+  margin: 0;
+  white-space: pre;
+}
+.code-block .cm { color: var(--ink-faint); }
+.code-block .add { color: var(--emerald-text); }
+.code-block .del { color: var(--rose-text); }
+
+/* Verify box */
+.verify-box {
+  border: 1px solid var(--emerald-line);
+  border-left: 3px solid var(--emerald);
+  border-radius: 0 4px 4px 0;
+  background: var(--emerald-soft);
+  padding: 0.7rem 1rem;
   font-size: 0.9rem;
   line-height: 1.55;
-  color: var(--ink-muted);
-  max-width: 52ch;
-  margin: 0 auto;
+  color: var(--ink-2);
+  margin: 0.9rem 0 0.3rem;
 }
+.verify-box strong { color: var(--emerald-text); }
+.verify-box code { font-size: 0.82em; }
+
+.warn-note {
+  border: 1px solid var(--amber-line);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 4px 4px 0;
+  background: var(--amber-soft);
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0.9rem 0 0.3rem;
+}
+.warn-note strong { color: var(--amber-text); }
+
+ul.plain { margin: 0.6rem 0 1rem 1.2rem; color: var(--ink-2); font-size: 0.95rem; }
+ul.plain li { margin-bottom: 0.4rem; line-height: 1.6; padding-left: 0.3rem; }
+ul.plain li strong { color: var(--ink); }
+
+/* Completion card */
+.final-card {
+  border: 1px solid var(--emerald-line);
+  border-left: 3px solid var(--emerald);
+  border-radius: 4px;
+  background: var(--emerald-soft);
+  padding: 1.2rem 1.4rem;
+  margin-top: 1.4rem;
+}
+.final-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--emerald-text);
+  margin-bottom: 0.6rem;
+}
+.final-card ul { margin-left: 1.2rem; color: var(--ink-2); }
+.final-card li { margin-bottom: 0.5rem; line-height: 1.55; }
+.final-card li strong { color: var(--ink); }
   </style>
 </head>
 <body>
@@ -316,31 +622,424 @@ p {
         <a href="/MCQ.html" class="nav-tab">Assessment</a>
         <a href="/disposable.html" class="nav-tab active" aria-current="page">Scratchpad</a>
       </nav>
-      <div class="theme-picker">
-        <label for="theme-select">Theme:</label>
-        <select id="theme-select" class="theme-select" aria-label="Theme mode">
-          <option value="system">System</option>
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
+      <div class="topbar-actions">
+        <button id="help-toggle" class="help-toggle" aria-expanded="false" aria-controls="help-panel">[HELP]</button>
+        <div class="theme-picker">
+          <label for="theme-select">Theme:</label>
+          <select id="theme-select" class="theme-select" aria-label="Theme mode">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div id="help-panel" class="help-panel" role="region" aria-label="Acronym reference">
+      <h2>Acronyms &amp; terms on this page</h2>
+      <div class="help-grid">
+        <div class="help-item"><strong>URL</strong>Uniform Resource Locator — a text address that says where a service lives and how to reach it, e.g. <code>postgres://user:pass@host:port/db</code>.</div>
+        <div class="help-item"><strong>DB</strong>Database — the program that stores and manages the data, here PostgreSQL.</div>
+        <div class="help-item"><strong>API</strong>Application Programming Interface — the set of URLs (<code>/api/todos</code>) the server exposes for the client to call.</div>
+        <div class="help-item"><strong>DNS</strong>Domain Name System — turns names into addresses; inside a Compose network, service names like <code>test-db</code> resolve to containers.</div>
+        <div class="help-item"><strong>CI</strong>Continuous Integration — an automated service (GitHub Actions) that runs your tests on every pull request.</div>
+        <div class="help-item"><strong>E2E</strong>End-to-end — tests that drive the real app in a browser, clicking and typing like a user.</div>
+        <div class="help-item"><strong>SSL / TLS</strong>Secure Sockets Layer / Transport Layer Security — encryption for network connections; required by Neon, not needed inside a private Compose network.</div>
+        <div class="help-item"><strong>YAML</strong>YAML Ain't Markup Language — the indentation-based format Compose files are written in.</div>
+        <div class="help-item"><strong>PR</strong>Pull Request — a proposed change in GitHub that CI checks before merge.</div>
+        <div class="help-item"><strong>tmpfs</strong>A file system held in RAM only — data written there vanishes when the container stops, leaving nothing on disk.</div>
+        <div class="help-item"><strong>healthcheck</strong>A Compose feature: a command the container runs on itself so dependents can wait until it is truly ready, not just started.</div>
+        <div class="help-item"><strong>pnpm</strong>Performant npm — a fast Node package manager; your server and client use it. <code>pnpm --dir server test</code> runs a script inside the <code>server/</code> folder.</div>
+        <div class="help-item"><strong>exit code</strong>A number every command returns when it ends: 0 means success, anything else means failure. CI and <code>&amp;&amp;</code> chains read it.</div>
+        <div class="help-item"><strong>pg_isready</strong>A small PostgreSQL tool that checks whether the database server accepts connections — used in the test-db healthcheck.</div>
+        <div class="help-item"><strong>exec</strong><code>docker compose exec &lt;service&gt; &lt;command&gt;</code> runs a command inside a running container — used here to inspect the server's environment.</div>
       </div>
     </div>
   </header>
 
-  <main class="container">
-    <article class="scratchpad-card">
-      <div class="eyebrow">Ad-Hoc Explanations &amp; Deep-Dives</div>
-      <h1>Disposable Scratchpad</h1>
-      <p>
-        This page is strictly reserved for user-requested deep dives, targeted troubleshooting, and ad-hoc concept remediation. It is replaced entirely whenever an ad-hoc explainer is generated.
-      </p>
+  <div class="progress-shell">
+    <span class="progress-count" id="progress-count">0 of 7 steps done</span>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <button class="progress-reset" id="progress-reset" type="button">Reset</button>
+  </div>
 
-      <div class="empty-state">
-        <div class="empty-icon">🧪</div>
-        <div class="empty-title">Ready for Ad-Hoc Lessons</div>
-        <p class="empty-desc">
-          When you request a concept breakdown or remediation in chat, the explanation and interactive diagrams will populate this page.
-        </p>
+  <main class="container">
+    <article>
+      <div class="eyebrow">Execution Runbook &middot; docker-beginner-simulation &middot; Stage 2</div>
+      <h1>Stage 2 Runbook: Do It, Step by Step</h1>
+
+      <div class="intro-card">
+        <p><strong>How to use this page:</strong> work top to bottom, tick each step as you finish it (ticks persist in this browser), and only move on when the <strong>Verify</strong> line passes. Every file is given complete — paste the whole thing, no merging by hand.</p>
+        <p><strong>Two phases, as you planned:</strong> Phase A gets your Dockerized client + server + disposable Postgres running and proves the app works <em>by hand</em> — no Playwright anywhere. Only when Phase A is green do you introduce Playwright in Phase B.</p>
+        <p><strong>Ground rule:</strong> run every command from the repo root <code>~/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation</code> unless a step says otherwise.</p>
+      </div>
+
+      <!-- ============================== PHASE A ============================== -->
+      <div class="phase-head">
+        <span class="phase-tag a">PHASE A</span>
+        <h2>Dockerized stack works — verified by hand</h2>
+      </div>
+      <p class="phase-sub">Goal: client + server + postgres:16-alpine containers, with the server pointed at the disposable database and you clicking through the app yourself.</p>
+
+      <section class="runbook-step" id="step-1">
+        <label class="step-head" for="check-1">
+          <input type="checkbox" class="step-check" id="check-1" data-step="1">
+          <span class="step-no">1</span>
+          <span class="step-title">Point the test server at test-db (remove env_file)</span>
+        </label>
+        <div class="step-body">
+          <p>
+            Your <code>docker-compose.test.yml</code> copies the production <code>server</code> service wholesale, <code>env_file: ./server/.env</code> included — so tests would still hit Neon. Replace the whole file with this; the only changes are inside the <code>server</code> service: <code>env_file</code> is gone, an <code>environment</code> override is in, and the server now waits for the database healthcheck.
+          </p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">docker-compose.test.yml (replace entire file)</span>
+              <button class="copy-btn" type="button" data-target="code-1">COPY</button>
+            </div>
+            <pre class="code-block" id="code-1">services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    init: true
+    depends_on:
+      server:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+
+  server:
+    build: ./server
+    environment:
+      DATABASE_URL: postgres://test_user:test_password@test-db:5432/todo_test_db
+    depends_on:
+      test-db:
+        condition: service_healthy
+    restart: unless-stopped
+    expose:
+      - "5000"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'node -e "fetch(''http://localhost:5000/api/health'').then(r =&gt; process.exit(r.ok ? 0 : 1)).catch(() =&gt; process.exit(1))"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  test-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: todo_test_db
+    ports:
+      # Host port 5433 avoids clashing with a local Postgres on 5432.
+      # Containers use test-db:5432; your terminal uses localhost:5433.
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d todo_test_db"]
+      interval: 2s
+      timeout: 2s
+      retries: 10</pre>
+          </div>
+          <p>
+            Why the URL looks like that: <code>test-db</code> is the service name, and inside a Compose network every service gets a DNS name equal to its name — so the server literally dials the alpine container on its native port 5432. The <code>5433</code> host mapping is only a side door for <em>you</em>, from outside Docker. Your <code>db.ts</code> enables SSL only for <code>neon.tech</code> / <code>sslmode=require</code> URLs, so no code change is needed.
+          </p>
+          <div class="verify-box"><strong>Verify now (stack not needed yet):</strong> <code>grep -n "neon" docker-compose.test.yml</code> prints nothing, and <code>grep -c "test-db:5432" docker-compose.test.yml</code> prints <code>1</code>.</div>
+        </div>
+      </section>
+
+      <section class="runbook-step" id="step-2">
+        <label class="step-head" for="check-2">
+          <input type="checkbox" class="step-check" id="check-2" data-step="2">
+          <span class="step-no">2</span>
+          <span class="step-title">Boot the stack and watch it come healthy</span>
+        </label>
+        <div class="step-body">
+          <p>
+            <code>--wait</code> makes Compose block until every healthcheck passes — this is why the healthchecks you already wrote matter.
+          </p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">terminal · repo root</span>
+              <button class="copy-btn" type="button" data-target="code-2">COPY</button>
+            </div>
+            <pre class="code-block" id="code-2">docker compose -f docker-compose.test.yml up -d --wait</pre>
+          </div>
+          <p>It takes roughly 15–30 seconds on the first run (image builds + Postgres startup). Then confirm the server is talking to the disposable database, not Neon:</p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">terminal · inspect what the server actually sees</span>
+              <button class="copy-btn" type="button" data-target="code-2b">COPY</button>
+            </div>
+            <pre class="code-block" id="code-2b">docker compose -f docker-compose.test.yml ps
+docker compose -f docker-compose.test.yml exec server printenv DATABASE_URL
+docker compose -f docker-compose.test.yml logs server | grep -i "database initialized"</pre>
+          </div>
+          <div class="verify-box"><strong>Verify:</strong> <code>ps</code> shows 3 services <code>healthy</code>; <code>printenv</code> prints <code>postgres://test_user:test_password@test-db:5432/todo_test_db</code> (no <code>neon.tech</code> anywhere); logs show <code>Database initialized: "todos" table is ready</code>.</div>
+        </div>
+      </section>
+
+      <section class="runbook-step" id="step-3">
+        <label class="step-head" for="check-3">
+          <input type="checkbox" class="step-check" id="check-3" data-step="3">
+          <span class="step-no">3</span>
+          <span class="step-title">Use the app by hand — you are the E2E test</span>
+        </label>
+        <div class="step-body">
+          <p>
+            Before any automation, prove the full stack behaves: open <code>http://localhost:3000</code> in your normal browser and run the app like a user.
+          </p>
+          <ul class="plain">
+            <li>Add a task via the quick-add input.</li>
+            <li>Toggle its completion checkbox on and off.</li>
+            <li>Create a second task via the detailed modal.</li>
+            <li>Delete both tasks.</li>
+          </ul>
+          <p>While a task exists, watch it land in the disposable database from another terminal (optional, needs <code>psql</code> locally):</p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">terminal · peek into the disposable DB through the 5433 side door</span>
+              <button class="copy-btn" type="button" data-target="code-3">COPY</button>
+            </div>
+            <pre class="code-block" id="code-3">psql postgres://test_user:test_password@localhost:5433/todo_test_db \
+  -c "SELECT id, title, completed FROM todos;"</pre>
+          </div>
+          <div class="verify-box"><strong>Verify:</strong> the UI reflects every action instantly, and the <code>psql</code> rows appear/disappear in sync with your clicks. Traffic path: browser &rarr; nginx :3000 &rarr; <code>/api</code> proxy &rarr; server :5000 &rarr; <code>test-db</code> — all containers, zero Neon.</div>
+        </div>
+      </section>
+
+      <section class="runbook-step" id="step-4">
+        <label class="step-head" for="check-4">
+          <input type="checkbox" class="step-check" id="check-4" data-step="4">
+          <span class="step-no">4</span>
+          <span class="step-title">Make the server test fail loudly + clean up, then run it</span>
+        </label>
+        <div class="step-body">
+          <p>
+            Your current <code>server/src/tests/api.test.ts</code> uses <code>console.assert</code>, which only <em>prints</em> failures and still exits 0 — CI would stay green on a broken build. Replace the whole file with this: <code>node:assert/strict</code> throws, and a <code>finally</code> block deletes the test row even when an assertion blows up mid-run.
+          </p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">server/src/tests/api.test.ts (replace entire file)</span>
+              <button class="copy-btn" type="button" data-target="code-4">COPY</button>
+            </div>
+            <pre class="code-block" id="code-4">import assert from "node:assert/strict";
+import { initDb } from "../config/db.js";
+import { TodoModel } from "../models/todoModel.js";
+
+async function runServerTests() {
+  console.log("Starting server integration tests against the disposable database...");
+
+  let createdId: number | undefined;
+  let failed = false;
+
+  try {
+    await initDb();
+
+    // 1. Create
+    const title = `Test Todo ${Date.now()}`;
+    const newTodo = await TodoModel.create({
+      title,
+      description: "Server test description",
+      priority: "high",
+      category: "work",
+    });
+    createdId = newTodo.id;
+    assert.equal(newTodo.title, title, "Todo title mismatch after create");
+    assert.equal(newTodo.priority, "high", "Todo priority mismatch after create");
+    console.log("PASS: create todo");
+
+    // 2. Stats
+    const stats = await TodoModel.getStats();
+    assert.equal(typeof stats.total, "number", "Stats total is not a number");
+    assert.ok(stats.total >= 1, "Stats should include the created todo");
+    console.log("PASS: fetch stats");
+
+    // 3. Toggle
+    const toggled = await TodoModel.toggle(createdId);
+    assert.equal(toggled?.completed, true, "Todo should be completed after toggle");
+    console.log("PASS: toggle todo");
+
+    // 4. Delete
+    const deleted = await TodoModel.delete(createdId);
+    assert.equal(deleted, true, "Todo delete should return true");
+    createdId = undefined; // cleanup already done — no row left behind
+    console.log("PASS: delete todo");
+
+    console.log("All server model &amp; DB tests passed.");
+  } catch (err) {
+    failed = true;
+    console.error("Server integration test failed:", err);
+  } finally {
+    // Runs on success AND failure: never leave test data behind.
+    if (createdId !== undefined) {
+      await TodoModel.delete(createdId).catch(() =&gt; {});
+    }
+  }
+
+  process.exit(failed ? 1 : 0);
+}
+
+runServerTests();</pre>
+          </div>
+          <p>
+            The server suite runs from your machine, not inside a container — so it knocks on the <strong>side door</strong> <code>localhost:5433</code>, the published host port, not the internal <code>test-db:5432</code>. Same database, two doors.
+          </p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">terminal · repo root</span>
+              <button class="copy-btn" type="button" data-target="code-4b">COPY</button>
+            </div>
+            <pre class="code-block" id="code-4b">DATABASE_URL=postgres://test_user:test_password@localhost:5433/todo_test_db pnpm --dir server test
+echo "exit code: $?"</pre>
+          </div>
+          <div class="verify-box"><strong>Verify:</strong> four <code>PASS:</code> lines, <code>All server model &amp; DB tests passed.</code>, and <code>exit code: 0</code>. Then prove failures are visible: temporarily change one assertion to something false (e.g. <code>assert.equal(newTodo.priority, "low")</code>), rerun, and confirm the command now prints an <code>AssertionError</code> and <code>exit code: 1</code>. Revert the change and rerun green. That non-zero exit is exactly what Stage 3&rsquo;s CI gate will read.</div>
+        </div>
+      </section>
+
+      <p class="phase-sub" style="margin-top:1.6rem;"><strong>Phase A is done when:</strong> the stack is up, you clicked through a working app on <code>:3000</code>, the server suite passes against the disposable DB with exit code 0, and broken assertions produce exit code 1. Nothing here mentioned Playwright — that was deliberate.</p>
+
+      <!-- ============================== PHASE B ============================== -->
+      <div class="phase-head">
+        <span class="phase-tag b">PHASE B</span>
+        <h2>Introduce Playwright against the Dockerized stack</h2>
+      </div>
+      <p class="phase-sub">Goal: the browser tests you already have in <code>client/e2e/todos.spec.ts</code> drive the real composed app instead of the Vite dev server.</p>
+
+      <section class="runbook-step" id="step-5">
+        <label class="step-head" for="check-5">
+          <input type="checkbox" class="step-check" id="check-5" data-step="5">
+          <span class="step-no">5</span>
+          <span class="step-title">Repoint client/playwright.config.ts at the Dockerized stack</span>
+        </label>
+        <div class="step-body">
+          <p>
+            The config currently targets <code>localhost:5173</code> (Vite dev). Two values change: <code>baseURL</code> moves to the nginx container on <code>:3000</code>, and the <code>webServer</code> block becomes a Compose bootstrap so standalone runs also work. Your specs in <code>e2e/todos.spec.ts</code> need zero changes — they use relative URLs, so they follow <code>baseURL</code>.
+          </p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">client/playwright.config.ts (replace entire file)</span>
+              <button class="copy-btn" type="button" data-target="code-5">COPY</button>
+            </div>
+            <pre class="code-block" id="code-5">import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './e2e',
+  fullyParallel: false,
+  forbidOnly: !!process.env.CI,
+  retries: 1,
+  workers: 1,
+  reporter: 'list',
+  use: {
+    baseURL: 'http://localhost:3000', // the dockerized client (nginx)
+    trace: 'on-first-retry',
+    headless: true,
+  },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
+  webServer: {
+    // Fallback bootstrap: if the stack is already up (Phase A), Playwright
+    // detects the URL and skips this. `up -d --wait` is idempotent.
+    command: 'docker compose -f ../docker-compose.test.yml up -d --wait',
+    url: 'http://localhost:3000',
+    reuseExistingServer: true,
+    timeout: 120000,
+  },
+});</pre>
+          </div>
+          <p>First run only: make sure a Chromium binary exists for Playwright to drive (already done on this machine for the learning project, but the client has its own Playwright version):</p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">terminal · first time only</span>
+              <button class="copy-btn" type="button" data-target="code-5b">COPY</button>
+            </div>
+            <pre class="code-block" id="code-5b">pnpm --dir client exec playwright install chromium</pre>
+          </div>
+          <div class="verify-box"><strong>Verify:</strong> <code>grep -n "3000" client/playwright.config.ts</code> shows both the <code>baseURL</code> and webServer <code>url</code> on port 3000, and no <code>5173</code> remains.</div>
+        </div>
+      </section>
+
+      <section class="runbook-step" id="step-6">
+        <label class="step-head" for="check-6">
+          <input type="checkbox" class="step-check" id="check-6" data-step="6">
+          <span class="step-no">6</span>
+          <span class="step-title">Create the one-command ceremony at the repo root</span>
+        </label>
+        <div class="step-body">
+          <p>
+            There is no <code>package.json</code> at the repo root yet — create it. The chain: bring the stack up, run the server suite, run the browser suite, then <em>always</em> tear down. The teardown is joined with <code>;</code> instead of <code>&amp;&amp;</code> so it runs even when a test suite fails — a crashed test can never leave containers behind.
+          </p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">package.json (create at repo root)</span>
+              <button class="copy-btn" type="button" data-target="code-6">COPY</button>
+            </div>
+            <pre class="code-block" id="code-6">{
+  "name": "docker-beginner-simulation",
+  "private": true,
+  "scripts": {
+    "test:e2e": "docker compose -f docker-compose.test.yml up -d --wait &amp;&amp; DATABASE_URL=postgres://test_user:test_password@localhost:5433/todo_test_db pnpm --dir server test &amp;&amp; pnpm --dir client run test:e2e ; docker compose -f docker-compose.test.yml down -v"
+  }
+}</pre>
+          </div>
+          <p>
+            Read the chain as the Stage 2 story in one line: <strong>ephemeral environment up &rarr; integration tests against it &rarr; full-stack browser tests against it &rarr; demolition, always.</strong>
+          </p>
+          <div class="verify-box"><strong>Verify:</strong> <code>npm run</code> (at root) lists <code>test:e2e</code>, and <code>node -e "JSON.parse(require('fs').readFileSync('package.json'))"</code> prints no error — valid JSON.</div>
+        </div>
+      </section>
+
+      <section class="runbook-step" id="step-7">
+        <label class="step-head" for="check-7">
+          <input type="checkbox" class="step-check" id="check-7" data-step="7">
+          <span class="step-no">7</span>
+          <span class="step-title">Run the ceremony — twice — and leave nothing behind</span>
+        </label>
+        <div class="step-body">
+          <p>Running it twice from a clean state is the repeatability proof: the tmpfs database is fresh RAM each time, so a second green run cannot be explained by leftover data.</p>
+          <div class="code-wrap">
+            <div class="code-head">
+              <span class="code-path">terminal · repo root — the repeatability drill</span>
+              <button class="copy-btn" type="button" data-target="code-7">COPY</button>
+            </div>
+            <pre class="code-block" id="code-7">docker compose -f docker-compose.test.yml down -v
+npm run test:e2e
+npm run test:e2e
+
+# afterwards: prove nothing was left behind
+docker compose -f docker-compose.test.yml ps
+docker volume ls | grep docker-beginner-simulation</pre>
+          </div>
+          <p>
+            Expected per run: server suite <code>PASS</code> lines, then the Playwright <code>list</code> reporter showing the <code>todos.spec.ts</code> tests passing against <code>http://localhost:3000</code>. After the runs: <code>ps</code> prints an empty header (no containers), and no project volumes remain.
+          </p>
+          <div class="warn-note"><strong>If Playwright fails to connect:</strong> the stack from Phase A may still be running with <em>old</em> server wiring. Run <code>docker compose -f docker-compose.test.yml down -v</code> once, then <code>npm run test:e2e</code> — <code>up --wait</code> rebuilds with the Step 1 config.</div>
+          <div class="verify-box"><strong>Verify (Stage 2 exit criteria, all four):</strong> tests never touched Neon (Step 1 grep + Step 2 printenv) · green from a clean checkout, twice · nothing left running afterwards · broken assertions exit non-zero (Step 4 drill). When all four hold, take the Stage 2 portion of <code>MCQ.html</code> — you can submit it per stage now.</div>
+        </div>
+      </section>
+
+      <div class="final-card">
+        <h3>Where this leaves you</h3>
+        <ul>
+          <li><strong>Phase A gave you</strong> a disposable test environment and hand-verified confidence that the app works inside Docker — the same stack a CI runner will get.</li>
+          <li><strong>Phase B gave you</strong> browser tests driving that stack and a single command that boots, tests, and demolishes it — the exact shape of the Stage 3 <code>test-e2e</code> job.</li>
+          <li><strong>Commit the four changed files</strong> (<code>docker-compose.test.yml</code>, <code>server/src/tests/api.test.ts</code>, <code>client/playwright.config.ts</code>, root <code>package.json</code>) so the trail lives in git — then Stage 3 is mostly about moving this command into GitHub Actions.</li>
+        </ul>
       </div>
     </article>
   </main>
@@ -348,9 +1047,10 @@ p {
   <script>
     (function() {
       "use strict";
+
+      // Theme (shared pattern with the other pages)
       const themeSelect = document.getElementById("theme-select");
       let theme = localStorage.getItem("learning-ai:theme") || "system";
-
       function applyTheme() {
         if (theme === "system") {
           document.documentElement.removeAttribute("data-theme");
@@ -359,14 +1059,90 @@ p {
         }
         themeSelect.value = theme;
       }
-
       themeSelect.addEventListener("change", (e) => {
         theme = e.target.value;
         localStorage.setItem("learning-ai:theme", theme);
         applyTheme();
       });
-
       applyTheme();
+
+      // Help panel
+      const helpToggle = document.getElementById("help-toggle");
+      const helpPanel = document.getElementById("help-panel");
+      helpToggle.addEventListener("click", () => {
+        const open = helpPanel.classList.toggle("open");
+        helpToggle.setAttribute("aria-expanded", String(open));
+      });
+
+      // Runbook progress: explicit ticking only, persisted in localStorage
+      const PROGRESS_KEY = "learning-ai:scratchpad:stage2-runbook";
+      const checkboxes = Array.from(document.querySelectorAll(".step-check"));
+      const progressCount = document.getElementById("progress-count");
+      const progressFill = document.getElementById("progress-fill");
+
+      let doneSteps = [];
+      try {
+        const raw = localStorage.getItem(PROGRESS_KEY);
+        if (raw) doneSteps = JSON.parse(raw).filter((n) => typeof n === "string");
+      } catch (_) { doneSteps = []; }
+
+      function saveProgress() {
+        try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(doneSteps)); } catch (_) {}
+      }
+
+      function renderProgress() {
+        checkboxes.forEach((cb) => {
+          cb.checked = doneSteps.includes(cb.dataset.step);
+          cb.closest(".runbook-step").classList.toggle("done", cb.checked);
+        });
+        const done = doneSteps.length;
+        const total = checkboxes.length;
+        progressCount.textContent = `${done} of ${total} steps done`;
+        progressFill.style.width = `${total ? (done / total) * 100 : 0}%`;
+        progressFill.classList.toggle("complete", done === total && total > 0);
+      }
+
+      checkboxes.forEach((cb) => {
+        cb.addEventListener("change", () => {
+          if (cb.checked) {
+            if (!doneSteps.includes(cb.dataset.step)) doneSteps.push(cb.dataset.step);
+          } else {
+            doneSteps = doneSteps.filter((s) => s !== cb.dataset.step);
+          }
+          saveProgress();
+          renderProgress();
+        });
+      });
+
+      document.getElementById("progress-reset").addEventListener("click", () => {
+        doneSteps = [];
+        saveProgress();
+        renderProgress();
+      });
+
+      // Copy buttons
+      document.querySelectorAll(".copy-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const pre = document.getElementById(btn.dataset.target);
+          try {
+            await navigator.clipboard.writeText(pre.textContent);
+          } catch (_) {
+            const range = document.createRange();
+            range.selectNodeContents(pre);
+            const sel = getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+          btn.textContent = "COPIED";
+          btn.classList.add("copied");
+          setTimeout(() => {
+            btn.textContent = "COPY";
+            btn.classList.remove("copied");
+          }, 1400);
+        });
+      });
+
+      renderProgress();
     })();
   </script>
 </body>
