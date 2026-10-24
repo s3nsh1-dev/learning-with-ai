@@ -3,627 +3,278 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stage 2 Runbook &middot; Execute &middot; docker-beginner-simulation</title>
+  <title>Why Stage 3 Runs CI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-/* ==================================================================
-   Learning reader — Scratchpad page (Stage 2 execution runbook).
-   Same design system as index.html / MCQ.html: Lexend, hairline
-   surfaces, full-width fluid layout, no centered shell.
-   ================================================================== */
+    :root {
+      color-scheme: light;
+      --bg: #fbfaf7;
+      --surface: #fff;
+      --surface-2: #f2f1ea;
+      --ink: #21201b;
+      --ink-2: #474440;
+      --muted: #6f6b63;
+      --line: #e4e2da;
+      --line-strong: #b8b4a9;
+      --blue: #1e5fbf;
+      --blue-soft: #edf3fc;
+      --blue-line: #c3d6f1;
+      --green: #147a52;
+      --green-soft: #ecf4ee;
+      --green-line: #b9dfd0;
+      --amber: #96650a;
+      --amber-soft: #faf3e1;
+      --amber-line: #e6d6ac;
+      --red: #a33145;
+      --red-soft: #faecee;
+      --red-line: #e8c2ca;
+      --code-bg: #f5f4ef;
+      --pad-x: clamp(1rem, 2.5vw, 2rem);
+      --font-body: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      --font-heading: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      --font-ui: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      --font-mono: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+    }
 
-:root {
-  --bg: #fbfaf7;
-  --surface: #ffffff;
-  --surface-2: #f2f1ea;
-  --ink: #21201b;
-  --ink-2: #474440;
-  --ink-muted: #6f6b63;
-  --ink-faint: #9d988d;
-  --line: #e4e2da;
-  --line-strong: #b8b4a9;
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #16171b;
+        --surface: #1c1e23;
+        --surface-2: #24262c;
+        --ink: #e7e5df;
+        --ink-2: #c5c2ba;
+        --muted: #9a968e;
+        --line: #2b2d34;
+        --line-strong: #4a4d55;
+        --blue: #7dabef;
+        --blue-soft: rgba(125, 171, 239, 0.13);
+        --blue-line: #33517f;
+        --green: #4cc289;
+        --green-soft: rgba(76, 194, 137, 0.12);
+        --green-line: #2b6148;
+        --amber: #dcaf4a;
+        --amber-soft: rgba(220, 175, 74, 0.12);
+        --amber-line: #6e5722;
+        --red: #e58799;
+        --red-soft: rgba(229, 135, 153, 0.12);
+        --red-line: #6e3542;
+        --code-bg: #101217;
+      }
+    }
 
-  --blue: #1e5fbf;
-  --blue-soft: #edf3fc;
-  --blue-line: #c3d6f1;
-  --blue-text: #17479c;
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #16171b;
+      --surface: #1c1e23;
+      --surface-2: #24262c;
+      --ink: #e7e5df;
+      --ink-2: #c5c2ba;
+      --muted: #9a968e;
+      --line: #2b2d34;
+      --line-strong: #4a4d55;
+      --blue: #7dabef;
+      --blue-soft: rgba(125, 171, 239, 0.13);
+      --blue-line: #33517f;
+      --green: #4cc289;
+      --green-soft: rgba(76, 194, 137, 0.12);
+      --green-line: #2b6148;
+      --amber: #dcaf4a;
+      --amber-soft: rgba(220, 175, 74, 0.12);
+      --amber-line: #6e5722;
+      --red: #e58799;
+      --red-soft: rgba(229, 135, 153, 0.12);
+      --red-line: #6e3542;
+      --code-bg: #101217;
+    }
 
-  --emerald: #147a52;
-  --emerald-soft: #ecf4ee;
-  --emerald-line: #b9dfd0;
-  --emerald-text: #116340;
+    :root[data-theme="light"] { color-scheme: light; }
 
-  --amber: #96650a;
-  --amber-soft: #faf3e1;
-  --amber-line: #e6d6ac;
-  --amber-text: #775105;
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.65 var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+    button, select { font: inherit; }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+    code, pre { font-family: var(--font-mono); }
+    code {
+      overflow-wrap: anywhere;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0.04em 0.3em;
+      background: var(--surface-2);
+      color: var(--ink);
+      font-size: 0.88em;
+    }
 
-  --rose: #b3384e;
-  --rose-soft: #faecee;
-  --rose-line: #e8c2ca;
-  --rose-text: #8f2c3e;
+    .topbar {
+      position: sticky;
+      z-index: 5;
+      top: 0;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.65rem 1rem;
+      padding: 0.55rem var(--pad-x);
+    }
+    .brand, .page-nav, .topbar-actions, .theme-picker {
+      display: flex;
+      align-items: center;
+    }
+    .brand { gap: 0.55rem; color: var(--muted); font: 0.74rem var(--font-mono); }
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0.12rem 0.42rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .page-nav {
+      gap: 0.2rem;
+      border-left: 1px solid var(--line);
+      padding-left: 0.85rem;
+      margin-right: auto;
+      margin-left: 1rem;
+    }
+    .nav-tab {
+      border-radius: 3px;
+      padding: 0.3rem 0.62rem;
+      color: var(--muted);
+      text-decoration: none;
+      font: 0.85rem var(--font-ui);
+    }
+    .nav-tab:hover, .nav-tab.active { background: var(--surface-2); color: var(--ink); }
+    .nav-tab.active { font-weight: 600; }
+    .topbar-actions { gap: 0.8rem; }
+    .help-toggle, .theme-select, .diagram-toggle, .copy-btn {
+      border: 1px solid var(--line-strong);
+      border-radius: 3px;
+      background: var(--surface);
+      color: var(--ink-2);
+      cursor: pointer;
+    }
+    .help-toggle, .theme-select { padding: 0.25rem 0.5rem; font: 0.78rem var(--font-ui); }
+    .help-toggle[aria-expanded="true"] { border-color: var(--blue-line); background: var(--blue-soft); color: var(--blue); }
+    .theme-picker { gap: 0.35rem; color: var(--muted); font-size: 0.78rem; }
+    .help-panel { display: none; border-top: 1px solid var(--line); background: var(--surface-2); padding: 1rem var(--pad-x); }
+    .help-panel.open { display: block; }
+    .help-panel h2 { margin: 0 0 0.6rem; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .help-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 0.45rem 1.2rem; }
+    .help-item { color: var(--ink-2); font-size: 0.82rem; }
+    .help-item strong { margin-right: 0.35rem; color: var(--ink); font-family: var(--font-mono); }
 
-  --purple: #5b4a9e;
-  --purple-soft: #f0edf9;
-  --purple-line: #cfc7ec;
-  --purple-text: #493a85;
-
-  --code-bg: #f5f4ef;
-  --code-ink: #26251f;
-  --code-border: #e4e2da;
-
-  --font-body: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-ui: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-heading: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
-
-  --pad-x: clamp(1rem, 2.5vw, 2rem);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #16171b;
-    --surface: #1c1e23;
-    --surface-2: #24262c;
-    --ink: #e7e5df;
-    --ink-2: #c5c2ba;
-    --ink-muted: #9a968e;
-    --ink-faint: #6d6a64;
-    --line: #2b2d34;
-    --line-strong: #4a4d55;
-
-    --blue: #7dabef;
-    --blue-soft: rgba(125, 171, 239, 0.13);
-    --blue-line: #33517f;
-    --blue-text: #a3c4f5;
-
-    --emerald: #4cc289;
-    --emerald-soft: rgba(76, 194, 137, 0.12);
-    --emerald-line: #2b6148;
-    --emerald-text: #7fd3a6;
-
-    --amber: #dcaf4a;
-    --amber-soft: rgba(220, 175, 74, 0.12);
-    --amber-line: #6e5722;
-    --amber-text: #e3c377;
-
-    --rose: #e58799;
-    --rose-soft: rgba(229, 135, 153, 0.12);
-    --rose-line: #6e3542;
-    --rose-text: #eba7b4;
-
-    --purple: #a795ec;
-    --purple-soft: rgba(167, 149, 236, 0.12);
-    --purple-line: #4d4275;
-    --purple-text: #c0b4f3;
-
-    --code-bg: #101217;
-    --code-ink: #dcdad2;
-    --code-border: #2b2d34;
-  }
-}
-
-:root[data-theme="dark"] {
-  --bg: #16171b;
-  --surface: #1c1e23;
-  --surface-2: #24262c;
-  --ink: #e7e5df;
-  --ink-2: #c5c2ba;
-  --ink-muted: #9a968e;
-  --ink-faint: #6d6a64;
-  --line: #2b2d34;
-  --line-strong: #4a4d55;
-
-  --blue: #7dabef;
-  --blue-soft: rgba(125, 171, 239, 0.13);
-  --blue-line: #33517f;
-  --blue-text: #a3c4f5;
-
-  --emerald: #4cc289;
-  --emerald-soft: rgba(76, 194, 137, 0.12);
-  --emerald-line: #2b6148;
-  --emerald-text: #7fd3a6;
-
-  --amber: #dcaf4a;
-  --amber-soft: rgba(220, 175, 74, 0.12);
-  --amber-line: #6e5722;
-  --amber-text: #e3c377;
-
-  --rose: #e58799;
-  --rose-soft: rgba(229, 135, 153, 0.12);
-  --rose-line: #6e3542;
-  --rose-text: #eba7b4;
-
-  --purple: #a795ec;
-  --purple-soft: rgba(167, 149, 236, 0.12);
-  --purple-line: #4d4275;
-  --purple-text: #c0b4f3;
-
-  --code-bg: #101217;
-  --code-ink: #dcdad2;
-  --code-border: #2b2d34;
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: var(--font-body);
-  font-size: 17px;
-  line-height: 1.65;
-  color: var(--ink);
-  background: var(--bg);
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
-
-code {
-  font-family: var(--font-mono);
-  font-size: 0.82em;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  padding: 0.06em 0.32em;
-  color: var(--ink);
-  word-break: break-all;
-}
-
-:focus-visible {
-  outline: 2px solid var(--blue);
-  outline-offset: 2px;
-}
-
-/* ------------------------------ Top bar ------------------------------ */
-
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-}
-
-.topbar-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.6rem 1rem;
-  padding: 0.55rem var(--pad-x);
-}
-
-.brand-spec {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.03em;
-  color: var(--ink-muted);
-}
-
-.badge-label {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.03em;
-  padding: 0.14rem 0.45rem;
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  color: var(--ink-faint);
-}
-
-.page-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-  border-left: 1px solid var(--line);
-  padding-left: 0.9rem;
-  margin-left: 0.25rem;
-}
-
-.nav-tab {
-  font-family: var(--font-ui);
-  font-size: 0.86rem;
-  text-decoration: none;
-  padding: 0.32rem 0.65rem;
-  border-radius: 3px;
-  color: var(--ink-muted);
-}
-.nav-tab:hover {
-  color: var(--ink);
-  background: var(--surface-2);
-}
-.nav-tab.active {
-  color: var(--ink);
-  background: var(--surface-2);
-  font-weight: 600;
-}
-
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.help-toggle {
-  font-family: var(--font-ui);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 0.3rem 0.6rem;
-  border: 1px solid var(--line-strong);
-  border-radius: 3px;
-  background: var(--surface);
-  color: var(--ink-muted);
-  cursor: pointer;
-}
-.help-toggle:hover { color: var(--ink); background: var(--surface-2); }
-.help-toggle[aria-expanded="true"] {
-  color: var(--blue-text);
-  border-color: var(--blue-line);
-  background: var(--blue-soft);
-}
-
-.theme-picker {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-family: var(--font-ui);
-  font-size: 0.78rem;
-  color: var(--ink-muted);
-}
-
-.theme-select {
-  font-family: var(--font-ui);
-  font-size: 0.8rem;
-  padding: 0.3rem 0.45rem;
-  border: 1px solid var(--line-strong);
-  border-radius: 3px;
-  background: var(--surface);
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.help-panel {
-  display: none;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface-2);
-  padding: 1.1rem var(--pad-x) 1.3rem;
-}
-.help-panel.open { display: block; }
-
-.help-panel h2 {
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-  margin-bottom: 0.7rem;
-}
-
-.help-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 0.45rem 1.4rem;
-}
-
-.help-item {
-  font-size: 0.86rem;
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-.help-item strong {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--ink);
-  margin-right: 0.35rem;
-}
-
-/* ------------------------------ Content ------------------------------ */
-
-.container {
-  padding: 2.5rem var(--pad-x) 4.5rem;
-}
-
-.eyebrow {
-  font-family: var(--font-ui);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-  margin-bottom: 0.45rem;
-}
-
-h1 {
-  font-family: var(--font-heading);
-  font-size: clamp(1.5rem, 2.6vw, 2.05rem);
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin-bottom: 0.9rem;
-}
-
-h2 {
-  font-family: var(--font-heading);
-  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--ink);
-  margin: 2.4rem 0 0.4rem;
-}
-
-p { color: var(--ink-2); margin-bottom: 1.1rem; line-height: 1.65; }
-p strong { color: var(--ink); font-weight: 600; }
-
-.intro-card {
-  border: 1px solid var(--blue-line);
-  border-left: 3px solid var(--blue);
-  border-radius: 4px;
-  background: var(--blue-soft);
-  padding: 1.1rem 1.3rem;
-  margin: 1.4rem 0 0.5rem;
-}
-.intro-card p { margin-bottom: 0.4rem; color: var(--ink-2); }
-.intro-card p:last-child { margin-bottom: 0; }
-.intro-card strong { color: var(--ink); }
-
-/* Progress tracker */
-.progress-shell {
-  position: sticky;
-  top: 0;
-  z-index: 35;
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.55rem var(--pad-x);
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-}
-.progress-count {
-  flex: none;
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  color: var(--ink-muted);
-  white-space: nowrap;
-}
-.progress-track {
-  flex: 1;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--emerald);
-  transition: width 0.25s ease;
-}
-.progress-fill.complete { background: var(--emerald-text); }
-.progress-reset {
-  flex: none;
-  font-family: var(--font-ui);
-  font-size: 0.74rem;
-  padding: 0.2rem 0.55rem;
-  border: 1px solid var(--line-strong);
-  border-radius: 3px;
-  background: var(--surface);
-  color: var(--ink-muted);
-  cursor: pointer;
-}
-.progress-reset:hover { color: var(--ink); background: var(--surface-2); }
-
-/* Phase banner */
-.phase-head {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.6rem 1rem;
-  margin: 2.6rem 0 0.3rem;
-  padding-top: 1.6rem;
-  border-top: 1px solid var(--line);
-}
-.phase-head:first-of-type { margin-top: 1.2rem; }
-.phase-tag {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  padding: 0.18rem 0.55rem;
-  border-radius: 3px;
-}
-.phase-tag.a { color: var(--purple-text); background: var(--purple-soft); border: 1px solid var(--purple-line); }
-.phase-tag.b { color: var(--amber-text); background: var(--amber-soft); border: 1px solid var(--amber-line); }
-.phase-sub { font-size: 0.92rem; color: var(--ink-muted); margin: 0.15rem 0 1.4rem; }
-
-/* Runbook step */
-.runbook-step {
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  background: var(--surface);
-  margin-bottom: 1.3rem;
-  overflow: hidden;
-}
-.runbook-step.done { border-color: var(--emerald-line); }
-
-.step-head {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1.2rem;
-  cursor: pointer;
-  user-select: none;
-}
-.step-head:hover { background: var(--surface-2); }
-.step-head input[type="checkbox"] {
-  width: 1.05rem;
-  height: 1.05rem;
-  accent-color: var(--emerald);
-  cursor: pointer;
-  flex: none;
-}
-.step-no {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.7rem;
-  height: 1.7rem;
-  padding: 0 0.3rem;
-  border: 1px solid var(--blue-line);
-  border-radius: 3px;
-  background: var(--blue-soft);
-  color: var(--blue-text);
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-.step-title {
-  font-family: var(--font-ui);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ink);
-}
-.runbook-step.done .step-title {
-  color: var(--ink-muted);
-  text-decoration: line-through;
-  text-decoration-color: var(--emerald-line);
-}
-.step-body {
-  padding: 0.2rem 1.35rem 1.25rem;
-  border-top: 1px dashed var(--line);
-}
-.step-body p { margin: 0.85rem 0 0.9rem; font-size: 0.95rem; }
-
-/* Code blocks with header + copy */
-.code-wrap {
-  margin: 0.9rem 0 1rem;
-  border: 1px solid var(--code-border);
-  border-radius: 4px;
-  overflow: hidden;
-}
-.code-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-  padding: 0.4rem 0.75rem;
-  background: var(--surface-2);
-  border-bottom: 1px solid var(--code-border);
-}
-.code-path {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  color: var(--ink-muted);
-  overflow-x: auto;
-  white-space: nowrap;
-}
-.copy-btn {
-  flex: none;
-  font-family: var(--font-ui);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  padding: 0.18rem 0.55rem;
-  border: 1px solid var(--line-strong);
-  border-radius: 3px;
-  background: var(--surface);
-  color: var(--ink-muted);
-  cursor: pointer;
-}
-.copy-btn:hover { color: var(--ink); background: var(--bg); }
-.copy-btn.copied { color: var(--emerald-text); border-color: var(--emerald-line); }
-
-.code-block {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  line-height: 1.6;
-  color: var(--code-ink);
-  background: var(--code-bg);
-  padding: 0.9rem 1.1rem;
-  overflow-x: auto;
-  margin: 0;
-  white-space: pre;
-}
-.code-block .cm { color: var(--ink-faint); }
-.code-block .add { color: var(--emerald-text); }
-.code-block .del { color: var(--rose-text); }
-
-/* Verify box */
-.verify-box {
-  border: 1px solid var(--emerald-line);
-  border-left: 3px solid var(--emerald);
-  border-radius: 0 4px 4px 0;
-  background: var(--emerald-soft);
-  padding: 0.7rem 1rem;
-  font-size: 0.9rem;
-  line-height: 1.55;
-  color: var(--ink-2);
-  margin: 0.9rem 0 0.3rem;
-}
-.verify-box strong { color: var(--emerald-text); }
-.verify-box code { font-size: 0.82em; }
-
-.warn-note {
-  border: 1px solid var(--amber-line);
-  border-left: 3px solid var(--amber);
-  border-radius: 0 4px 4px 0;
-  background: var(--amber-soft);
-  padding: 0.7rem 1rem;
-  font-size: 0.9rem;
-  line-height: 1.55;
-  color: var(--ink-2);
-  margin: 0.9rem 0 0.3rem;
-}
-.warn-note strong { color: var(--amber-text); }
-
-ul.plain { margin: 0.6rem 0 1rem 1.2rem; color: var(--ink-2); font-size: 0.95rem; }
-ul.plain li { margin-bottom: 0.4rem; line-height: 1.6; padding-left: 0.3rem; }
-ul.plain li strong { color: var(--ink); }
-
-/* Completion card */
-.final-card {
-  border: 1px solid var(--emerald-line);
-  border-left: 3px solid var(--emerald);
-  border-radius: 4px;
-  background: var(--emerald-soft);
-  padding: 1.2rem 1.4rem;
-  margin-top: 1.4rem;
-}
-.final-card h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--emerald-text);
-  margin-bottom: 0.6rem;
-}
-.final-card ul { margin-left: 1.2rem; color: var(--ink-2); }
-.final-card li { margin-bottom: 0.5rem; line-height: 1.55; }
-.final-card li strong { color: var(--ink); }
+    main { padding: 2.3rem var(--pad-x) 4rem; }
+    article { display: grid; gap: 1.5rem; }
+    .eyebrow, .section-label {
+      margin: 0;
+      color: var(--muted);
+      font: 600 0.72rem var(--font-ui);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { color: var(--ink); font-family: var(--font-heading); text-wrap: balance; }
+    h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3.1rem); line-height: 1.15; }
+    h2 { margin: 0; font-size: clamp(1.2rem, 2.3vw, 1.7rem); line-height: 1.3; }
+    h3 { margin: 0; font-size: 1.05rem; line-height: 1.4; }
+    p { margin: 0; color: var(--ink-2); }
+    p strong, li strong { color: var(--ink); }
+    .lede { font-size: 1.08rem; }
+    .question, .callout {
+      border: 1px solid var(--blue-line);
+      border-left: 3px solid var(--blue);
+      background: var(--blue-soft);
+      padding: 0.9rem 1rem;
+    }
+    .question { color: var(--ink-2); }
+    .question strong { color: var(--blue); }
+    .answer {
+      border-color: var(--green-line);
+      border-left-color: var(--green);
+      background: var(--green-soft);
+    }
+    .caution {
+      border-color: var(--amber-line);
+      border-left-color: var(--amber);
+      background: var(--amber-soft);
+    }
+    .section { display: grid; gap: 1rem; border-top: 1px solid var(--line); padding-top: 1.6rem; }
+    .section-head { display: grid; gap: 0.3rem; }
+    .step-grid, .job-grid, .reason-grid { display: grid; gap: 0.85rem; }
+    .step-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .step, .job-card, .reason-card {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      padding: 0.85rem 1rem;
+    }
+    .step b, .job-card h3, .reason-card h3 { display: block; margin-bottom: 0.35rem; }
+    .step p, .job-card p, .reason-card p { font-size: 0.9rem; }
+    .step-number { color: var(--blue); font: 600 0.72rem var(--font-mono); }
+    .diagram-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .diagram-toggle { padding: 0.35rem 0.7rem; font: 600 0.8rem var(--font-ui); }
+    .diagram-toggle[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); }
+    .diagram-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); padding: 0.9rem; }
+    .diagram-wrap svg { display: block; width: 100%; min-width: 780px; height: auto; color: var(--ink); }
+    .diagram-wrap figcaption { margin-top: 0.8rem; color: var(--muted); font-size: 0.86rem; }
+    svg .frame { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1.3; }
+    svg .box { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.2; }
+    svg .blue-box { fill: var(--blue-soft); stroke: var(--blue-line); }
+    svg .green-box { fill: var(--green-soft); stroke: var(--green-line); }
+    svg .amber-box { fill: var(--amber-soft); stroke: var(--amber-line); }
+    svg .title { fill: var(--ink); font: 600 14px var(--font-heading); }
+    svg .label { fill: var(--ink-2); font: 12px var(--font-ui); }
+    svg .small { fill: var(--muted); font: 11px var(--font-ui); }
+    svg .arrow { fill: none; stroke: var(--muted); stroke-width: 1.8; marker-end: url(#arrowhead); }
+    svg .blue-arrow { stroke: var(--blue); }
+    .job-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .job-card { border-top: 3px solid var(--blue); }
+    .job-card.server, .job-card.e2e { border-top-color: var(--green); }
+    .tree-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--code-bg); }
+    pre { min-width: 650px; margin: 0; overflow-x: auto; padding: 1rem; color: var(--ink); font-size: 0.82rem; line-height: 1.6; }
+    pre code { border: 0; border-radius: 0; padding: 0; background: transparent; font-size: inherit; }
+    .code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; border-bottom: 1px solid var(--line); background: var(--surface-2); padding: 0.4rem 0.7rem; }
+    .code-title { color: var(--muted); font: 0.75rem var(--font-mono); }
+    .copy-btn { padding: 0.2rem 0.5rem; font: 600 0.7rem var(--font-ui); }
+    .copy-status { min-height: 1.2em; color: var(--muted); font-size: 0.78rem; }
+    .reason-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .reason-card { display: grid; align-content: start; gap: 0.45rem; }
+    .reason-card code { font-weight: 600; }
+    .tag { display: inline-block; width: fit-content; border: 1px solid var(--blue-line); background: var(--blue-soft); color: var(--blue); padding: 0.08rem 0.35rem; font: 600 0.66rem var(--font-mono); letter-spacing: 0.04em; }
+    .tag.green { border-color: var(--green-line); background: var(--green-soft); color: var(--green); }
+    .tag.amber { border-color: var(--amber-line); background: var(--amber-soft); color: var(--amber); }
+    .fine-print { border-top: 1px solid var(--line); padding-top: 1rem; color: var(--muted); font-size: 0.85rem; }
+    @media (max-width: 760px) {
+      .step-grid, .job-grid, .reason-grid { grid-template-columns: 1fr; }
+      .topbar-actions { margin-left: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; }
+    }
   </style>
 </head>
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand-spec">
-        <span>DEV-LAB</span>
-        <span class="badge-label">SCRATCHPAD</span>
-      </div>
-      <!-- Common Top Navigation Across All Three Pages -->
+      <div class="brand"><span>DEV-LAB</span><span class="badge">SCRATCHPAD</span></div>
       <nav class="page-nav" aria-label="Page switcher">
         <a href="/index.html" class="nav-tab">Lesson</a>
         <a href="/MCQ.html" class="nav-tab">Assessment</a>
         <a href="/disposable.html" class="nav-tab active" aria-current="page">Scratchpad</a>
       </nav>
       <div class="topbar-actions">
-        <button id="help-toggle" class="help-toggle" aria-expanded="false" aria-controls="help-panel">[HELP]</button>
+        <button id="help-toggle" class="help-toggle" type="button" aria-expanded="false" aria-controls="help-panel">[HELP]</button>
         <div class="theme-picker">
           <label for="theme-select">Theme:</label>
           <select id="theme-select" class="theme-select" aria-label="Theme mode">
@@ -634,516 +285,324 @@ ul.plain li strong { color: var(--ink); }
         </div>
       </div>
     </div>
-    <div id="help-panel" class="help-panel" role="region" aria-label="Acronym reference">
-      <h2>Acronyms &amp; terms on this page</h2>
+    <div id="help-panel" class="help-panel" role="region" aria-label="Acronym reference" hidden>
+      <h2>Terms used on this page</h2>
       <div class="help-grid">
-        <div class="help-item"><strong>URL</strong>Uniform Resource Locator — a text address that says where a service lives and how to reach it, e.g. <code>postgres://user:pass@host:port/db</code>.</div>
-        <div class="help-item"><strong>DB</strong>Database — the program that stores and manages the data, here PostgreSQL.</div>
-        <div class="help-item"><strong>API</strong>Application Programming Interface — the set of URLs (<code>/api/todos</code>) the server exposes for the client to call.</div>
-        <div class="help-item"><strong>DNS</strong>Domain Name System — turns names into addresses; inside a Compose network, service names like <code>test-db</code> resolve to containers.</div>
-        <div class="help-item"><strong>CI</strong>Continuous Integration — an automated service (GitHub Actions) that runs your tests on every pull request.</div>
-        <div class="help-item"><strong>E2E</strong>End-to-end — tests that drive the real app in a browser, clicking and typing like a user.</div>
-        <div class="help-item"><strong>SSL / TLS</strong>Secure Sockets Layer / Transport Layer Security — encryption for network connections; required by Neon, not needed inside a private Compose network.</div>
-        <div class="help-item"><strong>YAML</strong>YAML Ain't Markup Language — the indentation-based format Compose files are written in.</div>
-        <div class="help-item"><strong>PR</strong>Pull Request — a proposed change in GitHub that CI checks before merge.</div>
-        <div class="help-item"><strong>tmpfs</strong>A file system held in RAM only — data written there vanishes when the container stops, leaving nothing on disk.</div>
-        <div class="help-item"><strong>healthcheck</strong>A Compose feature: a command the container runs on itself so dependents can wait until it is truly ready, not just started.</div>
-        <div class="help-item"><strong>pnpm</strong>Performant npm — a fast Node package manager; your server and client use it. <code>pnpm --dir server test</code> runs a script inside the <code>server/</code> folder.</div>
-        <div class="help-item"><strong>exit code</strong>A number every command returns when it ends: 0 means success, anything else means failure. CI and <code>&amp;&amp;</code> chains read it.</div>
-        <div class="help-item"><strong>pg_isready</strong>A small PostgreSQL tool that checks whether the database server accepts connections — used in the test-db healthcheck.</div>
-        <div class="help-item"><strong>exec</strong><code>docker compose exec &lt;service&gt; &lt;command&gt;</code> runs a command inside a running container — used here to inspect the server's environment.</div>
+        <div class="help-item"><strong>CI</strong>Continuous Integration means automatically checking code changes before they merge.</div>
+        <div class="help-item"><strong>PR</strong>Pull Request means a proposed change that GitHub can check before it is merged.</div>
+        <div class="help-item"><strong>VM</strong>Virtual Machine means a computer provided for the job to run on.</div>
+        <div class="help-item"><strong>E2E</strong>End-to-end tests exercise a user flow through the running application.</div>
+        <div class="help-item"><strong>YAML</strong>A configuration format that uses indentation to show which settings belong together.</div>
+        <div class="help-item"><strong>GitHub Actions</strong>GitHub's workflow service that starts jobs when configured events happen.</div>
+        <div class="help-item"><strong>Service container</strong>A temporary container, such as PostgreSQL, that a job uses as a dependency.</div>
+        <div class="help-item"><strong>Artifact</strong>A file or folder saved from a workflow run so you can inspect or download it later.</div>
+        <div class="help-item"><strong>Playwright</strong>A browser test tool that can click, type, and check what a page displays.</div>
+        <div class="help-item"><strong>PostgreSQL</strong>The database used by the Todo app and its isolated tests.</div>
       </div>
     </div>
   </header>
 
-  <div class="progress-shell">
-    <span class="progress-count" id="progress-count">0 of 7 steps done</span>
-    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-    <button class="progress-reset" id="progress-reset" type="button">Reset</button>
-  </div>
-
-  <main class="container">
+  <main>
     <article>
-      <div class="eyebrow">Execution Runbook &middot; docker-beginner-simulation &middot; Stage 2</div>
-      <h1>Stage 2 Runbook: Do It, Step by Step</h1>
+      <p class="eyebrow">Stage 2 → Stage 3 · the same checks, now run by GitHub</p>
+      <h1>Why Stage 3 runs CI</h1>
+      <p class="lede">Stage 2 made the tests safe to run. Stage 3 decides when they run, gives them a clean machine, and reports the result on the pull request. The test database is temporary; the runner is the computer doing the work.</p>
 
-      <div class="intro-card">
-        <p><strong>How to use this page:</strong> work top to bottom, tick each step as you finish it (ticks persist in this browser), and only move on when the <strong>Verify</strong> line passes. Every file is given complete — paste the whole thing, no merging by hand.</p>
-        <p><strong>Two phases, as you planned:</strong> Phase A gets your Dockerized client + server + disposable Postgres running and proves the app works <em>by hand</em> — no Playwright anywhere. Only when Phase A is green do you introduce Playwright in Phase B.</p>
-        <p><strong>Ground rule:</strong> run every command from the repo root <code>~/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation</code> unless a step says otherwise.</p>
+      <div class="question">
+        <strong>The question:</strong> If Stage 2 already containerized the client, server, and test database, and ran end-to-end tests, why add a container in a GitHub runner?
+      </div>
+      <div class="callout answer">
+        <strong>Short answer:</strong> You do not move Stage 2's containers into GitHub. GitHub starts a fresh runner for each job, and the workflow may start a separate PostgreSQL service container beside that job. The runner executes commands; the database container supplies one dependency.
       </div>
 
-      <!-- ============================== PHASE A ============================== -->
-      <div class="phase-head">
-        <span class="phase-tag a">PHASE A</span>
-        <h2>Dockerized stack works — verified by hand</h2>
-      </div>
-      <p class="phase-sub">Goal: client + server + postgres:16-alpine containers, with the server pointed at the disposable database and you clicking through the app yourself.</p>
+      <figure class="diagram-wrap">
+        <div class="diagram-controls" role="group" aria-label="Choose which test process to show">
+          <button class="diagram-toggle" type="button" data-diagram="stage2" aria-pressed="true">Stage 2 · run it yourself</button>
+          <button class="diagram-toggle" type="button" data-diagram="stage3" aria-pressed="false">Stage 3 · GitHub runs it</button>
+        </div>
+        <svg viewBox="0 0 1000 355" role="img" aria-label="Stage 2 runs your Docker Compose test stack by hand. Stage 3 runs separate GitHub jobs on fresh runners and returns check results to the pull request." aria-labelledby="diagram-title diagram-desc">
+          <title id="diagram-title">What changes between Stage 2 and Stage 3</title>
+          <desc id="diagram-desc">The tests and disposable database remain. Stage 3 adds an automatic GitHub trigger, isolated job runners, and a status check on the pull request.</desc>
+          <defs>
+            <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"></path>
+            </marker>
+          </defs>
+          <g id="stage2-flow">
+            <rect class="frame" x="20" y="22" width="960" height="310" rx="5"></rect>
+            <text class="title" x="42" y="52">Stage 2 · your computer</text>
+            <rect class="blue-box" x="45" y="104" width="175" height="84" rx="4"></rect>
+            <text class="title" x="60" y="132">You start the test</text>
+            <text class="label" x="60" y="155">docker compose up</text>
+            <text class="small" x="60" y="174">manual trigger</text>
+            <path class="arrow" d="M220 146 H270"></path>
+            <text class="small" x="226" y="132">starts</text>
+            <rect class="green-box" x="280" y="86" width="365" height="122" rx="4"></rect>
+            <text class="title" x="298" y="114">Disposable test stack</text>
+            <text class="label" x="298" y="143">Client + API + test PostgreSQL</text>
+            <text class="small" x="298" y="169">separate containers on a test network</text>
+            <path class="arrow" d="M645 146 H700"></path>
+            <text class="small" x="653" y="132">the tests use</text>
+            <rect class="box" x="710" y="104" width="235" height="84" rx="4"></rect>
+            <text class="title" x="728" y="132">Playwright checks a flow</text>
+            <text class="label" x="728" y="155">result appears on your machine</text>
+            <path class="arrow blue-arrow" d="M827 188 V248 H425 V220"></path>
+            <text class="small" x="570" y="244">teardown removes the temporary stack</text>
+            <text class="small" x="42" y="295">Stage 2 answers: "Can these tests run safely and repeatably?"</text>
+          </g>
+          <g id="stage3-flow" display="none">
+            <rect class="frame" x="20" y="22" width="960" height="310" rx="5"></rect>
+            <text class="title" x="42" y="52">Stage 3 · GitHub Actions</text>
+            <rect class="blue-box" x="42" y="101" width="150" height="74" rx="4"></rect>
+            <text class="title" x="57" y="129">PR or push</text>
+            <text class="label" x="57" y="151">workflow starts</text>
+            <path class="arrow" d="M192 138 H230"></path>
+            <text class="small" x="195" y="125">triggers</text>
+            <rect class="box" x="240" y="75" width="480" height="213" rx="4"></rect>
+            <text class="title" x="258" y="101">Three separate jobs, each on its own runner</text>
+            <rect class="blue-box" x="258" y="117" width="200" height="62" rx="4"></rect>
+            <text class="title" x="272" y="140">test-client</text>
+            <text class="small" x="272" y="160">lint + build · no database</text>
+            <rect class="green-box" x="476" y="117" width="224" height="62" rx="4"></rect>
+            <text class="title" x="490" y="140">test-server</text>
+            <text class="small" x="490" y="160">integration tests + its Postgres</text>
+            <rect class="green-box" x="258" y="197" width="442" height="62" rx="4"></rect>
+            <text class="title" x="272" y="220">test-e2e</text>
+            <text class="small" x="272" y="241">its Postgres + app startup + Playwright browser tests</text>
+            <path class="arrow" d="M720 138 H758"></path>
+            <text class="small" x="721" y="124">results</text>
+            <rect class="amber-box" x="768" y="101" width="185" height="74" rx="4"></rect>
+            <text class="title" x="783" y="129">PR check</text>
+            <text class="small" x="783" y="151">green or failed</text>
+            <path class="arrow blue-arrow" d="M860 175 V224"></path>
+            <rect class="box" x="768" y="232" width="185" height="55" rx="4"></rect>
+            <text class="label" x="782" y="255">Required check?</text>
+            <text class="small" x="782" y="274">branch rule controls merge</text>
+            <text class="small" x="42" y="315">The runner executes steps. Only the jobs needing a database get a service container.</text>
+          </g>
+        </svg>
+        <figcaption id="diagram-caption">Stage 2 already has a test stack. Stage 3 adds a trigger and runs verification on GitHub. The runner is not the PostgreSQL container, and the CI database is not reused from your laptop.</figcaption>
+      </figure>
 
-      <section class="runbook-step" id="step-1">
-        <label class="step-head" for="check-1">
-          <input type="checkbox" class="step-check" id="check-1" data-step="1">
-          <span class="step-no">1</span>
-          <span class="step-title">Point the test server at test-db (remove env_file)</span>
-        </label>
-        <div class="step-body">
-          <p>
-            Your <code>docker-compose.test.yml</code> copies the production <code>server</code> service wholesale, <code>env_file: ./server/.env</code> included — so tests would still hit Neon. Replace the whole file with this; the only changes are inside the <code>server</code> service: <code>env_file</code> is gone, an <code>environment</code> override is in, and the server now waits for the database healthcheck.
-          </p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">docker-compose.test.yml (replace entire file)</span>
-              <button class="copy-btn" type="button" data-target="code-1">COPY</button>
-            </div>
-            <pre class="code-block" id="code-1">services:
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    init: true
-    depends_on:
-      server:
-        condition: service_healthy
-    restart: unless-stopped
-    ports:
-      - "3000:80"
+      <section class="section">
+        <div class="section-head">
+          <p class="section-label">What changes from Stage 2 to Stage 3</p>
+          <h2>Stage 2 proves the tests; Stage 3 makes them part of the change process</h2>
+        </div>
+        <div class="step-grid">
+          <div class="step"><span class="step-number">Stage 2</span><b>Build safe checks</b><p>Use disposable PostgreSQL data, meaningful assertions, cleanup, and a full-stack browser test.</p></div>
+          <div class="step"><span class="step-number">A code change</span><b>Open a PR</b><p>A proposed change gives GitHub a specific commit to verify. A push to <code>main</code> can trigger the same workflow.</p></div>
+          <div class="step"><span class="step-number">Stage 3</span><b>Run on clean machines</b><p>GitHub checks out the commit, installs locked dependencies, and runs jobs without relying on your laptop.</p></div>
+          <div class="step"><span class="step-number">A status check</span><b>Review the result</b><p>GitHub reports each job. A repository rule can require those checks before allowing a merge.</p></div>
+        </div>
+        <p>In Stage 2, the local sequence is <code>docker compose ... up --build --wait</code>, run the checks, then <code>docker compose ... down -v</code>. The first command starts the test stack and waits for services; the last removes its containers and test volumes. Stage 3 rebuilds the needed test environment from the checked-out commit instead of carrying those local containers over.</p>
+        <div class="callout caution">
+          <strong>A workflow alone does not lock the merge button.</strong> Configure the repository's branch protection or ruleset to require the relevant status checks. Without that rule, GitHub can show a failing check while still allowing someone with permission to merge.
+        </div>
+        <p>Stage 3 is the verification gate, not image publishing or deployment. In this curriculum, Stage 4 handles publishing tested images. Stage 3 matters because a passing local run is optional and easy to forget; a required PR check makes the same checks visible at the point where the team decides to merge.</p>
+      </section>
 
-  server:
-    build: ./server
-    environment:
-      DATABASE_URL: postgres://test_user:test_password@test-db:5432/todo_test_db
-    depends_on:
-      test-db:
-        condition: service_healthy
-    restart: unless-stopped
-    expose:
-      - "5000"
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          'node -e "fetch(''http://localhost:5000/api/health'').then(r =&gt; process.exit(r.ok ? 0 : 1)).catch(() =&gt; process.exit(1))"',
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  test-db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: test_user
-      POSTGRES_PASSWORD: test_password
-      POSTGRES_DB: todo_test_db
-    ports:
-      # Host port 5433 avoids clashing with a local Postgres on 5432.
-      # Containers use test-db:5432; your terminal uses localhost:5433.
-      - "5433:5432"
-    tmpfs:
-      - /var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U test_user -d todo_test_db"]
-      interval: 2s
-      timeout: 2s
-      retries: 10</pre>
+      <section class="section">
+        <div class="section-head">
+          <p class="section-label">The jobs question</p>
+          <h2>All three topics belong under one <code>jobs:</code> key</h2>
+        </div>
+        <p>The snippets in lesson topics 02, 03, and 04 are excerpts from one workflow file. Topic 04 starts at the <code>test-e2e:</code> job, so the parent key is above the excerpt. It was not removed and the job is not a step inside <code>test-server</code>. The commands below are shortened to make the nesting visible, not a copy-paste-ready workflow.</p>
+        <div class="tree-wrap">
+          <div class="code-toolbar">
+            <span class="code-title">.github/workflows/ci-cd.yml · one parent, sibling jobs</span>
+            <button class="copy-btn" type="button" aria-label="Copy workflow structure">Copy</button>
+            <span class="copy-status" data-copy-status aria-live="polite"></span>
           </div>
-          <p>
-            Why the URL looks like that: <code>test-db</code> is the service name, and inside a Compose network every service gets a DNS name equal to its name — so the server literally dials the alpine container on its native port 5432. The <code>5433</code> host mapping is only a side door for <em>you</em>, from outside Docker. Your <code>db.ts</code> enables SSL only for <code>neon.tech</code> / <code>sslmode=require</code> URLs, so no code change is needed.
-          </p>
-          <div class="verify-box"><strong>Verify now (stack not needed yet):</strong> <code>grep -n "neon" docker-compose.test.yml</code> prints nothing, and <code>grep -c "test-db:5432" docker-compose.test.yml</code> prints <code>1</code>.</div>
+          <pre class="code-block"><code>on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:                         # one shared parent
+  test-client:                # topic 02
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pnpm lint
+      - run: pnpm build
+
+  test-server:                # topic 03
+    runs-on: ubuntu-latest
+    services:                 # Postgres belongs to this job
+      postgres:
+        image: postgres:16-alpine
+        ports:
+          - 5432:5432
+        options: &gt;-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: pnpm test:integration
+
+  test-e2e:                   # topic 04
+    runs-on: ubuntu-latest
+    services:                 # its own, separate Postgres
+      postgres:
+        image: postgres:16-alpine
+        ports:
+          - 5432:5432
+        options: &gt;-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          pnpm start &amp;
+          npx wait-on http://localhost:5000/api/health --timeout 20000
+          npx playwright test</code></pre>
+        </div>
+        <div class="job-grid">
+          <div class="job-card">
+            <h3><code>test-client</code></h3>
+            <p>Checks the client with linting and a production build. It does not need PostgreSQL, so it has no <code>services:</code> block.</p>
+          </div>
+          <div class="job-card server">
+            <h3><code>test-server</code></h3>
+            <p>Runs server type checks and integration tests. Its own Postgres service gives those tests a disposable database.</p>
+          </div>
+          <div class="job-card e2e">
+            <h3><code>test-e2e</code></h3>
+            <p>Starts the API, waits for it, then runs browser tests. Its Postgres service is separate from the server job's database.</p>
+          </div>
+        </div>
+        <p>Each job runs on its own runner. Jobs with no <code>needs:</code> relationship can run in parallel. A service nested under one job is only for that job; neither job shares its database with the other. The runner starts the service before the job steps and removes it when the job ends.</p>
+        <p>The service's <code>POSTGRES_USER</code>, <code>POSTGRES_PASSWORD</code>, and <code>POSTGRES_DB</code> values create its test database. The step's <code>DATABASE_URL</code> tells the application how to connect to that database. These are disposable test credentials, not production secrets.</p>
+        <div class="callout caution">
+          <strong>One detail the lesson excerpt should make explicit:</strong> the shown E2E steps start the API process, but do not show how the browser's client page is served. The Playwright configuration or another workflow step must start or provide that page. If neither does, the E2E test cannot reach the client.
         </div>
       </section>
 
-      <section class="runbook-step" id="step-2">
-        <label class="step-head" for="check-2">
-          <input type="checkbox" class="step-check" id="check-2" data-step="2">
-          <span class="step-no">2</span>
-          <span class="step-title">Boot the stack and watch it come healthy</span>
-        </label>
-        <div class="step-body">
-          <p>
-            <code>--wait</code> makes Compose block until every healthcheck passes — this is why the healthchecks you already wrote matter.
-          </p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">terminal · repo root</span>
-              <button class="copy-btn" type="button" data-target="code-2">COPY</button>
-            </div>
-            <pre class="code-block" id="code-2">docker compose -f docker-compose.test.yml up -d --wait</pre>
-          </div>
-          <p>It takes roughly 15–30 seconds on the first run (image builds + Postgres startup). Then confirm the server is talking to the disposable database, not Neon:</p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">terminal · inspect what the server actually sees</span>
-              <button class="copy-btn" type="button" data-target="code-2b">COPY</button>
-            </div>
-            <pre class="code-block" id="code-2b">docker compose -f docker-compose.test.yml ps
-docker compose -f docker-compose.test.yml exec server printenv DATABASE_URL
-docker compose -f docker-compose.test.yml logs server | grep -i "database initialized"</pre>
-          </div>
-          <div class="verify-box"><strong>Verify:</strong> <code>ps</code> shows 3 services <code>healthy</code>; <code>printenv</code> prints <code>postgres://test_user:test_password@test-db:5432/todo_test_db</code> (no <code>neon.tech</code> anywhere); logs show <code>Database initialized: "todos" table is ready</code>.</div>
+      <section class="section">
+        <div class="section-head">
+          <p class="section-label">Why the unfamiliar YAML is there</p>
+          <h2>Read each line as a job instruction with a specific job to do</h2>
         </div>
+        <p>The punctuation is mostly YAML structure. The unusual values solve practical problems: preparing the machine, connecting to a temporary database, waiting for servers, or saving evidence when a test fails.</p>
+        <div class="reason-grid">
+          <article class="reason-card">
+            <span class="tag">WORKFLOW START</span>
+            <h3><code>on:</code> and <code>concurrency:</code></h3>
+            <p><code>on:</code> names the events that start the workflow, such as a PR targeting <code>main</code> or a push to <code>main</code>.</p>
+            <p><code>${{ github.workflow }}</code> and <code>${{ github.ref }}</code> are GitHub expressions. Together they group runs for the same workflow and branch or PR. <code>cancel-in-progress: true</code> stops an older run in that group when a newer commit makes it out of date.</p>
+          </article>
+          <article class="reason-card">
+            <span class="tag">MACHINE + ACCESS</span>
+            <h3><code>runs-on</code>, <code>permissions</code>, and <code>working-directory</code></h3>
+            <p><code>runs-on: ubuntu-latest</code> asks GitHub for a hosted Ubuntu runner. Job steps run on that machine; they are not automatically inside your app's Docker image.</p>
+            <p><code>permissions: {}</code> removes default token access, then a job can grant only what it needs, such as <code>contents: read</code> to check out code.</p>
+            <p><code>defaults.run.working-directory: server</code> makes shell commands start in that folder, so steps do not repeat <code>cd server</code>. It affects <code>run:</code> commands, not actions loaded with <code>uses:</code>.</p>
+          </article>
+          <article class="reason-card">
+            <span class="tag green">DATABASE SERVICE</span>
+            <h3><code>services:</code>, <code>ports:</code>, and <code>options: &gt;-</code></h3>
+            <p><code>services:</code> asks the runner to start a helper container for this job. The test process running on the Ubuntu host reaches the published PostgreSQL port at <code>localhost:5432</code>. The service's <code>POSTGRES_*</code> variables initialize its empty test database; the test step's <code>DATABASE_URL</code> points the app at it. The health check confirms PostgreSQL accepts connections; it does not run your schema migrations.</p>
+            <p><code>options: &gt;-</code> makes a readable multi-line string. GitHub passes the contained Docker flags to the service container. The <code>&gt;-</code> folds line breaks into spaces and drops the final newline.</p>
+            <p><code>--health-cmd pg_isready</code> asks Docker to check whether PostgreSQL accepts connections. The interval, timeout, and retry flags control those checks. GitHub waits for the service to be healthy before running steps.</p>
+          </article>
+          <article class="reason-card">
+            <span class="tag green">TEMPORARY DATA</span>
+            <h3><code>--tmpfs /var/lib/postgresql/data</code></h3>
+            <p>This mounts the database's data directory in temporary memory rather than persistent storage. Test rows disappear with the service container. It is optional; it does not make this a production database, and the lesson should not promise a fixed speed-up.</p>
+          </article>
+          <article class="reason-card">
+            <span class="tag">INSTALLATION</span>
+            <h3><code>uses:</code>, <code>with:</code>, <code>run:</code>, and <code>env:</code></h3>
+            <p><code>actions/checkout@v4</code> checks out the commit being tested. <code>pnpm/action-setup@v3</code> installs the selected pnpm version. <code>actions/setup-node@v4</code> installs Node. These are reusable actions; <code>with:</code> supplies their inputs, such as versions and cache settings. The suffixes <code>@v4</code> and <code>@v3</code> select action versions.</p>
+            <p><code>run:</code> executes a shell command. <code>env:</code> passes variables to a step, such as the test database URL. <code>npx playwright install --with-deps chromium</code> installs Playwright's Chromium browser and required operating-system packages. <code>npx</code> runs a package's command-line tool. For repeatable CI, keep these tools in the project's dependencies and lockfile.</p>
+          </article>
+          <article class="reason-card">
+            <span class="tag">REPEATABLE DEPENDENCIES</span>
+            <h3><code>cache: pnpm</code> and <code>--frozen-lockfile</code></h3>
+            <p>The setup action can cache downloaded packages, using the lockfile named by <code>cache-dependency-path</code> to choose the cache key. A cache saves download time; it is not the source of truth for versions.</p>
+            <p><code>pnpm install --frozen-lockfile</code> installs the versions already recorded in the lockfile. It fails instead of silently rewriting that file when the package manifest and lockfile disagree.</p>
+          </article>
+          <article class="reason-card">
+            <span class="tag amber">START, THEN TEST</span>
+            <h3><code>pnpm start &amp;</code> and <code>wait-on ... --timeout 20000</code></h3>
+            <p>The shell's <code>&amp;</code> starts the long-running API process in the background so the same script can continue. Without it, the shell would wait for the server process to exit before starting tests.</p>
+            <p><code>wait-on</code> keeps checking the health URL before Playwright starts. <code>20000</code> is a 20-second timeout in milliseconds. If the API never responds, the command fails instead of letting tests race ahead. The API and browser client must both be running before a full UI journey can pass.</p>
+          </article>
+          <article class="reason-card">
+            <span class="tag amber">KEEP FAILURE EVIDENCE</span>
+            <h3><code>if: failure()</code> and <code>upload-artifact</code></h3>
+            <p>GitHub normally skips later steps after a failure. <code>if: failure()</code> tells this upload step to run when an earlier step in the job has failed.</p>
+            <p><code>actions/upload-artifact</code> copies the configured <code>path:</code> from the runner to the workflow run. Use a path the test reporter really writes. <code>retention-days: 7</code> asks GitHub to keep the uploaded files for seven days.</p>
+          </article>
+        </div>
+        <p class="fine-print">The runner is temporary, but it is not magic: it needs checkout, runtimes, packages, a ready database, and the app processes your tests expect. The workflow spells those steps out so GitHub can repeat them for each change.</p>
       </section>
 
-      <section class="runbook-step" id="step-3">
-        <label class="step-head" for="check-3">
-          <input type="checkbox" class="step-check" id="check-3" data-step="3">
-          <span class="step-no">3</span>
-          <span class="step-title">Use the app by hand — you are the E2E test</span>
-        </label>
-        <div class="step-body">
-          <p>
-            Before any automation, prove the full stack behaves: open <code>http://localhost:3000</code> in your normal browser and run the app like a user.
-          </p>
-          <ul class="plain">
-            <li>Add a task via the quick-add input.</li>
-            <li>Toggle its completion checkbox on and off.</li>
-            <li>Create a second task via the detailed modal.</li>
-            <li>Delete both tasks.</li>
-          </ul>
-          <p>While a task exists, watch it land in the disposable database from another terminal (optional, needs <code>psql</code> locally):</p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">terminal · peek into the disposable DB through the 5433 side door</span>
-              <button class="copy-btn" type="button" data-target="code-3">COPY</button>
-            </div>
-            <pre class="code-block" id="code-3">psql postgres://test_user:test_password@localhost:5433/todo_test_db \
-  -c "SELECT id, title, completed FROM todos;"</pre>
-          </div>
-          <div class="verify-box"><strong>Verify:</strong> the UI reflects every action instantly, and the <code>psql</code> rows appear/disappear in sync with your clicks. Traffic path: browser &rarr; nginx :3000 &rarr; <code>/api</code> proxy &rarr; server :5000 &rarr; <code>test-db</code> — all containers, zero Neon.</div>
-        </div>
-      </section>
-
-      <section class="runbook-step" id="step-4">
-        <label class="step-head" for="check-4">
-          <input type="checkbox" class="step-check" id="check-4" data-step="4">
-          <span class="step-no">4</span>
-          <span class="step-title">Make the server test fail loudly + clean up, then run it</span>
-        </label>
-        <div class="step-body">
-          <p>
-            Your current <code>server/src/tests/api.test.ts</code> uses <code>console.assert</code>, which only <em>prints</em> failures and still exits 0 — CI would stay green on a broken build. Replace the whole file with this: <code>node:assert/strict</code> throws, and a <code>finally</code> block deletes the test row even when an assertion blows up mid-run.
-          </p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">server/src/tests/api.test.ts (replace entire file)</span>
-              <button class="copy-btn" type="button" data-target="code-4">COPY</button>
-            </div>
-            <pre class="code-block" id="code-4">import assert from "node:assert/strict";
-import { initDb } from "../config/db.js";
-import { TodoModel } from "../models/todoModel.js";
-
-async function runServerTests() {
-  console.log("Starting server integration tests against the disposable database...");
-
-  let createdId: number | undefined;
-  let failed = false;
-
-  try {
-    await initDb();
-
-    // 1. Create
-    const title = `Test Todo ${Date.now()}`;
-    const newTodo = await TodoModel.create({
-      title,
-      description: "Server test description",
-      priority: "high",
-      category: "work",
-    });
-    createdId = newTodo.id;
-    assert.equal(newTodo.title, title, "Todo title mismatch after create");
-    assert.equal(newTodo.priority, "high", "Todo priority mismatch after create");
-    console.log("PASS: create todo");
-
-    // 2. Stats
-    const stats = await TodoModel.getStats();
-    assert.equal(typeof stats.total, "number", "Stats total is not a number");
-    assert.ok(stats.total >= 1, "Stats should include the created todo");
-    console.log("PASS: fetch stats");
-
-    // 3. Toggle
-    const toggled = await TodoModel.toggle(createdId);
-    assert.equal(toggled?.completed, true, "Todo should be completed after toggle");
-    console.log("PASS: toggle todo");
-
-    // 4. Delete
-    const deleted = await TodoModel.delete(createdId);
-    assert.equal(deleted, true, "Todo delete should return true");
-    createdId = undefined; // cleanup already done — no row left behind
-    console.log("PASS: delete todo");
-
-    console.log("All server model &amp; DB tests passed.");
-  } catch (err) {
-    failed = true;
-    console.error("Server integration test failed:", err);
-  } finally {
-    // Runs on success AND failure: never leave test data behind.
-    if (createdId !== undefined) {
-      await TodoModel.delete(createdId).catch(() =&gt; {});
-    }
-  }
-
-  process.exit(failed ? 1 : 0);
-}
-
-runServerTests();</pre>
-          </div>
-          <p>
-            The server suite runs from your machine, not inside a container — so it knocks on the <strong>side door</strong> <code>localhost:5433</code>, the published host port, not the internal <code>test-db:5432</code>. Same database, two doors.
-          </p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">terminal · repo root</span>
-              <button class="copy-btn" type="button" data-target="code-4b">COPY</button>
-            </div>
-            <pre class="code-block" id="code-4b">DATABASE_URL=postgres://test_user:test_password@localhost:5433/todo_test_db pnpm --dir server test
-echo "exit code: $?"</pre>
-          </div>
-          <div class="verify-box"><strong>Verify:</strong> four <code>PASS:</code> lines, <code>All server model &amp; DB tests passed.</code>, and <code>exit code: 0</code>. Then prove failures are visible: temporarily change one assertion to something false (e.g. <code>assert.equal(newTodo.priority, "low")</code>), rerun, and confirm the command now prints an <code>AssertionError</code> and <code>exit code: 1</code>. Revert the change and rerun green. That non-zero exit is exactly what Stage 3&rsquo;s CI gate will read.</div>
-        </div>
-      </section>
-
-      <p class="phase-sub" style="margin-top:1.6rem;"><strong>Phase A is done when:</strong> the stack is up, you clicked through a working app on <code>:3000</code>, the server suite passes against the disposable DB with exit code 0, and broken assertions produce exit code 1. Nothing here mentioned Playwright — that was deliberate.</p>
-
-      <!-- ============================== PHASE B ============================== -->
-      <div class="phase-head">
-        <span class="phase-tag b">PHASE B</span>
-        <h2>Introduce Playwright against the Dockerized stack</h2>
-      </div>
-      <p class="phase-sub">Goal: the browser tests you already have in <code>client/e2e/todos.spec.ts</code> drive the real composed app instead of the Vite dev server.</p>
-
-      <section class="runbook-step" id="step-5">
-        <label class="step-head" for="check-5">
-          <input type="checkbox" class="step-check" id="check-5" data-step="5">
-          <span class="step-no">5</span>
-          <span class="step-title">Repoint client/playwright.config.ts at the Dockerized stack</span>
-        </label>
-        <div class="step-body">
-          <p>
-            The config currently targets <code>localhost:5173</code> (Vite dev). Two values change: <code>baseURL</code> moves to the nginx container on <code>:3000</code>, and the <code>webServer</code> block becomes a Compose bootstrap so standalone runs also work. Your specs in <code>e2e/todos.spec.ts</code> need zero changes — they use relative URLs, so they follow <code>baseURL</code>.
-          </p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">client/playwright.config.ts (replace entire file)</span>
-              <button class="copy-btn" type="button" data-target="code-5">COPY</button>
-            </div>
-            <pre class="code-block" id="code-5">import { defineConfig, devices } from '@playwright/test';
-
-export default defineConfig({
-  testDir: './e2e',
-  fullyParallel: false,
-  forbidOnly: !!process.env.CI,
-  retries: 1,
-  workers: 1,
-  reporter: 'list',
-  use: {
-    baseURL: 'http://localhost:3000', // the dockerized client (nginx)
-    trace: 'on-first-retry',
-    headless: true,
-  },
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
-  webServer: {
-    // Fallback bootstrap: if the stack is already up (Phase A), Playwright
-    // detects the URL and skips this. `up -d --wait` is idempotent.
-    command: 'docker compose -f ../docker-compose.test.yml up -d --wait',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-    timeout: 120000,
-  },
-});</pre>
-          </div>
-          <p>First run only: make sure a Chromium binary exists for Playwright to drive (already done on this machine for the learning project, but the client has its own Playwright version):</p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">terminal · first time only</span>
-              <button class="copy-btn" type="button" data-target="code-5b">COPY</button>
-            </div>
-            <pre class="code-block" id="code-5b">pnpm --dir client exec playwright install chromium</pre>
-          </div>
-          <div class="verify-box"><strong>Verify:</strong> <code>grep -n "3000" client/playwright.config.ts</code> shows both the <code>baseURL</code> and webServer <code>url</code> on port 3000, and no <code>5173</code> remains.</div>
-        </div>
-      </section>
-
-      <section class="runbook-step" id="step-6">
-        <label class="step-head" for="check-6">
-          <input type="checkbox" class="step-check" id="check-6" data-step="6">
-          <span class="step-no">6</span>
-          <span class="step-title">Create the one-command ceremony at the repo root</span>
-        </label>
-        <div class="step-body">
-          <p>
-            There is no <code>package.json</code> at the repo root yet — create it. The chain: bring the stack up, run the server suite, run the browser suite, then <em>always</em> tear down. The teardown is joined with <code>;</code> instead of <code>&amp;&amp;</code> so it runs even when a test suite fails — a crashed test can never leave containers behind.
-          </p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">package.json (create at repo root)</span>
-              <button class="copy-btn" type="button" data-target="code-6">COPY</button>
-            </div>
-            <pre class="code-block" id="code-6">{
-  "name": "docker-beginner-simulation",
-  "private": true,
-  "scripts": {
-    "test:e2e": "docker compose -f docker-compose.test.yml up -d --wait &amp;&amp; DATABASE_URL=postgres://test_user:test_password@localhost:5433/todo_test_db pnpm --dir server test &amp;&amp; pnpm --dir client run test:e2e ; docker compose -f docker-compose.test.yml down -v"
-  }
-}</pre>
-          </div>
-          <p>
-            Read the chain as the Stage 2 story in one line: <strong>ephemeral environment up &rarr; integration tests against it &rarr; full-stack browser tests against it &rarr; demolition, always.</strong>
-          </p>
-          <div class="verify-box"><strong>Verify:</strong> <code>npm run</code> (at root) lists <code>test:e2e</code>, and <code>node -e "JSON.parse(require('fs').readFileSync('package.json'))"</code> prints no error — valid JSON.</div>
-        </div>
-      </section>
-
-      <section class="runbook-step" id="step-7">
-        <label class="step-head" for="check-7">
-          <input type="checkbox" class="step-check" id="check-7" data-step="7">
-          <span class="step-no">7</span>
-          <span class="step-title">Run the ceremony — twice — and leave nothing behind</span>
-        </label>
-        <div class="step-body">
-          <p>Running it twice from a clean state is the repeatability proof: the tmpfs database is fresh RAM each time, so a second green run cannot be explained by leftover data.</p>
-          <div class="code-wrap">
-            <div class="code-head">
-              <span class="code-path">terminal · repo root — the repeatability drill</span>
-              <button class="copy-btn" type="button" data-target="code-7">COPY</button>
-            </div>
-            <pre class="code-block" id="code-7">docker compose -f docker-compose.test.yml down -v
-npm run test:e2e
-npm run test:e2e
-
-# afterwards: prove nothing was left behind
-docker compose -f docker-compose.test.yml ps
-docker volume ls | grep docker-beginner-simulation</pre>
-          </div>
-          <p>
-            Expected per run: server suite <code>PASS</code> lines, then the Playwright <code>list</code> reporter showing the <code>todos.spec.ts</code> tests passing against <code>http://localhost:3000</code>. After the runs: <code>ps</code> prints an empty header (no containers), and no project volumes remain.
-          </p>
-          <div class="warn-note"><strong>If Playwright fails to connect:</strong> the stack from Phase A may still be running with <em>old</em> server wiring. Run <code>docker compose -f docker-compose.test.yml down -v</code> once, then <code>npm run test:e2e</code> — <code>up --wait</code> rebuilds with the Step 1 config.</div>
-          <div class="verify-box"><strong>Verify (Stage 2 exit criteria, all four):</strong> tests never touched Neon (Step 1 grep + Step 2 printenv) · green from a clean checkout, twice · nothing left running afterwards · broken assertions exit non-zero (Step 4 drill). When all four hold, take the Stage 2 portion of <code>MCQ.html</code> — you can submit it per stage now.</div>
-        </div>
-      </section>
-
-      <div class="final-card">
-        <h3>Where this leaves you</h3>
-        <ul>
-          <li><strong>Phase A gave you</strong> a disposable test environment and hand-verified confidence that the app works inside Docker — the same stack a CI runner will get.</li>
-          <li><strong>Phase B gave you</strong> browser tests driving that stack and a single command that boots, tests, and demolishes it — the exact shape of the Stage 3 <code>test-e2e</code> job.</li>
-          <li><strong>Commit the four changed files</strong> (<code>docker-compose.test.yml</code>, <code>server/src/tests/api.test.ts</code>, <code>client/playwright.config.ts</code>, root <code>package.json</code>) so the trail lives in git — then Stage 3 is mostly about moving this command into GitHub Actions.</li>
-        </ul>
-      </div>
     </article>
   </main>
 
   <script>
-    (function() {
-      "use strict";
+    const themeSelect = document.getElementById("theme-select");
+    const themeKey = "disposable-theme";
+    const savedTheme = localStorage.getItem(themeKey);
+    if (savedTheme && ["system", "light", "dark"].includes(savedTheme)) {
+      themeSelect.value = savedTheme;
+      if (savedTheme !== "system") document.documentElement.dataset.theme = savedTheme;
+    }
+    themeSelect.addEventListener("change", () => {
+      localStorage.setItem(themeKey, themeSelect.value);
+      if (themeSelect.value === "system") document.documentElement.removeAttribute("data-theme");
+      else document.documentElement.dataset.theme = themeSelect.value;
+    });
 
-      // Theme (shared pattern with the other pages)
-      const themeSelect = document.getElementById("theme-select");
-      let theme = localStorage.getItem("learning-ai:theme") || "system";
-      function applyTheme() {
-        if (theme === "system") {
-          document.documentElement.removeAttribute("data-theme");
-        } else {
-          document.documentElement.dataset.theme = theme;
+    const helpButton = document.getElementById("help-toggle");
+    const helpPanel = document.getElementById("help-panel");
+    helpButton.addEventListener("click", () => {
+      const open = helpButton.getAttribute("aria-expanded") !== "true";
+      helpButton.setAttribute("aria-expanded", String(open));
+      helpPanel.hidden = !open;
+      helpPanel.classList.toggle("open", open);
+    });
+
+    const stageButtons = document.querySelectorAll("[data-diagram]");
+    const stage2Flow = document.getElementById("stage2-flow");
+    const stage3Flow = document.getElementById("stage3-flow");
+    const diagramCaption = document.getElementById("diagram-caption");
+    stageButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const showStage3 = button.dataset.diagram === "stage3";
+        stage2Flow.setAttribute("display", showStage3 ? "none" : "inline");
+        stage3Flow.setAttribute("display", showStage3 ? "inline" : "none");
+        stageButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+        diagramCaption.textContent = showStage3
+          ? "The PR or push starts independent jobs on separate GitHub runners. Jobs that need a database start their own Postgres service; GitHub reports the results to the PR. A branch rule must require the checks to block merging."
+          : "Stage 2 already has a test stack. Stage 3 adds a trigger and runs verification on GitHub. The runner is not the PostgreSQL container, and the CI database is not reused from your laptop.";
+      });
+    });
+
+    document.querySelectorAll(".copy-btn").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const code = button.closest(".tree-wrap")?.querySelector(".code-block")?.innerText;
+        const copyStatus = button.closest(".code-toolbar")?.querySelector("[data-copy-status]");
+        if (!code) {
+          if (copyStatus) copyStatus.textContent = "Could not find the workflow excerpt to copy.";
+          return;
         }
-        themeSelect.value = theme;
-      }
-      themeSelect.addEventListener("change", (e) => {
-        theme = e.target.value;
-        localStorage.setItem("learning-ai:theme", theme);
-        applyTheme();
+        try {
+          await navigator.clipboard.writeText(code);
+          if (copyStatus) copyStatus.textContent = "Workflow structure copied.";
+        } catch (error) {
+          console.error("Clipboard copy failed:", error);
+          if (copyStatus) copyStatus.textContent = "Clipboard access failed. Select the code block and copy it manually.";
+        }
       });
-      applyTheme();
-
-      // Help panel
-      const helpToggle = document.getElementById("help-toggle");
-      const helpPanel = document.getElementById("help-panel");
-      helpToggle.addEventListener("click", () => {
-        const open = helpPanel.classList.toggle("open");
-        helpToggle.setAttribute("aria-expanded", String(open));
-      });
-
-      // Runbook progress: explicit ticking only, persisted in localStorage
-      const PROGRESS_KEY = "learning-ai:scratchpad:stage2-runbook";
-      const checkboxes = Array.from(document.querySelectorAll(".step-check"));
-      const progressCount = document.getElementById("progress-count");
-      const progressFill = document.getElementById("progress-fill");
-
-      let doneSteps = [];
-      try {
-        const raw = localStorage.getItem(PROGRESS_KEY);
-        if (raw) doneSteps = JSON.parse(raw).filter((n) => typeof n === "string");
-      } catch (_) { doneSteps = []; }
-
-      function saveProgress() {
-        try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(doneSteps)); } catch (_) {}
-      }
-
-      function renderProgress() {
-        checkboxes.forEach((cb) => {
-          cb.checked = doneSteps.includes(cb.dataset.step);
-          cb.closest(".runbook-step").classList.toggle("done", cb.checked);
-        });
-        const done = doneSteps.length;
-        const total = checkboxes.length;
-        progressCount.textContent = `${done} of ${total} steps done`;
-        progressFill.style.width = `${total ? (done / total) * 100 : 0}%`;
-        progressFill.classList.toggle("complete", done === total && total > 0);
-      }
-
-      checkboxes.forEach((cb) => {
-        cb.addEventListener("change", () => {
-          if (cb.checked) {
-            if (!doneSteps.includes(cb.dataset.step)) doneSteps.push(cb.dataset.step);
-          } else {
-            doneSteps = doneSteps.filter((s) => s !== cb.dataset.step);
-          }
-          saveProgress();
-          renderProgress();
-        });
-      });
-
-      document.getElementById("progress-reset").addEventListener("click", () => {
-        doneSteps = [];
-        saveProgress();
-        renderProgress();
-      });
-
-      // Copy buttons
-      document.querySelectorAll(".copy-btn").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          const pre = document.getElementById(btn.dataset.target);
-          try {
-            await navigator.clipboard.writeText(pre.textContent);
-          } catch (_) {
-            const range = document.createRange();
-            range.selectNodeContents(pre);
-            const sel = getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-          }
-          btn.textContent = "COPIED";
-          btn.classList.add("copied");
-          setTimeout(() => {
-            btn.textContent = "COPY";
-            btn.classList.remove("copied");
-          }, 1400);
-        });
-      });
-
-      renderProgress();
-    })();
+    });
   </script>
 </body>
 </html>

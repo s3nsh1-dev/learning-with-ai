@@ -30,12 +30,14 @@ the prompt; otherwise use the topic or page update explicitly requested by the u
   value". Leave enough room to explain how one step leads to the next.
 - Use a small, concrete example and carry it through the explanation where possible. Help the
   reader picture what happens.
-- For a requested HTML follow-up, address the specific misunderstanding first. Identify what the
-  reader understood correctly, then explain the correction. Use a simpler example before adding
-  more detail. Do not repeat the whole lesson unless requested.
-- When generating an HTML explanation from prompts that ask questions about the ongoing topic
-  (inspect `index.html` or `disposable-compose-review.html` to determine current topic context),
-  always explicitly state the question being addressed before continuing with the rest of the explanation.
+- For question-based HTML explanations, state the question, give a brief **Short answer** (one or
+  two direct sentences), then explain the reasoning and details. Keep the short answer concise and
+  do not repeat it verbatim.
+- For follow-ups, address the specific misunderstanding first. Note what the reader understood
+  correctly when useful, then explain the correction with a simple example. Do not repeat the
+  whole lesson unless requested.
+- For questions about the ongoing topic, inspect `index.html` or `disposable-compose-review.html`
+  for context, and explicitly state the question being answered.
 
 ## Lesson scope
 
@@ -64,16 +66,27 @@ destination rules in `AGENTS.md`; a course does not authorize a page rewrite for
   - Always use **Lexend** as the required standard typeface for reading (`--font-body`), interface controls (`--font-ui`), and headings (`--font-heading`) across all pages (`index.html`, `MCQ.html`, and `disposable.html`).
   - Preconnect and load Lexend from Google Fonts in the `<head>` of every page:
     ```html
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     ```
   - Define standard font stack CSS variables in `:root`:
     ```css
-    --font-body: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-ui: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-heading: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+    --font-body:
+      "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-ui:
+      "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-heading:
+      "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-mono:
+      ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas,
+      "Liberation Mono", monospace;
     ```
 - **Full-Width Fluid Layout (Strictly No Centered Shells, Margin Auto, or Artificial Max-Widths)**:
   - All pages (`index.html`, `MCQ.html`, `disposable.html`) must use a fluid, full-width layout stretching across the screen (`padding: ... var(--pad-x)` only).
