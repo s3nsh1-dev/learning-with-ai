@@ -3,34 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Why Stage 3 Runs CI</title>
+  <title>Local CI Run Log</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: light;
-      --bg: #fbfaf7;
-      --surface: #fff;
-      --surface-2: #f2f1ea;
-      --ink: #21201b;
-      --ink-2: #474440;
-      --muted: #6f6b63;
-      --line: #e4e2da;
-      --line-strong: #b8b4a9;
-      --blue: #1e5fbf;
-      --blue-soft: #edf3fc;
-      --blue-line: #c3d6f1;
-      --green: #147a52;
-      --green-soft: #ecf4ee;
-      --green-line: #b9dfd0;
-      --amber: #96650a;
-      --amber-soft: #faf3e1;
-      --amber-line: #e6d6ac;
-      --red: #a33145;
-      --red-soft: #faecee;
-      --red-line: #e8c2ca;
-      --code-bg: #f5f4ef;
+      --bg: #eef3f4;
+      --surface: #fbfdfd;
+      --surface-2: #e4ecee;
+      --ink: #17272f;
+      --ink-2: #3d515b;
+      --muted: #5c7079;
+      --line: #d3dfe2;
+      --line-strong: #a6b8be;
+      --blue: #285d73;
+      --blue-soft: #e0eef2;
+      --blue-line: #b7d0d8;
+      --green: #197354;
+      --green-soft: #e2f1eb;
+      --green-line: #afd3c4;
+      --amber: #865b22;
+      --amber-soft: #f4eddf;
+      --amber-line: #ddc99f;
+      --red: #9a4353;
+      --red-soft: #f4e7e9;
+      --red-line: #d9b9bf;
+      --code-bg: #e8eff0;
       --pad-x: clamp(1rem, 2.5vw, 2rem);
       --font-body: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       --font-heading: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -41,53 +41,53 @@
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
         color-scheme: dark;
-        --bg: #16171b;
-        --surface: #1c1e23;
-        --surface-2: #24262c;
-        --ink: #e7e5df;
-        --ink-2: #c5c2ba;
-        --muted: #9a968e;
-        --line: #2b2d34;
-        --line-strong: #4a4d55;
-        --blue: #7dabef;
-        --blue-soft: rgba(125, 171, 239, 0.13);
-        --blue-line: #33517f;
-        --green: #4cc289;
-        --green-soft: rgba(76, 194, 137, 0.12);
-        --green-line: #2b6148;
-        --amber: #dcaf4a;
-        --amber-soft: rgba(220, 175, 74, 0.12);
-        --amber-line: #6e5722;
-        --red: #e58799;
-        --red-soft: rgba(229, 135, 153, 0.12);
-        --red-line: #6e3542;
-        --code-bg: #101217;
+        --bg: #101b21;
+        --surface: #17262d;
+        --surface-2: #20333b;
+        --ink: #e4edef;
+        --ink-2: #c0d0d4;
+        --muted: #91a6ad;
+        --line: #2a3b42;
+        --line-strong: #49616b;
+        --blue: #8fc3d0;
+        --blue-soft: rgba(143, 195, 208, 0.12);
+        --blue-line: #3b6470;
+        --green: #6cc9a4;
+        --green-soft: rgba(108, 201, 164, 0.12);
+        --green-line: #356b58;
+        --amber: #d8b36d;
+        --amber-soft: rgba(216, 179, 109, 0.12);
+        --amber-line: #685632;
+        --red: #db8a99;
+        --red-soft: rgba(219, 138, 153, 0.12);
+        --red-line: #683b45;
+        --code-bg: #111d22;
       }
     }
 
     :root[data-theme="dark"] {
       color-scheme: dark;
-      --bg: #16171b;
-      --surface: #1c1e23;
-      --surface-2: #24262c;
-      --ink: #e7e5df;
-      --ink-2: #c5c2ba;
-      --muted: #9a968e;
-      --line: #2b2d34;
-      --line-strong: #4a4d55;
-      --blue: #7dabef;
-      --blue-soft: rgba(125, 171, 239, 0.13);
-      --blue-line: #33517f;
-      --green: #4cc289;
-      --green-soft: rgba(76, 194, 137, 0.12);
-      --green-line: #2b6148;
-      --amber: #dcaf4a;
-      --amber-soft: rgba(220, 175, 74, 0.12);
-      --amber-line: #6e5722;
-      --red: #e58799;
-      --red-soft: rgba(229, 135, 153, 0.12);
-      --red-line: #6e3542;
-      --code-bg: #101217;
+      --bg: #101b21;
+      --surface: #17262d;
+      --surface-2: #20333b;
+      --ink: #e4edef;
+      --ink-2: #c0d0d4;
+      --muted: #91a6ad;
+      --line: #2a3b42;
+      --line-strong: #49616b;
+      --blue: #8fc3d0;
+      --blue-soft: rgba(143, 195, 208, 0.12);
+      --blue-line: #3b6470;
+      --green: #6cc9a4;
+      --green-soft: rgba(108, 201, 164, 0.12);
+      --green-line: #356b58;
+      --amber: #d8b36d;
+      --amber-soft: rgba(216, 179, 109, 0.12);
+      --amber-line: #685632;
+      --red: #db8a99;
+      --red-soft: rgba(219, 138, 153, 0.12);
+      --red-line: #683b45;
+      --code-bg: #111d22;
     }
 
     :root[data-theme="light"] { color-scheme: light; }
@@ -159,7 +159,7 @@
     .nav-tab:hover, .nav-tab.active { background: var(--surface-2); color: var(--ink); }
     .nav-tab.active { font-weight: 600; }
     .topbar-actions { gap: 0.8rem; }
-    .help-toggle, .theme-select, .diagram-toggle, .copy-btn {
+    .help-toggle, .theme-select {
       border: 1px solid var(--line-strong);
       border-radius: 3px;
       background: var(--surface);
@@ -192,75 +192,81 @@
     p { margin: 0; color: var(--ink-2); }
     p strong, li strong { color: var(--ink); }
     .lede { font-size: 1.08rem; }
-    .question, .callout {
-      border: 1px solid var(--blue-line);
-      border-left: 3px solid var(--blue);
-      background: var(--blue-soft);
-      padding: 0.9rem 1rem;
-    }
-    .question { color: var(--ink-2); }
-    .question strong { color: var(--blue); }
-    .answer {
-      border-color: var(--green-line);
-      border-left-color: var(--green);
-      background: var(--green-soft);
-    }
-    .caution {
-      border-color: var(--amber-line);
-      border-left-color: var(--amber);
-      background: var(--amber-soft);
-    }
-    .section { display: grid; gap: 1rem; border-top: 1px solid var(--line); padding-top: 1.6rem; }
-    .section-head { display: grid; gap: 0.3rem; }
-    .step-grid, .job-grid, .reason-grid { display: grid; gap: 0.85rem; }
-    .step-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .step, .job-card, .reason-card {
-      border: 1px solid var(--line);
-      background: var(--surface);
-      padding: 0.85rem 1rem;
-    }
-    .step b, .job-card h3, .reason-card h3 { display: block; margin-bottom: 0.35rem; }
-    .step p, .job-card p, .reason-card p { font-size: 0.9rem; }
-    .step-number { color: var(--blue); font: 600 0.72rem var(--font-mono); }
-    .diagram-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .diagram-toggle { padding: 0.35rem 0.7rem; font: 600 0.8rem var(--font-ui); }
-    .diagram-toggle[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); }
-    .diagram-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); padding: 0.9rem; }
-    .diagram-wrap svg { display: block; width: 100%; min-width: 780px; height: auto; color: var(--ink); }
-    .diagram-wrap figcaption { margin-top: 0.8rem; color: var(--muted); font-size: 0.86rem; }
-    svg .frame { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1.3; }
-    svg .box { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.2; }
-    svg .blue-box { fill: var(--blue-soft); stroke: var(--blue-line); }
-    svg .green-box { fill: var(--green-soft); stroke: var(--green-line); }
-    svg .amber-box { fill: var(--amber-soft); stroke: var(--amber-line); }
-    svg .title { fill: var(--ink); font: 600 14px var(--font-heading); }
-    svg .label { fill: var(--ink-2); font: 12px var(--font-ui); }
-    svg .small { fill: var(--muted); font: 11px var(--font-ui); }
-    svg .arrow { fill: none; stroke: var(--muted); stroke-width: 1.8; marker-end: url(#arrowhead); }
-    svg .blue-arrow { stroke: var(--blue); }
-    .job-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .job-card { border-top: 3px solid var(--blue); }
-    .job-card.server, .job-card.e2e { border-top-color: var(--green); }
-    .tree-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--code-bg); }
-    pre { min-width: 650px; margin: 0; overflow-x: auto; padding: 1rem; color: var(--ink); font-size: 0.82rem; line-height: 1.6; }
-    pre code { border: 0; border-radius: 0; padding: 0; background: transparent; font-size: inherit; }
-    .code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; border-bottom: 1px solid var(--line); background: var(--surface-2); padding: 0.4rem 0.7rem; }
-    .code-title { color: var(--muted); font: 0.75rem var(--font-mono); }
-    .copy-btn { padding: 0.2rem 0.5rem; font: 600 0.7rem var(--font-ui); }
-    .copy-status { min-height: 1.2em; color: var(--muted); font-size: 0.78rem; }
-    .reason-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .reason-card { display: grid; align-content: start; gap: 0.45rem; }
-    .reason-card code { font-weight: 600; }
-    .tag { display: inline-block; width: fit-content; border: 1px solid var(--blue-line); background: var(--blue-soft); color: var(--blue); padding: 0.08rem 0.35rem; font: 600 0.66rem var(--font-mono); letter-spacing: 0.04em; }
-    .tag.green { border-color: var(--green-line); background: var(--green-soft); color: var(--green); }
-    .tag.amber { border-color: var(--amber-line); background: var(--amber-soft); color: var(--amber); }
-    .fine-print { border-top: 1px solid var(--line); padding-top: 1rem; color: var(--muted); font-size: 0.85rem; }
-    @media (max-width: 760px) {
-      .step-grid, .job-grid, .reason-grid { grid-template-columns: 1fr; }
-      .topbar-actions { margin-left: auto; }
-    }
+    .topbar-actions { margin-left: auto; }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; }
+    }
+
+    body { background: var(--bg); }
+    .topbar { border-bottom-color: var(--line-strong); }
+    .brand span:first-child { color: var(--ink); font-weight: 700; letter-spacing: 0.08em; }
+    .badge { border-color: var(--blue-line); background: var(--blue-soft); color: var(--blue); }
+    main { padding-top: clamp(1.5rem, 4vw, 3rem); }
+    article { gap: clamp(1.25rem, 3vw, 2.25rem); }
+    .run-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--line-strong);
+      padding-bottom: 1.3rem;
+    }
+    .run-heading-copy { display: grid; gap: 0.45rem; }
+    .run-heading h1 { font-size: clamp(1.8rem, 3.6vw, 3rem); letter-spacing: -0.045em; }
+    .run-status {
+      display: grid;
+      gap: 0.2rem;
+      border: 1px solid var(--amber-line);
+      background: var(--amber-soft);
+      padding: 0.65rem 0.85rem;
+      min-width: min(100%, 230px);
+    }
+    .run-status strong { color: var(--amber); font: 600 0.72rem var(--font-mono); letter-spacing: 0.06em; }
+    .run-status span { color: var(--ink-2); font-size: 0.82rem; }
+    .run-sequence { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; align-items: stretch; }
+    .run-card {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 1rem;
+      min-width: 0;
+      border: 1px solid var(--line-strong);
+      background: var(--surface);
+    }
+    .run-card-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 0.7rem;
+      border-bottom: 1px solid var(--line);
+      padding: 0.9rem 1rem;
+    }
+    .run-title { display: grid; gap: 0.1rem; }
+    .run-index { color: var(--blue); font: 600 0.7rem var(--font-mono); letter-spacing: 0.08em; }
+    .run-title h2 { font-size: 1.1rem; }
+    .result-pill { border: 1px solid var(--green-line); background: var(--green-soft); color: var(--green); padding: 0.1rem 0.45rem; font: 600 0.68rem var(--font-mono); white-space: nowrap; }
+    .run-location { display: grid; gap: 0.25rem; padding: 0 1rem; }
+    .run-label { color: var(--muted); font: 600 0.65rem var(--font-ui); letter-spacing: 0.09em; text-transform: uppercase; }
+    .run-location code { width: fit-content; max-width: 100%; overflow-wrap: anywhere; }
+    .command-list { display: grid; align-content: start; }
+    .command-row { display: grid; grid-template-columns: 1.4rem minmax(0, 1fr) auto; align-items: start; gap: 0.45rem; border-top: 1px solid var(--line); padding: 0.65rem 1rem; }
+    .command-prompt { color: var(--blue); font: 600 0.88rem var(--font-mono); }
+    .command-row code { min-width: 0; border: 0; background: transparent; padding: 0; font-size: 0.78rem; line-height: 1.6; }
+    .command-result { color: var(--green); font: 600 0.65rem var(--font-mono); }
+    .run-meta { display: grid; gap: 0.35rem; border-top: 1px solid var(--line); background: var(--surface-2); padding: 0.7rem 1rem; color: var(--ink-2); font-size: 0.78rem; }
+    .run-meta code { font-size: 0.92em; }
+    .run-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; border-top: 1px solid var(--line-strong); padding-top: 0.8rem; color: var(--muted); font: 0.74rem var(--font-mono); }
+    .run-footer strong { color: var(--ink-2); font-weight: 500; }
+    @media (max-width: 900px) {
+      .run-sequence { grid-template-columns: 1fr; }
+      .run-card { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .run-heading { align-items: stretch; }
+      .run-status { min-width: 100%; }
+      .command-row { grid-template-columns: 1rem minmax(0, 1fr) auto; gap: 0.3rem; padding-inline: 0.75rem; }
+      .command-row code { font-size: 0.72rem; }
+      .run-card-head, .run-location, .run-meta { padding-inline: 0.75rem; }
     }
   </style>
 </head>
@@ -286,264 +292,119 @@
       </div>
     </div>
     <div id="help-panel" class="help-panel" role="region" aria-label="Acronym reference" hidden>
-      <h2>Terms used on this page</h2>
+      <h2>Acronyms</h2>
       <div class="help-grid">
-        <div class="help-item"><strong>CI</strong>Continuous Integration means automatically checking code changes before they merge.</div>
-        <div class="help-item"><strong>PR</strong>Pull Request means a proposed change that GitHub can check before it is merged.</div>
-        <div class="help-item"><strong>VM</strong>Virtual Machine means a computer provided for the job to run on.</div>
-        <div class="help-item"><strong>E2E</strong>End-to-end tests exercise a user flow through the running application.</div>
-        <div class="help-item"><strong>YAML</strong>A configuration format that uses indentation to show which settings belong together.</div>
-        <div class="help-item"><strong>GitHub Actions</strong>GitHub's workflow service that starts jobs when configured events happen.</div>
-        <div class="help-item"><strong>Service container</strong>A temporary container, such as PostgreSQL, that a job uses as a dependency.</div>
-        <div class="help-item"><strong>Artifact</strong>A file or folder saved from a workflow run so you can inspect or download it later.</div>
-        <div class="help-item"><strong>Playwright</strong>A browser test tool that can click, type, and check what a page displays.</div>
-        <div class="help-item"><strong>PostgreSQL</strong>The database used by the Todo app and its isolated tests.</div>
+        <div class="help-item"><strong>CI</strong>Continuous Integration runs automated checks on code changes.</div>
+        <div class="help-item"><strong>E2E</strong>End-to-end tests check a user flow through the running app.</div>
       </div>
     </div>
   </header>
 
   <main>
     <article>
-      <p class="eyebrow">Stage 2 → Stage 3 · the same checks, now run by GitHub</p>
-      <h1>Why Stage 3 runs CI</h1>
-      <p class="lede">Stage 2 made the tests safe to run. Stage 3 decides when they run, gives them a clean machine, and reports the result on the pull request. The test database is temporary; the runner is the computer doing the work.</p>
+      <header class="run-heading">
+        <div class="run-heading-copy">
+          <p class="eyebrow">Docker Todo · local verification record</p>
+          <h1>Commands used for the checks</h1>
+        </div>
+        <div class="run-status" role="status">
+          <strong>LOCAL RUNS</strong>
+          <span>GitHub Actions has not run yet</span>
+        </div>
+      </header>
 
-      <div class="question">
-        <strong>The question:</strong> If Stage 2 already containerized the client, server, and test database, and ran end-to-end tests, why add a container in a GitHub runner?
-      </div>
-      <div class="callout answer">
-        <strong>Short answer:</strong> You do not move Stage 2's containers into GitHub. GitHub starts a fresh runner for each job, and the workflow may start a separate PostgreSQL service container beside that job. The runner executes commands; the database container supplies one dependency.
-      </div>
+      <section class="run-sequence" aria-label="Local validation steps">
+        <article class="run-card">
+          <header class="run-card-head">
+            <div class="run-title">
+              <span class="run-index">01 / CLIENT</span>
+              <h2>Lint and build</h2>
+            </div>
+            <span class="result-pill">PASS*</span>
+          </header>
+          <div class="run-location">
+            <span class="run-label">Working directory</span>
+            <code>/home/user228/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation/client</code>
+          </div>
+          <div class="command-list" aria-label="Client commands">
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm lint</code>
+              <span class="command-result">PASS*</span>
+            </div>
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm build</code>
+              <span class="command-result">PASS</span>
+            </div>
+          </div>
+          <div class="run-meta"><span>* Lint passed with 3 warnings.</span></div>
+        </article>
 
-      <figure class="diagram-wrap">
-        <div class="diagram-controls" role="group" aria-label="Choose which test process to show">
-          <button class="diagram-toggle" type="button" data-diagram="stage2" aria-pressed="true">Stage 2 · run it yourself</button>
-          <button class="diagram-toggle" type="button" data-diagram="stage3" aria-pressed="false">Stage 3 · GitHub runs it</button>
-        </div>
-        <svg viewBox="0 0 1000 355" role="img" aria-label="Stage 2 runs your Docker Compose test stack by hand. Stage 3 runs separate GitHub jobs on fresh runners and returns check results to the pull request." aria-labelledby="diagram-title diagram-desc">
-          <title id="diagram-title">What changes between Stage 2 and Stage 3</title>
-          <desc id="diagram-desc">The tests and disposable database remain. Stage 3 adds an automatic GitHub trigger, isolated job runners, and a status check on the pull request.</desc>
-          <defs>
-            <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-              <path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"></path>
-            </marker>
-          </defs>
-          <g id="stage2-flow">
-            <rect class="frame" x="20" y="22" width="960" height="310" rx="5"></rect>
-            <text class="title" x="42" y="52">Stage 2 · your computer</text>
-            <rect class="blue-box" x="45" y="104" width="175" height="84" rx="4"></rect>
-            <text class="title" x="60" y="132">You start the test</text>
-            <text class="label" x="60" y="155">docker compose up</text>
-            <text class="small" x="60" y="174">manual trigger</text>
-            <path class="arrow" d="M220 146 H270"></path>
-            <text class="small" x="226" y="132">starts</text>
-            <rect class="green-box" x="280" y="86" width="365" height="122" rx="4"></rect>
-            <text class="title" x="298" y="114">Disposable test stack</text>
-            <text class="label" x="298" y="143">Client + API + test PostgreSQL</text>
-            <text class="small" x="298" y="169">separate containers on a test network</text>
-            <path class="arrow" d="M645 146 H700"></path>
-            <text class="small" x="653" y="132">the tests use</text>
-            <rect class="box" x="710" y="104" width="235" height="84" rx="4"></rect>
-            <text class="title" x="728" y="132">Playwright checks a flow</text>
-            <text class="label" x="728" y="155">result appears on your machine</text>
-            <path class="arrow blue-arrow" d="M827 188 V248 H425 V220"></path>
-            <text class="small" x="570" y="244">teardown removes the temporary stack</text>
-            <text class="small" x="42" y="295">Stage 2 answers: "Can these tests run safely and repeatably?"</text>
-          </g>
-          <g id="stage3-flow" display="none">
-            <rect class="frame" x="20" y="22" width="960" height="310" rx="5"></rect>
-            <text class="title" x="42" y="52">Stage 3 · GitHub Actions</text>
-            <rect class="blue-box" x="42" y="101" width="150" height="74" rx="4"></rect>
-            <text class="title" x="57" y="129">PR or push</text>
-            <text class="label" x="57" y="151">workflow starts</text>
-            <path class="arrow" d="M192 138 H230"></path>
-            <text class="small" x="195" y="125">triggers</text>
-            <rect class="box" x="240" y="75" width="480" height="213" rx="4"></rect>
-            <text class="title" x="258" y="101">Three separate jobs, each on its own runner</text>
-            <rect class="blue-box" x="258" y="117" width="200" height="62" rx="4"></rect>
-            <text class="title" x="272" y="140">test-client</text>
-            <text class="small" x="272" y="160">lint + build · no database</text>
-            <rect class="green-box" x="476" y="117" width="224" height="62" rx="4"></rect>
-            <text class="title" x="490" y="140">test-server</text>
-            <text class="small" x="490" y="160">integration tests + its Postgres</text>
-            <rect class="green-box" x="258" y="197" width="442" height="62" rx="4"></rect>
-            <text class="title" x="272" y="220">test-e2e</text>
-            <text class="small" x="272" y="241">its Postgres + app startup + Playwright browser tests</text>
-            <path class="arrow" d="M720 138 H758"></path>
-            <text class="small" x="721" y="124">results</text>
-            <rect class="amber-box" x="768" y="101" width="185" height="74" rx="4"></rect>
-            <text class="title" x="783" y="129">PR check</text>
-            <text class="small" x="783" y="151">green or failed</text>
-            <path class="arrow blue-arrow" d="M860 175 V224"></path>
-            <rect class="box" x="768" y="232" width="185" height="55" rx="4"></rect>
-            <text class="label" x="782" y="255">Required check?</text>
-            <text class="small" x="782" y="274">branch rule controls merge</text>
-            <text class="small" x="42" y="315">The runner executes steps. Only the jobs needing a database get a service container.</text>
-          </g>
-        </svg>
-        <figcaption id="diagram-caption">Stage 2 already has a test stack. Stage 3 adds a trigger and runs verification on GitHub. The runner is not the PostgreSQL container, and the CI database is not reused from your laptop.</figcaption>
-      </figure>
+        <article class="run-card">
+          <header class="run-card-head">
+            <div class="run-title">
+              <span class="run-index">02 / SERVER</span>
+              <h2>Typecheck, build, tests</h2>
+            </div>
+            <span class="result-pill">PASS</span>
+          </header>
+          <div class="run-location">
+            <span class="run-label">Working directory</span>
+            <code>/home/user228/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation/server</code>
+          </div>
+          <div class="command-list" aria-label="Server commands">
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm typecheck</code>
+              <span class="command-result">PASS</span>
+            </div>
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm build</code>
+              <span class="command-result">PASS</span>
+            </div>
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm test</code>
+              <span class="command-result">PASS</span>
+            </div>
+          </div>
+          <div class="run-meta"><span>Test database: disposable PostgreSQL container</span></div>
+        </article>
 
-      <section class="section">
-        <div class="section-head">
-          <p class="section-label">What changes from Stage 2 to Stage 3</p>
-          <h2>Stage 2 proves the tests; Stage 3 makes them part of the change process</h2>
-        </div>
-        <div class="step-grid">
-          <div class="step"><span class="step-number">Stage 2</span><b>Build safe checks</b><p>Use disposable PostgreSQL data, meaningful assertions, cleanup, and a full-stack browser test.</p></div>
-          <div class="step"><span class="step-number">A code change</span><b>Open a PR</b><p>A proposed change gives GitHub a specific commit to verify. A push to <code>main</code> can trigger the same workflow.</p></div>
-          <div class="step"><span class="step-number">Stage 3</span><b>Run on clean machines</b><p>GitHub checks out the commit, installs locked dependencies, and runs jobs without relying on your laptop.</p></div>
-          <div class="step"><span class="step-number">A status check</span><b>Review the result</b><p>GitHub reports each job. A repository rule can require those checks before allowing a merge.</p></div>
-        </div>
-        <p>In Stage 2, the local sequence is <code>docker compose ... up --build --wait</code>, run the checks, then <code>docker compose ... down -v</code>. The first command starts the test stack and waits for services; the last removes its containers and test volumes. Stage 3 rebuilds the needed test environment from the checked-out commit instead of carrying those local containers over.</p>
-        <div class="callout caution">
-          <strong>A workflow alone does not lock the merge button.</strong> Configure the repository's branch protection or ruleset to require the relevant status checks. Without that rule, GitHub can show a failing check while still allowing someone with permission to merge.
-        </div>
-        <p>Stage 3 is the verification gate, not image publishing or deployment. In this curriculum, Stage 4 handles publishing tested images. Stage 3 matters because a passing local run is optional and easy to forget; a required PR check makes the same checks visible at the point where the team decides to merge.</p>
+        <article class="run-card">
+          <header class="run-card-head">
+            <div class="run-title">
+              <span class="run-index">03 / PLAYWRIGHT</span>
+              <h2>Browser tests</h2>
+            </div>
+            <span class="result-pill">4 / 4 PASS</span>
+          </header>
+          <div class="run-location">
+            <span class="run-label">Working directory</span>
+            <code>/home/user228/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation</code>
+          </div>
+          <div class="command-list" aria-label="Playwright command">
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm test:e2e</code>
+              <span class="command-result">PASS</span>
+            </div>
+            <div class="run-meta">
+              <span>Compose up: <code>docker compose -f docker-compose.test.yml up -d --build --wait</code></span>
+              <span>Browser tests: <code>pnpm --dir client run test:e2e</code></span>
+              <span>Exit cleanup: <code>docker compose -f docker-compose.test.yml down --volumes --remove-orphans</code></span>
+            </div>
+          </div>
+          <div class="run-meta"><span>Test stack: client + server + PostgreSQL</span></div>
+        </article>
       </section>
 
-      <section class="section">
-        <div class="section-head">
-          <p class="section-label">The jobs question</p>
-          <h2>All three topics belong under one <code>jobs:</code> key</h2>
-        </div>
-        <p>The snippets in lesson topics 02, 03, and 04 are excerpts from one workflow file. Topic 04 starts at the <code>test-e2e:</code> job, so the parent key is above the excerpt. It was not removed and the job is not a step inside <code>test-server</code>. The commands below are shortened to make the nesting visible, not a copy-paste-ready workflow.</p>
-        <div class="tree-wrap">
-          <div class="code-toolbar">
-            <span class="code-title">.github/workflows/ci-cd.yml · one parent, sibling jobs</span>
-            <button class="copy-btn" type="button" aria-label="Copy workflow structure">Copy</button>
-            <span class="copy-status" data-copy-status aria-live="polite"></span>
-          </div>
-          <pre class="code-block"><code>on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
-
-jobs:                         # one shared parent
-  test-client:                # topic 02
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: pnpm lint
-      - run: pnpm build
-
-  test-server:                # topic 03
-    runs-on: ubuntu-latest
-    services:                 # Postgres belongs to this job
-      postgres:
-        image: postgres:16-alpine
-        ports:
-          - 5432:5432
-        options: &gt;-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - uses: actions/checkout@v4
-      - run: pnpm test:integration
-
-  test-e2e:                   # topic 04
-    runs-on: ubuntu-latest
-    services:                 # its own, separate Postgres
-      postgres:
-        image: postgres:16-alpine
-        ports:
-          - 5432:5432
-        options: &gt;-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          pnpm start &amp;
-          npx wait-on http://localhost:5000/api/health --timeout 20000
-          npx playwright test</code></pre>
-        </div>
-        <div class="job-grid">
-          <div class="job-card">
-            <h3><code>test-client</code></h3>
-            <p>Checks the client with linting and a production build. It does not need PostgreSQL, so it has no <code>services:</code> block.</p>
-          </div>
-          <div class="job-card server">
-            <h3><code>test-server</code></h3>
-            <p>Runs server type checks and integration tests. Its own Postgres service gives those tests a disposable database.</p>
-          </div>
-          <div class="job-card e2e">
-            <h3><code>test-e2e</code></h3>
-            <p>Starts the API, waits for it, then runs browser tests. Its Postgres service is separate from the server job's database.</p>
-          </div>
-        </div>
-        <p>Each job runs on its own runner. Jobs with no <code>needs:</code> relationship can run in parallel. A service nested under one job is only for that job; neither job shares its database with the other. The runner starts the service before the job steps and removes it when the job ends.</p>
-        <p>The service's <code>POSTGRES_USER</code>, <code>POSTGRES_PASSWORD</code>, and <code>POSTGRES_DB</code> values create its test database. The step's <code>DATABASE_URL</code> tells the application how to connect to that database. These are disposable test credentials, not production secrets.</p>
-        <div class="callout caution">
-          <strong>One detail the lesson excerpt should make explicit:</strong> the shown E2E steps start the API process, but do not show how the browser's client page is served. The Playwright configuration or another workflow step must start or provide that page. If neither does, the E2E test cannot reach the client.
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="section-head">
-          <p class="section-label">Why the unfamiliar YAML is there</p>
-          <h2>Read each line as a job instruction with a specific job to do</h2>
-        </div>
-        <p>The punctuation is mostly YAML structure. The unusual values solve practical problems: preparing the machine, connecting to a temporary database, waiting for servers, or saving evidence when a test fails.</p>
-        <div class="reason-grid">
-          <article class="reason-card">
-            <span class="tag">WORKFLOW START</span>
-            <h3><code>on:</code> and <code>concurrency:</code></h3>
-            <p><code>on:</code> names the events that start the workflow, such as a PR targeting <code>main</code> or a push to <code>main</code>.</p>
-            <p><code>${{ github.workflow }}</code> and <code>${{ github.ref }}</code> are GitHub expressions. Together they group runs for the same workflow and branch or PR. <code>cancel-in-progress: true</code> stops an older run in that group when a newer commit makes it out of date.</p>
-          </article>
-          <article class="reason-card">
-            <span class="tag">MACHINE + ACCESS</span>
-            <h3><code>runs-on</code>, <code>permissions</code>, and <code>working-directory</code></h3>
-            <p><code>runs-on: ubuntu-latest</code> asks GitHub for a hosted Ubuntu runner. Job steps run on that machine; they are not automatically inside your app's Docker image.</p>
-            <p><code>permissions: {}</code> removes default token access, then a job can grant only what it needs, such as <code>contents: read</code> to check out code.</p>
-            <p><code>defaults.run.working-directory: server</code> makes shell commands start in that folder, so steps do not repeat <code>cd server</code>. It affects <code>run:</code> commands, not actions loaded with <code>uses:</code>.</p>
-          </article>
-          <article class="reason-card">
-            <span class="tag green">DATABASE SERVICE</span>
-            <h3><code>services:</code>, <code>ports:</code>, and <code>options: &gt;-</code></h3>
-            <p><code>services:</code> asks the runner to start a helper container for this job. The test process running on the Ubuntu host reaches the published PostgreSQL port at <code>localhost:5432</code>. The service's <code>POSTGRES_*</code> variables initialize its empty test database; the test step's <code>DATABASE_URL</code> points the app at it. The health check confirms PostgreSQL accepts connections; it does not run your schema migrations.</p>
-            <p><code>options: &gt;-</code> makes a readable multi-line string. GitHub passes the contained Docker flags to the service container. The <code>&gt;-</code> folds line breaks into spaces and drops the final newline.</p>
-            <p><code>--health-cmd pg_isready</code> asks Docker to check whether PostgreSQL accepts connections. The interval, timeout, and retry flags control those checks. GitHub waits for the service to be healthy before running steps.</p>
-          </article>
-          <article class="reason-card">
-            <span class="tag green">TEMPORARY DATA</span>
-            <h3><code>--tmpfs /var/lib/postgresql/data</code></h3>
-            <p>This mounts the database's data directory in temporary memory rather than persistent storage. Test rows disappear with the service container. It is optional; it does not make this a production database, and the lesson should not promise a fixed speed-up.</p>
-          </article>
-          <article class="reason-card">
-            <span class="tag">INSTALLATION</span>
-            <h3><code>uses:</code>, <code>with:</code>, <code>run:</code>, and <code>env:</code></h3>
-            <p><code>actions/checkout@v4</code> checks out the commit being tested. <code>pnpm/action-setup@v3</code> installs the selected pnpm version. <code>actions/setup-node@v4</code> installs Node. These are reusable actions; <code>with:</code> supplies their inputs, such as versions and cache settings. The suffixes <code>@v4</code> and <code>@v3</code> select action versions.</p>
-            <p><code>run:</code> executes a shell command. <code>env:</code> passes variables to a step, such as the test database URL. <code>npx playwright install --with-deps chromium</code> installs Playwright's Chromium browser and required operating-system packages. <code>npx</code> runs a package's command-line tool. For repeatable CI, keep these tools in the project's dependencies and lockfile.</p>
-          </article>
-          <article class="reason-card">
-            <span class="tag">REPEATABLE DEPENDENCIES</span>
-            <h3><code>cache: pnpm</code> and <code>--frozen-lockfile</code></h3>
-            <p>The setup action can cache downloaded packages, using the lockfile named by <code>cache-dependency-path</code> to choose the cache key. A cache saves download time; it is not the source of truth for versions.</p>
-            <p><code>pnpm install --frozen-lockfile</code> installs the versions already recorded in the lockfile. It fails instead of silently rewriting that file when the package manifest and lockfile disagree.</p>
-          </article>
-          <article class="reason-card">
-            <span class="tag amber">START, THEN TEST</span>
-            <h3><code>pnpm start &amp;</code> and <code>wait-on ... --timeout 20000</code></h3>
-            <p>The shell's <code>&amp;</code> starts the long-running API process in the background so the same script can continue. Without it, the shell would wait for the server process to exit before starting tests.</p>
-            <p><code>wait-on</code> keeps checking the health URL before Playwright starts. <code>20000</code> is a 20-second timeout in milliseconds. If the API never responds, the command fails instead of letting tests race ahead. The API and browser client must both be running before a full UI journey can pass.</p>
-          </article>
-          <article class="reason-card">
-            <span class="tag amber">KEEP FAILURE EVIDENCE</span>
-            <h3><code>if: failure()</code> and <code>upload-artifact</code></h3>
-            <p>GitHub normally skips later steps after a failure. <code>if: failure()</code> tells this upload step to run when an earlier step in the job has failed.</p>
-            <p><code>actions/upload-artifact</code> copies the configured <code>path:</code> from the runner to the workflow run. Use a path the test reporter really writes. <code>retention-days: 7</code> asks GitHub to keep the uploaded files for seven days.</p>
-          </article>
-        </div>
-        <p class="fine-print">The runner is temporary, but it is not magic: it needs checkout, runtimes, packages, a ready database, and the app processes your tests expect. The workflow spells those steps out so GitHub can repeat them for each change.</p>
-      </section>
-
+      <footer class="run-footer">
+        <span><strong>Scope</strong> Local commands only</span>
+        <span><strong>Remote workflow</strong> Not run on GitHub Actions</span>
+      </footer>
     </article>
   </main>
 
@@ -570,39 +431,6 @@ jobs:                         # one shared parent
       helpPanel.classList.toggle("open", open);
     });
 
-    const stageButtons = document.querySelectorAll("[data-diagram]");
-    const stage2Flow = document.getElementById("stage2-flow");
-    const stage3Flow = document.getElementById("stage3-flow");
-    const diagramCaption = document.getElementById("diagram-caption");
-    stageButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const showStage3 = button.dataset.diagram === "stage3";
-        stage2Flow.setAttribute("display", showStage3 ? "none" : "inline");
-        stage3Flow.setAttribute("display", showStage3 ? "inline" : "none");
-        stageButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-        diagramCaption.textContent = showStage3
-          ? "The PR or push starts independent jobs on separate GitHub runners. Jobs that need a database start their own Postgres service; GitHub reports the results to the PR. A branch rule must require the checks to block merging."
-          : "Stage 2 already has a test stack. Stage 3 adds a trigger and runs verification on GitHub. The runner is not the PostgreSQL container, and the CI database is not reused from your laptop.";
-      });
-    });
-
-    document.querySelectorAll(".copy-btn").forEach((button) => {
-      button.addEventListener("click", async () => {
-        const code = button.closest(".tree-wrap")?.querySelector(".code-block")?.innerText;
-        const copyStatus = button.closest(".code-toolbar")?.querySelector("[data-copy-status]");
-        if (!code) {
-          if (copyStatus) copyStatus.textContent = "Could not find the workflow excerpt to copy.";
-          return;
-        }
-        try {
-          await navigator.clipboard.writeText(code);
-          if (copyStatus) copyStatus.textContent = "Workflow structure copied.";
-        } catch (error) {
-          console.error("Clipboard copy failed:", error);
-          if (copyStatus) copyStatus.textContent = "Clipboard access failed. Select the code block and copy it manually.";
-        }
-      });
-    });
   </script>
 </body>
 </html>
