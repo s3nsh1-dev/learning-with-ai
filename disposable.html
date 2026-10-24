@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local CI Run Log</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef3f4;
+      --surface: #fbfdfd;
+      --surface-2: #e4ecee;
+      --ink: #17272f;
+      --ink-2: #3d515b;
+      --muted: #5c7079;
+      --line: #d3dfe2;
+      --line-strong: #a6b8be;
+      --blue: #285d73;
+      --blue-soft: #e0eef2;
+      --blue-line: #b7d0d8;
+      --green: #197354;
+      --green-soft: #e2f1eb;
+      --green-line: #afd3c4;
+      --amber: #865b22;
+      --amber-soft: #f4eddf;
+      --amber-line: #ddc99f;
+      --red: #9a4353;
+      --red-soft: #f4e7e9;
+      --red-line: #d9b9bf;
+      --code-bg: #e8eff0;
+      --pad-x: clamp(1rem, 2.5vw, 2rem);
+      --font-body: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      --font-heading: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      --font-ui: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      --font-mono: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #101b21;
+        --surface: #17262d;
+        --surface-2: #20333b;
+        --ink: #e4edef;
+        --ink-2: #c0d0d4;
+        --muted: #91a6ad;
+        --line: #2a3b42;
+        --line-strong: #49616b;
+        --blue: #8fc3d0;
+        --blue-soft: rgba(143, 195, 208, 0.12);
+        --blue-line: #3b6470;
+        --green: #6cc9a4;
+        --green-soft: rgba(108, 201, 164, 0.12);
+        --green-line: #356b58;
+        --amber: #d8b36d;
+        --amber-soft: rgba(216, 179, 109, 0.12);
+        --amber-line: #685632;
+        --red: #db8a99;
+        --red-soft: rgba(219, 138, 153, 0.12);
+        --red-line: #683b45;
+        --code-bg: #111d22;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #101b21;
+      --surface: #17262d;
+      --surface-2: #20333b;
+      --ink: #e4edef;
+      --ink-2: #c0d0d4;
+      --muted: #91a6ad;
+      --line: #2a3b42;
+      --line-strong: #49616b;
+      --blue: #8fc3d0;
+      --blue-soft: rgba(143, 195, 208, 0.12);
+      --blue-line: #3b6470;
+      --green: #6cc9a4;
+      --green-soft: rgba(108, 201, 164, 0.12);
+      --green-line: #356b58;
+      --amber: #d8b36d;
+      --amber-soft: rgba(216, 179, 109, 0.12);
+      --amber-line: #685632;
+      --red: #db8a99;
+      --red-soft: rgba(219, 138, 153, 0.12);
+      --red-line: #683b45;
+      --code-bg: #111d22;
+    }
+
+    :root[data-theme="light"] { color-scheme: light; }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.65 var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+    button, select { font: inherit; }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+    code, pre { font-family: var(--font-mono); }
+    code {
+      overflow-wrap: anywhere;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0.04em 0.3em;
+      background: var(--surface-2);
+      color: var(--ink);
+      font-size: 0.88em;
+    }
+
+    .topbar {
+      position: sticky;
+      z-index: 5;
+      top: 0;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.65rem 1rem;
+      padding: 0.55rem var(--pad-x);
+    }
+    .brand, .page-nav, .topbar-actions, .theme-picker {
+      display: flex;
+      align-items: center;
+    }
+    .brand { gap: 0.55rem; color: var(--muted); font: 0.74rem var(--font-mono); }
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0.12rem 0.42rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .page-nav {
+      gap: 0.2rem;
+      border-left: 1px solid var(--line);
+      padding-left: 0.85rem;
+      margin-right: auto;
+      margin-left: 1rem;
+    }
+    .nav-tab {
+      border-radius: 3px;
+      padding: 0.3rem 0.62rem;
+      color: var(--muted);
+      text-decoration: none;
+      font: 0.85rem var(--font-ui);
+    }
+    .nav-tab:hover, .nav-tab.active { background: var(--surface-2); color: var(--ink); }
+    .nav-tab.active { font-weight: 600; }
+    .topbar-actions { gap: 0.8rem; }
+    .help-toggle, .theme-select {
+      border: 1px solid var(--line-strong);
+      border-radius: 3px;
+      background: var(--surface);
+      color: var(--ink-2);
+      cursor: pointer;
+    }
+    .help-toggle, .theme-select { padding: 0.25rem 0.5rem; font: 0.78rem var(--font-ui); }
+    .help-toggle[aria-expanded="true"] { border-color: var(--blue-line); background: var(--blue-soft); color: var(--blue); }
+    .theme-picker { gap: 0.35rem; color: var(--muted); font-size: 0.78rem; }
+    .help-panel { display: none; border-top: 1px solid var(--line); background: var(--surface-2); padding: 1rem var(--pad-x); }
+    .help-panel.open { display: block; }
+    .help-panel h2 { margin: 0 0 0.6rem; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .help-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 0.45rem 1.2rem; }
+    .help-item { color: var(--ink-2); font-size: 0.82rem; }
+    .help-item strong { margin-right: 0.35rem; color: var(--ink); font-family: var(--font-mono); }
+
+    main { padding: 2.3rem var(--pad-x) 4rem; }
+    article { display: grid; gap: 1.5rem; }
+    .eyebrow, .section-label {
+      margin: 0;
+      color: var(--muted);
+      font: 600 0.72rem var(--font-ui);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { color: var(--ink); font-family: var(--font-heading); text-wrap: balance; }
+    h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3.1rem); line-height: 1.15; }
+    h2 { margin: 0; font-size: clamp(1.2rem, 2.3vw, 1.7rem); line-height: 1.3; }
+    h3 { margin: 0; font-size: 1.05rem; line-height: 1.4; }
+    p { margin: 0; color: var(--ink-2); }
+    p strong, li strong { color: var(--ink); }
+    .lede { font-size: 1.08rem; }
+    .topbar-actions { margin-left: auto; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; }
+    }
+
+    body { background: var(--bg); }
+    .topbar { border-bottom-color: var(--line-strong); }
+    .brand span:first-child { color: var(--ink); font-weight: 700; letter-spacing: 0.08em; }
+    .badge { border-color: var(--blue-line); background: var(--blue-soft); color: var(--blue); }
+    main { padding-top: clamp(1.5rem, 4vw, 3rem); }
+    article { gap: clamp(1.25rem, 3vw, 2.25rem); }
+    .run-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--line-strong);
+      padding-bottom: 1.3rem;
+    }
+    .run-heading-copy { display: grid; gap: 0.45rem; }
+    .run-heading h1 { font-size: clamp(1.8rem, 3.6vw, 3rem); letter-spacing: -0.045em; }
+    .run-status {
+      display: grid;
+      gap: 0.2rem;
+      border: 1px solid var(--amber-line);
+      background: var(--amber-soft);
+      padding: 0.65rem 0.85rem;
+      min-width: min(100%, 230px);
+    }
+    .run-status strong { color: var(--amber); font: 600 0.72rem var(--font-mono); letter-spacing: 0.06em; }
+    .run-status span { color: var(--ink-2); font-size: 0.82rem; }
+    .run-sequence { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; align-items: stretch; }
+    .run-card {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 1rem;
+      min-width: 0;
+      border: 1px solid var(--line-strong);
+      background: var(--surface);
+    }
+    .run-card-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 0.7rem;
+      border-bottom: 1px solid var(--line);
+      padding: 0.9rem 1rem;
+    }
+    .run-title { display: grid; gap: 0.1rem; }
+    .run-index { color: var(--blue); font: 600 0.7rem var(--font-mono); letter-spacing: 0.08em; }
+    .run-title h2 { font-size: 1.1rem; }
+    .result-pill { border: 1px solid var(--green-line); background: var(--green-soft); color: var(--green); padding: 0.1rem 0.45rem; font: 600 0.68rem var(--font-mono); white-space: nowrap; }
+    .run-location { display: grid; gap: 0.25rem; padding: 0 1rem; }
+    .run-label { color: var(--muted); font: 600 0.65rem var(--font-ui); letter-spacing: 0.09em; text-transform: uppercase; }
+    .run-location code { width: fit-content; max-width: 100%; overflow-wrap: anywhere; }
+    .command-list { display: grid; align-content: start; }
+    .command-row { display: grid; grid-template-columns: 1.4rem minmax(0, 1fr) auto; align-items: start; gap: 0.45rem; border-top: 1px solid var(--line); padding: 0.65rem 1rem; }
+    .command-prompt { color: var(--blue); font: 600 0.88rem var(--font-mono); }
+    .command-row code { min-width: 0; border: 0; background: transparent; padding: 0; font-size: 0.78rem; line-height: 1.6; }
+    .command-result { color: var(--green); font: 600 0.65rem var(--font-mono); }
+    .run-meta { display: grid; gap: 0.35rem; border-top: 1px solid var(--line); background: var(--surface-2); padding: 0.7rem 1rem; color: var(--ink-2); font-size: 0.78rem; }
+    .run-meta code { font-size: 0.92em; }
+    .run-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; border-top: 1px solid var(--line-strong); padding-top: 0.8rem; color: var(--muted); font: 0.74rem var(--font-mono); }
+    .run-footer strong { color: var(--ink-2); font-weight: 500; }
+    @media (max-width: 900px) {
+      .run-sequence { grid-template-columns: 1fr; }
+      .run-card { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .run-heading { align-items: stretch; }
+      .run-status { min-width: 100%; }
+      .command-row { grid-template-columns: 1rem minmax(0, 1fr) auto; gap: 0.3rem; padding-inline: 0.75rem; }
+      .command-row code { font-size: 0.72rem; }
+      .run-card-head, .run-location, .run-meta { padding-inline: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span>DEV-LAB</span><span class="badge">SCRATCHPAD</span></div>
+      <nav class="page-nav" aria-label="Page switcher">
+        <a href="/index.html" class="nav-tab">Lesson</a>
+        <a href="/MCQ.html" class="nav-tab">Assessment</a>
+        <a href="/disposable.html" class="nav-tab active" aria-current="page">Scratchpad</a>
+      </nav>
+      <div class="topbar-actions">
+        <button id="help-toggle" class="help-toggle" type="button" aria-expanded="false" aria-controls="help-panel">[HELP]</button>
+        <div class="theme-picker">
+          <label for="theme-select">Theme:</label>
+          <select id="theme-select" class="theme-select" aria-label="Theme mode">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div id="help-panel" class="help-panel" role="region" aria-label="Acronym reference" hidden>
+      <h2>Acronyms</h2>
+      <div class="help-grid">
+        <div class="help-item"><strong>CI</strong>Continuous Integration runs automated checks on code changes.</div>
+        <div class="help-item"><strong>E2E</strong>End-to-end tests check a user flow through the running app.</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <article>
+      <header class="run-heading">
+        <div class="run-heading-copy">
+          <p class="eyebrow">Docker Todo · local verification record</p>
+          <h1>Commands used for the checks</h1>
+        </div>
+        <div class="run-status" role="status">
+          <strong>LOCAL RUNS</strong>
+          <span>GitHub Actions has not run yet</span>
+        </div>
+      </header>
+
+      <section class="run-sequence" aria-label="Local validation steps">
+        <article class="run-card">
+          <header class="run-card-head">
+            <div class="run-title">
+              <span class="run-index">01 / CLIENT</span>
+              <h2>Lint and build</h2>
+            </div>
+            <span class="result-pill">PASS*</span>
+          </header>
+          <div class="run-location">
+            <span class="run-label">Working directory</span>
+            <code>/home/user228/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation/client</code>
+          </div>
+          <div class="command-list" aria-label="Client commands">
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm lint</code>
+              <span class="command-result">PASS*</span>
+            </div>
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm build</code>
+              <span class="command-result">PASS</span>
+            </div>
+          </div>
+          <div class="run-meta"><span>* Lint passed with 3 warnings.</span></div>
+        </article>
+
+        <article class="run-card">
+          <header class="run-card-head">
+            <div class="run-title">
+              <span class="run-index">02 / SERVER</span>
+              <h2>Typecheck, build, tests</h2>
+            </div>
+            <span class="result-pill">PASS</span>
+          </header>
+          <div class="run-location">
+            <span class="run-label">Working directory</span>
+            <code>/home/user228/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation/server</code>
+          </div>
+          <div class="command-list" aria-label="Server commands">
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm typecheck</code>
+              <span class="command-result">PASS</span>
+            </div>
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm build</code>
+              <span class="command-result">PASS</span>
+            </div>
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm test</code>
+              <span class="command-result">PASS</span>
+            </div>
+          </div>
+          <div class="run-meta"><span>Test database: disposable PostgreSQL container</span></div>
+        </article>
+
+        <article class="run-card">
+          <header class="run-card-head">
+            <div class="run-title">
+              <span class="run-index">03 / PLAYWRIGHT</span>
+              <h2>Browser tests</h2>
+            </div>
+            <span class="result-pill">4 / 4 PASS</span>
+          </header>
+          <div class="run-location">
+            <span class="run-label">Working directory</span>
+            <code>/home/user228/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation</code>
+          </div>
+          <div class="command-list" aria-label="Playwright command">
+            <div class="command-row">
+              <span class="command-prompt" aria-hidden="true">$</span>
+              <code>pnpm test:e2e</code>
+              <span class="command-result">PASS</span>
+            </div>
+            <div class="run-meta">
+              <span>Compose up: <code>docker compose -f docker-compose.test.yml up -d --build --wait</code></span>
+              <span>Browser tests: <code>pnpm --dir client run test:e2e</code></span>
+              <span>Exit cleanup: <code>docker compose -f docker-compose.test.yml down --volumes --remove-orphans</code></span>
+            </div>
+          </div>
+          <div class="run-meta"><span>Test stack: client + server + PostgreSQL</span></div>
+        </article>
+      </section>
+
+      <footer class="run-footer">
+        <span><strong>Scope</strong> Local commands only</span>
+        <span><strong>Remote workflow</strong> Not run on GitHub Actions</span>
+      </footer>
+    </article>
+  </main>
+
+  <script>
+    const themeSelect = document.getElementById("theme-select");
+    const themeKey = "disposable-theme";
+    const savedTheme = localStorage.getItem(themeKey);
+    if (savedTheme && ["system", "light", "dark"].includes(savedTheme)) {
+      themeSelect.value = savedTheme;
+      if (savedTheme !== "system") document.documentElement.dataset.theme = savedTheme;
+    }
+    themeSelect.addEventListener("change", () => {
+      localStorage.setItem(themeKey, themeSelect.value);
+      if (themeSelect.value === "system") document.documentElement.removeAttribute("data-theme");
+      else document.documentElement.dataset.theme = themeSelect.value;
+    });
+
+    const helpButton = document.getElementById("help-toggle");
+    const helpPanel = document.getElementById("help-panel");
+    helpButton.addEventListener("click", () => {
+      const open = helpButton.getAttribute("aria-expanded") !== "true";
+      helpButton.setAttribute("aria-expanded", String(open));
+      helpPanel.hidden = !open;
+      helpPanel.classList.toggle("open", open);
+    });
+
+  </script>
+</body>
+</html>

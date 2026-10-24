@@ -30,12 +30,14 @@ the prompt; otherwise use the topic or page update explicitly requested by the u
   value". Leave enough room to explain how one step leads to the next.
 - Use a small, concrete example and carry it through the explanation where possible. Help the
   reader picture what happens.
-- For a requested HTML follow-up, address the specific misunderstanding first. Identify what the
-  reader understood correctly, then explain the correction. Use a simpler example before adding
-  more detail. Do not repeat the whole lesson unless requested.
-- When generating an HTML explanation from prompts that ask questions about the ongoing topic
-  (inspect `index.html` or `disposable-compose-review.html` to determine current topic context),
-  always explicitly state the question being addressed before continuing with the rest of the explanation.
+- For question-based HTML explanations, state the question, give a brief **Short answer** (one or
+  two direct sentences), then explain the reasoning and details. Keep the short answer concise and
+  do not repeat it verbatim.
+- For follow-ups, address the specific misunderstanding first. Note what the reader understood
+  correctly when useful, then explain the correction with a simple example. Do not repeat the
+  whole lesson unless requested.
+- For questions about the ongoing topic, inspect `index.html` or `disposable-compose-review.html`
+  for context, and explicitly state the question being answered.
 
 ## Lesson scope
 
@@ -45,21 +47,56 @@ branching into unrelated subtopics.
 Use structured learning only when the user explicitly requests a course or staged curriculum:
 
 1. Ask about the desired depth and any missing information needed to shape the curriculum.
-2. Update `CURRICULUM.md` to track stages appropriate to that depth.
-3. Cover the stages through successive user-requested HTML explanations.
-4. End each stage with an MCQ and use the answer to adjust later stages.
+2. Update `CURRICULUM.md` to track stages. Every stage must include an explicit post-completion checkpoint for `MCQ.html`.
+3. Teach each stage sequentially in `index.html`.
+4. When the user completes Stage N, prepare `MCQ.html` testing Stage N concepts. Scale question count to stage complexity.
+5. In `MCQ.html`, require answering all questions before submitting. After submission, display the total score, confirm correct answers cleanly, and provide brief explanations only for incorrect choices. All MCQ options must have decent technical complexity and plausible distractors rooted in real architectural misconceptions.
+6. Advance `index.html` to Stage N+1 only after the user reviews their MCQ assessment.
 
 Curriculum tracking is not a lesson archive. Ordinary follow-up messages still use the response
 destination rules in `AGENTS.md`; a course does not authorize a page rewrite for every reply.
 
-## Visual design and diagrams
+## Visual design, navigation and diagrams
 
 - Apply the repository's [artifact-design](../artifact-design/SKILL.md),
   [artifact-diagramming](../artifact-diagramming/SKILL.md), and
   [frontend-design](../frontend-design/SKILL.md) skills when creating or redesigning a page.
   For a content update, preserve the existing visual design unless the user requests a redesign.
-- Support the explanation with hand-authored inline SVG. Give each figure one clear claim and
-  draw each distinct mechanism that benefits from a picture; avoid decorative or redundant figures.
+- **Standard Typography (Lexend)**:
+  - Always use **Lexend** as the required standard typeface for reading (`--font-body`), interface controls (`--font-ui`), and headings (`--font-heading`) across all pages (`index.html`, `MCQ.html`, and `disposable.html`).
+  - Preconnect and load Lexend from Google Fonts in the `<head>` of every page:
+    ```html
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    ```
+  - Define standard font stack CSS variables in `:root`:
+    ```css
+    --font-body:
+      "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-ui:
+      "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-heading:
+      "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --font-mono:
+      ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    ```
+- **Full-Width Fluid Layout (Strictly No Centered Shells, Margin Auto, or Artificial Max-Widths)**:
+  - All pages (`index.html`, `MCQ.html`, `disposable.html`) must use a fluid, full-width layout stretching across the screen (`padding: ... var(--pad-x)` only).
+  - Never use `margin: 0 auto`, `margin: auto`, or artificial container `max-width` (e.g. `max-width: 1040px`, `max-width: 1440px`, or `max-width: 65ch/70ch/80ch` on body text/containers). Content must freely use the full width to display.
+- **Collapsible Sidebar**:
+  - The lesson page (`index.html`) includes a collapsible topic sidebar with a dedicated toggle button in the topbar (`#sidebar-toggle-btn`) and inside the sidebar header (`#sidebar-close-btn`).
+  - Toggling collapses or expands the sidebar on desktop and mobile without centering the main content.
+- **Common Cross-Page Navigation**: Every page (`index.html`, `MCQ.html`, and `disposable.html`) must include a persistent top navigation bar linking between Lesson, Assessment, and Scratchpad.
+- **Topbar Help Button**: Include a `[HELP]` button in the topbar that toggles an in-page panel displaying the full form and a 1-sentence plain-English explanation for every technical acronym introduced on that page.
+- **Interactive SVG for Mechanisms**: Support explanations with hand-authored inline SVG. When explaining mechanisms with multiple states, paths, or failure modes (e.g. PR checks vs. main release, normal vs. rollback), provide simple buttons to toggle SVG states so visual learners see how the system reacts. Avoid decorative or redundant figures.
 - Show the mechanism through position, distance, direction, overlap, and labelled arrows. Make
   the relevant boundary, sequence, or failure point visible rather than drawing only labelled boxes.
 - Give every figure an accessible description and a caption explaining why the pictured mechanism

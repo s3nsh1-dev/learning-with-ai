@@ -8,18 +8,20 @@
 - **`prompt.txt`** — holds the current topic; must match the current `CURRICULUM.md` stage.
 - **`CURRICULUM.md`** — defines the track and stages.
 - **`index.html`** — strictly reserved for the current `CURRICULUM.md` stage. When `prompt.txt` is referenced, confirm it matches the curriculum stage; warn if they differ.
+- **`MCQ.html`** — post-stage assessment and evaluation of weak spots for the completed stage. Replace on each stage completion.
 - **`disposable.html`** — for ad-hoc or explicitly requested artifact lessons. Replace entirely on each use.
 - **Chat** — default for all other questions. No artifacts unless explicitly requested.
-- Use the local [eli5 skill](.agents/skills/eli5/SKILL.md) for HTML explanations (`index.html` and `disposable.html`).
+- Use the local [eli5 skill](.agents/skills/eli5/SKILL.md) for HTML explanations (`index.html`, `MCQ.html`, and `disposable.html`).
 
 ## Lesson UI & State
 
+- Common top navigation linking between index.html, MCQ.html, and disposable.html.
 - Single-topic view with Previous/Next controls and a collapsible sidebar tracking topic completion.
 - Explicit topic completion only (visiting does not complete).
 - Persist active topic and completion state in `localStorage` using unique keys per lesson.
 
 ## Page location and dev server
 
-- Only two pages exist: `index.html` (curriculum) and `disposable.html` (ad-hoc). Do not create others.
+- Only three pages exist: `index.html` (curriculum), `MCQ.html` (stage assessment), and `disposable.html` (ad-hoc). Do not create others.
 - Curriculum stage advances are built from scratch; content corrections update the existing page.
 - Run `npm run dev` and preview at `http://localhost:5173` (IPv6 loopback; do not use `127.0.0.1`).

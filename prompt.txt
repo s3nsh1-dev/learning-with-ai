@@ -1,1 +1,1 @@
-Stage 1: Map the Todo app delivery system
+Stage 2, 3 & 4: Make tests safe, build the PR gate, and publish immutable images to GHCR

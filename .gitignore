@@ -23,7 +23,6 @@ Thumbs.db
 .vscode/
 
 # Test artifacts
-.playwright-mcp/
 test-results/
 playwright-report/
 
