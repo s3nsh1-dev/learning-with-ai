@@ -1,436 +1,1946 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Local CI Run Log</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      color-scheme: light;
-      --bg: #eef3f4;
-      --surface: #fbfdfd;
-      --surface-2: #e4ecee;
-      --ink: #17272f;
-      --ink-2: #3d515b;
-      --muted: #5c7079;
-      --line: #d3dfe2;
-      --line-strong: #a6b8be;
-      --blue: #285d73;
-      --blue-soft: #e0eef2;
-      --blue-line: #b7d0d8;
-      --green: #197354;
-      --green-soft: #e2f1eb;
-      --green-line: #afd3c4;
-      --amber: #865b22;
-      --amber-soft: #f4eddf;
-      --amber-line: #ddc99f;
-      --red: #9a4353;
-      --red-soft: #f4e7e9;
-      --red-line: #d9b9bf;
-      --code-bg: #e8eff0;
-      --pad-x: clamp(1rem, 2.5vw, 2rem);
-      --font-body: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      --font-heading: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      --font-ui: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      --font-mono: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        color-scheme: dark;
-        --bg: #101b21;
-        --surface: #17262d;
-        --surface-2: #20333b;
-        --ink: #e4edef;
-        --ink-2: #c0d0d4;
-        --muted: #91a6ad;
-        --line: #2a3b42;
-        --line-strong: #49616b;
-        --blue: #8fc3d0;
-        --blue-soft: rgba(143, 195, 208, 0.12);
-        --blue-line: #3b6470;
-        --green: #6cc9a4;
-        --green-soft: rgba(108, 201, 164, 0.12);
-        --green-line: #356b58;
-        --amber: #d8b36d;
-        --amber-soft: rgba(216, 179, 109, 0.12);
-        --amber-line: #685632;
-        --red: #db8a99;
-        --red-soft: rgba(219, 138, 153, 0.12);
-        --red-line: #683b45;
-        --code-bg: #111d22;
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A practical guide to container registries, GHCR, Docker Hub, image manifests, and Git commit SHAs in Stage 4."
+    />
+    <title>Where Docker Images Live</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --ground: #f1f5f8;
+        --panel: #ffffff;
+        --panel-2: #e5edf3;
+        --ink: #172936;
+        --muted: #536b7b;
+        --line: #bdccd6;
+        --github: #245e83;
+        --github-wash: #dfedf5;
+        --docker: #a6532c;
+        --docker-wash: #f6e8df;
+        --safe: #286a51;
+        --safe-wash: #e2f1e9;
+        --caution: #815d1c;
+        --caution-wash: #f5eedb;
+        --pad-x: clamp(1rem, 3.5vw, 3.5rem);
+        --font-body:
+          "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        --font-ui:
+          "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        --font-heading:
+          "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        --font-mono:
+          ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas,
+          "Liberation Mono", monospace;
       }
-    }
 
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --bg: #101b21;
-      --surface: #17262d;
-      --surface-2: #20333b;
-      --ink: #e4edef;
-      --ink-2: #c0d0d4;
-      --muted: #91a6ad;
-      --line: #2a3b42;
-      --line-strong: #49616b;
-      --blue: #8fc3d0;
-      --blue-soft: rgba(143, 195, 208, 0.12);
-      --blue-line: #3b6470;
-      --green: #6cc9a4;
-      --green-soft: rgba(108, 201, 164, 0.12);
-      --green-line: #356b58;
-      --amber: #d8b36d;
-      --amber-soft: rgba(216, 179, 109, 0.12);
-      --amber-line: #685632;
-      --red: #db8a99;
-      --red-soft: rgba(219, 138, 153, 0.12);
-      --red-line: #683b45;
-      --code-bg: #111d22;
-    }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          color-scheme: dark;
+          --ground: #111c25;
+          --panel: #192a36;
+          --panel-2: #223846;
+          --ink: #edf4f7;
+          --muted: #b5c5ce;
+          --line: #405867;
+          --github: #8bc8e8;
+          --github-wash: #1c3b4c;
+          --docker: #efab84;
+          --docker-wash: #492f27;
+          --safe: #8ed2ad;
+          --safe-wash: #1d3e32;
+          --caution: #e8c979;
+          --caution-wash: #41371f;
+        }
+      }
 
-    :root[data-theme="light"] { color-scheme: light; }
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --ground: #111c25;
+        --panel: #192a36;
+        --panel-2: #223846;
+        --ink: #edf4f7;
+        --muted: #b5c5ce;
+        --line: #405867;
+        --github: #8bc8e8;
+        --github-wash: #1c3b4c;
+        --docker: #efab84;
+        --docker-wash: #492f27;
+        --safe: #8ed2ad;
+        --safe-wash: #1d3e32;
+        --caution: #e8c979;
+        --caution-wash: #41371f;
+      }
 
-    *, *::before, *::after { box-sizing: border-box; }
-    body {
-      min-height: 100vh;
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font: 16px/1.65 var(--font-body);
-      -webkit-font-smoothing: antialiased;
-    }
-    button, select { font: inherit; }
-    a { color: var(--blue); text-underline-offset: 3px; }
-    :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
-    code, pre { font-family: var(--font-mono); }
-    code {
-      overflow-wrap: anywhere;
-      border: 1px solid var(--line);
-      border-radius: 3px;
-      padding: 0.04em 0.3em;
-      background: var(--surface-2);
-      color: var(--ink);
-      font-size: 0.88em;
-    }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
 
-    .topbar {
-      position: sticky;
-      z-index: 5;
-      top: 0;
-      border-bottom: 1px solid var(--line);
-      background: var(--surface);
-    }
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.65rem 1rem;
-      padding: 0.55rem var(--pad-x);
-    }
-    .brand, .page-nav, .topbar-actions, .theme-picker {
-      display: flex;
-      align-items: center;
-    }
-    .brand { gap: 0.55rem; color: var(--muted); font: 0.74rem var(--font-mono); }
-    .badge {
-      border: 1px solid var(--line);
-      border-radius: 3px;
-      padding: 0.12rem 0.42rem;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-    }
-    .page-nav {
-      gap: 0.2rem;
-      border-left: 1px solid var(--line);
-      padding-left: 0.85rem;
-      margin-right: auto;
-      margin-left: 1rem;
-    }
-    .nav-tab {
-      border-radius: 3px;
-      padding: 0.3rem 0.62rem;
-      color: var(--muted);
-      text-decoration: none;
-      font: 0.85rem var(--font-ui);
-    }
-    .nav-tab:hover, .nav-tab.active { background: var(--surface-2); color: var(--ink); }
-    .nav-tab.active { font-weight: 600; }
-    .topbar-actions { gap: 0.8rem; }
-    .help-toggle, .theme-select {
-      border: 1px solid var(--line-strong);
-      border-radius: 3px;
-      background: var(--surface);
-      color: var(--ink-2);
-      cursor: pointer;
-    }
-    .help-toggle, .theme-select { padding: 0.25rem 0.5rem; font: 0.78rem var(--font-ui); }
-    .help-toggle[aria-expanded="true"] { border-color: var(--blue-line); background: var(--blue-soft); color: var(--blue); }
-    .theme-picker { gap: 0.35rem; color: var(--muted); font-size: 0.78rem; }
-    .help-panel { display: none; border-top: 1px solid var(--line); background: var(--surface-2); padding: 1rem var(--pad-x); }
-    .help-panel.open { display: block; }
-    .help-panel h2 { margin: 0 0 0.6rem; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
-    .help-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 0.45rem 1.2rem; }
-    .help-item { color: var(--ink-2); font-size: 0.82rem; }
-    .help-item strong { margin-right: 0.35rem; color: var(--ink); font-family: var(--font-mono); }
+      html {
+        scroll-behavior: smooth;
+      }
 
-    main { padding: 2.3rem var(--pad-x) 4rem; }
-    article { display: grid; gap: 1.5rem; }
-    .eyebrow, .section-label {
-      margin: 0;
-      color: var(--muted);
-      font: 600 0.72rem var(--font-ui);
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-    }
-    h1, h2, h3 { color: var(--ink); font-family: var(--font-heading); text-wrap: balance; }
-    h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3.1rem); line-height: 1.15; }
-    h2 { margin: 0; font-size: clamp(1.2rem, 2.3vw, 1.7rem); line-height: 1.3; }
-    h3 { margin: 0; font-size: 1.05rem; line-height: 1.4; }
-    p { margin: 0; color: var(--ink-2); }
-    p strong, li strong { color: var(--ink); }
-    .lede { font-size: 1.08rem; }
-    .topbar-actions { margin-left: auto; }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; }
-    }
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background: var(--ground);
+        color: var(--ink);
+        font: 16px/1.7 var(--font-body);
+      }
 
-    body { background: var(--bg); }
-    .topbar { border-bottom-color: var(--line-strong); }
-    .brand span:first-child { color: var(--ink); font-weight: 700; letter-spacing: 0.08em; }
-    .badge { border-color: var(--blue-line); background: var(--blue-soft); color: var(--blue); }
-    main { padding-top: clamp(1.5rem, 4vw, 3rem); }
-    article { gap: clamp(1.25rem, 3vw, 2.25rem); }
-    .run-heading {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-      border-bottom: 1px solid var(--line-strong);
-      padding-bottom: 1.3rem;
-    }
-    .run-heading-copy { display: grid; gap: 0.45rem; }
-    .run-heading h1 { font-size: clamp(1.8rem, 3.6vw, 3rem); letter-spacing: -0.045em; }
-    .run-status {
-      display: grid;
-      gap: 0.2rem;
-      border: 1px solid var(--amber-line);
-      background: var(--amber-soft);
-      padding: 0.65rem 0.85rem;
-      min-width: min(100%, 230px);
-    }
-    .run-status strong { color: var(--amber); font: 600 0.72rem var(--font-mono); letter-spacing: 0.06em; }
-    .run-status span { color: var(--ink-2); font-size: 0.82rem; }
-    .run-sequence { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; align-items: stretch; }
-    .run-card {
-      display: grid;
-      grid-template-rows: auto auto 1fr auto;
-      gap: 1rem;
-      min-width: 0;
-      border: 1px solid var(--line-strong);
-      background: var(--surface);
-    }
-    .run-card-head {
-      display: flex;
-      align-items: start;
-      justify-content: space-between;
-      gap: 0.7rem;
-      border-bottom: 1px solid var(--line);
-      padding: 0.9rem 1rem;
-    }
-    .run-title { display: grid; gap: 0.1rem; }
-    .run-index { color: var(--blue); font: 600 0.7rem var(--font-mono); letter-spacing: 0.08em; }
-    .run-title h2 { font-size: 1.1rem; }
-    .result-pill { border: 1px solid var(--green-line); background: var(--green-soft); color: var(--green); padding: 0.1rem 0.45rem; font: 600 0.68rem var(--font-mono); white-space: nowrap; }
-    .run-location { display: grid; gap: 0.25rem; padding: 0 1rem; }
-    .run-label { color: var(--muted); font: 600 0.65rem var(--font-ui); letter-spacing: 0.09em; text-transform: uppercase; }
-    .run-location code { width: fit-content; max-width: 100%; overflow-wrap: anywhere; }
-    .command-list { display: grid; align-content: start; }
-    .command-row { display: grid; grid-template-columns: 1.4rem minmax(0, 1fr) auto; align-items: start; gap: 0.45rem; border-top: 1px solid var(--line); padding: 0.65rem 1rem; }
-    .command-prompt { color: var(--blue); font: 600 0.88rem var(--font-mono); }
-    .command-row code { min-width: 0; border: 0; background: transparent; padding: 0; font-size: 0.78rem; line-height: 1.6; }
-    .command-result { color: var(--green); font: 600 0.65rem var(--font-mono); }
-    .run-meta { display: grid; gap: 0.35rem; border-top: 1px solid var(--line); background: var(--surface-2); padding: 0.7rem 1rem; color: var(--ink-2); font-size: 0.78rem; }
-    .run-meta code { font-size: 0.92em; }
-    .run-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; border-top: 1px solid var(--line-strong); padding-top: 0.8rem; color: var(--muted); font: 0.74rem var(--font-mono); }
-    .run-footer strong { color: var(--ink-2); font-weight: 500; }
-    @media (max-width: 900px) {
-      .run-sequence { grid-template-columns: 1fr; }
-      .run-card { grid-template-columns: minmax(0, 1fr); }
-    }
-    @media (max-width: 560px) {
-      .run-heading { align-items: stretch; }
-      .run-status { min-width: 100%; }
-      .command-row { grid-template-columns: 1rem minmax(0, 1fr) auto; gap: 0.3rem; padding-inline: 0.75rem; }
-      .command-row code { font-size: 0.72rem; }
-      .run-card-head, .run-location, .run-meta { padding-inline: 0.75rem; }
-    }
-  </style>
-</head>
-<body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand"><span>DEV-LAB</span><span class="badge">SCRATCHPAD</span></div>
-      <nav class="page-nav" aria-label="Page switcher">
-        <a href="/index.html" class="nav-tab">Lesson</a>
-        <a href="/MCQ.html" class="nav-tab">Assessment</a>
-        <a href="/disposable.html" class="nav-tab active" aria-current="page">Scratchpad</a>
-      </nav>
-      <div class="topbar-actions">
-        <button id="help-toggle" class="help-toggle" type="button" aria-expanded="false" aria-controls="help-panel">[HELP]</button>
-        <div class="theme-picker">
-          <label for="theme-select">Theme:</label>
-          <select id="theme-select" class="theme-select" aria-label="Theme mode">
+      h1,
+      h2,
+      h3,
+      p,
+      figure,
+      pre {
+        margin: 0;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-heading);
+        text-wrap: balance;
+      }
+
+      p,
+      li {
+        color: var(--muted);
+      }
+
+      a {
+        color: var(--github);
+        text-underline-offset: 0.18em;
+      }
+
+      a:hover {
+        color: var(--ink);
+      }
+
+      code,
+      pre {
+        font-family: var(--font-mono);
+      }
+
+      code {
+        overflow-wrap: anywhere;
+        color: var(--ink);
+        font-size: 0.92em;
+      }
+
+      button,
+      select {
+        color: inherit;
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--github);
+        outline-offset: 3px;
+      }
+
+      .topbar {
+        position: sticky;
+        z-index: 5;
+        top: 0;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .topbar-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.65rem 1rem;
+        padding: 0.7rem var(--pad-x);
+      }
+
+      .brand {
+        color: var(--ink);
+        font: 700 0.78rem var(--font-mono);
+        letter-spacing: 0.08em;
+      }
+
+      .nav,
+      .tools {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+
+      .nav a {
+        padding: 0.3rem 0.55rem;
+        color: var(--muted);
+        font-size: 0.84rem;
+        text-decoration: none;
+      }
+
+      .nav a:hover,
+      .nav a[aria-current="page"] {
+        background: var(--panel-2);
+        color: var(--ink);
+      }
+
+      .tools {
+        margin-left: auto;
+        gap: 0.55rem;
+      }
+
+      .help,
+      .theme {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        padding: 0.28rem 0.52rem;
+        font-size: 0.78rem;
+      }
+
+      .help[aria-expanded="true"] {
+        border-color: var(--github);
+        background: var(--github-wash);
+        color: var(--github);
+      }
+
+      .theme-label {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .help-panel {
+        border-top: 1px solid var(--line);
+        background: var(--panel-2);
+        padding: 1rem var(--pad-x);
+      }
+
+      .help-panel[hidden] {
+        display: none;
+      }
+
+      .help-panel h2 {
+        font-size: 1rem;
+      }
+
+      .terms {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.6rem 1.2rem;
+        margin-top: 0.7rem;
+      }
+
+      .term {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .term b {
+        color: var(--ink);
+        font-family: var(--font-mono);
+      }
+
+      main {
+        padding: clamp(1.7rem, 4vw, 3.5rem) var(--pad-x) 4rem;
+      }
+
+      article {
+        display: grid;
+        gap: clamp(2.5rem, 6vw, 5rem);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.6fr);
+        align-items: end;
+        gap: 2rem;
+      }
+
+      .hero-copy {
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .eyebrow,
+      .label {
+        font: 700 0.7rem var(--font-mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow {
+        color: var(--github);
+      }
+
+      h1 {
+        max-width: 17ch;
+        font-size: clamp(2.5rem, 6.5vw, 6rem);
+        line-height: 0.98;
+        letter-spacing: -0.065em;
+      }
+
+      .lede {
+        max-width: 68ch;
+        font-size: clamp(1rem, 1.4vw, 1.2rem);
+      }
+
+      .short-answer {
+        display: grid;
+        gap: 0.5rem;
+        border-left: 5px solid var(--github);
+        background: var(--github-wash);
+        padding: 1rem 1.1rem;
+      }
+
+      .short-answer b {
+        font-size: 0.85rem;
+      }
+
+      .short-answer p {
+        color: var(--ink);
+        font-size: 0.88rem;
+      }
+
+      .section {
+        display: grid;
+        gap: 1rem;
+        scroll-margin-top: 6rem;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 0.65fr);
+        align-items: end;
+        gap: 1rem;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0.85rem;
+      }
+
+      .section-title {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      h2 {
+        font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+        line-height: 1.16;
+        letter-spacing: -0.035em;
+      }
+
+      .section-note {
+        font-size: 0.88rem;
+      }
+
+      .definition-grid,
+      .choice-grid,
+      .concept-grid,
+      .faq-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .panel {
+        display: grid;
+        align-content: start;
+        gap: 0.65rem;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        padding: clamp(0.9rem, 2vw, 1.25rem);
+      }
+
+      .panel h3 {
+        font-size: 1.08rem;
+      }
+
+      .panel p,
+      .panel li {
+        font-size: 0.88rem;
+      }
+
+      .panel ul,
+      .panel ol {
+        display: grid;
+        gap: 0.45rem;
+        padding-left: 1.2rem;
+      }
+
+      .panel.github {
+        border-top: 4px solid var(--github);
+      }
+
+      .panel.docker {
+        border-top: 4px solid var(--docker);
+      }
+
+      .label.github-text {
+        color: var(--github);
+      }
+
+      .label.docker-text {
+        color: var(--docker);
+      }
+
+      .flow-board,
+      .process-board {
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .provider-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        border-bottom: 1px solid var(--line);
+        padding: 0.75rem;
+      }
+
+      .provider-tab {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        padding: 0.42rem 0.65rem;
+        font-size: 0.82rem;
+      }
+
+      .provider-tab[aria-pressed="true"][data-provider="ghcr"] {
+        border-color: var(--github);
+        background: var(--github-wash);
+        color: var(--github);
+      }
+
+      .provider-tab[aria-pressed="true"][data-provider="hub"] {
+        border-color: var(--docker);
+        background: var(--docker-wash);
+        color: var(--docker);
+      }
+
+      .flow-content {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(250px, 0.8fr);
+        gap: 1.1rem;
+        padding: 1rem;
+      }
+
+      .figure {
+        min-width: 0;
+        overflow-x: auto;
+      }
+
+      .figure svg {
+        display: block;
+        width: 100%;
+        min-width: 660px;
+        height: auto;
+        color: var(--ink);
+      }
+
+      .figure figcaption {
+        margin-top: 0.55rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .svg-node {
+        fill: var(--panel-2);
+        stroke: var(--line);
+        stroke-width: 1.5;
+      }
+
+      .svg-node.registry {
+        fill: var(--github-wash);
+        stroke: var(--github);
+      }
+
+      .svg-line {
+        fill: none;
+        stroke: var(--github);
+        stroke-width: 2;
+        marker-end: url("#flow-arrow");
+      }
+
+      .svg-title {
+        fill: var(--ink);
+        font: 600 13px var(--font-heading);
+      }
+
+      .svg-copy {
+        fill: var(--muted);
+        font: 11px var(--font-ui);
+      }
+
+      .flow-explain {
+        display: grid;
+        align-content: start;
+        gap: 0.7rem;
+        border-left: 1px solid var(--line);
+        padding-left: 1rem;
+      }
+
+      .flow-explain h3 {
+        font-size: 1.08rem;
+      }
+
+      .flow-explain p {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .command {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        padding: 0.8rem;
+        color: var(--ink);
+        font: 0.78rem/1.7 var(--font-mono);
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.65rem;
+        counter-reset: release-step;
+      }
+
+      .step {
+        display: grid;
+        align-content: start;
+        gap: 0.45rem;
+        border-top: 3px solid var(--github);
+        background: var(--panel);
+        padding: 0.8rem;
+        counter-increment: release-step;
+      }
+
+      .step::before {
+        color: var(--github);
+        content: "0" counter(release-step);
+        font: 700 0.72rem var(--font-mono);
+      }
+
+      .step h3 {
+        font-size: 0.95rem;
+      }
+
+      .step p {
+        font-size: 0.8rem;
+      }
+
+      .code-panel {
+        display: grid;
+        gap: 0.5rem;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        padding: 1rem;
+      }
+
+      .code-panel pre {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        padding: 1rem;
+        color: var(--ink);
+        font-size: 0.79rem;
+        line-height: 1.65;
+      }
+
+      .code-note {
+        font-size: 0.8rem;
+      }
+
+      .comparison {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--panel);
+        font-size: 0.84rem;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+      }
+
+      .comparison th,
+      .comparison td {
+        min-width: 150px;
+        border-bottom: 1px solid var(--line);
+        padding: 0.75rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .comparison th {
+        background: var(--panel-2);
+        color: var(--ink);
+        font-size: 0.78rem;
+      }
+
+      .comparison td {
+        color: var(--muted);
+      }
+
+      .comparison tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .callout {
+        border-left: 4px solid var(--caution);
+        background: var(--caution-wash);
+        padding: 0.9rem 1rem;
+        color: var(--ink);
+        font-size: 0.88rem;
+      }
+
+      .question {
+        border-top: 3px solid var(--line);
+      }
+
+      .sources {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem 1.2rem;
+        border-top: 1px solid var(--line);
+        padding-top: 1rem;
+        font-size: 0.82rem;
+      }
+
+      .footer-note {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .delivery-map {
+        border-top: 3px solid var(--github);
+        padding-top: 1.2rem;
+      }
+
+      .map-intro {
+        max-width: 78ch;
+      }
+
+      .map-part {
+        display: grid;
+        gap: 0.75rem;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        padding: clamp(0.8rem, 2vw, 1.2rem);
+      }
+
+      .map-part-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(220px, 0.65fr);
+        align-items: end;
+        gap: 0.8rem 1.2rem;
+      }
+
+      .map-part-head h3 {
+        font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+      }
+
+      .map-part-head p {
+        font-size: 0.82rem;
+      }
+
+      .map-figure {
+        min-width: 0;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        background: var(--ground);
+      }
+
+      .map-figure svg {
+        display: block;
+        width: 100%;
+        min-width: 980px;
+        height: auto;
+        color: var(--ink);
+      }
+
+      .map-figure figcaption {
+        border-top: 1px solid var(--line);
+        padding: 0.6rem 0.8rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .pipeline-diagram .node {
+        fill: var(--panel);
+        stroke: var(--line);
+        stroke-width: 1.5;
+      }
+
+      .pipeline-diagram .node.source {
+        fill: var(--panel-2);
+      }
+
+      .pipeline-diagram .node.github-node {
+        fill: var(--github-wash);
+        stroke: var(--github);
+      }
+
+      .pipeline-diagram .node.docker-node {
+        fill: var(--docker-wash);
+        stroke: var(--docker);
+      }
+
+      .pipeline-diagram .node.safe-node {
+        fill: var(--safe-wash);
+        stroke: var(--safe);
+      }
+
+      .pipeline-diagram .node.warn-node {
+        fill: var(--caution-wash);
+        stroke: var(--caution);
+      }
+
+      .pipeline-diagram .wire {
+        fill: none;
+        stroke: var(--muted);
+        stroke-width: 1.8;
+        marker-end: url("#pipeline-arrow");
+      }
+
+      .pipeline-diagram .wire.github-wire {
+        stroke: var(--github);
+      }
+
+      .pipeline-diagram .wire.safe-wire {
+        stroke: var(--safe);
+      }
+
+      .pipeline-diagram .wire.warn-wire {
+        stroke: var(--caution);
+      }
+
+      .pipeline-diagram .bus {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 1.5;
+      }
+
+      .pipeline-diagram .node-title {
+        fill: var(--ink);
+        font: 600 13px var(--font-heading);
+      }
+
+      .pipeline-diagram .node-copy {
+        fill: var(--muted);
+        font: 11px var(--font-ui);
+      }
+
+      .pipeline-diagram .wire-label {
+        fill: var(--muted);
+        font: 10px var(--font-mono);
+      }
+
+      .pipeline-diagram .node-tag {
+        fill: var(--github);
+        font: 700 9px var(--font-mono);
+        letter-spacing: 0.06em;
+      }
+
+      .map-caution {
+        border-left: 4px solid var(--caution);
+        background: var(--caution-wash);
+        padding: 0.85rem 1rem;
+        color: var(--ink);
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 900px) {
+        .hero,
+        .section-head,
+        .flow-content,
+        .map-part-head {
+          grid-template-columns: 1fr;
+        }
+
+        .flow-explain {
+          border-top: 1px solid var(--line);
+          border-left: 0;
+          padding-top: 0.9rem;
+          padding-left: 0;
+        }
+
+        .steps {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 600px) {
+        .tools {
+          margin-left: 0;
+        }
+
+        .terms,
+        .definition-grid,
+        .choice-grid,
+        .concept-grid,
+        .faq-grid,
+        .steps {
+          grid-template-columns: 1fr;
+        }
+
+        .flow-content {
+          padding: 0.65rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-row">
+        <div class="brand">STAGE 4 FIELD NOTES</div>
+        <nav class="nav" aria-label="Page navigation">
+          <a href="/index.html">Lesson</a>
+          <a href="/MCQ.html">Assessment</a>
+          <a href="/disposable.html" aria-current="page">Scratchpad</a>
+        </nav>
+        <div class="tools">
+          <button
+            id="help-button"
+            class="help"
+            type="button"
+            aria-expanded="false"
+            aria-controls="help-panel"
+          >
+            [HELP]
+          </button>
+          <label class="theme-label" for="theme">Theme</label>
+          <select id="theme" class="theme" aria-label="Choose color theme">
             <option value="system">System</option>
             <option value="light">Light</option>
             <option value="dark">Dark</option>
           </select>
         </div>
       </div>
-    </div>
-    <div id="help-panel" class="help-panel" role="region" aria-label="Acronym reference" hidden>
-      <h2>Acronyms</h2>
-      <div class="help-grid">
-        <div class="help-item"><strong>CI</strong>Continuous Integration runs automated checks on code changes.</div>
-        <div class="help-item"><strong>E2E</strong>End-to-end tests check a user flow through the running app.</div>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <article>
-      <header class="run-heading">
-        <div class="run-heading-copy">
-          <p class="eyebrow">Docker Todo · local verification record</p>
-          <h1>Commands used for the checks</h1>
+      <section id="help-panel" class="help-panel" hidden aria-label="Acronym guide">
+        <h2>Acronyms and short forms on this page</h2>
+        <div class="terms">
+          <div class="term"><b>API</b> A defined way for software to request work from another program.</div>
+          <div class="term"><b>CI</b> Continuous Integration. Automated checks run when code changes.</div>
+          <div class="term"><b>CD</b> Continuous Delivery. A verified build is published so a host can fetch it.</div>
+          <div class="term"><b>GHCR</b> GitHub Container Registry, GitHub's service for storing container images.</div>
+          <div class="term"><b>JSON</b> A text format for structured data made of fields, lists, and values.</div>
+          <div class="term"><b>OCI</b> Open Container Initiative, the group that publishes common container formats.</div>
+          <div class="term"><b>PAT</b> Personal Access Token, a credential tied to a user's account.</div>
+          <div class="term"><b>SHA</b> Secure Hash Algorithm. Git uses hash-based object IDs to identify commits.</div>
         </div>
-        <div class="run-status" role="status">
-          <strong>LOCAL RUNS</strong>
-          <span>GitHub Actions has not run yet</span>
-        </div>
-      </header>
-
-      <section class="run-sequence" aria-label="Local validation steps">
-        <article class="run-card">
-          <header class="run-card-head">
-            <div class="run-title">
-              <span class="run-index">01 / CLIENT</span>
-              <h2>Lint and build</h2>
-            </div>
-            <span class="result-pill">PASS*</span>
-          </header>
-          <div class="run-location">
-            <span class="run-label">Working directory</span>
-            <code>/home/user228/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation/client</code>
-          </div>
-          <div class="command-list" aria-label="Client commands">
-            <div class="command-row">
-              <span class="command-prompt" aria-hidden="true">$</span>
-              <code>pnpm lint</code>
-              <span class="command-result">PASS*</span>
-            </div>
-            <div class="command-row">
-              <span class="command-prompt" aria-hidden="true">$</span>
-              <code>pnpm build</code>
-              <span class="command-result">PASS</span>
-            </div>
-          </div>
-          <div class="run-meta"><span>* Lint passed with 3 warnings.</span></div>
-        </article>
-
-        <article class="run-card">
-          <header class="run-card-head">
-            <div class="run-title">
-              <span class="run-index">02 / SERVER</span>
-              <h2>Typecheck, build, tests</h2>
-            </div>
-            <span class="result-pill">PASS</span>
-          </header>
-          <div class="run-location">
-            <span class="run-label">Working directory</span>
-            <code>/home/user228/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation/server</code>
-          </div>
-          <div class="command-list" aria-label="Server commands">
-            <div class="command-row">
-              <span class="command-prompt" aria-hidden="true">$</span>
-              <code>pnpm typecheck</code>
-              <span class="command-result">PASS</span>
-            </div>
-            <div class="command-row">
-              <span class="command-prompt" aria-hidden="true">$</span>
-              <code>pnpm build</code>
-              <span class="command-result">PASS</span>
-            </div>
-            <div class="command-row">
-              <span class="command-prompt" aria-hidden="true">$</span>
-              <code>pnpm test</code>
-              <span class="command-result">PASS</span>
-            </div>
-          </div>
-          <div class="run-meta"><span>Test database: disposable PostgreSQL container</span></div>
-        </article>
-
-        <article class="run-card">
-          <header class="run-card-head">
-            <div class="run-title">
-              <span class="run-index">03 / PLAYWRIGHT</span>
-              <h2>Browser tests</h2>
-            </div>
-            <span class="result-pill">4 / 4 PASS</span>
-          </header>
-          <div class="run-location">
-            <span class="run-label">Working directory</span>
-            <code>/home/user228/Local_Storage/development/WebDev/intentional-projects/docker-beginner-simulation</code>
-          </div>
-          <div class="command-list" aria-label="Playwright command">
-            <div class="command-row">
-              <span class="command-prompt" aria-hidden="true">$</span>
-              <code>pnpm test:e2e</code>
-              <span class="command-result">PASS</span>
-            </div>
-            <div class="run-meta">
-              <span>Compose up: <code>docker compose -f docker-compose.test.yml up -d --build --wait</code></span>
-              <span>Browser tests: <code>pnpm --dir client run test:e2e</code></span>
-              <span>Exit cleanup: <code>docker compose -f docker-compose.test.yml down --volumes --remove-orphans</code></span>
-            </div>
-          </div>
-          <div class="run-meta"><span>Test stack: client + server + PostgreSQL</span></div>
-        </article>
       </section>
+    </header>
 
-      <footer class="run-footer">
-        <span><strong>Scope</strong> Local commands only</span>
-        <span><strong>Remote workflow</strong> Not run on GitHub Actions</span>
-      </footer>
-    </article>
-  </main>
+    <main>
+      <article>
+        <header class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Stage 4, publishing images</p>
+            <h1>Build it here.<br />Pull it there.</h1>
+            <p class="lede">
+              A Docker image is the packaged application. A container registry
+              stores that package so GitHub Actions, a developer's laptop, or
+              the EC2 server can upload and download it.
+            </p>
+          </div>
+          <aside class="short-answer">
+            <b>Short answer</b>
+            <p>
+              GHCR was chosen because this project already uses GitHub. Actions
+              can publish with a short-lived, narrowly permissioned token, and
+              the image package can live beside its source repository. Docker
+              Hub can store the same image. The project could use it instead.
+            </p>
+          </aside>
+        </header>
 
-  <script>
-    const themeSelect = document.getElementById("theme-select");
-    const themeKey = "disposable-theme";
-    const savedTheme = localStorage.getItem(themeKey);
-    if (savedTheme && ["system", "light", "dark"].includes(savedTheme)) {
-      themeSelect.value = savedTheme;
-      if (savedTheme !== "system") document.documentElement.dataset.theme = savedTheme;
-    }
-    themeSelect.addEventListener("change", () => {
-      localStorage.setItem(themeKey, themeSelect.value);
-      if (themeSelect.value === "system") document.documentElement.removeAttribute("data-theme");
-      else document.documentElement.dataset.theme = themeSelect.value;
-    });
+        <section class="section" id="registry" aria-labelledby="registry-title">
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">First, the basic idea</p>
+              <h2 id="registry-title">What is a container registry?</h2>
+            </div>
+            <p class="section-note">
+              Think of the registry as a remote package store. It does not run
+              the application. It keeps published images and serves them to
+              software that asks for a particular image.
+            </p>
+          </div>
+          <div class="definition-grid">
+            <article class="panel">
+              <h3>Image: the thing you build</h3>
+              <p>
+                A Dockerfile describes how to assemble the application and its
+                runtime files into an image. The image is made of a config and
+                filesystem layers. A running container is created from an
+                image.
+              </p>
+              <p>
+                In this project, the client and server are separate images
+                because they are separate app parts with different build and
+                runtime needs.
+              </p>
+            </article>
+            <article class="panel">
+              <h3>Registry: where you publish it</h3>
+              <p>
+                A registry accepts image uploads, stores image data, and lets
+                authorized users download it later. It usually organizes
+                images into repositories and uses tags or digests to identify
+                versions.
+              </p>
+              <p>
+                GitHub Actions builds and pushes the images. EC2 later
+                authenticates and pulls them. The registry is the handoff point
+                between those two machines.
+              </p>
+            </article>
+          </div>
+        </section>
 
-    const helpButton = document.getElementById("help-toggle");
-    const helpPanel = document.getElementById("help-panel");
-    helpButton.addEventListener("click", () => {
-      const open = helpButton.getAttribute("aria-expanded") !== "true";
-      helpButton.setAttribute("aria-expanded", String(open));
-      helpPanel.hidden = !open;
-      helpPanel.classList.toggle("open", open);
-    });
+        <section class="section" id="provider" aria-labelledby="provider-title">
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">Same package, different address</p>
+              <h2 id="provider-title">GHCR or Docker Hub?</h2>
+            </div>
+            <p class="section-note">
+              Select a destination. The build and Docker image format stay the
+              same. The image name, login, access settings, and registry
+              account change.
+            </p>
+          </div>
+          <div class="flow-board">
+            <div class="provider-tabs" role="group" aria-label="Choose a registry">
+              <button
+                class="provider-tab"
+                type="button"
+                data-provider="ghcr"
+                aria-pressed="true"
+              >
+                This project: GHCR
+              </button>
+              <button
+                class="provider-tab"
+                type="button"
+                data-provider="hub"
+                aria-pressed="false"
+              >
+                Alternative: Docker Hub
+              </button>
+            </div>
+            <div class="flow-content">
+              <figure class="figure">
+                <svg
+                  viewBox="0 0 780 210"
+                  role="img"
+                  aria-label="GitHub Actions builds an image, authenticates to GHCR, pushes it to the registry, and EC2 pulls it."
+                >
+                  <defs>
+                    <marker
+                      id="flow-arrow"
+                      markerWidth="8"
+                      markerHeight="8"
+                      refX="6"
+                      refY="4"
+                      orient="auto"
+                    >
+                      <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
+                    </marker>
+                  </defs>
+                  <path class="svg-line" d="M170 102 H225"></path>
+                  <path class="svg-line" d="M365 102 H420"></path>
+                  <path class="svg-line" d="M560 102 H615"></path>
+                  <rect class="svg-node" x="20" y="65" width="150" height="74"></rect>
+                  <text class="svg-title" x="38" y="94">GitHub Actions</text>
+                  <text class="svg-copy" x="38" y="116">builds image</text>
+                  <rect class="svg-node" x="225" y="65" width="140" height="74"></rect>
+                  <text class="svg-title" x="242" y="94">Login</text>
+                  <text id="auth-copy" class="svg-copy" x="242" y="116">GITHUB_TOKEN</text>
+                  <rect class="svg-node registry" x="420" y="65" width="140" height="74"></rect>
+                  <text id="registry-title-svg" class="svg-title" x="437" y="94">GHCR</text>
+                  <text id="registry-host-svg" class="svg-copy" x="437" y="116">ghcr.io</text>
+                  <rect class="svg-node" x="615" y="65" width="145" height="74"></rect>
+                  <text class="svg-title" x="632" y="94">EC2 host</text>
+                  <text class="svg-copy" x="632" y="116">pulls image</text>
+                  <text class="svg-copy" x="175" y="88">push</text>
+                  <text class="svg-copy" x="370" y="88">stores</text>
+                  <text class="svg-copy" x="565" y="88">pull</text>
+                  <text id="image-name-svg" class="svg-copy" x="420" y="170">
+                    ghcr.io/s3nsh1-dev/docker-beginner-simulation-client
+                  </text>
+                </svg>
+                <figcaption>
+                  The registry changes, but the flow does not: build, log in,
+                  push, then pull on the server.
+                </figcaption>
+              </figure>
+              <div class="flow-explain" aria-live="polite">
+                <h3 id="provider-heading">Why this project uses GHCR</h3>
+                <p id="provider-copy">
+                  The repository and workflow already live on GitHub. A
+                  publishing job can use its job-scoped GITHUB_TOKEN with
+                  packages: write instead of storing a Docker Hub password in
+                  repository secrets.
+                </p>
+                <pre id="provider-address" class="command">ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:&lt;commit-sha&gt;</pre>
+              </div>
+            </div>
+          </div>
+        </section>
 
-  </script>
-</body>
+        <section class="section" aria-labelledby="comparison-title">
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">Pick based on the project</p>
+              <h2 id="comparison-title">When would you choose each one?</h2>
+            </div>
+            <p class="section-note">
+              Neither service is inherently the right registry for every team.
+              Compare account ownership, who needs access, automation, pricing,
+              storage rules, and image pull limits.
+            </p>
+          </div>
+          <div class="table-wrap">
+            <table class="comparison">
+              <thead>
+                <tr>
+                  <th scope="col">Question</th>
+                  <th scope="col">GHCR</th>
+                  <th scope="col">Docker Hub</th>
+                  <th scope="col">Another registry</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Good fit when...</td>
+                  <td>The code and CI already live on GitHub, and package access should follow GitHub accounts or teams.</td>
+                  <td>You want a familiar, widely used public image location or already manage Docker Hub repositories.</td>
+                  <td>Your cloud provider or company already manages a registry, such as Amazon ECR for an AWS-centered setup.</td>
+                </tr>
+                <tr>
+                  <td>Workflow login</td>
+                  <td>GitHub Actions can use GITHUB_TOKEN with explicit package write permission.</td>
+                  <td>Use Docker Hub credentials or an access token stored as GitHub Actions secrets.</td>
+                  <td>Usually use that provider's identity and access controls. Setup depends on the registry.</td>
+                </tr>
+                <tr>
+                  <td>Image address</td>
+                  <td><code>ghcr.io/owner/image:tag</code></td>
+                  <td><code>docker.io/namespace/image:tag</code></td>
+                  <td>For Amazon ECR, an account and region are part of the address.</td>
+                </tr>
+                <tr>
+                  <td>Can Docker pull it?</td>
+                  <td>Yes, after login if the package is private.</td>
+                  <td>Yes, after login if the repository is private.</td>
+                  <td>Yes, after using that registry's authentication method.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <aside class="callout">
+            Moving from GHCR to Docker Hub would not mean rewriting the
+            Dockerfile. You would change the image name, configure a Docker Hub
+            repository, change workflow login credentials, update the server's
+            pull address, and grant the right people access.
+          </aside>
+        </section>
+
+        <section class="section" id="release" aria-labelledby="release-title">
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">The Stage 4 path</p>
+              <h2 id="release-title">What happens after a merge?</h2>
+            </div>
+            <p class="section-note">
+              This project publishes the client and server images after trusted
+              checks pass on the merged commit. A pull request can run tests,
+              but it should not publish production packages.
+            </p>
+          </div>
+          <div class="steps" aria-label="Steps from source commit to deployed image">
+            <article class="step">
+              <h3>Git names the commit</h3>
+              <p>A commit has an object ID, often called its commit SHA.</p>
+            </article>
+            <article class="step">
+              <h3>Actions checks it</h3>
+              <p>Tests and builds must pass before the publish job runs.</p>
+            </article>
+            <article class="step">
+              <h3>Build and push</h3>
+              <p>Buildx packages each app part and uploads it to GHCR.</p>
+            </article>
+            <article class="step">
+              <h3>Registry records it</h3>
+              <p>Tags point to manifests, which describe image config and layers.</p>
+            </article>
+            <article class="step">
+              <h3>EC2 pulls it</h3>
+              <p>The host downloads the selected image and starts its container.</p>
+            </article>
+          </div>
+          <div class="code-panel">
+            <h3>These are two different packages</h3>
+            <pre><code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:&lt;full-commit-sha&gt;
+ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:&lt;full-commit-sha&gt;</code></pre>
+            <p class="code-note">
+              The client and server use the same source commit value in their
+              tags, but each name points to a different image. EC2 can pull
+              both tags and run that release together.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="manifest-title">
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">What the registry stores</p>
+              <h2 id="manifest-title">What is an image manifest?</h2>
+            </div>
+            <p class="section-note">
+              A manifest is a small data record that tells a container tool
+              which config and filesystem layers make up one image for one
+              platform.
+            </p>
+          </div>
+          <div class="concept-grid">
+            <article class="panel">
+              <h3>It points to the pieces</h3>
+              <p>
+                The registry stores image data as blobs. The manifest lists
+                descriptors for the image configuration and its layers. Each
+                descriptor includes a content digest and size, so the client
+                knows what to request and can check what it received.
+              </p>
+              <pre class="command">{
+  "schemaVersion": 2,
+  "mediaType": "application/vnd.oci.image.manifest.v1+json",
+  "config": { "digest": "sha256:..." },
+  "layers": [
+    { "digest": "sha256:..." },
+    { "digest": "sha256:..." }
+  ]
+}</pre>
+            </article>
+            <article class="panel">
+              <h3>A pull is a lookup, then downloads</h3>
+              <ol>
+                <li>Docker asks the registry for an image by name and tag.</li>
+                <li>The registry resolves that tag to a manifest or image index.</li>
+                <li>Docker downloads the referenced config and missing layers.</li>
+                <li>Docker checks their digests and assembles the image locally.</li>
+              </ol>
+            </article>
+          </div>
+          <aside class="callout">
+            A multi-platform image can start with an image index, which points
+            to separate manifests such as <code>linux/amd64</code> and
+            <code>linux/arm64</code>. Docker selects the one that matches the
+            machine. That is why Stage 4 mentions multi-platform tagging.
+          </aside>
+        </section>
+
+        <section class="section" aria-labelledby="sha-title">
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">Trace a release to source</p>
+              <h2 id="sha-title">What is a Git commit SHA?</h2>
+            </div>
+            <p class="section-note">
+              It is the object ID Git uses to identify a commit. It identifies
+              that commit record, which includes the project tree and commit
+              metadata, not merely a filename or a Docker image.
+            </p>
+          </div>
+          <div class="concept-grid">
+            <article class="panel">
+              <h3>Get it from your checkout</h3>
+              <pre class="command">git rev-parse HEAD
+git show -s --format='%H%n%s' HEAD</pre>
+              <p>
+                <code>HEAD</code> means the commit currently checked out. The
+                first command prints its full object ID. The second prints the
+                ID and the commit subject line. A short form such as
+                <code>8e91c2d</code> is easier to read, but use the full value
+                for an unambiguous release tag.
+              </p>
+            </article>
+            <article class="panel">
+              <h3>Why put it on the image tag?</h3>
+              <p>
+                If the image tag includes the source commit ID, a deploy log
+                gives you a direct lead back to the code change. You can ask,
+                "Which commit built the client running on EC2?" and inspect
+                that commit in GitHub.
+              </p>
+              <p>
+                A tag like <code>latest</code> does not answer that question by
+                itself because it usually gets moved to a newer image.
+              </p>
+            </article>
+          </div>
+          <div class="code-panel">
+            <h3>A commit tag and an image digest identify different things</h3>
+            <pre><code>IMAGE_TAG="$(git rev-parse HEAD)"
+docker pull "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:${IMAGE_TAG}"
+
+# A registry can also address the exact image content by digest:
+docker pull "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client@sha256:&lt;manifest-digest&gt;"</code></pre>
+            <p class="code-note">
+              The commit SHA identifies source history. The
+              <code>sha256:...</code> image digest identifies image content.
+              The build connects them through the tag and image metadata.
+            </p>
+          </div>
+          <aside class="callout">
+            A SHA-looking tag is not automatically immutable. Docker tags are
+            names that can be reassigned unless registry policy prevents it.
+            A commit-SHA tag is a useful release convention, but the image
+            digest is the content-derived identifier. Stage 4's "immutable
+            SHA tag" means "tagged to a specific source commit"; do not assume
+            the registry rejects someone moving that tag.
+          </aside>
+        </section>
+
+        <section class="section" aria-labelledby="questions-title">
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">Questions that come up while wiring it</p>
+              <h2 id="questions-title">A few practical clarifications</h2>
+            </div>
+            <p class="section-note">
+              These are the distinctions that make registry setup easier to
+              troubleshoot.
+            </p>
+          </div>
+          <div class="faq-grid">
+            <article class="panel question">
+              <h3>Why did ghcr.io open a GitHub Actions page?</h3>
+              <p>
+                Visiting <code>https://ghcr.io</code> in a browser currently
+                redirects to GitHub's Actions feature page. That root address
+                is not the registry's package browser. Docker tools use
+                <code>ghcr.io</code> as the registry hostname with a full image
+                path, such as
+                <code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:tag</code>.
+              </p>
+              <p>
+                Actions and GHCR are separate services. Actions runs the
+                workflow; GHCR stores and serves the image. The direct
+                <a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry">container registry docs</a>
+                explain the package service.
+              </p>
+            </article>
+            <article class="panel question">
+              <h3>Is GHCR outdated, or does GitHub Actions replace it?</h3>
+              <p>
+                No. Current GitHub documentation still describes publishing
+                images to GitHub Packages and container registries. Actions is
+                one way to automate a build and push. GHCR is one place to
+                store the result.
+              </p>
+            </article>
+            <article class="panel question">
+              <h3>Does the registry build the image?</h3>
+              <p>
+                Usually the CI runner builds it from the Dockerfile and pushes
+                the finished image. Some registry services also offer
+                automated builds, but this project builds in GitHub Actions.
+                The registry's job here is storage and distribution.
+              </p>
+            </article>
+            <article class="panel question">
+              <h3>What does the workflow token actually allow?</h3>
+              <p>
+                The publishing job requests only the permissions it needs, such
+                as <code>contents: read</code> to check out source and
+                <code>packages: write</code> to publish the image. Pull
+                requests should not get that publish permission. EC2 uses
+                separate, read-only registry credentials to pull private
+                images.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="stage-map-title">
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">Back to the lesson</p>
+              <h2 id="stage-map-title">What Stage 4 is asking you to wire up</h2>
+            </div>
+            <p class="section-note">
+              Stage 4 is the publish step after Stage 3's checks. It does not
+              deploy the app to EC2 yet. Later stages configure the host to
+              pull and run these images.
+            </p>
+          </div>
+          <div class="definition-grid">
+            <article class="panel github">
+              <span class="label github-text">GitHub Actions job</span>
+              <ul>
+                <li>Run only for a trusted commit after the checks pass.</li>
+                <li>Grant <code>contents: read</code> and <code>packages: write</code> to the publish job.</li>
+                <li>Log in to <code>ghcr.io</code> with that job's <code>GITHUB_TOKEN</code>.</li>
+                <li>Build and push separate client and server images, tagged with the commit ID.</li>
+              </ul>
+            </article>
+            <article class="panel">
+              <span class="label">Later, on EC2</span>
+              <ul>
+                <li>Log in with credentials that can read the private packages.</li>
+                <li>Set the release tag to the commit that should run.</li>
+                <li>Use Docker Compose to pull both matching images.</li>
+                <li>Start the services and check application health.</li>
+              </ul>
+            </article>
+          </div>
+          <p class="footer-note">
+            For the exact GitHub workflow syntax, the
+            <a href="https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images">GitHub publishing guide</a>
+            covers GHCR and Docker Hub. The
+            <a href="https://docs.docker.com/docker-hub/repos/">Docker Hub repository guide</a>
+            explains Hub repositories. The
+            <a href="https://github.com/opencontainers/image-spec/blob/main/manifest.md">OCI manifest spec</a>
+            defines image manifests. The
+            <a href="https://git-scm.com/book/en/v2/Git-Internals-Git-Objects">Git object guide</a>
+            explains Git object IDs.
+          </p>
+        </section>
+
+        <section
+          class="section delivery-map"
+          aria-labelledby="delivery-map-title"
+        >
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">The complete capstone route</p>
+              <h2 id="delivery-map-title">
+                From app code to a checked release on EC2
+              </h2>
+            </div>
+            <p class="section-note map-intro">
+              Follow the numbered parts in order. Each diagram keeps the
+              checkpoints visible, including the pull request stop, both image
+              builds, the host's private files, the health check, and rollback.
+              On a narrow screen, scroll inside a diagram rather than losing a
+              step.
+            </p>
+          </div>
+
+          <article class="map-part">
+            <header class="map-part-head">
+              <div>
+                <p class="eyebrow">01 / Verify a proposed change</p>
+                <h3>Source code enters the pull request gate</h3>
+              </div>
+              <p>
+                Client, server, and end-to-end checks can run in parallel.
+                Their results join at one merge decision.
+              </p>
+            </header>
+            <figure class="map-figure">
+              <svg
+                class="pipeline-diagram"
+                viewBox="0 0 1240 410"
+                role="img"
+                aria-label="Client and server code with Dockerfiles enter a pull request. GitHub Actions runs client checks, server checks with disposable PostgreSQL, and Playwright end-to-end checks in parallel. All required checks must pass to merge. A failed check blocks the pull request and cannot publish or deploy."
+              >
+                <defs>
+                  <marker
+                    id="pipe-arrow-pr"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
+                  </marker>
+                </defs>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-pr)"
+                  d="M185 190 H220"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-pr)"
+                  d="M370 190 H405"
+                ></path>
+                <path class="bus" d="M585 190 H610 M610 87 V293"></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-pr)"
+                  d="M610 87 H635"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-pr)"
+                  d="M610 190 H635"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-pr)"
+                  d="M610 293 H635"
+                ></path>
+                <path class="bus" d="M915 87 H940 M915 190 H940 M915 293 H940 M940 87 V293"></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-pr)"
+                  d="M940 190 H965"
+                ></path>
+                <path
+                  class="wire safe-wire"
+                  marker-end="url(#pipe-arrow-pr)"
+                  d="M1110 167 H1140 V92 H1160"
+                ></path>
+                <path
+                  class="wire warn-wire"
+                  marker-end="url(#pipe-arrow-pr)"
+                  d="M1110 212 H1140 V315 H1160"
+                ></path>
+                <text class="wire-label" x="191" y="178">push branch</text>
+                <text class="wire-label" x="374" y="178">open PR</text>
+                <text class="wire-label" x="616" y="62">parallel jobs</text>
+                <text class="wire-label" x="1116" y="145">yes</text>
+                <text class="wire-label" x="1116" y="238">no</text>
+
+                <rect class="node source" x="20" y="130" width="165" height="120"></rect>
+                <text class="node-tag" x="36" y="154">REPOSITORY</text>
+                <text class="node-title" x="36" y="180">App source</text>
+                <text class="node-copy" x="36" y="202">React + Nginx client</text>
+                <text class="node-copy" x="36" y="222">Express server + Dockerfiles</text>
+
+                <rect class="node github-node" x="220" y="145" width="150" height="90"></rect>
+                <text class="node-tag" x="236" y="169">GIT</text>
+                <text class="node-title" x="236" y="193">Feature branch</text>
+                <text class="node-copy" x="236" y="214">commit opens PR</text>
+
+                <rect class="node github-node" x="405" y="145" width="180" height="90"></rect>
+                <text class="node-tag" x="421" y="169">GITHUB ACTIONS</text>
+                <text class="node-title" x="421" y="193">PR workflow</text>
+                <text class="node-copy" x="421" y="214">read-only permissions</text>
+
+                <rect class="node" x="635" y="55" width="280" height="64"></rect>
+                <text class="node-title" x="651" y="80">Client verification</text>
+                <text class="node-copy" x="651" y="101">pnpm install → lint → build</text>
+
+                <rect class="node" x="635" y="158" width="280" height="64"></rect>
+                <text class="node-title" x="651" y="183">Server verification</text>
+                <text class="node-copy" x="651" y="204">typecheck + integration tests / disposable Postgres</text>
+
+                <rect class="node" x="635" y="261" width="280" height="64"></rect>
+                <text class="node-title" x="651" y="286">Full-stack Playwright</text>
+                <text class="node-copy" x="651" y="307">browser → client → API → disposable Postgres</text>
+
+                <rect class="node github-node" x="965" y="145" width="145" height="90"></rect>
+                <text class="node-title" x="981" y="176">All checks</text>
+                <text class="node-title" x="981" y="196">green?</text>
+                <text class="node-copy" x="981" y="217">required status gate</text>
+
+                <rect class="node safe-node" x="1160" y="55" width="75" height="74"></rect>
+                <text class="node-title" x="1172" y="82">Merge</text>
+                <text class="node-copy" x="1172" y="103">to main</text>
+
+                <rect class="node warn-node" x="1160" y="278" width="75" height="74"></rect>
+                <text class="node-title" x="1172" y="305">Blocked</text>
+                <text class="node-copy" x="1172" y="326">fix + retry</text>
+                <text class="node-copy" x="945" y="375">PRs cannot publish images or deploy to EC2.</text>
+              </svg>
+              <figcaption>
+                A failure stops at the PR. Only a merge to the protected main
+                branch moves the change into the release path.
+              </figcaption>
+            </figure>
+          </article>
+
+          <article class="map-part">
+            <header class="map-part-head">
+              <div>
+                <p class="eyebrow">02 / Publish the approved commit</p>
+                <h3>Checks unlock two separate GHCR images</h3>
+              </div>
+              <p>
+                A push to main runs the checks again. The publish job depends
+                on all of them and tags both images from the same source
+                commit.
+              </p>
+            </header>
+            <figure class="map-figure">
+              <svg
+                class="pipeline-diagram"
+                viewBox="0 0 1240 385"
+                role="img"
+                aria-label="A main branch push and commit SHA rerun all verification jobs. When those jobs pass, a main-only publish job checks out source with contents read permission, authenticates to GHCR with GITHUB_TOKEN and packages write permission, uses Buildx and cache, builds client and server images separately with the same commit SHA tag and OCI metadata, then pushes both private images and their manifests to GHCR."
+              >
+                <defs>
+                  <marker
+                    id="pipe-arrow-publish"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
+                  </marker>
+                </defs>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-publish)"
+                  d="M165 165 H195"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-publish)"
+                  d="M365 165 H395"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-publish)"
+                  d="M575 165 H605"
+                ></path>
+                <path class="bus" d="M785 165 H815 M815 95 V235"></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-publish)"
+                  d="M815 95 H845"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-publish)"
+                  d="M815 235 H845"
+                ></path>
+                <path
+                  class="wire"
+                  marker-end="url(#pipe-arrow-publish)"
+                  d="M1045 95 H1080"
+                ></path>
+                <path
+                  class="wire"
+                  marker-end="url(#pipe-arrow-publish)"
+                  d="M1045 235 H1080"
+                ></path>
+                <text class="wire-label" x="170" y="152">push main</text>
+                <text class="wire-label" x="370" y="152">checks pass</text>
+                <text class="wire-label" x="792" y="73">build separately</text>
+                <text class="wire-label" x="1049" y="82">push</text>
+                <text class="wire-label" x="1049" y="222">push</text>
+
+                <rect class="node source" x="20" y="120" width="145" height="90"></rect>
+                <text class="node-tag" x="36" y="144">TRUSTED SOURCE</text>
+                <text class="node-title" x="36" y="169">main commit</text>
+                <text class="node-copy" x="36" y="190">source SHA: $GITHUB_SHA</text>
+
+                <rect class="node github-node" x="195" y="120" width="170" height="90"></rect>
+                <text class="node-title" x="211" y="150">Rerun PR checks</text>
+                <text class="node-copy" x="211" y="172">client + server + E2E</text>
+                <text class="node-copy" x="211" y="192">publish needs all three</text>
+
+                <rect class="node github-node" x="395" y="120" width="180" height="90"></rect>
+                <text class="node-tag" x="411" y="144">MAIN ONLY</text>
+                <text class="node-title" x="411" y="169">Publish job</text>
+                <text class="node-copy" x="411" y="190">contents:read</text>
+                <text class="node-copy" x="411" y="205">packages:write</text>
+
+                <rect class="node" x="605" y="120" width="180" height="90"></rect>
+                <text class="node-title" x="621" y="150">GHCR login</text>
+                <text class="node-copy" x="621" y="172">GITHUB_TOKEN</text>
+                <text class="node-copy" x="621" y="192">Buildx + layer cache</text>
+
+                <rect class="node" x="845" y="55" width="200" height="80"></rect>
+                <text class="node-title" x="861" y="83">Build client</text>
+                <text class="node-copy" x="861" y="104">client Dockerfile + context</text>
+                <text class="node-copy" x="861" y="122">tag: sha-&lt;commit&gt;</text>
+
+                <rect class="node" x="845" y="195" width="200" height="80"></rect>
+                <text class="node-title" x="861" y="223">Build server</text>
+                <text class="node-copy" x="861" y="244">server Dockerfile + context</text>
+                <text class="node-copy" x="861" y="262">tag: sha-&lt;commit&gt;</text>
+
+                <rect class="node docker-node" x="1080" y="45" width="150" height="100"></rect>
+                <text class="node-tag" x="1096" y="67">PRIVATE GHCR</text>
+                <text class="node-title" x="1096" y="91">client image</text>
+                <text class="node-copy" x="1096" y="111">manifest + layers</text>
+                <text class="node-copy" x="1096" y="129">OCI source / revision</text>
+
+                <rect class="node docker-node" x="1080" y="185" width="150" height="100"></rect>
+                <text class="node-tag" x="1096" y="207">PRIVATE GHCR</text>
+                <text class="node-title" x="1096" y="231">server image</text>
+                <text class="node-copy" x="1096" y="251">manifest + layers</text>
+                <text class="node-copy" x="1096" y="269">OCI source / revision</text>
+
+                <text class="node-copy" x="26" y="330">
+                  Both image tags use the same source commit; the image digests identify the built contents.
+                </text>
+              </svg>
+              <figcaption>
+                The commit SHA ties both packages to one source revision. Each
+                image has its own manifest and content digest in GHCR.
+              </figcaption>
+            </figure>
+          </article>
+
+          <article class="map-part">
+            <header class="map-part-head">
+              <div>
+                <p class="eyebrow">03 / Send the release to EC2</p>
+                <h3>Deploy the exact two tags, not source code</h3>
+              </div>
+              <p>
+                The deploy job serializes releases, verifies the SSH host, and
+                tells EC2 which already-built commit to run.
+              </p>
+            </header>
+            <figure class="map-figure">
+              <svg
+                class="pipeline-diagram"
+                viewBox="0 0 1240 390"
+                role="img"
+                aria-label="After publish succeeds, a serialized GitHub Actions deploy job uses protected SSH secrets and verifies the EC2 host key, copies the production Compose file, and sends the release commit SHA. EC2 stores IMAGE_TAG in release.env and DATABASE_URL in permission-restricted server.env, logs into private GHCR using read-only credentials, and Docker Compose pulls the client and server images tagged with the release SHA."
+              >
+                <defs>
+                  <marker
+                    id="pipe-arrow-deploy"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
+                  </marker>
+                </defs>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-deploy)"
+                  d="M180 165 H215"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-deploy)"
+                  d="M405 165 H440"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-deploy)"
+                  d="M650 165 H690"
+                ></path>
+                <path
+                  class="wire safe-wire"
+                  marker-end="url(#pipe-arrow-deploy)"
+                  d="M885 165 H920"
+                ></path>
+                <path class="bus" d="M1080 165 H1100 M1100 100 V230"></path>
+                <path
+                  class="wire"
+                  marker-end="url(#pipe-arrow-deploy)"
+                  d="M1100 100 H1120"
+                ></path>
+                <path
+                  class="wire"
+                  marker-end="url(#pipe-arrow-deploy)"
+                  d="M1100 230 H1120"
+                ></path>
+                <text class="wire-label" x="184" y="152">publish passed</text>
+                <text class="wire-label" x="411" y="152">verified SSH</text>
+                <text class="wire-label" x="653" y="152">send release + Compose</text>
+                <text class="wire-label" x="890" y="152">pull by tag</text>
+
+                <rect class="node github-node" x="20" y="120" width="160" height="90"></rect>
+                <text class="node-tag" x="36" y="144">DEPLOY JOB</text>
+                <text class="node-title" x="36" y="169">Serialized</text>
+                <text class="node-copy" x="36" y="190">one deployment at a time</text>
+
+                <rect class="node github-node" x="215" y="105" width="190" height="120"></rect>
+                <text class="node-title" x="231" y="134">Protect SSH</text>
+                <text class="node-copy" x="231" y="156">GitHub secrets: key + host</text>
+                <text class="node-copy" x="231" y="177">verify known host key</text>
+                <text class="node-copy" x="231" y="198">no secrets in logs</text>
+
+                <rect class="node github-node" x="440" y="105" width="210" height="120"></rect>
+                <text class="node-title" x="456" y="134">Transfer release contract</text>
+                <text class="node-copy" x="456" y="156">production Compose file</text>
+                <text class="node-copy" x="456" y="177">release.env: IMAGE_TAG=SHA</text>
+                <text class="node-copy" x="456" y="198">keep prior SHA for rollback</text>
+
+                <rect class="node source" x="690" y="85" width="195" height="160"></rect>
+                <text class="node-tag" x="706" y="109">UBUNTU EC2</text>
+                <text class="node-title" x="706" y="134">Host-only settings</text>
+                <text class="node-copy" x="706" y="156">server.env: DATABASE_URL</text>
+                <text class="node-copy" x="706" y="177">file mode: chmod 600</text>
+                <text class="node-copy" x="706" y="198">GHCR read-only login</text>
+                <text class="node-copy" x="706" y="219">never bake secrets into images</text>
+
+                <rect class="node docker-node" x="920" y="120" width="160" height="90"></rect>
+                <text class="node-title" x="936" y="150">Compose pull</text>
+                <text class="node-copy" x="936" y="172">uses release.env tag</text>
+                <text class="node-copy" x="936" y="192">does not build source</text>
+
+                <rect class="node docker-node" x="1120" y="55" width="110" height="90"></rect>
+                <text class="node-title" x="1132" y="83">client</text>
+                <text class="node-copy" x="1132" y="104">image: SHA</text>
+                <text class="node-copy" x="1132" y="123">Nginx</text>
+
+                <rect class="node docker-node" x="1120" y="185" width="110" height="90"></rect>
+                <text class="node-title" x="1132" y="213">server</text>
+                <text class="node-copy" x="1132" y="234">image: same SHA</text>
+                <text class="node-copy" x="1132" y="253">API internal</text>
+
+                <text class="node-copy" x="25" y="330">
+                  Network exposure: port 80 reaches Nginx; the Express API has no public host port.
+                </text>
+              </svg>
+              <figcaption>
+                EC2 receives a Compose file and release value, then pulls the
+                images from GHCR. The database URL stays in a protected
+                host-only file.
+              </figcaption>
+            </figure>
+          </article>
+
+          <article class="map-part">
+            <header class="map-part-head">
+              <div>
+                <p class="eyebrow">04 / Prove the release is healthy</p>
+                <h3>Route traffic, check health, restore if needed</h3>
+              </div>
+              <p>
+                Deployment is not done when containers start. The workflow
+                checks the public health route and has a previous SHA to
+                restore if the new release fails.
+              </p>
+            </header>
+            <figure class="map-figure">
+              <svg
+                class="pipeline-diagram"
+                viewBox="0 0 1240 410"
+                role="img"
+                aria-label="A browser sends requests to the EC2 public port 80, Nginx serves the client and proxies API requests to the internal Express server, which connects to Neon PostgreSQL using DATABASE_URL from server.env. GitHub Actions polls the public API health endpoint. On success it records the new SHA as current and keeps the previous SHA. On failure it restores the prior IMAGE_TAG, reruns Docker Compose, checks health again, and reports deployment failure without exposing secrets."
+              >
+                <defs>
+                  <marker
+                    id="pipe-arrow-health"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
+                  </marker>
+                </defs>
+                <path
+                  class="wire"
+                  marker-end="url(#pipe-arrow-health)"
+                  d="M155 125 H195"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-health)"
+                  d="M365 125 H405"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-health)"
+                  d="M575 125 H615"
+                ></path>
+                <path
+                  class="wire github-wire"
+                  marker-end="url(#pipe-arrow-health)"
+                  d="M785 125 H825"
+                ></path>
+                <path
+                  class="wire safe-wire"
+                  marker-end="url(#pipe-arrow-health)"
+                  d="M990 105 H1030"
+                ></path>
+                <path
+                  class="wire warn-wire"
+                  marker-end="url(#pipe-arrow-health)"
+                  d="M910 170 V280 H780"
+                ></path>
+                <path
+                  class="wire warn-wire"
+                  marker-end="url(#pipe-arrow-health)"
+                  d="M590 315 H545 V205"
+                ></path>
+                <path
+                  class="wire warn-wire"
+                  marker-end="url(#pipe-arrow-health)"
+                  d="M780 315 H825"
+                ></path>
+                <text class="wire-label" x="160" y="113">HTTP :80</text>
+                <text class="wire-label" x="368" y="113">/api/*</text>
+                <text class="wire-label" x="580" y="113">DATABASE_URL</text>
+                <text class="wire-label" x="790" y="113">poll health</text>
+                <text class="wire-label" x="995" y="92">healthy</text>
+                <text class="wire-label" x="908" y="202">unhealthy</text>
+                <text class="wire-label" x="608" y="302">restore prior IMAGE_TAG</text>
+                <text class="wire-label" x="785" y="302">compose up + recheck</text>
+
+                <rect class="node source" x="20" y="85" width="135" height="80"></rect>
+                <text class="node-title" x="36" y="114">Browser</text>
+                <text class="node-copy" x="36" y="136">public request</text>
+
+                <rect class="node docker-node" x="195" y="85" width="170" height="80"></rect>
+                <text class="node-title" x="211" y="114">Nginx client</text>
+                <text class="node-copy" x="211" y="136">host port 80 only</text>
+
+                <rect class="node docker-node" x="405" y="85" width="170" height="80"></rect>
+                <text class="node-title" x="421" y="114">Express API</text>
+                <text class="node-copy" x="421" y="136">Compose network only</text>
+
+                <rect class="node source" x="615" y="85" width="170" height="80"></rect>
+                <text class="node-title" x="631" y="114">Neon Postgres</text>
+                <text class="node-copy" x="631" y="136">URL from server.env</text>
+
+                <rect class="node github-node" x="825" y="65" width="165" height="105"></rect>
+                <text class="node-title" x="841" y="94">Health poll</text>
+                <text class="node-copy" x="841" y="116">GET /api/health</text>
+                <text class="node-copy" x="841" y="137">through public Nginx</text>
+                <text class="node-copy" x="841" y="157">never print secret values</text>
+
+                <rect class="node safe-node" x="1030" y="65" width="195" height="80"></rect>
+                <text class="node-title" x="1046" y="94">Release confirmed</text>
+                <text class="node-copy" x="1046" y="116">record current SHA</text>
+                <text class="node-copy" x="1046" y="136">keep previous SHA</text>
+
+                <rect class="node warn-node" x="590" y="275" width="190" height="80"></rect>
+                <text class="node-title" x="606" y="304">Rollback</text>
+                <text class="node-copy" x="606" y="326">use previous image tag</text>
+                <text class="node-copy" x="606" y="346">recreate services</text>
+
+                <rect class="node warn-node" x="825" y="275" width="195" height="80"></rect>
+                <text class="node-title" x="841" y="304">Check restored health</text>
+                <text class="node-copy" x="841" y="326">report failed release</text>
+                <text class="node-copy" x="841" y="346">keep diagnostics</text>
+              </svg>
+              <figcaption>
+                A healthy deployment records the new SHA and preserves the
+                previous one. If health fails, Compose restores the previous
+                tag and the workflow reports the failed release.
+              </figcaption>
+            </figure>
+          </article>
+
+          <aside class="map-caution">
+            <b>Scope note.</b> This is the full target flow in the curriculum's
+            capstone. The workflow example on the Stage 4 lesson page currently
+            ends after publishing to GHCR. Production Compose, EC2 setup,
+            serialized SSH deployment, health polling, and rollback are added
+            in later stages.
+          </aside>
+        </section>
+      </article>
+    </main>
+
+    <script>
+      const providerDetails = {
+        ghcr: {
+          title: "Why this project uses GHCR",
+          copy:
+            "The repository and workflow already live on GitHub. A publishing job can use its job-scoped GITHUB_TOKEN with packages: write instead of storing a Docker Hub password in repository secrets.",
+          auth: "GITHUB_TOKEN",
+          name: "GHCR",
+          host: "ghcr.io",
+          address:
+            "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:<commit-sha>",
+          description:
+            "GitHub Actions builds an image, authenticates to GHCR, pushes it to the registry, and EC2 pulls it.",
+          stroke: "var(--github)",
+          wash: "var(--github-wash)",
+        },
+        hub: {
+          title: "When Docker Hub might fit better",
+          copy:
+            "Choose Docker Hub when its public image directory, existing team access, or established repositories suit your users. The build can stay the same, but Actions needs Docker Hub credentials stored as secrets and the EC2 host needs Hub pull access.",
+          auth: "Hub access token",
+          name: "Docker Hub",
+          host: "docker.io",
+          address:
+            "docker.io/s3nsh1-dev/docker-beginner-simulation-client:<commit-sha>",
+          description:
+            "GitHub Actions builds an image, authenticates to Docker Hub, pushes it to the registry, and EC2 pulls it.",
+          stroke: "var(--docker)",
+          wash: "var(--docker-wash)",
+        },
+      };
+
+      const tabs = document.querySelectorAll("[data-provider]");
+      const registryNode = document.querySelector(".svg-node.registry");
+      const figure = document.querySelector(".figure svg");
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const choice = providerDetails[tab.dataset.provider];
+          document.getElementById("provider-heading").textContent = choice.title;
+          document.getElementById("provider-copy").textContent = choice.copy;
+          document.getElementById("auth-copy").textContent = choice.auth;
+          document.getElementById("registry-title-svg").textContent = choice.name;
+          document.getElementById("registry-host-svg").textContent = choice.host;
+          document.getElementById("image-name-svg").textContent = choice.address
+            .split(":")[0];
+          document.getElementById("provider-address").textContent =
+            choice.address;
+          registryNode.style.fill = choice.wash;
+          registryNode.style.stroke = choice.stroke;
+          figure.setAttribute("aria-label", choice.description);
+
+          tabs.forEach((button) => {
+            button.setAttribute("aria-pressed", String(button === tab));
+          });
+        });
+      });
+
+      const helpButton = document.getElementById("help-button");
+      const helpPanel = document.getElementById("help-panel");
+      helpButton.addEventListener("click", () => {
+        const open = helpButton.getAttribute("aria-expanded") !== "true";
+        helpButton.setAttribute("aria-expanded", String(open));
+        helpPanel.hidden = !open;
+      });
+
+      const theme = document.getElementById("theme");
+      const themeKey = "where-docker-images-live-theme";
+      const savedTheme = localStorage.getItem(themeKey);
+      if (["system", "light", "dark"].includes(savedTheme)) {
+        theme.value = savedTheme;
+      }
+
+      const applyTheme = () => {
+        localStorage.setItem(themeKey, theme.value);
+        if (theme.value === "system") {
+          document.documentElement.removeAttribute("data-theme");
+        } else {
+          document.documentElement.dataset.theme = theme.value;
+        }
+      };
+
+      applyTheme();
+      theme.addEventListener("change", applyTheme);
+    </script>
+  </body>
 </html>
