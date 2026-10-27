@@ -3,10 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Make Tests Safe, Build the PR Gate &amp; Publish to GHCR · Stages 2, 3
-      &amp; 4
-    </title>
+    <title>Publish to GHCR, Define Prod Compose &amp; Secure EC2 · Stages 4, 5 &amp; 6</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -1600,6 +1597,28 @@
               Request-response protocol validated by assertion checks on status
               codes like 200, 201, 400, or 404.
             </li>
+            <li>
+              <strong>EC2</strong> — <em>Elastic Compute Cloud</em>: AWS
+              virtual machines hosting production Docker containers.
+            </li>
+            <li>
+              <strong>SSH</strong> — <em>Secure Shell</em>: Encrypted protocol on
+              TCP port 22 using public-key cryptography for host management.
+            </li>
+            <li>
+              <strong>SG</strong> — <em>Security Group</em>: Stateful host-level
+              virtual firewall regulating inbound and outbound network traffic on EC2.
+            </li>
+            <li>
+              <strong>PAT</strong> — <em>Personal Access Token</em>: Scoped
+              GitHub authentication token with <code>read:packages</code> permission
+              used on EC2 to pull private images from GHCR.
+            </li>
+            <li>
+              <strong>YAML</strong> — <em>YAML Ain't Markup Language</em>:
+              Configuration standard defining multi-container environments in
+              <code>compose.prod.yaml</code>.
+            </li>
           </ul>
         </div>
       </div>
@@ -1616,7 +1635,7 @@
         <div class="sidebar-inner" id="sidebar-inner">
           <div class="sidebar-head">
             <div class="sidebar-header-row">
-              <span class="stage-tag">Curriculum Stages 2, 3 &amp; 4</span>
+              <span class="stage-tag">Curriculum Stages 4, 5 &amp; 6</span>
               <button
                 class="sidebar-close-btn"
                 id="sidebar-close-btn"
@@ -1639,19 +1658,17 @@
                 </svg>
               </button>
             </div>
-            <h2 class="stage-name">Safe Tests, PR Gate &amp; GHCR Release</h2>
+            <h2 class="stage-name">GHCR Release, Prod Compose &amp; Secure EC2</h2>
 
             <div class="progress-box">
               <div class="progress-labels">
                 <span>Overall Progress</span>
-                <span id="progress-text">0 / 12 complete</span>
+                <span id="progress-text">0 / 9 complete</span>
               </div>
               <div
                 class="progress-track"
                 role="progressbar"
-                aria-label="Stages 2, 3 & 4 completion"
-                aria-valuemin="0"
-                aria-valuemax="12"
+                aria-label="Stages 4, 5 & 6 completion" aria-valuemin="0" aria-valuemax="9"
                 aria-valuenow="0"
               >
                 <span class="progress-bar-fill" id="progress-bar"></span>
@@ -1681,1757 +1698,15 @@
           <header class="lesson-header">
             <div class="lesson-meta">
               <span class="meta-tag primary">CAPSTONE: DOCKER TODO APP</span>
-              <span class="meta-tag emerald">STAGE 02: SAFE TESTS</span>
-              <span class="meta-tag purple">STAGE 03: PR CI GATE</span>
               <span class="meta-tag amber">STAGE 04: GHCR RELEASE</span>
+              <span class="meta-tag blue">STAGE 05: PROD COMPOSE</span>
+              <span class="meta-tag emerald">STAGE 06: SECURE EC2</span>
             </div>
-            <h1>Make Tests Safe, Build the PR Gate &amp; Publish to GHCR</h1>
+            <h1>Publish to GHCR, Define Prod Compose &amp; Secure EC2</h1>
             <p class="lesson-summary">
-              A comprehensive, hands-on engineering track: from isolating local
-              tests in disposable PostgreSQL containers and building
-              deterministic Playwright checks (Stage 2), to constructing the
-              automated GitHub Actions PR verification gate (Stage 3), and
-              publishing immutable, SHA-tagged images to GitHub Container
-              Registry (Stage 4).
+              A comprehensive, hands-on engineering track: from building immutable, SHA-tagged images pushed to GitHub Container Registry (Stage 4), to defining the production Compose contract with private service networking (Stage 5), and hardening an AWS EC2 instance with strict Security Groups, SSH permissions, and smoke testing (Stage 6).
             </p>
           </header>
-          <section
-            class="topic-section"
-            data-id="shared-db-danger"
-            data-title="The Danger of Shared Test Databases"
-          >
-            <div class="topic-eyebrow">
-              01 / Hermetic Boundaries · The Blast Radius
-            </div>
-            <h2 class="topic-heading" tabindex="-1">
-              Why Tests Must Never Touch Neon Production Data
-            </h2>
-
-            <p class="lead-paragraph">
-              In naive beginner projects, integration tests often read from the
-              same <code>DATABASE_URL</code> configured in the developer's
-              <code>.env</code> file. If that environment points to Neon cloud
-              storage, running a test suite becomes an active operational
-              hazard.
-            </p>
-
-            <p>
-              When automated tests interact with a shared or live cloud
-              database, three critical failures occur immediately:
-            </p>
-
-            <ul>
-              <li>
-                <strong>Production Data Corruption:</strong> If a test runs
-                <code>DELETE FROM todos</code> or truncates tables during
-                teardown, real user records or staging data disappear.
-              </li>
-              <li>
-                <strong>Race Conditions &amp; Flakiness:</strong> When two
-                developers (or two parallel GitHub Action runner jobs) run tests
-                simultaneously, their inserts and deletes collide. Test A
-                expects 3 todos, but finds 7 because Test B just ran.
-              </li>
-              <li>
-                <strong>Network Latency &amp; Rate Limits:</strong> Hitting a
-                remote cloud database across the internet introduces TLS
-                handshakes, network jitter, connection pool exhaustion, and
-                serverless cold starts that double test execution time.
-              </li>
-            </ul>
-
-            <!-- Interactive SVG Simulation Controls -->
-            <div class="sim-panel">
-              <div class="sim-header">
-                <span class="sim-label">Test Architecture Comparison:</span>
-                <div
-                  class="sim-btn-group"
-                  role="group"
-                  aria-label="Architecture simulation mode"
-                >
-                  <button class="sim-btn active" data-flow="shared">
-                    Shared DB (Dangerous)
-                  </button>
-                  <button class="sim-btn" data-flow="ephemeral">
-                    Disposable Container (Safe)
-                  </button>
-                  <button class="sim-btn" data-flow="playwright">
-                    Full-Stack E2E Flow
-                  </button>
-                </div>
-              </div>
-              <div class="sim-status-box" id="sim-status-box">
-                <strong>Scenario: Shared Database Pitfall</strong> — Test
-                runners collide against the same remote cloud database. Data
-                leaks, tests intermittently fail, and production tables are
-                exposed to destructive teardown queries.
-              </div>
-            </div>
-
-            <!-- Interactive Architectural SVG -->
-            <figure class="diagram-card">
-              <svg
-                class="interactive-mechanism-svg"
-                id="mechanism-svg"
-                viewBox="0 0 960 360"
-                role="img"
-                aria-labelledby="mech-title mech-desc"
-              >
-                <title id="mech-title">
-                  Test Environment Isolation Architecture
-                </title>
-                <desc id="mech-desc">
-                  Diagram comparing shared external database anti-pattern
-                  against isolated local ephemeral Docker PostgreSQL containers
-                  and Playwright E2E orchestration.
-                </desc>
-
-                <defs>
-                  <marker
-                    id="m-arrow-blue"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--blue)" />
-                  </marker>
-                  <marker
-                    id="m-arrow-amber"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--amber)" />
-                  </marker>
-                  <marker
-                    id="m-arrow-emerald"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--emerald)" />
-                  </marker>
-                </defs>
-
-                <!-- Left Container: Test Runner -->
-                <rect
-                  class="svg-boundary-box"
-                  x="20"
-                  y="30"
-                  width="260"
-                  height="300"
-                  rx="8"
-                />
-                <text class="svg-boundary-label" x="35" y="55">
-                  CI Test Runner / Local CLI
-                </text>
-
-                <!-- Node: Test Job A -->
-                <g transform="translate(40, 80)">
-                  <rect
-                    class="svg-node-box blue"
-                    x="0"
-                    y="0"
-                    width="220"
-                    height="60"
-                  />
-                  <text class="svg-node-title" x="12" y="24">
-                    Test Worker #1
-                  </text>
-                  <text class="svg-node-sub" x="12" y="44">
-                    pnpm test:integration (PR #104)
-                  </text>
-                </g>
-
-                <!-- Node: Test Job B -->
-                <g transform="translate(40, 180)">
-                  <rect
-                    class="svg-node-box blue"
-                    x="0"
-                    y="0"
-                    width="220"
-                    height="60"
-                  />
-                  <text class="svg-node-title" x="12" y="24">
-                    Test Worker #2
-                  </text>
-                  <text class="svg-node-sub" x="12" y="44">
-                    pnpm test:integration (PR #105)
-                  </text>
-                </g>
-
-                <!-- MIDDLE / RIGHT SWITCHABLE NODES -->
-                <!-- Group: Shared Neon DB (Active in 'shared' flow) -->
-                <g id="svg-shared-group" transform="translate(560, 90)">
-                  <rect
-                    class="svg-node-box amber"
-                    x="0"
-                    y="0"
-                    width="340"
-                    height="170"
-                  />
-                  <text
-                    class="svg-node-title"
-                    x="20"
-                    y="35"
-                    fill="var(--amber-text)"
-                  >
-                    Shared Cloud Neon Database
-                  </text>
-                  <text class="svg-node-sub" x="20" y="60">
-                    postgresql://user:pass@ep-cool-123.neon.tech/prod
-                  </text>
-                  <text class="svg-node-sub" x="20" y="85">
-                    ⚠️ Test A truncates tables while Test B executes query
-                  </text>
-                  <text class="svg-node-sub" x="20" y="110">
-                    ⚠️ High latency over WAN + connection exhaustion
-                  </text>
-                  <text class="svg-node-sub" x="20" y="135" font-weight="700">
-                    RESULT: Flaky tests, false positives, corrupted state
-                  </text>
-                </g>
-
-                <!-- Group: Ephemeral DB (Active in 'ephemeral' flow) -->
-                <g
-                  id="svg-ephemeral-group"
-                  transform="translate(440, 50)"
-                  style="display: none"
-                >
-                  <rect
-                    class="svg-boundary-box"
-                    x="0"
-                    y="0"
-                    width="480"
-                    height="260"
-                    rx="8"
-                  />
-                  <text class="svg-boundary-label" x="20" y="25">
-                    Isolated Docker Network (Ephemeral)
-                  </text>
-
-                  <rect
-                    class="svg-node-box emerald"
-                    x="20"
-                    y="45"
-                    width="200"
-                    height="90"
-                  />
-                  <text class="svg-node-title" x="32" y="70">
-                    Throwaway Postgres #1
-                  </text>
-                  <text class="svg-node-sub" x="32" y="90">
-                    Port: 127.0.0.1:5433
-                  </text>
-                  <text class="svg-node-sub" x="32" y="110">
-                    Volume: in-memory tmpfs
-                  </text>
-
-                  <rect
-                    class="svg-node-box emerald"
-                    x="20"
-                    y="150"
-                    width="200"
-                    height="90"
-                  />
-                  <text class="svg-node-title" x="32" y="175">
-                    Throwaway Postgres #2
-                  </text>
-                  <text class="svg-node-sub" x="32" y="195">
-                    Port: 127.0.0.1:5434
-                  </text>
-                  <text class="svg-node-sub" x="32" y="215">
-                    Volume: in-memory tmpfs
-                  </text>
-
-                  <rect
-                    class="svg-node-box"
-                    x="250"
-                    y="90"
-                    width="200"
-                    height="85"
-                  />
-                  <text class="svg-node-title" x="262" y="115">
-                    Complete Lifecycle
-                  </text>
-                  <text class="svg-node-sub" x="262" y="135">
-                    1. Start container &amp; seed
-                  </text>
-                  <text class="svg-node-sub" x="262" y="155">
-                    2. Run tests &amp; destroy with -v
-                  </text>
-                </g>
-
-                <!-- Group: Playwright E2E Flow (Active in 'playwright' flow) -->
-                <g
-                  id="svg-playwright-group"
-                  transform="translate(360, 40)"
-                  style="display: none"
-                >
-                  <rect
-                    class="svg-boundary-box"
-                    x="0"
-                    y="0"
-                    width="570"
-                    height="280"
-                    rx="8"
-                  />
-                  <text class="svg-boundary-label" x="20" y="25">
-                    Dockerized Full Stack (E2E Test Run)
-                  </text>
-
-                  <rect
-                    class="svg-node-box blue"
-                    x="20"
-                    y="50"
-                    width="150"
-                    height="80"
-                  />
-                  <text class="svg-node-title" x="30" y="75">Playwright</text>
-                  <text class="svg-node-sub" x="30" y="95">
-                    Headless Chromium
-                  </text>
-                  <text class="svg-node-sub" x="30" y="112">
-                    clicks buttons
-                  </text>
-
-                  <rect
-                    class="svg-node-box"
-                    x="200"
-                    y="50"
-                    width="160"
-                    height="80"
-                  />
-                  <text class="svg-node-title" x="210" y="75">
-                    Client (Nginx)
-                  </text>
-                  <text class="svg-node-sub" x="210" y="95">
-                    Port 80 -&gt; React dist
-                  </text>
-                  <text class="svg-node-sub" x="210" y="112">
-                    proxies /api/*
-                  </text>
-
-                  <rect
-                    class="svg-node-box amber"
-                    x="390"
-                    y="50"
-                    width="160"
-                    height="80"
-                  />
-                  <text class="svg-node-title" x="400" y="75">Express API</text>
-                  <text class="svg-node-sub" x="400" y="95">
-                    Port 5000 (Internal)
-                  </text>
-                  <text class="svg-node-sub" x="400" y="112">
-                    Node.js backend
-                  </text>
-
-                  <rect
-                    class="svg-node-box emerald"
-                    x="200"
-                    y="170"
-                    width="350"
-                    height="75"
-                  />
-                  <text class="svg-node-title" x="215" y="195">
-                    Disposable PostgreSQL Container
-                  </text>
-                  <text class="svg-node-sub" x="215" y="215">
-                    Database: test_todo_db · Destroyed on exit
-                  </text>
-                </g>
-
-                <!-- Dynamic Wires -->
-                <path
-                  id="svg-wire-1"
-                  class="svg-wire danger"
-                  d="M 260 110 H 560"
-                  marker-end="url(#m-arrow-amber)"
-                />
-                <path
-                  id="svg-wire-2"
-                  class="svg-wire danger"
-                  d="M 260 210 H 560"
-                  marker-end="url(#m-arrow-amber)"
-                />
-              </svg>
-              <figcaption>
-                Figure 2.1: Architectural diagram showing why shared databases
-                fail in CI pipelines, and how isolated disposable container
-                environments establish absolute hermetic test boundaries.
-              </figcaption>
-            </figure>
-
-            <div class="callout emerald">
-              <div class="callout-title">The Principle of Hermetic Testing</div>
-              <p>
-                A test suite is <strong>hermetic</strong> when it is completely
-                self-contained. It brings up its own isolated database, seeds
-                its own schema, runs its tests, and tears down all resources
-                without relying on or affecting anything in the outside world.
-              </p>
-            </div>
-          </section>
-
-          <!-- TOPIC 2: EPHEMERAL POSTGRESQL -->
-          <section
-            class="topic-section"
-            data-id="ephemeral-postgres"
-            data-title="Ephemeral PostgreSQL with Docker Compose"
-            hidden
-          >
-            <div class="topic-eyebrow">
-              02 / Infrastructure · Disposable Containers
-            </div>
-            <h2 class="topic-heading" tabindex="-1">
-              Provisioning Throwaway Databases with Docker Compose
-            </h2>
-
-            <p class="lead-paragraph">
-              The word <strong>ephemeral</strong> means "lasting for a very
-              short time." In our CI/CD pipeline, an ephemeral database exists
-              only for the duration of the test job and is completely wiped
-              clean when the test finishes.
-            </p>
-
-            <p>
-              Instead of installing PostgreSQL on the host machine or relying on
-              remote services, we use a dedicated test Compose file
-              (<code>docker-compose.test.yml</code>) or Docker command that runs
-              an official <code>postgres:16-alpine</code> container.
-            </p>
-
-            <h3>The PostgreSQL Readiness Race Condition</h3>
-            <p>
-              A common trap when launching a database container in CI is trying
-              to connect immediately. When Docker starts the PostgreSQL
-              container, Docker reports the container as "running" within
-              milliseconds. However, the internal PostgreSQL database daemon
-              needs several seconds to initialize database clusters and open
-              socket listeners.
-            </p>
-
-            <p>
-              If your test script runs <code>pnpm db:migrate</code> before the
-              database is ready, the migration immediately crashes with:
-            </p>
-
-            <div class="code-snippet">
-              <div class="code-top">
-                <span>Terminal Error · Connection Refused Race Condition</span>
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code>Error: connect ECONNREFUSED 127.0.0.1:5433
-    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1606:16)
-    at runMigrations (src/db/migrate.ts:14:9)
-Process exited with code 1</code></pre>
-            </div>
-
-            <p>
-              To prevent this race condition, we must wait for PostgreSQL's
-              built-in <code>pg_isready</code> health tool before starting the
-              test runner:
-            </p>
-
-            <div class="code-snippet">
-              <div class="code-top">
-                <span
-                  >Compose Service Definition · docker-compose.test.yml</span
-                >
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code>version: "3.8"
-
-services:
-  test-db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: test_user
-      POSTGRES_PASSWORD: test_password
-      POSTGRES_DB: todo_test_db
-    ports:
-      # Map to custom host port 5433 to avoid clashing with local Postgres (5432)
-      - "5433:5432"
-    # In-memory tmpfs makes tests 5x faster and leaves no disk artifacts
-    tmpfs:
-      - /var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U test_user -d todo_test_db"]
-      interval: 2s
-      timeout: 2s
-      retries: 10</code></pre>
-            </div>
-
-            <div class="callout amber">
-              <div class="callout-title">
-                Why tmpfs (In-Memory Storage) Matters for Tests
-              </div>
-              <p>
-                By mounting <code>tmpfs: /var/lib/postgresql/data</code>,
-                PostgreSQL writes database records directly to RAM instead of
-                writing to disk. This speeds up test transactions significantly
-                and guarantees that when the container exits, all data vanishes
-                with zero disk cleanup required.
-              </p>
-            </div>
-          </section>
-
-          <!-- TOPIC 3: ASSERTIONS THAT ACTUALLY FAIL -->
-          <section
-            class="topic-section"
-            data-id="failing-assertions"
-            data-title="Assertions That Actually Fail"
-            hidden
-          >
-            <div class="topic-eyebrow">
-              03 / Quality Assurance · The Exit Code Contract
-            </div>
-            <h2 class="topic-heading" tabindex="-1">
-              Replacing Console-Only Logs with True Failing Assertions
-            </h2>
-
-            <p class="lead-paragraph">
-              The single most dangerous test suite is one that logs errors to
-              the screen but still exits with status code 0 ("Success"). In
-              CI/CD, if your test script does not return an exit code other than
-              0, GitHub Actions considers the job green and passes the pull
-              request!
-            </p>
-
-            <h3>The "Silent Pass" Anti-Pattern</h3>
-            <p>Look at how naive integration tests are frequently written:</p>
-
-            <div class="code-snippet">
-              <div class="code-top">
-                <span>Broken Test Script · Logs Errors but Exits with 0</span>
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code>// ❌ ANTI-PATTERN: Silent Pass
-async function testCreateTodo() {
-  try {
-    const res = await fetch("http://localhost:5000/api/todos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: "" }) // Invalid payload!
-    });
-    const data = await res.json();
-    
-    if (res.status !== 201) {
-      console.log("Failed to create todo: status was " + res.status);
-      return; // ⚠️ Function returns normally, exit code remains 0!
-    }
-  } catch (err) {
-    console.error("Test encountered error:", err);
-    // ⚠️ Error is swallowed! Node process finishes with exit 0.
-  }
-}
-testCreateTodo();</code></pre>
-            </div>
-
-            <p>
-              When GitHub Actions executes the script above, it looks only at
-              the Node.js process exit status. Because the error was caught and
-              logged, the process exits with code <code>0</code>. GitHub Actions
-              paints a green checkmark next to the PR, completely unaware that
-              the API failed!
-            </p>
-
-            <h3>The True Assertion Contract</h3>
-            <p>
-              Proper assertions must verify three distinct aspects of every
-              operation and throw unhandled errors or call <code>assert</code> /
-              <code>expect</code> so the process exits with code
-              <code>1</code> on failure:
-            </p>
-
-            <div class="table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Validation Layer</th>
-                    <th>What Must Be Asserted</th>
-                    <th>Example Assertion</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>HTTP Status Code</strong></td>
-                    <td>
-                      Ensure exact status code semantics (e.g. 201 Created vs
-                      200 OK vs 400 Bad Request).
-                    </td>
-                    <td><code>assert.strictEqual(res.status, 201);</code></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Response Payload</strong></td>
-                    <td>
-                      Validate shape, data types, and returned fields (including
-                      generated IDs).
-                    </td>
-                    <td>
-                      <code
-                        >assert.ok(data.id, "Expected returned todo to have an
-                        id");</code
-                      >
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><strong>Database Persistence</strong></td>
-                    <td>
-                      Directly query the database to confirm the record was
-                      actually written to the table.
-                    </td>
-                    <td>
-                      <code
-                        >const row = await db.query("SELECT * FROM todos WHERE
-                        id = $1", [data.id]);<br />assert.strictEqual(row.rows.length,
-                        1);</code
-                      >
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="code-snippet">
-              <div class="code-top">
-                <span
-                  >Robust Integration Test · Fails Fast with Strict
-                  Assertions</span
-                >
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code>import assert from "node:assert/strict";
-import { pool } from "../src/db.js";
-
-export async function runIntegrationTests() {
-  console.log("▶ Testing POST /api/todos creation...");
-
-  const res = await fetch("http://localhost:5000/api/todos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title: "Walk the dog" })
-  });
-
-  // 1. Assert HTTP Status
-  assert.strictEqual(res.status, 201, `Expected status 201, got ${res.status}`);
-
-  const body = await res.json();
-  
-  // 2. Assert Body Structure
-  assert.ok(typeof body.id === "string" || typeof body.id === "number", "Todo must have a valid ID");
-  assert.strictEqual(body.title, "Walk the dog", "Todo title must match payload");
-  assert.strictEqual(body.completed, false, "Todo must initialize as uncompleted");
-
-  // 3. Assert Database Persistence
-  const dbCheck = await pool.query("SELECT * FROM todos WHERE id = $1", [body.id]);
-  assert.strictEqual(dbCheck.rows.length, 1, "Todo record must exist in PostgreSQL table");
-
-  console.log("✔ POST /api/todos passed cleanly.");
-}</code></pre>
-            </div>
-          </section>
-
-          <!-- TOPIC 4: DETERMINISTIC STATE & CLEANUP GUARANTEES -->
-          <section
-            class="topic-section"
-            data-id="cleanup-guarantees"
-            data-title="Deterministic State &amp; Cleanup Guarantees"
-            hidden
-          >
-            <div class="topic-eyebrow">04 / Lifecycle · Repeatability</div>
-            <h2 class="topic-heading" tabindex="-1">
-              Deterministic Test State: Sandboxes and Cleanup Hooks
-            </h2>
-
-            <p class="lead-paragraph">
-              A test suite must be able to run 100 times in a row and produce
-              the exact same result every time. If running a test suite leaves
-              leftover records in the database, the second test run will behave
-              differently from the first.
-            </p>
-
-            <h3>Before, Each, and After: The Lifecycle Triangle</h3>
-            <p>Repeatable testing relies on strict lifecycle hooks:</p>
-
-            <ol>
-              <li>
-                <strong>Global Setup (<code>beforeAll</code>):</strong> Wait for
-                database readiness, run SQL schema migrations, and prepare fresh
-                tables.
-              </li>
-              <li>
-                <strong>Per-Test Sandbox (<code>beforeEach</code>):</strong>
-                Truncate tables or clear records so every single test case
-                begins with a pristine, predictable table state.
-              </li>
-              <li>
-                <strong>Per-Test Teardown (<code>afterEach</code>):</strong>
-                Cancel ongoing async handles, close open sockets, and ensure no
-                pending promises keep Node alive.
-              </li>
-              <li>
-                <strong>Global Teardown (<code>afterAll</code>):</strong> Close
-                the database connection pool (<code>pool.end()</code>). If you
-                don't close the pool, the Node process will hang indefinitely
-                waiting for the open socket!
-              </li>
-            </ol>
-
-            <div class="code-snippet">
-              <div class="code-top">
-                <span>Database Cleanup Hook · src/tests/setup.ts</span>
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code>import { pool } from "../db.js";
-
-// Truncate tables before each test case for isolation
-export async function cleanDatabase() {
-  await pool.query("TRUNCATE TABLE todos RESTART IDENTITY CASCADE;");
-}
-
-// Global teardown hook to prevent hanging process
-export async function closeDatabase() {
-  await pool.end(); // Closes all active client connections in the pool
-}</code></pre>
-            </div>
-
-            <div class="callout amber">
-              <div class="callout-title">The "Hanging CI Job" Pitfall</div>
-              <p>
-                In Node.js, an open database connection pool keeps an active
-                event loop socket open. If your test runner finishes all
-                assertions but never invokes <code>await pool.end()</code>, the
-                test process will sit frozen in GitHub Actions until the runner
-                hits its 6-hour timeout limit!
-              </p>
-            </div>
-          </section>
-
-          <!-- TOPIC 5: FULL-STACK PLAYWRIGHT & STAGE 2 REVIEW -->
-          <section
-            class="topic-section"
-            data-id="playwright-review"
-            data-title="Full-Stack Playwright &amp; Stage 2 Review"
-            hidden
-          >
-            <div class="topic-eyebrow">
-              05 / End-to-End · Docker Orchestration &amp; Assessment
-            </div>
-            <h2 class="topic-heading" tabindex="-1">
-              Running Playwright Against the Dockerized Stack
-            </h2>
-
-            <p class="lead-paragraph">
-              Unit tests verify individual JavaScript functions. Integration
-              tests verify that Express talks to PostgreSQL. But only End-to-End
-              (E2E) tests verify that the real browser can load the React bundle
-              from Nginx, submit a todo via <code>/api</code>, and see it
-              rendered on screen.
-            </p>
-
-            <h3>The Test Execution Pipeline Script</h3>
-            <p>
-              In Stage 2, our end-to-end test runner follows this exact sequence
-              from a clean Git checkout:
-            </p>
-
-            <ol>
-              <li>
-                <strong>Build &amp; Start Containers:</strong> Run
-                <code
-                  >docker compose -f docker-compose.test.yml up -d --build</code
-                >
-                to launch Client, Express API, and Ephemeral PostgreSQL on test
-                ports.
-              </li>
-              <li>
-                <strong>Poll Health Endpoint:</strong> Wait for
-                <code>http://localhost:8080/api/health</code> to respond with
-                200 OK before launching the browser.
-              </li>
-              <li>
-                <strong>Run Playwright Headlessly:</strong> Playwright spins up
-                headless Chromium, navigates to
-                <code>http://localhost:8080</code>, types "Buy milk", presses
-                Enter, and asserts that the new todo item appears in the DOM.
-              </li>
-              <li>
-                <strong>Tear Down &amp; Wipe Volumes:</strong> Run
-                <code>docker compose -f docker-compose.test.yml down -v</code>.
-                The <code>-v</code> flag is critical: it removes anonymous and
-                named Docker volumes so no leftover database state persists on
-                disk!
-              </li>
-            </ol>
-
-            <div class="code-snippet">
-              <div class="code-top">
-                <span>Full Test Pipeline Runner · package.json script</span>
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code># Executed by CI runner or developer terminal
-"test:e2e": "docker compose -f docker-compose.test.yml up -d --wait && playwright test && docker compose -f docker-compose.test.yml down -v"</code></pre>
-            </div>
-
-            <!-- Embedded Knowledge Check MCQ -->
-            <div class="mcq-container">
-              <div class="mcq-head">Stage 2 Knowledge Check · ELI5</div>
-              <div class="mcq-question" id="mcq-q-text">
-                Why must the CI test teardown command execute `docker compose
-                down -v` with the `-v` flag instead of just `docker compose
-                down`?
-              </div>
-              <div class="mcq-options" id="mcq-options-container">
-                <button class="mcq-opt-btn" data-index="0">
-                  <span class="mcq-opt-badge">A</span>
-                  <span
-                    >The -v flag tells Docker to print verbose logging output to
-                    stdout so test failures can be audited.</span
-                  >
-                </button>
-                <button class="mcq-opt-btn" data-index="1">
-                  <span class="mcq-opt-badge">B</span>
-                  <span
-                    >The -v flag deletes associated storage volumes, ensuring
-                    old test records do not persist and contaminate subsequent
-                    test runs.</span
-                  >
-                </button>
-                <button class="mcq-opt-btn" data-index="2">
-                  <span class="mcq-opt-badge">C</span>
-                  <span
-                    >The -v flag verifies that the PostgreSQL container image
-                    signature matches official OCI standards.</span
-                  >
-                </button>
-              </div>
-              <div class="mcq-feedback" id="mcq-feedback"></div>
-            </div>
-
-            <h3>Stage 2 Acceptance Criteria Checklist</h3>
-            <p>
-              Verify that your test implementation meets all Stage 2 capstone
-              requirements:
-            </p>
-            <ul>
-              <li>
-                ✓ Tests never connect to or write against the production Neon
-                database.
-              </li>
-              <li>
-                ✓ PostgreSQL is run in an isolated ephemeral container with
-                tmpfs or volume wiping.
-              </li>
-              <li>
-                ✓ All assertions fail with non-zero exit codes when endpoints
-                return unexpected statuses or shapes.
-              </li>
-              <li>
-                ✓ Database pools are closed cleanly so tests do not hang the CI
-                process.
-              </li>
-              <li>
-                ✓ Playwright tests successfully execute against the full
-                Dockerized stack (Client + Server + Ephemeral DB).
-              </li>
-              <li>
-                ✓ <code>docker compose down -v</code> leaves no orphaned
-                containers or lingering volumes behind.
-              </li>
-            </ul>
-
-            <div class="callout emerald">
-              <div class="callout-title">
-                Stage 2 Milestone Reached · Advancing to the Pull-Request CI
-                Gate
-              </div>
-              <p>
-                Now that our tests are hermetic, disposable, and repeatable
-                locally, we move directly to
-                <strong>Stage 3: Building the Pull-Request CI Gate</strong> to
-                run these checks automatically on every proposed commit in
-                GitHub Actions.
-              </p>
-            </div>
-          </section>
-          <!-- TOPIC 1: PR GATE & TRIGGER ARCHITECTURE -->
-          <section
-            class="topic-section"
-            data-id="trigger-architecture"
-            data-title="PR Gate &amp; Trigger Architecture"
-          >
-            <div class="topic-eyebrow">01 / Stage 3 · Trust Boundaries</div>
-            <h2 class="topic-heading" tabindex="-1">
-              The Pull-Request Gate &amp; Workflow Triggers
-            </h2>
-
-            <p class="lead-paragraph">
-              Continuous Integration exists for one non-negotiable reason:
-              <strong>unverified code must never enter the main branch</strong>.
-              Before a single line of JavaScript or Docker configuration is
-              merged, an automated gate must run every test in complete
-              isolation.
-            </p>
-
-            <p>
-              In GitHub Actions, this boundary starts with workflow triggers in
-              <code>.github/workflows/ci-cd.yml</code>. A common security and
-              operational flaw in early pipelines is triggering the exact same
-              jobs for pull requests and pushes to <code>main</code>. If an
-              untrusted fork opens a pull request, running deployment
-              credentials or pushing container tags would allow an external
-              attacker to hijack your production release.
-            </p>
-
-            <div class="callout warning">
-              <div class="callout-title">
-                ⚠️ The First Law of Pipeline Security
-              </div>
-              <p>
-                Pull requests from feature branches or external forks must run
-                strictly in read-only verification mode. They must never receive
-                registry publishing rights, SSH keys, or cloud infrastructure
-                credentials.
-              </p>
-            </div>
-
-            <h3>The Interactive Pipeline Mechanism</h3>
-            <p>
-              Explore how the pipeline reacts across three distinct lifecycle
-              events: a standard verification PR, an approved push to
-              <code>main</code>, and a failing pull request that triggers the CI
-              gate brake.
-            </p>
-
-            <!-- Interactive SVG Simulation Controls -->
-            <div class="sim-panel">
-              <div class="sim-header">
-                <span class="sim-label">Pipeline Execution Mode:</span>
-                <div
-                  class="pipe-sim-btn-group"
-                  role="group"
-                  aria-label="Pipeline simulation mode"
-                >
-                  <button class="pipe-sim-btn active" data-flow="pr-gate">
-                    1. PR Gate (Verify Only)
-                  </button>
-                  <button class="pipe-sim-btn" data-flow="main-publish">
-                    2. Main Merge (Publish to GHCR)
-                  </button>
-                  <button class="pipe-sim-btn" data-flow="pr-broken">
-                    3. Broken PR (Gate Blocks Merge)
-                  </button>
-                </div>
-              </div>
-              <div class="sim-status-box" id="pipe-sim-status-box">
-                <strong>Scenario: Pull-Request CI Gate</strong> — A developer
-                opens PR #42. GitHub Actions triggers parallel verification jobs
-                (lint, typecheck, integration tests with ephemeral Postgres,
-                Playwright E2E). Status reports Green to GitHub UI.
-                <em>Publish and Deploy jobs are completely locked.</em>
-              </div>
-            </div>
-
-            <!-- Interactive Architectural SVG -->
-            <figure class="diagram-card">
-              <svg
-                class="interactive-mechanism-svg"
-                id="pipe-pipeline-svg"
-                viewBox="0 0 960 380"
-                role="img"
-                aria-labelledby="pipe-title pipe-desc"
-              >
-                <title id="pipe-title">
-                  CI/CD Dual-Stage Delivery Mechanism
-                </title>
-                <desc id="pipe-desc">
-                  Architectural diagram displaying GitHub Actions PR
-                  verification gate, Ephemeral PostgreSQL service container,
-                  conditional GHCR publishing step, and immutable SHA tagging.
-                </desc>
-
-                <defs>
-                  <marker
-                    id="arrow-blue"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--blue)" />
-                  </marker>
-                  <marker
-                    id="arrow-emerald"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--emerald)" />
-                  </marker>
-                  <marker
-                    id="arrow-rose"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--rose)" />
-                  </marker>
-                  <marker
-                    id="arrow-slate"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--line-strong)" />
-                  </marker>
-                </defs>
-
-                <!-- ZONE 1: TRIGGER & SOURCE -->
-                <rect
-                  class="svg-boundary-box"
-                  x="20"
-                  y="30"
-                  width="230"
-                  height="320"
-                  rx="8"
-                />
-                <text class="svg-boundary-label" x="35" y="55">
-                  1. Git Trigger Source
-                </text>
-
-                <g id="svg-trigger-node" transform="translate(40, 80)">
-                  <rect
-                    class="svg-node-box blue"
-                    id="pipe-trigger-box"
-                    x="0"
-                    y="0"
-                    width="190"
-                    height="75"
-                  />
-                  <text
-                    class="svg-node-title"
-                    id="pipe-trigger-title"
-                    x="14"
-                    y="28"
-                  >
-                    pull_request Event
-                  </text>
-                  <text
-                    class="svg-node-sub"
-                    id="pipe-trigger-sub1"
-                    x="14"
-                    y="48"
-                  >
-                    Branch: feature/auth-gate
-                  </text>
-                  <text
-                    class="svg-node-sub"
-                    id="pipe-trigger-sub2"
-                    x="14"
-                    y="64"
-                  >
-                    Target: main (SHA: e8f91c0)
-                  </text>
-                </g>
-
-                <g transform="translate(40, 190)">
-                  <rect
-                    class="svg-node-box"
-                    x="0"
-                    y="0"
-                    width="190"
-                    height="135"
-                  />
-                  <text class="svg-node-title" x="14" y="28">
-                    Concurrency Control
-                  </text>
-                  <text class="svg-node-sub" x="14" y="50">concurrency:</text>
-                  <text class="svg-node-sub" x="14" y="68">
-                    group: ${{ github.ref }}
-                  </text>
-                  <text class="svg-node-sub" x="14" y="86">
-                    cancel-in-progress: true
-                  </text>
-                  <text
-                    class="svg-node-sub"
-                    x="14"
-                    y="112"
-                    fill="var(--emerald-text)"
-                  >
-                    ✓ Cancels obsolete runs
-                  </text>
-                </g>
-
-                <!-- ZONE 2: VERIFICATION GATE (STAGE 3) -->
-                <rect
-                  class="svg-boundary-box"
-                  x="280"
-                  y="30"
-                  width="360"
-                  height="320"
-                  rx="8"
-                />
-                <text class="svg-boundary-label" x="295" y="55">
-                  2. Verification Gate (GHA Runners)
-                </text>
-
-                <!-- Job 1: Client Checks -->
-                <g transform="translate(300, 75)">
-                  <rect
-                    class="svg-node-box blue"
-                    id="pipe-job-client-box"
-                    x="0"
-                    y="0"
-                    width="320"
-                    height="65"
-                  />
-                  <text class="svg-node-title" x="14" y="25">
-                    Job: test-client
-                  </text>
-                  <text class="svg-node-sub" x="14" y="44">
-                    pnpm lint · pnpm build (Vite SPA)
-                  </text>
-                  <rect
-                    x="235"
-                    y="12"
-                    width="70"
-                    height="20"
-                    rx="4"
-                    fill="var(--blue-soft)"
-                    id="client-badge-bg"
-                  />
-                  <text
-                    x="242"
-                    y="26"
-                    font-family="var(--font-heading)"
-                    font-size="10"
-                    font-weight="700"
-                    fill="var(--blue-text)"
-                    id="client-badge-txt"
-                  >
-                    CACHED
-                  </text>
-                </g>
-
-                <!-- Job 2: Server Checks + Ephemeral Service -->
-                <g transform="translate(300, 155)">
-                  <rect
-                    class="svg-node-box blue"
-                    id="pipe-job-server-box"
-                    x="0"
-                    y="0"
-                    width="320"
-                    height="85"
-                  />
-                  <text class="svg-node-title" x="14" y="24">
-                    Job: test-server
-                  </text>
-                  <text class="svg-node-sub" x="14" y="42">
-                    services: postgres:16-alpine (tmpfs)
-                  </text>
-                  <text class="svg-node-sub" x="14" y="58">
-                    pnpm typecheck · pnpm test:integration
-                  </text>
-                  <text
-                    class="svg-node-sub"
-                    id="pipe-server-status-txt"
-                    x="14"
-                    y="74"
-                    fill="var(--emerald-text)"
-                  >
-                    ✓ Ephemeral DB on localhost:5432
-                  </text>
-                </g>
-
-                <!-- Job 3: E2E Playwright -->
-                <g transform="translate(300, 255)">
-                  <rect
-                    class="svg-node-box blue"
-                    id="pipe-job-e2e-box"
-                    x="0"
-                    y="0"
-                    width="320"
-                    height="75"
-                  />
-                  <text class="svg-node-title" x="14" y="24">
-                    Job: test-e2e (Playwright)
-                  </text>
-                  <text class="svg-node-sub" x="14" y="42">
-                    Headless Chromium hitting client+server
-                  </text>
-                  <text
-                    class="svg-node-sub"
-                    id="pipe-e2e-status-txt"
-                    x="14"
-                    y="60"
-                  >
-                    Uploads traces on failure
-                  </text>
-                </g>
-
-                <!-- ZONE 3: PUBLISH TO GHCR (STAGE 4) -->
-                <rect
-                  class="svg-boundary-box"
-                  x="670"
-                  y="30"
-                  width="270"
-                  height="320"
-                  rx="8"
-                />
-                <text class="svg-boundary-label" x="685" y="55">
-                  3. Immutable GHCR Release
-                </text>
-
-                <g id="svg-publish-group" transform="translate(690, 80)">
-                  <rect
-                    class="svg-node-box"
-                    id="pipe-publish-box"
-                    x="0"
-                    y="0"
-                    width="230"
-                    height="150"
-                  />
-                  <text
-                    class="svg-node-title"
-                    id="pipe-publish-title"
-                    x="16"
-                    y="30"
-                    fill="var(--ink-muted)"
-                  >
-                    Job: publish-images
-                  </text>
-                  <text class="svg-node-sub" id="publish-cond" x="16" y="52">
-                    if: github.ref == 'refs/heads/main'
-                  </text>
-                  <text class="svg-node-sub" id="publish-token" x="16" y="72">
-                    permissions: packages:write
-                  </text>
-                  <text class="svg-node-sub" id="publish-target1" x="16" y="96">
-                    ghcr.io/...-client:sha-e8f91c0
-                  </text>
-                  <text
-                    class="svg-node-sub"
-                    id="publish-target2"
-                    x="16"
-                    y="114"
-                  >
-                    ghcr.io/...-server:sha-e8f91c0
-                  </text>
-                  <text
-                    class="svg-node-sub"
-                    id="pipe-publish-status"
-                    x="16"
-                    y="136"
-                    font-weight="700"
-                    fill="var(--ink-muted)"
-                  >
-                    STATUS: SKIPPED (PR Only)
-                  </text>
-                </g>
-
-                <g transform="translate(690, 250)">
-                  <rect
-                    class="svg-node-box"
-                    id="deploy-preview-box"
-                    x="0"
-                    y="0"
-                    width="230"
-                    height="80"
-                  />
-                  <text class="svg-node-title" x="16" y="28">
-                    Stage 5-7 Preview
-                  </text>
-                  <text class="svg-node-sub" x="16" y="48">
-                    EC2 Production Host
-                  </text>
-                  <text class="svg-node-sub" x="16" y="66">
-                    Pulls exact immutable SHA
-                  </text>
-                </g>
-
-                <!-- INTERCONNECT WIRES -->
-                <!-- Trigger to Verifications -->
-                <path
-                  id="wire-trigger-client"
-                  class="svg-wire active"
-                  d="M 230 115 H 300"
-                  marker-end="url(#arrow-blue)"
-                />
-                <path
-                  id="wire-trigger-server"
-                  class="svg-wire active"
-                  d="M 230 115 C 260 115, 260 195, 300 195"
-                  marker-end="url(#arrow-blue)"
-                />
-                <path
-                  id="wire-trigger-e2e"
-                  class="svg-wire active"
-                  d="M 230 115 C 260 115, 260 290, 300 290"
-                  marker-end="url(#arrow-blue)"
-                />
-
-                <!-- Verification to Publish -->
-                <path
-                  id="pipe-wire-verify-publish"
-                  class="svg-wire blocked"
-                  d="M 620 195 C 655 195, 655 155, 690 155"
-                  marker-end="url(#arrow-slate)"
-                />
-              </svg>
-              <figcaption>
-                Figure 1.1: Complete structural flow of the CI/CD pipeline
-                across Stages 3 and 4. Toggle the execution modes above to
-                observe how GitHub Actions evaluates branch conditions and
-                blocks unauthorized release attempts.
-              </figcaption>
-            </figure>
-
-            <h3>Trigger Configuration in YAML</h3>
-            <p>
-              Here is the foundation of our production pipeline configuration.
-              It declares triggers for both pull requests (any branch targeting
-              <code>main</code>) and direct pushes to <code>main</code> (such as
-              when a PR is merged):
-            </p>
-
-            <div class="code-snippet">
-              <div class="code-header">
-                <span class="code-file"
-                  >.github/workflows/ci-cd.yml (Triggers &amp;
-                  Concurrency)</span
-                >
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code>name: CI/CD Pipeline
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-# Cancel in-progress runs when a new commit is pushed to the same PR branch
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-# Default runner to zero permissions unless explicitly granted per job
-permissions: {}</code></pre>
-            </div>
-
-            <div class="callout info">
-              <div class="callout-title">
-                💡 Why <code>cancel-in-progress</code> Matters
-              </div>
-              <p>
-                When a software engineer pushes three rapid commits to a pull
-                request, running three full suites of headless Playwright tests
-                costs compute time and burns runner concurrency. The
-                <code>concurrency</code> block cancels the superseded runs
-                immediately.
-              </p>
-            </div>
-          </section>
-
-          <!-- TOPIC 2: FAST PARALLEL CHECKS & DEPENDENCY CACHING -->
-          <section
-            class="topic-section"
-            data-id="parallel-checks-caching"
-            data-title="Parallel Checks &amp; Caching"
-            hidden
-          >
-            <div class="topic-eyebrow">02 / Stage 3 · Execution Velocity</div>
-            <h2 class="topic-heading" tabindex="-1">
-              Fast Parallel Checks &amp; Dependency Caching
-            </h2>
-
-            <p class="lead-paragraph">
-              A CI pipeline that takes 15 minutes to run is a pipeline
-              developers will bypass. High-performing engineering teams organize
-              verification into <strong>parallel independent jobs</strong> and
-              leverage <strong>deterministic dependency caching</strong>.
-            </p>
-
-            <p>
-              In our Todo application, the frontend React Vite client and
-              backend Express server live in the same repository, but have
-              completely separate dependency trees. Rather than running linting,
-              typechecking, and building in one monolithic serial script, we
-              split them into parallel runner jobs.
-            </p>
-
-            <h3>Why We Cache the pnpm Virtual Store</h3>
-            <p>
-              Running <code>pnpm install</code> from scratch on every commit
-              downloads hundreds of megabytes of packages over the internet.
-              GitHub Actions provides <code>actions/setup-node</code> with
-              built-in caching support keyed on <code>pnpm-lock.yaml</code>:
-            </p>
-
-            <div class="table-container">
-              <table class="spec-table">
-                <thead>
-                  <tr>
-                    <th>Execution Phase</th>
-                    <th>Cold Run (No Cache)</th>
-                    <th>Warm Run (GHA Cache Hit)</th>
-                    <th>Engineering Impact</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><code>pnpm install</code></td>
-                    <td>~140 seconds</td>
-                    <td>~6 seconds</td>
-                    <td>
-                      Restores packages from GitHub Actions internal cache SSD
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><code>pnpm lint &amp;&amp; build</code></td>
-                    <td>~35 seconds</td>
-                    <td>~32 seconds</td>
-                    <td>
-                      Vite compiles production client bundles to
-                      <code>dist/</code>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><strong>Total Feedback Latency</strong></td>
-                    <td><strong>~3 minutes</strong></td>
-                    <td><strong>&lt; 40 seconds</strong></td>
-                    <td>Developer gets immediate pull request feedback</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <h3>The Client Verification Job</h3>
-            <p>
-              Notice the precise sequence: install pnpm via
-              <code>pnpm/action-setup</code>, configure Node 24 with cache path,
-              restore dependencies, and execute typecheck and build:
-            </p>
-
-            <div class="code-snippet">
-              <div class="code-header">
-                <span class="code-file"
-                  >.github/workflows/ci-cd.yml (Client Verification Job)</span
-                >
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code>jobs:
-  test-client:
-    name: Verify Client
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    defaults:
-      run:
-        working-directory: client
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 12.4.2
-
-      - name: Setup Node 24 with pnpm Cache
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: 'pnpm'
-          cache-dependency-path: client/pnpm-lock.yaml
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run Client Linter
-        run: pnpm lint
-
-      - name: Compile Client Bundle
-        run: pnpm build</code></pre>
-            </div>
-
-            <div class="callout warning">
-              <div class="callout-title">
-                ⚠️ The <code>--frozen-lockfile</code> Guarantee
-              </div>
-              <p>
-                In CI, always use <code>pnpm install --frozen-lockfile</code>.
-                If a package was added to <code>package.json</code> without
-                committing the updated <code>pnpm-lock.yaml</code>, the build
-                fails immediately rather than silently resolving
-                nondeterministic versions.
-              </p>
-            </div>
-          </section>
-
-          <!-- TOPIC 3: EPHEMERAL SERVICE CONTAINERS -->
-          <section
-            class="topic-section"
-            data-id="service-containers"
-            data-title="Ephemeral PostgreSQL in Actions"
-            hidden
-          >
-            <div class="topic-eyebrow">03 / Stage 3 · Test Isolation</div>
-            <h2 class="topic-heading" tabindex="-1">
-              CI Service Containers: Ephemeral PostgreSQL in Actions
-            </h2>
-
-            <p class="lead-paragraph">
-              In Stage 2, we learned why integration tests must never touch a
-              shared cloud database like Neon. In GitHub Actions, instead of
-              writing complex shell scripts to start and stop Docker containers
-              manually, we declare native <strong>Service Containers</strong>.
-            </p>
-
-            <p>
-              GitHub Actions provides a top-level
-              <code>services:</code> definition within any job. When configured,
-              the runner starts the specified Docker container before any job
-              step executes, bridges network ports, runs a health check, and
-              automatically terminates the container when the job finishes.
-            </p>
-
-            <h3>Runner Networking &amp; Health Probes</h3>
-            <p>
-              Because our runner jobs execute directly on the
-              <code>ubuntu-latest</code> VM host, mapped service ports are
-              reachable on <code>localhost:5432</code>. But databases require
-              several seconds to initialize their internal tables and listen on
-              their socket. If the test runner attempts to connect before
-              PostgreSQL is ready, the job crashes immediately.
-            </p>
-
-            <p>
-              We eliminate this race condition using a native Docker health
-              check:
-            </p>
-
-            <div class="code-snippet">
-              <div class="code-header">
-                <span class="code-file"
-                  >.github/workflows/ci-cd.yml (PostgreSQL Service
-                  Definition)</span
-                >
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code>  test-server:
-    name: Verify Server
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_DB: todo_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-          --tmpfs /var/lib/postgresql/data
-    defaults:
-      run:
-        working-directory: server
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 12.4.2
-
-      - name: Setup Node 24 with Cache
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: 'pnpm'
-          cache-dependency-path: server/pnpm-lock.yaml
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Typecheck Server
-        run: pnpm typecheck
-
-      - name: Run Integration Tests
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/todo_test
-        run: pnpm test:integration</code></pre>
-            </div>
-
-            <div class="callout info">
-              <div class="callout-title">
-                💡 The <code>--tmpfs</code> Performance Optimization
-              </div>
-              <p>
-                Notice the <code>--tmpfs /var/lib/postgresql/data</code> option.
-                It mounts the database storage directly in runner RAM instead of
-                virtual disk. In-memory PostgreSQL writes are 4x faster, and
-                every row vanishes into thin air when the job ends.
-              </p>
-            </div>
-          </section>
-
-          <!-- TOPIC 4: FULL-STACK PLAYWRIGHT E2E -->
-          <section
-            class="topic-section"
-            data-id="playwright-e2e-gate"
-            data-title="Playwright E2E &amp; Failure Artifacts"
-            hidden
-          >
-            <div class="topic-eyebrow">04 / Stage 3 · Automated Acceptance</div>
-            <h2 class="topic-heading" tabindex="-1">
-              Full-Stack Playwright E2E &amp; Diagnostic Artifacts
-            </h2>
-
-            <p class="lead-paragraph">
-              Unit and integration tests prove that isolated functions and SQL
-              queries work. But they cannot prove that the React client can
-              actually render items fetched from the Express API in a real
-              browser. The ultimate CI gate is an
-              <strong>End-to-End (E2E) browser suite</strong>.
-            </p>
-
-            <p>
-              In Stage 2, we built Playwright tests that drive a headless
-              Chromium browser against our containers. In GitHub Actions, we
-              orchestrate the full stack directly inside the runner, verify the
-              live health endpoint, execute the tests, and preserve diagnostic
-              artifacts if any assertion fails.
-            </p>
-
-            <h3>Orchestrating the Stack in CI</h3>
-            <p>
-              The E2E job requires three coordinated components running
-              simultaneously:
-            </p>
-            <ol>
-              <li>
-                <strong>PostgreSQL Service Container:</strong> Provides the
-                clean database.
-              </li>
-              <li>
-                <strong>Background API Server:</strong> Express running on port
-                5000 with <code>pnpm start &amp;</code>.
-              </li>
-              <li>
-                <strong>Playwright Test Runner:</strong> Spins up headless
-                Chromium, hits port 5000 / 3000, and verifies user journeys.
-              </li>
-            </ol>
-
-            <div class="code-snippet">
-              <div class="code-header">
-                <span class="code-file"
-                  >.github/workflows/ci-cd.yml (Playwright E2E Job)</span
-                >
-                <button class="copy-btn">Copy</button>
-              </div>
-              <pre><code>  test-e2e:
-    name: Full-Stack E2E
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_DB: todo_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-          --tmpfs /var/lib/postgresql/data
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install pnpm &amp; Node
-        uses: pnpm/action-setup@v3
-        with:
-          version: 12.4.2
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Install Server &amp; Client Dependencies
-        run: |
-          cd server && pnpm install --frozen-lockfile
-          cd ../client && pnpm install --frozen-lockfile
-          cd ..
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Start Server in Background
-        env:
-          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/todo_test
-          PORT: 5000
-        run: |
-          cd server
-          pnpm start &amp;
-          npx wait-on http://localhost:5000/api/health --timeout 20000
-
-      - name: Run Playwright Tests
-        run: npx playwright test
-
-      - name: Upload Diagnostic Artifacts on Failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-failure-report
-          path: playwright-report/
-          retention-days: 7</code></pre>
-            </div>
-
-            <div class="callout danger">
-              <div class="callout-title">
-                🚨 The Diagnostic Failure Boundary
-              </div>
-              <p>
-                Notice <code>if: failure()</code> on the artifact upload step.
-                When an E2E test fails in headless CI, you cannot look at the
-                screen. Uploading the Playwright trace zip and screenshots gives
-                the engineer video recordings and DOM snapshots of the exact
-                instant the assertion failed.
-              </p>
-            </div>
-          </section>
-
           <!-- TOPIC 5: GHCR AUTH & LEAST PRIVILEGE -->
           <section
             class="topic-section"
@@ -3439,7 +1714,7 @@ permissions: {}</code></pre>
             data-title="Publishing to GHCR &amp; Permissions"
             hidden
           >
-            <div class="topic-eyebrow">05 / Stage 4 · Continuous Delivery</div>
+            <div class="topic-eyebrow">01 / Stage 4 · Continuous Delivery</div>
             <h2 class="topic-heading" tabindex="-1">
               Publishing to GHCR: Credentials &amp; Least Privilege
             </h2>
@@ -3564,7 +1839,7 @@ permissions: {}</code></pre>
             data-title="Docker Buildx &amp; OCI Metadata"
             hidden
           >
-            <div class="topic-eyebrow">06 / Stage 4 · Build Engineering</div>
+            <div class="topic-eyebrow">02 / Stage 4 · Build Engineering</div>
             <h2 class="topic-heading" tabindex="-1">
               Docker Buildx Layer Caching &amp; OCI Metadata
             </h2>
@@ -3659,7 +1934,7 @@ permissions: {}</code></pre>
             data-title="Immutable SHA Tags &amp; Pipeline Review"
             hidden
           >
-            <div class="topic-eyebrow">07 / Stage 4 · Production Rigor</div>
+            <div class="topic-eyebrow">03 / Stage 4 · Production Rigor</div>
             <h2 class="topic-heading" tabindex="-1">
               Immutable Commit SHA Tags &amp; Pipeline Review
             </h2>
@@ -3961,6 +2236,788 @@ jobs:
               <div class="mcq-feedback" id="mcq-feedback-st4"></div>
             </div>
           </section>
+          <!-- ========================================================================= -->
+          <!-- STAGE 5: DEFINE THE PRODUCTION COMPOSE CONTRACT -->
+          <!-- ========================================================================= -->
+
+          <!-- TOPIC 04: DEV VS PROD COMPOSE -->
+          <section
+            class="topic-section"
+            data-id="dev-vs-prod-compose"
+            data-title="Dev vs. Prod Compose &amp; Build Boundaries"
+            hidden
+          >
+            <div class="topic-eyebrow">04 / Stage 5 · Deployment Architecture</div>
+            <h2 class="topic-heading" tabindex="-1">
+              Dev vs. Prod Compose: The EC2 Build Boundary
+            </h2>
+
+            <p class="lead-paragraph">
+              In local development, Docker Compose is optimized for developer ergonomics: hot reloading, mounting local directories, and building images on the fly with <code>build: .</code>. In production, using that same Compose file on EC2 is a severe operational hazard that causes server crashes, build non-determinism, and security vulnerabilities.
+            </p>
+
+            <h3>The Golden Rule: Never Build on Production EC2</h3>
+            <p>
+              A production virtual machine is a <strong>runtime host</strong>, not a build machine. When an EC2 instance attempts to build Docker images directly from source, three critical failure modes occur:
+            </p>
+
+            <ul>
+              <li>
+                <strong>Host Memory Exhaustion (OOM Spikes):</strong> Running <code>npm run build</code> or compiling TypeScript requires heavy CPU and hundreds of megabytes of RAM. On common EC2 instances (such as <code>t2.micro</code> or <code>t3.micro</code> with 1 GB RAM), build spikes trigger the Linux kernel Out-Of-Memory (OOM) killer, which abruptly terminates running production processes like PostgreSQL or Nginx.
+              </li>
+              <li>
+                <strong>Toolchain Sprawl &amp; Attack Surface:</strong> Building on the server requires storing full Git source code repositories, Git credentials, Node.js runtimes, compilers, and development dependencies on the live production machine. If the server is probed or compromised, attackers gain instant access to your source code and build tools.
+              </li>
+              <li>
+                <strong>Destruction of CI Guarantees:</strong> CI pipelines exist to build, test, and vet an exact, immutable artifact. Building from source on EC2 means you are deploying an untested artifact whose installed packages may subtly differ from what was verified in CI.
+              </li>
+            </ul>
+
+            <div class="callout warning">
+              <div class="callout-title">⚠️ The Architectural Separation</div>
+              <p>
+                <strong>CI Job (GitHub Actions):</strong> Builds images, runs test suites, scans for vulnerabilities, tags with the commit SHA, and pushes to GHCR.<br />
+                <strong>Production Host (EC2):</strong> Pulls the prebuilt image from GHCR and starts the container. It never runs <code>docker build</code> or compiles source code.
+              </p>
+            </div>
+
+            <h3>Architectural Contrast: Development vs. Production Compose</h3>
+            <div class="comparison-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+              <div class="callout info" style="margin: 0;">
+                <div class="callout-title">🛠️ Development (<code>compose.yaml</code>)</div>
+                <ul style="padding-left: 1.25rem; margin-top: 0.5rem;">
+                  <li><strong>Image Source:</strong> <code>build: ./client</code></li>
+                  <li><strong>Source Bind Mounts:</strong> <code>- ./client:/app</code> (enables instant hot reloading)</li>
+                  <li><strong>Port Exposure:</strong> Binds host ports for all services (<code>5432:5432</code>, <code>3000:3000</code>) for easy debugging</li>
+                  <li><strong>Restart Policy:</strong> <code>no</code> (default)</li>
+                  <li><strong>Environment:</strong> Plain text defaults inside file</li>
+                </ul>
+              </div>
+              <div class="callout emerald" style="margin: 0;">
+                <div class="callout-title">🚀 Production (<code>compose.prod.yaml</code>)</div>
+                <ul style="padding-left: 1.25rem; margin-top: 0.5rem;">
+                  <li><strong>Image Source:</strong> <code>image: ghcr.io/${GH_OWNER}/todo-client:${IMAGE_TAG}</code></li>
+                  <li><strong>Source Bind Mounts:</strong> <strong>STRICTLY ZERO</strong> (code baked immutably inside image)</li>
+                  <li><strong>Port Exposure:</strong> Only Nginx (<code>80:80</code>) exposed to host; API &amp; DB remain private</li>
+                  <li><strong>Restart Policy:</strong> <code>restart: unless-stopped</code></li>
+                  <li><strong>Environment:</strong> Loaded dynamically from host <code>.env</code> file (chmod 600)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">compose.prod.yaml (Service Definition Pattern)</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>services:
+  api:
+    image: ghcr.io/${GH_OWNER}/todo-api:${IMAGE_TAG}
+    restart: unless-stopped
+    expose:
+      - "3000" # Internal to Docker bridge network only; NO host port binding
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+      - PORT=3000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - todo-net</code></pre>
+            </div>
+          </section>
+
+          <!-- TOPIC 05: PRODUCTION COMPOSE ARCHITECTURE & NETWORK ISOLATION -->
+          <section
+            class="topic-section"
+            data-id="prod-compose-file"
+            data-title="Production Compose &amp; Network Topology"
+            hidden
+          >
+            <div class="topic-eyebrow">05 / Stage 5 · Network Topology</div>
+            <h2 class="topic-heading" tabindex="-1">
+              Production Compose Architecture &amp; Private Network Isolation
+            </h2>
+
+            <p class="lead-paragraph">
+              A secure production deployment strictly minimizes the public network attack surface. External web traffic must enter through a single hardened reverse proxy gateway (Nginx on port 80), while the backend API and database communicate exclusively over an isolated, internal Docker bridge network.
+            </p>
+
+            <h3>The Three-Tier Production Topology</h3>
+            <p>
+              In our production Compose architecture, three services operate under the principle of least network privilege:
+            </p>
+
+            <ol>
+              <li>
+                <strong>Nginx Reverse Proxy (Gateway):</strong> The only container with a public host port binding (<code>ports: ["80:80"]</code>). It terminates incoming HTTP connections, serves pre-rendered static frontend assets directly, and proxies <code>/api/*</code> requests internally to the backend.
+              </li>
+              <li>
+                <strong>Express API (Application Server):</strong> Binds no public host ports. It declares <code>expose: ["3000"]</code>, making port 3000 accessible only to sibling containers sharing the <code>todo-net</code> bridge network.
+              </li>
+              <li>
+                <strong>PostgreSQL 16 (Database):</strong> Completely inaccessible from outside the Docker host. It communicates strictly with the Express API container over <code>db:5432</code> and persists data using a dedicated named Docker volume (<code>db_data</code>).
+              </li>
+            </ol>
+
+            <!-- Interactive Network Topology SVG -->
+            <div class="interactive-diagram" style="margin: 2rem 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600;">Interactive Topology: Production Network Isolation</h4>
+                <div class="sim-btn-group" id="net-sim-btn-group" style="display: flex; gap: 0.5rem;">
+                  <button class="sim-btn active" data-flow="all">Full Topology</button>
+                  <button class="sim-btn" data-flow="public">Public Ingress (Port 80)</button>
+                  <button class="sim-btn" data-flow="internal">Private Network (Bridge)</button>
+                </div>
+              </div>
+
+              <div id="net-sim-status" style="padding: 0.75rem 1rem; background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem;">
+                <strong>Architecture View: Full Topology</strong> — Port 80 is the sole ingress on the EC2 host. Express and PostgreSQL communicate over the private <code>todo-net</code> bridge with no public exposure.
+              </div>
+
+              <svg viewBox="0 0 940 340" width="100%" height="auto" style="display: block; overflow: visible; font-family: var(--font-body, 'Lexend', sans-serif);" aria-label="Production Compose Network Isolation Diagram">
+                <defs>
+                  <marker id="net-arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--blue)" />
+                  </marker>
+                  <marker id="net-arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--emerald)" />
+                  </marker>
+                  <marker id="net-arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--ink-faint)" />
+                  </marker>
+                </defs>
+
+                <!-- Internet Box -->
+                <g id="net-node-internet">
+                  <rect x="20" y="110" width="130" height="90" rx="8" fill="var(--surface)" stroke="var(--blue-line)" stroke-width="2" />
+                  <text x="85" y="145" text-anchor="middle" font-size="13" font-weight="600" fill="var(--blue-text)">Public Internet</text>
+                  <text x="85" y="168" text-anchor="middle" font-size="11" fill="var(--ink-muted)">HTTP Clients</text>
+                  <text x="85" y="186" text-anchor="middle" font-size="10" fill="var(--ink-faint)">Port 80 Ingress</text>
+                </g>
+
+                <!-- EC2 Host Perimeter -->
+                <rect x="190" y="20" width="730" height="290" rx="10" fill="none" stroke="var(--line-strong)" stroke-width="2" stroke-dasharray="6 4" />
+                <text x="210" y="45" font-size="12" font-weight="700" fill="var(--ink-muted)" letter-spacing="0.05em">AWS EC2 HOST BOUNDARY</text>
+
+                <!-- Docker Bridge Network Box -->
+                <rect id="net-box-bridge" x="350" y="55" width="550" height="235" rx="8" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5" />
+                <text x="370" y="80" font-size="11" font-weight="600" fill="var(--ink-muted)">Docker Bridge Network: "todo-net" (172.20.0.0/16)</text>
+
+                <!-- Host Port 80 Ingress Gateway -->
+                <g id="net-node-port80">
+                  <rect x="210" y="125" width="100" height="60" rx="6" fill="var(--blue-soft)" stroke="var(--blue-line)" stroke-width="1.5" />
+                  <text x="260" y="150" text-anchor="middle" font-size="11" font-weight="600" fill="var(--blue-text)">Host Port 80</text>
+                  <text x="260" y="168" text-anchor="middle" font-size="9" fill="var(--blue)">0.0.0.0:80</text>
+                </g>
+
+                <!-- Nginx Container -->
+                <g id="net-node-nginx">
+                  <rect x="370" y="105" width="140" height="100" rx="8" fill="var(--surface)" stroke="var(--blue)" stroke-width="2" />
+                  <text x="440" y="135" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">nginx (Client)</text>
+                  <text x="440" y="155" text-anchor="middle" font-size="11" fill="var(--blue-text)">Reverse Proxy</text>
+                  <text x="440" y="175" text-anchor="middle" font-size="10" fill="var(--ink-muted)">Serves SPA HTML</text>
+                  <text x="440" y="192" text-anchor="middle" font-size="9" fill="var(--emerald)">proxy_pass /api</text>
+                </g>
+
+                <!-- Express API Container -->
+                <g id="net-node-api">
+                  <rect x="560" y="90" width="140" height="85" rx="8" fill="var(--surface)" stroke="var(--purple-line)" stroke-width="2" />
+                  <text x="630" y="120" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">api (Express)</text>
+                  <text x="630" y="140" text-anchor="middle" font-size="10" fill="var(--purple-text)">expose: ["3000"]</text>
+                  <text x="630" y="158" text-anchor="middle" font-size="9" fill="var(--ink-muted)">Private to Bridge</text>
+                </g>
+
+                <!-- PostgreSQL Container -->
+                <g id="net-node-db">
+                  <rect x="560" y="195" width="140" height="80" rx="8" fill="var(--surface)" stroke="var(--emerald-line)" stroke-width="2" />
+                  <text x="630" y="225" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">db (PostgreSQL 16)</text>
+                  <text x="630" y="245" text-anchor="middle" font-size="10" fill="var(--emerald-text)">expose: ["5432"]</text>
+                  <text x="630" y="262" text-anchor="middle" font-size="9" fill="var(--ink-muted)">NO public port</text>
+                </g>
+
+                <!-- Volume Container -->
+                <g id="net-node-vol">
+                  <rect x="740" y="195" width="130" height="80" rx="8" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5" stroke-dasharray="4 2" />
+                  <text x="805" y="225" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)">Named Volume</text>
+                  <text x="805" y="245" text-anchor="middle" font-size="10" fill="var(--ink-muted)">db_data:</text>
+                  <text x="805" y="262" text-anchor="middle" font-size="9" fill="var(--ink-faint)">/var/lib/postgresql</text>
+                </g>
+
+                <!-- Wires -->
+                <path id="net-wire-1" d="M 150 155 L 210 155" stroke="var(--blue)" stroke-width="2.5" marker-end="url(#net-arrow-blue)" fill="none" />
+                <path id="net-wire-2" d="M 310 155 L 370 155" stroke="var(--blue)" stroke-width="2.5" marker-end="url(#net-arrow-blue)" fill="none" />
+                <path id="net-wire-3" d="M 510 140 L 560 130" stroke="var(--purple)" stroke-width="2" marker-end="url(#net-arrow-blue)" fill="none" />
+                <path id="net-wire-4" d="M 630 175 L 630 195" stroke="var(--emerald)" stroke-width="2" marker-end="url(#net-arrow-emerald)" fill="none" />
+                <path id="net-wire-5" d="M 700 235 L 740 235" stroke="var(--ink-muted)" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#net-arrow-muted)" fill="none" />
+              </svg>
+            </div>
+
+            <h3>The Complete <code>compose.prod.yaml</code> Specification</h3>
+            <p>
+              Here is the canonical, verified production Compose contract used for our deployment:
+            </p>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">compose.prod.yaml</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>services:
+  nginx:
+    image: ghcr.io/${GH_OWNER}/todo-client:${IMAGE_TAG}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - todo-net
+
+  api:
+    image: ghcr.io/${GH_OWNER}/todo-api:${IMAGE_TAG}
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - todo-net
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - todo-net
+
+volumes:
+  db_data:
+
+networks:
+  todo-net:
+    driver: bridge</code></pre>
+            </div>
+          </section>
+
+          <!-- TOPIC 06: DECOUPLING RELEASE TAGS & DRY RUN -->
+          <section
+            class="topic-section"
+            data-id="release-env-vs-secrets"
+            data-title="Secrets Decoupling &amp; Compose Dry Run"
+            hidden
+          >
+            <div class="topic-eyebrow">06 / Stage 5 · Configuration &amp; Dry Run</div>
+            <h2 class="topic-heading" tabindex="-1">
+              Decoupling Release Tags from Runtime Secrets &amp; Dry Run Verification
+            </h2>
+
+            <p class="lead-paragraph">
+              A robust deployment contract cleanly separates <strong>release parameters</strong> (which Git commit SHA image tag is deploying) from <strong>runtime secrets</strong> (database passwords and JWT tokens). Conflating the two leads to credentials leaking into Git history or deployment scripts breaking across releases.
+            </p>
+
+            <h3>The Separation of Concerns</h3>
+            <div class="comparison-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+              <div class="callout blue" style="margin: 0;">
+                <div class="callout-title">📦 Release Parameters (Dynamic)</div>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+                  <code>GH_OWNER</code>, <code>IMAGE_TAG</code> (e.g. <code>sha-e8f91c0</code>)<br />
+                  Supplied by the deployment pipeline during CD. These change on every single deployment, are safe to log publicly, and identify the exact immutable code version.
+                </p>
+              </div>
+              <div class="callout rose" style="margin: 0;">
+                <div class="callout-title">🔒 Runtime Secrets (Static &amp; Sensitive)</div>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+                  <code>POSTGRES_PASSWORD</code>, <code>JWT_SECRET</code>, <code>DATABASE_URL</code><br />
+                  Stored strictly in an uncommitted <code>.env</code> file on the EC2 host. Owned by the system administrator, chmod 600, and never checked into GitHub.
+                </p>
+              </div>
+            </div>
+
+            <h3>How Compose Resolves Environment Variables</h3>
+            <p>
+              When <code>compose.prod.yaml</code> contains <code>${IMAGE_TAG}</code>, Docker Compose interpolates the value in this exact order of precedence:
+            </p>
+            <ol>
+              <li><strong>Shell Ambient Variables:</strong> Values exported in the current terminal session (e.g. <code>export IMAGE_TAG=sha-e8f91c0</code>).</li>
+              <li><strong>The <code>.env</code> File:</strong> Key-value pairs in the adjacent <code>.env</code> file in the Compose directory.</li>
+              <li><strong>Default Fallbacks:</strong> In-line syntax like <code>${IMAGE_TAG:-latest}</code> if specified.</li>
+            </ol>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">Sample /opt/todo-app/.env (Secured on EC2 Host)</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># Deployment parameters (or passed via CD environment)
+GH_OWNER=octocat
+IMAGE_TAG=sha-e8f91c0
+
+# Production database credentials (Never commit to Git!)
+POSTGRES_USER=todo_prod_user
+POSTGRES_PASSWORD=super_secret_db_password_98234
+POSTGRES_DB=todo_prod
+
+# Application secrets
+JWT_SECRET=production_jwt_signing_key_4a9b2c8f1e7d</code></pre>
+            </div>
+
+            <h3>The Golden Pre-Flight Check: <code>docker compose config</code></h3>
+            <p>
+              Never deploy blindly. Before pulling images or running <code>up -d</code>, execute:
+            </p>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Terminal (Dry-Run Validation)</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>docker compose -f compose.prod.yaml config</code></pre>
+            </div>
+
+            <p>
+              This command acts as a comprehensive dry-run parser:
+            </p>
+            <ul>
+              <li>Validates YAML indentation, syntax, and schema correctness.</li>
+              <li>Resolves and prints all <code>${VARIABLE}</code> substitutions in plain text.</li>
+              <li>Warns immediately if any referenced environment variable is missing or empty.</li>
+              <li>Validates volume bindings, network bridges, and port declarations <strong>without launching any containers</strong>.</li>
+            </ul>
+
+            <div class="callout tip">
+              <div class="callout-title">💡 CI/CD Sanity Check</div>
+              <p>
+                You can run <code>docker compose -f compose.prod.yaml config --quiet</code> inside your GitHub Actions pipeline before deploying to guarantee that changes to your Compose file never introduce syntax errors onto the live host!
+              </p>
+            </div>
+          </section>
+
+          <!-- ========================================================================= -->
+          <!-- STAGE 6: PREPARE AND SECURE EC2 -->
+          <!-- ========================================================================= -->
+
+          <!-- TOPIC 07: EC2 NETWORK PERIMETER & SECURITY GROUPS -->
+          <section
+            class="topic-section"
+            data-id="ec2-network-security"
+            data-title="EC2 Security Groups &amp; SSH Key Hardening"
+            hidden
+          >
+            <div class="topic-eyebrow">07 / Stage 6 · Network Perimeter</div>
+            <h2 class="topic-heading" tabindex="-1">
+              EC2 Network Perimeter: Security Groups &amp; SSH Key Hardening
+            </h2>
+
+            <p class="lead-paragraph">
+              Before provisioning software on an AWS EC2 instance, you must configure its perimeter defenses. AWS <strong>Security Groups</strong> act as a virtual firewall controlling inbound and outbound network traffic at the hypervisor level, long before packets even reach the Linux operating system.
+            </p>
+
+            <h3>The Principle of Least Network Privilege</h3>
+            <p>
+              A common beginner mistake is opening all ports (<code>0.0.0.0/0</code> on ports 0–65535) or exposing port 5432 to connect remote GUI clients. In production, this invites automated bots to brute-force database credentials within minutes.
+            </p>
+
+            <div class="table-frame" style="overflow-x: auto; margin: 1.5rem 0;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                <thead>
+                  <tr style="background: var(--surface-2); border-bottom: 2px solid var(--line);">
+                    <th style="padding: 0.75rem 1rem; text-align: left;">Rule Type</th>
+                    <th style="padding: 0.75rem 1rem; text-align: left;">Protocol &amp; Port</th>
+                    <th style="padding: 0.75rem 1rem; text-align: left;">Source CIDR</th>
+                    <th style="padding: 0.75rem 1rem; text-align: left;">Rationale</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid var(--line);">
+                    <td style="padding: 0.75rem 1rem;"><strong>Inbound</strong></td>
+                    <td style="padding: 0.75rem 1rem;"><code>TCP 80 (HTTP)</code></td>
+                    <td style="padding: 0.75rem 1rem;"><code>0.0.0.0/0</code></td>
+                    <td style="padding: 0.75rem 1rem;">Public access for web visitors hitting Nginx.</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid var(--line);">
+                    <td style="padding: 0.75rem 1rem;"><strong>Inbound</strong></td>
+                    <td style="padding: 0.75rem 1rem;"><code>TCP 443 (HTTPS)</code></td>
+                    <td style="padding: 0.75rem 1rem;"><code>0.0.0.0/0</code></td>
+                    <td style="padding: 0.75rem 1rem;">Encrypted TLS web traffic.</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid var(--line);">
+                    <td style="padding: 0.75rem 1rem;"><strong>Inbound</strong></td>
+                    <td style="padding: 0.75rem 1rem;"><code>TCP 22 (SSH)</code></td>
+                    <td style="padding: 0.75rem 1rem;"><code>YOUR_IP/32</code> or Bastion</td>
+                    <td style="padding: 0.75rem 1rem;">Administrative host access; never open to the public internet.</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid var(--line); background: var(--rose-soft);">
+                    <td style="padding: 0.75rem 1rem; color: var(--rose-text);"><strong>Inbound</strong></td>
+                    <td style="padding: 0.75rem 1rem; color: var(--rose-text);"><code>TCP 5432, 3000</code></td>
+                    <td style="padding: 0.75rem 1rem; color: var(--rose-text);"><strong>NONE (BLOCKED)</strong></td>
+                    <td style="padding: 0.75rem 1rem; color: var(--rose-text);">Express and PostgreSQL live exclusively on the private Docker bridge network.</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0.75rem 1rem;"><strong>Outbound</strong></td>
+                    <td style="padding: 0.75rem 1rem;"><code>All Traffic</code></td>
+                    <td style="padding: 0.75rem 1rem;"><code>0.0.0.0/0</code></td>
+                    <td style="padding: 0.75rem 1rem;">Allows the host to fetch Ubuntu security updates and pull images from GHCR.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Interactive Security Group SVG -->
+            <div class="interactive-diagram" style="margin: 2rem 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600;">Interactive Firewall: AWS Security Group Filtering</h4>
+                <div class="sim-btn-group" id="sg-sim-btn-group" style="display: flex; gap: 0.5rem;">
+                  <button class="sim-btn active" data-flow="all">All Traffic</button>
+                  <button class="sim-btn" data-flow="http">HTTP (80)</button>
+                  <button class="sim-btn" data-flow="ssh">SSH (22)</button>
+                  <button class="sim-btn" data-flow="blocked">Probing (5432)</button>
+                </div>
+              </div>
+
+              <div id="sg-sim-status" style="padding: 0.75rem 1rem; background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem;">
+                <strong>Security Group View: Active Rules</strong> — HTTP (80) is open to 0.0.0.0/0. SSH (22) is restricted to the admin IP. Direct database probes on 5432 are silently dropped at the hypervisor.
+              </div>
+
+              <svg viewBox="0 0 940 300" width="100%" height="auto" style="display: block; overflow: visible; font-family: var(--font-body, 'Lexend', sans-serif);" aria-label="Security Group Ingress Filtering Diagram">
+                <defs>
+                  <marker id="sg-arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--emerald)" />
+                  </marker>
+                  <marker id="sg-arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--blue)" />
+                  </marker>
+                  <marker id="sg-arrow-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--rose)" />
+                  </marker>
+                </defs>
+
+                <!-- Traffic Sources (Left) -->
+                <g id="sg-node-web">
+                  <rect x="30" y="30" width="150" height="60" rx="6" fill="var(--emerald-soft)" stroke="var(--emerald-line)" stroke-width="1.5" />
+                  <text x="105" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="var(--emerald-text)">Web Traffic (0.0.0.0/0)</text>
+                  <text x="105" y="73" text-anchor="middle" font-size="10" fill="var(--ink-muted)">Port 80 (HTTP)</text>
+                </g>
+
+                <g id="sg-node-ssh">
+                  <rect x="30" y="120" width="150" height="60" rx="6" fill="var(--blue-soft)" stroke="var(--blue-line)" stroke-width="1.5" />
+                  <text x="105" y="145" text-anchor="middle" font-size="11" font-weight="600" fill="var(--blue-text)">Admin Workstation</text>
+                  <text x="105" y="163" text-anchor="middle" font-size="10" fill="var(--ink-muted)">Port 22 (SSH)</text>
+                </g>
+
+                <g id="sg-node-attack">
+                  <rect x="30" y="210" width="150" height="60" rx="6" fill="var(--rose-soft)" stroke="var(--rose-line)" stroke-width="1.5" />
+                  <text x="105" y="235" text-anchor="middle" font-size="11" font-weight="600" fill="var(--rose-text)">Internet Port Scanner</text>
+                  <text x="105" y="253" text-anchor="middle" font-size="10" fill="var(--rose-text)">Port 5432 (Postgres)</text>
+                </g>
+
+                <!-- Firewall Wall (Middle) -->
+                <rect x="290" y="20" width="220" height="260" rx="8" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="2" />
+                <text x="400" y="45" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">AWS SECURITY GROUP</text>
+
+                <g id="sg-rule-80">
+                  <rect x="310" y="60" width="180" height="45" rx="5" fill="var(--surface)" stroke="var(--emerald)" stroke-width="1.5" />
+                  <text x="400" y="82" text-anchor="middle" font-size="11" font-weight="600" fill="var(--emerald-text)">ALLOW: Port 80 (Any)</text>
+                  <text x="400" y="96" text-anchor="middle" font-size="9" fill="var(--ink-muted)">Target: Nginx Container</text>
+                </g>
+
+                <g id="sg-rule-22">
+                  <rect x="310" y="125" width="180" height="45" rx="5" fill="var(--surface)" stroke="var(--blue)" stroke-width="1.5" />
+                  <text x="400" y="147" text-anchor="middle" font-size="11" font-weight="600" fill="var(--blue-text)">ALLOW: Port 22 (Admin IP)</text>
+                  <text x="400" y="161" text-anchor="middle" font-size="9" fill="var(--ink-muted)">Target: Host SSHD</text>
+                </g>
+
+                <g id="sg-rule-5432">
+                  <rect x="310" y="190" width="180" height="55" rx="5" fill="var(--rose-soft)" stroke="var(--rose)" stroke-width="1.5" />
+                  <text x="400" y="213" text-anchor="middle" font-size="11" font-weight="600" fill="var(--rose-text)">DROP: Port 5432 &amp; 3000</text>
+                  <text x="400" y="230" text-anchor="middle" font-size="9" fill="var(--rose-text)">No rule = Silent packet drop</text>
+                </g>
+
+                <!-- Target Host (Right) -->
+                <rect x="620" y="20" width="280" height="260" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="2" />
+                <text x="760" y="45" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink-muted)">EC2 INSTANCE INTERFACE</text>
+
+                <g id="sg-host-nginx">
+                  <rect x="640" y="60" width="240" height="45" rx="5" fill="var(--emerald-soft)" stroke="var(--emerald-line)" stroke-width="1.5" />
+                  <text x="760" y="87" text-anchor="middle" font-size="11" font-weight="600" fill="var(--emerald-text)">✓ Nginx Port 80 (Served)</text>
+                </g>
+
+                <g id="sg-host-sshd">
+                  <rect x="640" y="125" width="240" height="45" rx="5" fill="var(--blue-soft)" stroke="var(--blue-line)" stroke-width="1.5" />
+                  <text x="760" y="152" text-anchor="middle" font-size="11" font-weight="600" fill="var(--blue-text)">✓ SSH Session Authenticated</text>
+                </g>
+
+                <g id="sg-host-blocked">
+                  <rect x="640" y="195" width="240" height="50" rx="5" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 3" />
+                  <text x="760" y="225" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink-faint)">🛑 Packets Never Reach Host</text>
+                </g>
+
+                <!-- Wires -->
+                <path id="sg-wire-1" d="M 180 60 L 310 80" stroke="var(--emerald)" stroke-width="2" marker-end="url(#sg-arrow-emerald)" fill="none" />
+                <path id="sg-wire-1-out" d="M 490 82 L 640 82" stroke="var(--emerald)" stroke-width="2" marker-end="url(#sg-arrow-emerald)" fill="none" />
+
+                <path id="sg-wire-2" d="M 180 150 L 310 147" stroke="var(--blue)" stroke-width="2" marker-end="url(#sg-arrow-blue)" fill="none" />
+                <path id="sg-wire-2-out" d="M 490 147 L 640 147" stroke="var(--blue)" stroke-width="2" marker-end="url(#sg-arrow-blue)" fill="none" />
+
+                <path id="sg-wire-3" d="M 180 240 L 310 215" stroke="var(--rose)" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#sg-arrow-rose)" fill="none" />
+              </svg>
+            </div>
+
+            <h3>SSH Key Pair Hardening: Why <code>chmod 400</code> is Mandatory</h3>
+            <p>
+              When AWS generates your private key (e.g. <code>todo-deploy-key.pem</code>), your local operating system may default file permissions to <code>0644</code> (readable by other users on your workstation).
+            </p>
+            <p>
+              OpenSSH clients strictly enforce private key security. If you attempt to connect with loose permissions:
+            </p>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">OpenSSH Terminal Warning</span>
+              </div>
+              <pre><code>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Permissions 0644 for 'todo-deploy-key.pem' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+Load key "todo-deploy-key.pem": bad permissions
+ubuntu@ec2-54-211-100-50.compute-1.amazonaws.com: Permission denied (publickey).</code></pre>
+            </div>
+
+            <p>
+              Fix the permissions immediately before connecting:
+            </p>
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">Workstation Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>chmod 400 ~/.ssh/todo-deploy-key.pem
+ssh -i ~/.ssh/todo-deploy-key.pem ubuntu@&lt;EC2-PUBLIC-IP&gt;</code></pre>
+            </div>
+          </section>
+
+          <!-- TOPIC 08: DOCKER ENGINE PROVISIONING & LEAST-PRIVILEGE GHCR -->
+          <section
+            class="topic-section"
+            data-id="ec2-host-hardening"
+            data-title="Host Provisioning &amp; Least-Privilege GHCR"
+            hidden
+          >
+            <div class="topic-eyebrow">08 / Stage 6 · Host Provisioning</div>
+            <h2 class="topic-heading" tabindex="-1">
+              Docker Engine Provisioning &amp; Least-Privilege GHCR Access
+            </h2>
+
+            <p class="lead-paragraph">
+              With network perimeters in place, we provision modern container runtime tooling on Ubuntu 24.04 LTS. Using official upstream Docker repositories ensures access to Docker Engine v26+ and the integrated <code>docker compose</code> v2 plugin, avoiding broken legacy packages.
+            </p>
+
+            <h3>Why Never Install <code>docker.io</code></h3>
+            <p>
+              Running <code>sudo apt install docker.io</code> installs Ubuntu's frozen upstream snapshot. These packages are frequently months behind, miss CVE security patches, and do not bundle the official Compose v2 plugin (leaving you stuck with deprecated Python-based <code>docker-compose</code> v1).
+            </p>
+
+            <h3>Production Setup: Official Docker Apt Repository</h3>
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal (Ubuntu 24.04 LTS)</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># 1. Update system package index and install prerequisites
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg
+
+# 2. Add Docker's official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# 3. Add official Docker repository to Apt sources
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release &amp;&amp; echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+
+# 4. Install Docker Engine and the Compose plugin
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin</code></pre>
+            </div>
+
+            <h3>Granting Non-Root User Permissions</h3>
+            <p>
+              By default, the Docker daemon socket (<code>/var/run/docker.sock</code>) is owned by <code>root:docker</code>. If regular users run <code>docker ps</code>, they receive <code>permission denied while trying to connect to the Docker daemon socket</code>.
+            </p>
+            <p>
+              To allow the non-root <code>ubuntu</code> user and future CI automation scripts to manage containers without needing passwordless root <code>sudo</code>:
+            </p>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># Add the ubuntu user to the docker group
+sudo usermod -aG docker ubuntu
+
+# Activate the group changes in the current shell session
+newgrp docker
+
+# Verify non-root execution
+docker run --rm hello-world</code></pre>
+            </div>
+
+            <h3>Authenticating with GHCR: The Principle of Least Privilege</h3>
+            <p>
+              The EC2 instance needs to pull container images from GitHub Container Registry. <strong>Never</strong> log in with your primary GitHub account password or a Personal Access Token with broad <code>repo</code> write scopes.
+            </p>
+
+            <div class="callout warning">
+              <div class="callout-title">⚠️ Least-Privilege PAT Scope</div>
+              <p>
+                Create a dedicated GitHub Personal Access Token (classic or fine-grained) scoped strictly to <strong><code>read:packages</code></strong>. If the EC2 host is ever compromised, the attacker cannot read private source code repositories, push malicious images, or alter account settings.
+              </p>
+            </div>
+
+            <h3>Secure Login via <code>--password-stdin</code></h3>
+            <p>
+              Avoid passing tokens via the command-line flag <code>-p $TOKEN</code>:
+            </p>
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal (Secure GHCR Login)</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># Secure authentication without exposing token in process tables or history
+echo "$GHCR_PAT" | docker login ghcr.io -u &lt;GITHUB_USERNAME&gt; --password-stdin</code></pre>
+            </div>
+
+            <p>
+              Why <code>--password-stdin</code> is mandatory: CLI arguments are visible to any local user running <code>ps aux</code>, stored in <code>/proc/&lt;pid&gt;/cmdline</code>, and saved in plain text in <code>~/.bash_history</code>. Piping via standard input prevents credential leakage entirely.
+            </p>
+          </section>
+
+          <!-- TOPIC 09: HOST SMOKE TESTING & VERIFICATION -->
+          <section
+            class="topic-section"
+            data-id="smoke-test-verification"
+            data-title="Host Smoke Testing &amp; Health Verification"
+            hidden
+          >
+            <div class="topic-eyebrow">09 / Stage 6 · Deployment Verification</div>
+            <h2 class="topic-heading" tabindex="-1">
+              Host Smoke Testing &amp; End-to-End Health Verification
+            </h2>
+
+            <p class="lead-paragraph">
+              Before handing deployment responsibilities over to automated GitHub Actions CD pipelines, we perform a manual deployment and comprehensive smoke test. This proves that all infrastructure layers—Security Groups, Docker daemon, GHCR authentication, Compose networking, and database persistence—function cohesively.
+            </p>
+
+            <h3>The Four-Tier Smoke Test Verification Plan</h3>
+            <p>
+              Follow this step-by-step verification checklist to prove production readiness:
+            </p>
+
+            <div class="step-guide" style="margin: 1.5rem 0;">
+              <!-- Step 1 -->
+              <div class="callout info" style="margin-bottom: 1rem;">
+                <div class="callout-title">Step 1: Test Image Pull from GHCR</div>
+                <p style="margin-top: 0.5rem;">
+                  Confirm that the host can pull private container images using the least-privilege PAT credentials:
+                </p>
+                <div class="code-snippet" style="margin-top: 0.5rem;">
+                  <pre><code>docker pull ghcr.io/&lt;GH_OWNER&gt;/todo-api:sha-e8f91c0
+docker pull ghcr.io/&lt;GH_OWNER&gt;/todo-client:sha-e8f91c0</code></pre>
+                </div>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="callout info" style="margin-bottom: 1rem;">
+                <div class="callout-title">Step 2: Place Compose Contract &amp; Launch Stack</div>
+                <p style="margin-top: 0.5rem;">
+                  Create <code>/opt/todo-app</code>, place <code>compose.prod.yaml</code> and <code>.env</code>, secure file permissions, and start containers:
+                </p>
+                <div class="code-snippet" style="margin-top: 0.5rem;">
+                  <pre><code>sudo mkdir -p /opt/todo-app &amp;&amp; sudo chown -R ubuntu:ubuntu /opt/todo-app
+cd /opt/todo-app
+
+# Secure .env file permissions: owner-readable only
+chmod 600 .env
+
+# Verify Compose resolution dry-run
+docker compose -f compose.prod.yaml config
+
+# Launch services in background mode
+docker compose -f compose.prod.yaml up -d</code></pre>
+                </div>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="callout emerald" style="margin-bottom: 1rem;">
+                <div class="callout-title">Step 3: Internal Health &amp; Deep Database Probe</div>
+                <p style="margin-top: 0.5rem;">
+                  Verify the complete internal proxy and database query chain from within the EC2 terminal:
+                </p>
+                <div class="code-snippet" style="margin-top: 0.5rem;">
+                  <pre><code># 1. Check container runtime status
+docker compose -f compose.prod.yaml ps
+
+# 2. Probe Nginx local port 80 binding
+curl -I http://localhost
+
+# 3. Deep healthcheck: exercises Nginx -&gt; Express -&gt; PostgreSQL (SELECT 1;)
+curl -s http://localhost/api/health | jq .
+# Expected output:
+# { "status": "ok", "db": "connected", "uptime": 12 }</code></pre>
+                </div>
+              </div>
+
+              <!-- Step 4 -->
+              <div class="callout emerald" style="margin-bottom: 1rem;">
+                <div class="callout-title">Step 4: External Public IP Verification</div>
+                <p style="margin-top: 0.5rem;">
+                  From your <strong>local workstation</strong> (outside AWS), test public ingress through the AWS Security Group:
+                </p>
+                <div class="code-snippet" style="margin-top: 0.5rem;">
+                  <pre><code>curl -I http://&lt;EC2-PUBLIC-IP&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="callout warning">
+              <div class="callout-title">🔍 Troubleshooting: The Classic Ingress Timeout</div>
+              <p>
+                <strong>Symptom:</strong> <code>curl http://localhost/api/health</code> succeeds inside the EC2 terminal, but accessing <code>http://&lt;EC2-PUBLIC-IP&gt;</code> from your browser hangs indefinitely and times out.<br />
+                <strong>Diagnosis:</strong> Your containers are healthy and Nginx is listening. The timeout indicates packets are being silently dropped by AWS before reaching the EC2 virtual network interface.<br />
+                <strong>Fix:</strong> Open AWS EC2 Console &rarr; Security Groups &rarr; Edit Inbound Rules &rarr; Add Type: <code>HTTP (TCP 80)</code>, Source: <code>0.0.0.0/0</code>.
+              </p>
+            </div>
+
+            <h3>Stage 6 Complete: The Foundation for Continuous Deployment</h3>
+            <p>
+              With an immutable Compose specification tested and an EC2 host hardened, secured, and validated, you have completed Stage 5 and Stage 6. In Stage 7, we automate this entire process: whenever a pull request is merged to <code>main</code>, GitHub Actions will automatically connect over SSH, pull the new commit SHA image, and execute a zero-downtime rolling restart!
+            </p>
+          </section>
+
 
           <!-- Footer Actions -->
           <footer class="lesson-footer">
@@ -3990,7 +3047,7 @@ jobs:
       (function () {
         "use strict";
 
-        const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-02-03-04";
+        const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-04-05-06";
         const sections = Array.from(
           document.querySelectorAll(".topic-section[data-id]"),
         );
@@ -4587,6 +3644,97 @@ jobs:
               navigateToTopic(topicIds[idx - 1], true);
             }
           }
+        });
+
+        
+        // Stage 5 Network Simulation Switcher
+        const netSimButtons = Array.from(document.querySelectorAll("#net-sim-btn-group .sim-btn"));
+        const netSimStatus = document.getElementById("net-sim-status");
+        const netNodeInternet = document.getElementById("net-node-internet");
+        const netNodePort80 = document.getElementById("net-node-port80");
+        const netNodeNginx = document.getElementById("net-node-nginx");
+        const netNodeApi = document.getElementById("net-node-api");
+        const netNodeDb = document.getElementById("net-node-db");
+        const netWire1 = document.getElementById("net-wire-1");
+        const netWire2 = document.getElementById("net-wire-2");
+        const netWire3 = document.getElementById("net-wire-3");
+        const netWire4 = document.getElementById("net-wire-4");
+
+        const netDescriptions = {
+          all: "<strong>Architecture View: Full Topology</strong> — Port 80 is the sole ingress on the EC2 host. Express and PostgreSQL communicate over the private <code>todo-net</code> bridge with no public exposure.",
+          public: "<strong>Scenario: Public Ingress (Port 80)</strong> — External users reach host port 80. Nginx terminates HTTP, serves client files, and forwards <code>/api</code> internally.",
+          internal: "<strong>Scenario: Internal Network (Bridge)</strong> — Express API and PostgreSQL communicate strictly across the private <code>todo-net</code> bridge. Zero direct public internet exposure."
+        };
+
+        netSimButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const flow = btn.dataset.flow;
+            netSimButtons.forEach((b) => b.classList.toggle("active", b === btn));
+            if (netSimStatus && netDescriptions[flow]) {
+              netSimStatus.innerHTML = netDescriptions[flow];
+            }
+            if (netNodePort80 && netNodeNginx && netNodeApi && netNodeDb && netWire1 && netWire2 && netWire3 && netWire4) {
+              if (flow === "public") {
+                netWire1.style.stroke = "var(--blue)";
+                netWire2.style.stroke = "var(--blue)";
+                netWire3.style.stroke = "var(--ink-faint)";
+                netWire4.style.stroke = "var(--ink-faint)";
+              } else if (flow === "internal") {
+                netWire1.style.stroke = "var(--ink-faint)";
+                netWire2.style.stroke = "var(--ink-faint)";
+                netWire3.style.stroke = "var(--purple)";
+                netWire4.style.stroke = "var(--emerald)";
+              } else {
+                netWire1.style.stroke = "var(--blue)";
+                netWire2.style.stroke = "var(--blue)";
+                netWire3.style.stroke = "var(--purple)";
+                netWire4.style.stroke = "var(--emerald)";
+              }
+            }
+          });
+        });
+
+        // Stage 6 Security Group Switcher
+        const sgSimButtons = Array.from(document.querySelectorAll("#sg-sim-btn-group .sim-btn"));
+        const sgSimStatus = document.getElementById("sg-sim-status");
+        const sgWire1 = document.getElementById("sg-wire-1");
+        const sgWire2 = document.getElementById("sg-wire-2");
+        const sgWire3 = document.getElementById("sg-wire-3");
+
+        const sgDescriptions = {
+          all: "<strong>Security Group View: Active Rules</strong> — HTTP (80) is open to 0.0.0.0/0. SSH (22) is restricted to the admin IP. Direct database probes on 5432 are silently dropped at the hypervisor.",
+          http: "<strong>Scenario: Web Traffic (Port 80)</strong> — Public visitors reach Nginx over port 80. Rule <code>0.0.0.0/0:80</code> allows inbound TCP handshake.",
+          ssh: "<strong>Scenario: SSH Access (Port 22)</strong> — Administrator connects with hardened private key (chmod 400). Restricted to trusted administrative CIDR.",
+          blocked: "<strong>Scenario: Malicious Database Probing</strong> — Automated internet bots probe port 5432. Because no Security Group ingress rule exists, AWS silently drops the packets."
+        };
+
+        sgSimButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const flow = btn.dataset.flow;
+            sgSimButtons.forEach((b) => b.classList.toggle("active", b === btn));
+            if (sgSimStatus && sgDescriptions[flow]) {
+              sgSimStatus.innerHTML = sgDescriptions[flow];
+            }
+            if (sgWire1 && sgWire2 && sgWire3) {
+              if (flow === "http") {
+                sgWire1.style.opacity = "1";
+                sgWire2.style.opacity = "0.2";
+                sgWire3.style.opacity = "0.2";
+              } else if (flow === "ssh") {
+                sgWire1.style.opacity = "0.2";
+                sgWire2.style.opacity = "1";
+                sgWire3.style.opacity = "0.2";
+              } else if (flow === "blocked") {
+                sgWire1.style.opacity = "0.2";
+                sgWire2.style.opacity = "0.2";
+                sgWire3.style.opacity = "1";
+              } else {
+                sgWire1.style.opacity = "1";
+                sgWire2.style.opacity = "1";
+                sgWire3.style.opacity = "1";
+              }
+            }
+          });
         });
 
         // Code copy button

@@ -682,6 +682,7 @@
         fill: var(--panel);
         stroke: var(--line);
         stroke-width: 1.5;
+        rx: 6px;
       }
 
       .pipeline-diagram .node.source {
@@ -712,7 +713,6 @@
         fill: none;
         stroke: var(--muted);
         stroke-width: 1.8;
-        marker-end: url("#pipeline-arrow");
       }
 
       .pipeline-diagram .wire.github-wire {
@@ -744,8 +744,14 @@
       }
 
       .pipeline-diagram .wire-label {
-        fill: var(--muted);
-        font: 10px var(--font-mono);
+        fill: var(--ink);
+        font: 600 11px var(--font-mono);
+        letter-spacing: 0.02em;
+        paint-order: stroke fill;
+        stroke: var(--ground);
+        stroke-width: 4px;
+        stroke-linejoin: round;
+        stroke-linecap: round;
       }
 
       .pipeline-diagram .node-tag {
@@ -982,9 +988,9 @@
                   <rect class="svg-node" x="615" y="65" width="145" height="74"></rect>
                   <text class="svg-title" x="632" y="94">EC2 host</text>
                   <text class="svg-copy" x="632" y="116">pulls image</text>
-                  <text class="svg-copy" x="175" y="88">push</text>
-                  <text class="svg-copy" x="370" y="88">stores</text>
-                  <text class="svg-copy" x="565" y="88">pull</text>
+                  <text class="svg-copy" text-anchor="middle" x="198" y="88">push</text>
+                  <text class="svg-copy" text-anchor="middle" x="392" y="88">stores</text>
+                  <text class="svg-copy" text-anchor="middle" x="588" y="88">pull</text>
                   <text id="image-name-svg" class="svg-copy" x="420" y="170">
                     ghcr.io/s3nsh1-dev/docker-beginner-simulation-client
                   </text>
@@ -1363,111 +1369,148 @@ docker pull "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client@sha256:&lt;man
             <figure class="map-figure">
               <svg
                 class="pipeline-diagram"
-                viewBox="0 0 1240 410"
+                viewBox="0 0 1340 380"
                 role="img"
                 aria-label="Client and server code with Dockerfiles enter a pull request. GitHub Actions runs client checks, server checks with disposable PostgreSQL, and Playwright end-to-end checks in parallel. All required checks must pass to merge. A failed check blocks the pull request and cannot publish or deploy."
               >
                 <defs>
                   <marker
-                    id="pipe-arrow-pr"
+                    id="m-pr-github"
                     markerWidth="8"
                     markerHeight="8"
                     refX="6"
                     refY="4"
                     orient="auto"
                   >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--github)"></path>
+                  </marker>
+                  <marker
+                    id="m-pr-safe"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--safe)"></path>
+                  </marker>
+                  <marker
+                    id="m-pr-warn"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--caution)"></path>
                   </marker>
                 </defs>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-pr)"
-                  d="M185 190 H220"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-pr)"
-                  d="M370 190 H405"
-                ></path>
-                <path class="bus" d="M585 190 H610 M610 87 V293"></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-pr)"
-                  d="M610 87 H635"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-pr)"
-                  d="M610 190 H635"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-pr)"
-                  d="M610 293 H635"
-                ></path>
-                <path class="bus" d="M915 87 H940 M915 190 H940 M915 293 H940 M940 87 V293"></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-pr)"
-                  d="M940 190 H965"
-                ></path>
-                <path
-                  class="wire safe-wire"
-                  marker-end="url(#pipe-arrow-pr)"
-                  d="M1110 167 H1140 V92 H1160"
-                ></path>
-                <path
-                  class="wire warn-wire"
-                  marker-end="url(#pipe-arrow-pr)"
-                  d="M1110 212 H1140 V315 H1160"
-                ></path>
-                <text class="wire-label" x="191" y="178">push branch</text>
-                <text class="wire-label" x="374" y="178">open PR</text>
-                <text class="wire-label" x="616" y="62">parallel jobs</text>
-                <text class="wire-label" x="1116" y="145">yes</text>
-                <text class="wire-label" x="1116" y="238">no</text>
 
-                <rect class="node source" x="20" y="130" width="165" height="120"></rect>
-                <text class="node-tag" x="36" y="154">REPOSITORY</text>
-                <text class="node-title" x="36" y="180">App source</text>
-                <text class="node-copy" x="36" y="202">React + Nginx client</text>
-                <text class="node-copy" x="36" y="222">Express server + Dockerfiles</text>
+                <!-- 1. Pipeline Wires -->
+                <g class="pipeline-wires">
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pr-github)"
+                    d="M180 190 H245"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pr-github)"
+                    d="M390 190 H455"
+                  ></path>
+                  <path class="wire github-wire" d="M620 190 H665"></path>
+                  <path class="bus" d="M665 87 V293"></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pr-github)"
+                    d="M665 87 H710"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pr-github)"
+                    d="M665 190 H710"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pr-github)"
+                    d="M665 293 H710"
+                  ></path>
+                  <path class="wire github-wire" d="M975 87 H1015"></path>
+                  <path class="wire github-wire" d="M975 190 H1015"></path>
+                  <path class="wire github-wire" d="M975 293 H1015"></path>
+                  <path class="bus" d="M1015 87 V293"></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pr-github)"
+                    d="M1015 190 H1060"
+                  ></path>
+                  <path
+                    class="wire safe-wire"
+                    marker-end="url(#m-pr-safe)"
+                    d="M1195 167 H1225 V87 H1255"
+                  ></path>
+                  <path
+                    class="wire warn-wire"
+                    marker-end="url(#m-pr-warn)"
+                    d="M1195 213 H1225 V293 H1255"
+                  ></path>
+                </g>
 
-                <rect class="node github-node" x="220" y="145" width="150" height="90"></rect>
-                <text class="node-tag" x="236" y="169">GIT</text>
-                <text class="node-title" x="236" y="193">Feature branch</text>
-                <text class="node-copy" x="236" y="214">commit opens PR</text>
+                <!-- 2. Pipeline Nodes -->
+                <g class="pipeline-nodes">
+                  <rect class="node source" x="20" y="130" width="160" height="120" rx="6"></rect>
+                  <text class="node-tag" x="36" y="154">REPOSITORY</text>
+                  <text class="node-title" x="36" y="180">App source</text>
+                  <text class="node-copy" x="36" y="202">React + Nginx client</text>
+                  <text class="node-copy" x="36" y="222">Express server + Dockerfiles</text>
 
-                <rect class="node github-node" x="405" y="145" width="180" height="90"></rect>
-                <text class="node-tag" x="421" y="169">GITHUB ACTIONS</text>
-                <text class="node-title" x="421" y="193">PR workflow</text>
-                <text class="node-copy" x="421" y="214">read-only permissions</text>
+                  <rect class="node github-node" x="245" y="145" width="145" height="90" rx="6"></rect>
+                  <text class="node-tag" x="261" y="169">GIT</text>
+                  <text class="node-title" x="261" y="193">Feature branch</text>
+                  <text class="node-copy" x="261" y="214">commit opens PR</text>
 
-                <rect class="node" x="635" y="55" width="280" height="64"></rect>
-                <text class="node-title" x="651" y="80">Client verification</text>
-                <text class="node-copy" x="651" y="101">pnpm install → lint → build</text>
+                  <rect class="node github-node" x="455" y="145" width="165" height="90" rx="6"></rect>
+                  <text class="node-tag" x="471" y="169">GITHUB ACTIONS</text>
+                  <text class="node-title" x="471" y="193">PR workflow</text>
+                  <text class="node-copy" x="471" y="214">read-only permissions</text>
 
-                <rect class="node" x="635" y="158" width="280" height="64"></rect>
-                <text class="node-title" x="651" y="183">Server verification</text>
-                <text class="node-copy" x="651" y="204">typecheck + integration tests / disposable Postgres</text>
+                  <rect class="node" x="710" y="55" width="265" height="64" rx="6"></rect>
+                  <text class="node-title" x="726" y="80">Client verification</text>
+                  <text class="node-copy" x="726" y="101">pnpm install → lint → build</text>
 
-                <rect class="node" x="635" y="261" width="280" height="64"></rect>
-                <text class="node-title" x="651" y="286">Full-stack Playwright</text>
-                <text class="node-copy" x="651" y="307">browser → client → API → disposable Postgres</text>
+                  <rect class="node" x="710" y="158" width="265" height="64" rx="6"></rect>
+                  <text class="node-title" x="726" y="183">Server verification</text>
+                  <text class="node-copy" x="726" y="204">typecheck + integration tests / test DB</text>
 
-                <rect class="node github-node" x="965" y="145" width="145" height="90"></rect>
-                <text class="node-title" x="981" y="176">All checks</text>
-                <text class="node-title" x="981" y="196">green?</text>
-                <text class="node-copy" x="981" y="217">required status gate</text>
+                  <rect class="node" x="710" y="261" width="265" height="64" rx="6"></rect>
+                  <text class="node-title" x="726" y="286">Full-stack Playwright</text>
+                  <text class="node-copy" x="726" y="307">browser → client → API → test DB</text>
 
-                <rect class="node safe-node" x="1160" y="55" width="75" height="74"></rect>
-                <text class="node-title" x="1172" y="82">Merge</text>
-                <text class="node-copy" x="1172" y="103">to main</text>
+                  <rect class="node github-node" x="1060" y="145" width="135" height="90" rx="6"></rect>
+                  <text class="node-title" x="1076" y="176">All checks</text>
+                  <text class="node-title" x="1076" y="196">green?</text>
+                  <text class="node-copy" x="1076" y="217">required status gate</text>
 
-                <rect class="node warn-node" x="1160" y="278" width="75" height="74"></rect>
-                <text class="node-title" x="1172" y="305">Blocked</text>
-                <text class="node-copy" x="1172" y="326">fix + retry</text>
-                <text class="node-copy" x="945" y="375">PRs cannot publish images or deploy to EC2.</text>
+                  <rect class="node safe-node" x="1255" y="55" width="75" height="64" rx="6"></rect>
+                  <text class="node-title" x="1267" y="80">Merge</text>
+                  <text class="node-copy" x="1267" y="101">to main</text>
+
+                  <rect class="node warn-node" x="1255" y="261" width="75" height="64" rx="6"></rect>
+                  <text class="node-title" x="1267" y="286">Blocked</text>
+                  <text class="node-copy" x="1267" y="307">fix + retry</text>
+
+                  <text class="node-copy" x="975" y="365">PRs cannot publish images or deploy to EC2.</text>
+                </g>
+
+                <!-- 3. Wire Labels (rendered on top, never hidden) -->
+                <g class="pipeline-labels">
+                  <text class="wire-label" text-anchor="middle" x="212" y="176">push branch</text>
+                  <text class="wire-label" text-anchor="middle" x="422" y="176">open PR</text>
+                  <text class="wire-label" text-anchor="middle" x="665" y="58">parallel jobs</text>
+                  <text class="wire-label" text-anchor="middle" x="1037" y="176">all pass</text>
+                  <text class="wire-label" text-anchor="middle" x="1225" y="74">yes</text>
+                  <text class="wire-label" text-anchor="middle" x="1225" y="315">no</text>
+                </g>
               </svg>
               <figcaption>
                 A failure stops at the PR. Only a merge to the protected main
@@ -1491,110 +1534,135 @@ docker pull "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client@sha256:&lt;man
             <figure class="map-figure">
               <svg
                 class="pipeline-diagram"
-                viewBox="0 0 1240 385"
+                viewBox="0 0 1340 370"
                 role="img"
                 aria-label="A main branch push and commit SHA rerun all verification jobs. When those jobs pass, a main-only publish job checks out source with contents read permission, authenticates to GHCR with GITHUB_TOKEN and packages write permission, uses Buildx and cache, builds client and server images separately with the same commit SHA tag and OCI metadata, then pushes both private images and their manifests to GHCR."
               >
                 <defs>
                   <marker
-                    id="pipe-arrow-publish"
+                    id="m-pub-github"
                     markerWidth="8"
                     markerHeight="8"
                     refX="6"
                     refY="4"
                     orient="auto"
                   >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--github)"></path>
+                  </marker>
+                  <marker
+                    id="m-pub-muted"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--muted)"></path>
                   </marker>
                 </defs>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-publish)"
-                  d="M165 165 H195"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-publish)"
-                  d="M365 165 H395"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-publish)"
-                  d="M575 165 H605"
-                ></path>
-                <path class="bus" d="M785 165 H815 M815 95 V235"></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-publish)"
-                  d="M815 95 H845"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-publish)"
-                  d="M815 235 H845"
-                ></path>
-                <path
-                  class="wire"
-                  marker-end="url(#pipe-arrow-publish)"
-                  d="M1045 95 H1080"
-                ></path>
-                <path
-                  class="wire"
-                  marker-end="url(#pipe-arrow-publish)"
-                  d="M1045 235 H1080"
-                ></path>
-                <text class="wire-label" x="170" y="152">push main</text>
-                <text class="wire-label" x="370" y="152">checks pass</text>
-                <text class="wire-label" x="792" y="73">build separately</text>
-                <text class="wire-label" x="1049" y="82">push</text>
-                <text class="wire-label" x="1049" y="222">push</text>
 
-                <rect class="node source" x="20" y="120" width="145" height="90"></rect>
-                <text class="node-tag" x="36" y="144">TRUSTED SOURCE</text>
-                <text class="node-title" x="36" y="169">main commit</text>
-                <text class="node-copy" x="36" y="190">source SHA: $GITHUB_SHA</text>
+                <!-- 1. Pipeline Wires -->
+                <g class="pipeline-wires">
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pub-github)"
+                    d="M165 165 H230"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pub-github)"
+                    d="M395 165 H460"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pub-github)"
+                    d="M625 165 H690"
+                  ></path>
+                  <path class="wire github-wire" d="M855 165 H895"></path>
+                  <path class="bus" d="M895 95 V235"></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pub-github)"
+                    d="M895 95 H945"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-pub-github)"
+                    d="M895 235 H945"
+                  ></path>
+                  <path
+                    class="wire"
+                    marker-end="url(#m-pub-muted)"
+                    d="M1135 95 H1200"
+                  ></path>
+                  <path
+                    class="wire"
+                    marker-end="url(#m-pub-muted)"
+                    d="M1135 235 H1200"
+                  ></path>
+                </g>
 
-                <rect class="node github-node" x="195" y="120" width="170" height="90"></rect>
-                <text class="node-title" x="211" y="150">Rerun PR checks</text>
-                <text class="node-copy" x="211" y="172">client + server + E2E</text>
-                <text class="node-copy" x="211" y="192">publish needs all three</text>
+                <!-- 2. Pipeline Nodes -->
+                <g class="pipeline-nodes">
+                  <rect class="node source" x="20" y="120" width="145" height="90" rx="6"></rect>
+                  <text class="node-tag" x="36" y="144">TRUSTED SOURCE</text>
+                  <text class="node-title" x="36" y="169">main commit</text>
+                  <text class="node-copy" x="36" y="190">source: $GITHUB_SHA</text>
 
-                <rect class="node github-node" x="395" y="120" width="180" height="90"></rect>
-                <text class="node-tag" x="411" y="144">MAIN ONLY</text>
-                <text class="node-title" x="411" y="169">Publish job</text>
-                <text class="node-copy" x="411" y="190">contents:read</text>
-                <text class="node-copy" x="411" y="205">packages:write</text>
+                  <rect class="node github-node" x="230" y="120" width="165" height="90" rx="6"></rect>
+                  <text class="node-title" x="246" y="150">Rerun PR checks</text>
+                  <text class="node-copy" x="246" y="172">client + server + E2E</text>
+                  <text class="node-copy" x="246" y="192">publish needs all 3</text>
 
-                <rect class="node" x="605" y="120" width="180" height="90"></rect>
-                <text class="node-title" x="621" y="150">GHCR login</text>
-                <text class="node-copy" x="621" y="172">GITHUB_TOKEN</text>
-                <text class="node-copy" x="621" y="192">Buildx + layer cache</text>
+                  <rect class="node github-node" x="460" y="120" width="165" height="90" rx="6"></rect>
+                  <text class="node-tag" x="476" y="144">MAIN ONLY</text>
+                  <text class="node-title" x="476" y="169">Publish job</text>
+                  <text class="node-copy" x="476" y="190">contents: read</text>
+                  <text class="node-copy" x="476" y="205">packages: write</text>
 
-                <rect class="node" x="845" y="55" width="200" height="80"></rect>
-                <text class="node-title" x="861" y="83">Build client</text>
-                <text class="node-copy" x="861" y="104">client Dockerfile + context</text>
-                <text class="node-copy" x="861" y="122">tag: sha-&lt;commit&gt;</text>
+                  <rect class="node" x="690" y="120" width="165" height="90" rx="6"></rect>
+                  <text class="node-title" x="706" y="150">GHCR login</text>
+                  <text class="node-copy" x="706" y="172">GITHUB_TOKEN</text>
+                  <text class="node-copy" x="706" y="192">Buildx + layer cache</text>
 
-                <rect class="node" x="845" y="195" width="200" height="80"></rect>
-                <text class="node-title" x="861" y="223">Build server</text>
-                <text class="node-copy" x="861" y="244">server Dockerfile + context</text>
-                <text class="node-copy" x="861" y="262">tag: sha-&lt;commit&gt;</text>
+                  <rect class="node" x="945" y="55" width="190" height="80" rx="6"></rect>
+                  <text class="node-title" x="961" y="83">Build client</text>
+                  <text class="node-copy" x="961" y="104">client Dockerfile + context</text>
+                  <text class="node-copy" x="961" y="122">tag: sha-&lt;commit&gt;</text>
 
-                <rect class="node docker-node" x="1080" y="45" width="150" height="100"></rect>
-                <text class="node-tag" x="1096" y="67">PRIVATE GHCR</text>
-                <text class="node-title" x="1096" y="91">client image</text>
-                <text class="node-copy" x="1096" y="111">manifest + layers</text>
-                <text class="node-copy" x="1096" y="129">OCI source / revision</text>
+                  <rect class="node" x="945" y="195" width="190" height="80" rx="6"></rect>
+                  <text class="node-title" x="961" y="223">Build server</text>
+                  <text class="node-copy" x="961" y="244">server Dockerfile + context</text>
+                  <text class="node-copy" x="961" y="262">tag: sha-&lt;commit&gt;</text>
 
-                <rect class="node docker-node" x="1080" y="185" width="150" height="100"></rect>
-                <text class="node-tag" x="1096" y="207">PRIVATE GHCR</text>
-                <text class="node-title" x="1096" y="231">server image</text>
-                <text class="node-copy" x="1096" y="251">manifest + layers</text>
-                <text class="node-copy" x="1096" y="269">OCI source / revision</text>
+                  <rect class="node docker-node" x="1200" y="45" width="130" height="100" rx="6"></rect>
+                  <text class="node-tag" x="1212" y="67">PRIVATE GHCR</text>
+                  <text class="node-title" x="1212" y="91">client image</text>
+                  <text class="node-copy" x="1212" y="111">manifest + layers</text>
+                  <text class="node-copy" x="1212" y="129">OCI source / rev</text>
 
-                <text class="node-copy" x="26" y="330">
-                  Both image tags use the same source commit; the image digests identify the built contents.
-                </text>
+                  <rect class="node docker-node" x="1200" y="185" width="130" height="100" rx="6"></rect>
+                  <text class="node-tag" x="1212" y="207">PRIVATE GHCR</text>
+                  <text class="node-title" x="1212" y="231">server image</text>
+                  <text class="node-copy" x="1212" y="251">manifest + layers</text>
+                  <text class="node-copy" x="1212" y="269">OCI source / rev</text>
+
+                  <text class="node-copy" x="24" y="335">
+                    Both image tags use the same source commit; the image digests identify the built contents.
+                  </text>
+                </g>
+
+                <!-- 3. Wire Labels (rendered on top, never hidden) -->
+                <g class="pipeline-labels">
+                  <text class="wire-label" text-anchor="middle" x="197" y="150">push main</text>
+                  <text class="wire-label" text-anchor="middle" x="427" y="150">checks pass</text>
+                  <text class="wire-label" text-anchor="middle" x="657" y="150">auth token</text>
+                  <text class="wire-label" text-anchor="middle" x="895" y="42">build separately</text>
+                  <text class="wire-label" text-anchor="middle" x="920" y="82">client</text>
+                  <text class="wire-label" text-anchor="middle" x="920" y="222">server</text>
+                  <text class="wire-label" text-anchor="middle" x="1167" y="82">push</text>
+                  <text class="wire-label" text-anchor="middle" x="1167" y="222">push</text>
+                </g>
               </svg>
               <figcaption>
                 The commit SHA ties both packages to one source revision. Each
@@ -1617,101 +1685,137 @@ docker pull "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client@sha256:&lt;man
             <figure class="map-figure">
               <svg
                 class="pipeline-diagram"
-                viewBox="0 0 1240 390"
+                viewBox="0 0 1380 370"
                 role="img"
                 aria-label="After publish succeeds, a serialized GitHub Actions deploy job uses protected SSH secrets and verifies the EC2 host key, copies the production Compose file, and sends the release commit SHA. EC2 stores IMAGE_TAG in release.env and DATABASE_URL in permission-restricted server.env, logs into private GHCR using read-only credentials, and Docker Compose pulls the client and server images tagged with the release SHA."
               >
                 <defs>
                   <marker
-                    id="pipe-arrow-deploy"
+                    id="m-dep-github"
                     markerWidth="8"
                     markerHeight="8"
                     refX="6"
                     refY="4"
                     orient="auto"
                   >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--github)"></path>
+                  </marker>
+                  <marker
+                    id="m-dep-safe"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--safe)"></path>
+                  </marker>
+                  <marker
+                    id="m-dep-muted"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--muted)"></path>
                   </marker>
                 </defs>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-deploy)"
-                  d="M180 165 H215"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-deploy)"
-                  d="M405 165 H440"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-deploy)"
-                  d="M650 165 H690"
-                ></path>
-                <path
-                  class="wire safe-wire"
-                  marker-end="url(#pipe-arrow-deploy)"
-                  d="M885 165 H920"
-                ></path>
-                <path class="bus" d="M1080 165 H1100 M1100 100 V230"></path>
-                <path
-                  class="wire"
-                  marker-end="url(#pipe-arrow-deploy)"
-                  d="M1100 100 H1120"
-                ></path>
-                <path
-                  class="wire"
-                  marker-end="url(#pipe-arrow-deploy)"
-                  d="M1100 230 H1120"
-                ></path>
-                <text class="wire-label" x="184" y="152">publish passed</text>
-                <text class="wire-label" x="411" y="152">verified SSH</text>
-                <text class="wire-label" x="653" y="152">send release + Compose</text>
-                <text class="wire-label" x="890" y="152">pull by tag</text>
 
-                <rect class="node github-node" x="20" y="120" width="160" height="90"></rect>
-                <text class="node-tag" x="36" y="144">DEPLOY JOB</text>
-                <text class="node-title" x="36" y="169">Serialized</text>
-                <text class="node-copy" x="36" y="190">one deployment at a time</text>
+                <!-- 1. Pipeline Wires -->
+                <g class="pipeline-wires">
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-dep-github)"
+                    d="M170 165 H240"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-dep-github)"
+                    d="M420 165 H495"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-dep-github)"
+                    d="M700 165 H780"
+                  ></path>
+                  <path
+                    class="wire safe-wire"
+                    marker-end="url(#m-dep-safe)"
+                    d="M970 165 H1045"
+                  ></path>
+                  <path class="wire safe-wire" d="M1200 165 H1235"></path>
+                  <path class="bus" d="M1235 95 V235"></path>
+                  <path
+                    class="wire safe-wire"
+                    marker-end="url(#m-dep-safe)"
+                    d="M1235 95 H1265"
+                  ></path>
+                  <path
+                    class="wire safe-wire"
+                    marker-end="url(#m-dep-safe)"
+                    d="M1235 235 H1265"
+                  ></path>
+                </g>
 
-                <rect class="node github-node" x="215" y="105" width="190" height="120"></rect>
-                <text class="node-title" x="231" y="134">Protect SSH</text>
-                <text class="node-copy" x="231" y="156">GitHub secrets: key + host</text>
-                <text class="node-copy" x="231" y="177">verify known host key</text>
-                <text class="node-copy" x="231" y="198">no secrets in logs</text>
+                <!-- 2. Pipeline Nodes -->
+                <g class="pipeline-nodes">
+                  <rect class="node github-node" x="20" y="120" width="150" height="90" rx="6"></rect>
+                  <text class="node-tag" x="36" y="144">DEPLOY JOB</text>
+                  <text class="node-title" x="36" y="169">Serialized</text>
+                  <text class="node-copy" x="36" y="190">one deploy at a time</text>
 
-                <rect class="node github-node" x="440" y="105" width="210" height="120"></rect>
-                <text class="node-title" x="456" y="134">Transfer release contract</text>
-                <text class="node-copy" x="456" y="156">production Compose file</text>
-                <text class="node-copy" x="456" y="177">release.env: IMAGE_TAG=SHA</text>
-                <text class="node-copy" x="456" y="198">keep prior SHA for rollback</text>
+                  <rect class="node github-node" x="240" y="105" width="180" height="120" rx="6"></rect>
+                  <text class="node-tag" x="256" y="129">SECURITY</text>
+                  <text class="node-title" x="256" y="152">Protect SSH</text>
+                  <text class="node-copy" x="256" y="174">GitHub secrets: key + host</text>
+                  <text class="node-copy" x="256" y="194">verify known host key</text>
+                  <text class="node-copy" x="256" y="212">no secrets in logs</text>
 
-                <rect class="node source" x="690" y="85" width="195" height="160"></rect>
-                <text class="node-tag" x="706" y="109">UBUNTU EC2</text>
-                <text class="node-title" x="706" y="134">Host-only settings</text>
-                <text class="node-copy" x="706" y="156">server.env: DATABASE_URL</text>
-                <text class="node-copy" x="706" y="177">file mode: chmod 600</text>
-                <text class="node-copy" x="706" y="198">GHCR read-only login</text>
-                <text class="node-copy" x="706" y="219">never bake secrets into images</text>
+                  <rect class="node github-node" x="495" y="105" width="205" height="120" rx="6"></rect>
+                  <text class="node-tag" x="511" y="129">TRANSFER CONTRACT</text>
+                  <text class="node-title" x="511" y="152">Transfer release</text>
+                  <text class="node-copy" x="511" y="174">production Compose file</text>
+                  <text class="node-copy" x="511" y="194">release.env: IMAGE_TAG</text>
+                  <text class="node-copy" x="511" y="212">keep prior SHA for rollback</text>
 
-                <rect class="node docker-node" x="920" y="120" width="160" height="90"></rect>
-                <text class="node-title" x="936" y="150">Compose pull</text>
-                <text class="node-copy" x="936" y="172">uses release.env tag</text>
-                <text class="node-copy" x="936" y="192">does not build source</text>
+                  <rect class="node source" x="780" y="90" width="190" height="150" rx="6"></rect>
+                  <text class="node-tag" x="796" y="114">UBUNTU EC2</text>
+                  <text class="node-title" x="796" y="138">Host-only settings</text>
+                  <text class="node-copy" x="796" y="160">server.env: DATABASE_URL</text>
+                  <text class="node-copy" x="796" y="180">file mode: chmod 600</text>
+                  <text class="node-copy" x="796" y="200">GHCR read-only login</text>
+                  <text class="node-copy" x="796" y="220">no secrets in images</text>
 
-                <rect class="node docker-node" x="1120" y="55" width="110" height="90"></rect>
-                <text class="node-title" x="1132" y="83">client</text>
-                <text class="node-copy" x="1132" y="104">image: SHA</text>
-                <text class="node-copy" x="1132" y="123">Nginx</text>
+                  <rect class="node docker-node" x="1045" y="120" width="155" height="90" rx="6"></rect>
+                  <text class="node-title" x="1061" y="150">Compose pull</text>
+                  <text class="node-copy" x="1061" y="172">uses release.env tag</text>
+                  <text class="node-copy" x="1061" y="192">pulls prebuilt images</text>
 
-                <rect class="node docker-node" x="1120" y="185" width="110" height="90"></rect>
-                <text class="node-title" x="1132" y="213">server</text>
-                <text class="node-copy" x="1132" y="234">image: same SHA</text>
-                <text class="node-copy" x="1132" y="253">API internal</text>
+                  <rect class="node docker-node" x="1265" y="55" width="105" height="80" rx="6"></rect>
+                  <text class="node-title" x="1277" y="83">client</text>
+                  <text class="node-copy" x="1277" y="104">image: SHA</text>
+                  <text class="node-copy" x="1277" y="122">Nginx (:80)</text>
 
-                <text class="node-copy" x="25" y="330">
-                  Network exposure: port 80 reaches Nginx; the Express API has no public host port.
-                </text>
+                  <rect class="node docker-node" x="1265" y="195" width="105" height="80" rx="6"></rect>
+                  <text class="node-title" x="1277" y="223">server</text>
+                  <text class="node-copy" x="1277" y="244">image: SHA</text>
+                  <text class="node-copy" x="1277" y="262">API internal</text>
+
+                  <text class="node-copy" x="24" y="325">
+                    Network exposure: port 80 reaches Nginx; the Express API has no public host port.
+                  </text>
+                </g>
+
+                <!-- 3. Wire Labels (rendered on top, never hidden) -->
+                <g class="pipeline-labels">
+                  <text class="wire-label" text-anchor="middle" x="205" y="150">publish passed</text>
+                  <text class="wire-label" text-anchor="middle" x="457" y="150">verified SSH</text>
+                  <text class="wire-label" text-anchor="middle" x="740" y="150">send release.env</text>
+                  <text class="wire-label" text-anchor="middle" x="1007" y="150">pull by SHA</text>
+                  <text class="wire-label" text-anchor="middle" x="1245" y="82">client</text>
+                  <text class="wire-label" text-anchor="middle" x="1245" y="222">server</text>
+                </g>
               </svg>
               <figcaption>
                 EC2 receives a Compose file and release value, then pulls the
@@ -1736,107 +1840,151 @@ docker pull "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client@sha256:&lt;man
             <figure class="map-figure">
               <svg
                 class="pipeline-diagram"
-                viewBox="0 0 1240 410"
+                viewBox="0 0 1360 380"
                 role="img"
                 aria-label="A browser sends requests to the EC2 public port 80, Nginx serves the client and proxies API requests to the internal Express server, which connects to Neon PostgreSQL using DATABASE_URL from server.env. GitHub Actions polls the public API health endpoint. On success it records the new SHA as current and keeps the previous SHA. On failure it restores the prior IMAGE_TAG, reruns Docker Compose, checks health again, and reports deployment failure without exposing secrets."
               >
                 <defs>
                   <marker
-                    id="pipe-arrow-health"
+                    id="m-hlt-github"
                     markerWidth="8"
                     markerHeight="8"
                     refX="6"
                     refY="4"
                     orient="auto"
                   >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--github)"></path>
+                  </marker>
+                  <marker
+                    id="m-hlt-safe"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--safe)"></path>
+                  </marker>
+                  <marker
+                    id="m-hlt-warn"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--caution)"></path>
+                  </marker>
+                  <marker
+                    id="m-hlt-muted"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6"
+                    refY="4"
+                    orient="auto"
+                  >
+                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--muted)"></path>
                   </marker>
                 </defs>
-                <path
-                  class="wire"
-                  marker-end="url(#pipe-arrow-health)"
-                  d="M155 125 H195"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-health)"
-                  d="M365 125 H405"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-health)"
-                  d="M575 125 H615"
-                ></path>
-                <path
-                  class="wire github-wire"
-                  marker-end="url(#pipe-arrow-health)"
-                  d="M785 125 H825"
-                ></path>
-                <path
-                  class="wire safe-wire"
-                  marker-end="url(#pipe-arrow-health)"
-                  d="M990 105 H1030"
-                ></path>
-                <path
-                  class="wire warn-wire"
-                  marker-end="url(#pipe-arrow-health)"
-                  d="M910 170 V280 H780"
-                ></path>
-                <path
-                  class="wire warn-wire"
-                  marker-end="url(#pipe-arrow-health)"
-                  d="M590 315 H545 V205"
-                ></path>
-                <path
-                  class="wire warn-wire"
-                  marker-end="url(#pipe-arrow-health)"
-                  d="M780 315 H825"
-                ></path>
-                <text class="wire-label" x="160" y="113">HTTP :80</text>
-                <text class="wire-label" x="368" y="113">/api/*</text>
-                <text class="wire-label" x="580" y="113">DATABASE_URL</text>
-                <text class="wire-label" x="790" y="113">poll health</text>
-                <text class="wire-label" x="995" y="92">healthy</text>
-                <text class="wire-label" x="908" y="202">unhealthy</text>
-                <text class="wire-label" x="608" y="302">restore prior IMAGE_TAG</text>
-                <text class="wire-label" x="785" y="302">compose up + recheck</text>
 
-                <rect class="node source" x="20" y="85" width="135" height="80"></rect>
-                <text class="node-title" x="36" y="114">Browser</text>
-                <text class="node-copy" x="36" y="136">public request</text>
+                <!-- 1. Pipeline Wires -->
+                <g class="pipeline-wires">
+                  <path
+                    class="wire"
+                    marker-end="url(#m-hlt-muted)"
+                    d="M150 125 H220"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-hlt-github)"
+                    d="M380 125 H455"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-hlt-github)"
+                    d="M615 125 H695"
+                  ></path>
+                  <path
+                    class="wire github-wire"
+                    marker-end="url(#m-hlt-github)"
+                    d="M860 125 H935"
+                  ></path>
+                  <path
+                    class="wire safe-wire"
+                    marker-end="url(#m-hlt-safe)"
+                    d="M1105 105 H1175"
+                  ></path>
+                  <!-- Rollback branches -->
+                  <path
+                    class="wire warn-wire"
+                    marker-end="url(#m-hlt-warn)"
+                    d="M1020 170 V270 H800"
+                  ></path>
+                  <path
+                    class="wire warn-wire"
+                    marker-end="url(#m-hlt-warn)"
+                    d="M600 270 H300 V165"
+                  ></path>
+                  <path
+                    class="wire warn-wire"
+                    marker-end="url(#m-hlt-warn)"
+                    d="M800 270 H880"
+                  ></path>
+                </g>
 
-                <rect class="node docker-node" x="195" y="85" width="170" height="80"></rect>
-                <text class="node-title" x="211" y="114">Nginx client</text>
-                <text class="node-copy" x="211" y="136">host port 80 only</text>
+                <!-- 2. Pipeline Nodes -->
+                <g class="pipeline-nodes">
+                  <rect class="node source" x="20" y="85" width="130" height="80" rx="6"></rect>
+                  <text class="node-title" x="36" y="114">Browser</text>
+                  <text class="node-copy" x="36" y="136">public request</text>
 
-                <rect class="node docker-node" x="405" y="85" width="170" height="80"></rect>
-                <text class="node-title" x="421" y="114">Express API</text>
-                <text class="node-copy" x="421" y="136">Compose network only</text>
+                  <rect class="node docker-node" x="220" y="85" width="160" height="80" rx="6"></rect>
+                  <text class="node-title" x="236" y="114">Nginx client</text>
+                  <text class="node-copy" x="236" y="136">host port 80 only</text>
 
-                <rect class="node source" x="615" y="85" width="170" height="80"></rect>
-                <text class="node-title" x="631" y="114">Neon Postgres</text>
-                <text class="node-copy" x="631" y="136">URL from server.env</text>
+                  <rect class="node docker-node" x="455" y="85" width="160" height="80" rx="6"></rect>
+                  <text class="node-title" x="471" y="114">Express API</text>
+                  <text class="node-copy" x="471" y="136">Compose network</text>
 
-                <rect class="node github-node" x="825" y="65" width="165" height="105"></rect>
-                <text class="node-title" x="841" y="94">Health poll</text>
-                <text class="node-copy" x="841" y="116">GET /api/health</text>
-                <text class="node-copy" x="841" y="137">through public Nginx</text>
-                <text class="node-copy" x="841" y="157">never print secret values</text>
+                  <rect class="node source" x="695" y="85" width="165" height="80" rx="6"></rect>
+                  <text class="node-title" x="711" y="114">Neon Postgres</text>
+                  <text class="node-copy" x="711" y="136">URL: server.env</text>
 
-                <rect class="node safe-node" x="1030" y="65" width="195" height="80"></rect>
-                <text class="node-title" x="1046" y="94">Release confirmed</text>
-                <text class="node-copy" x="1046" y="116">record current SHA</text>
-                <text class="node-copy" x="1046" y="136">keep previous SHA</text>
+                  <rect class="node github-node" x="935" y="65" width="170" height="105" rx="6"></rect>
+                  <text class="node-tag" x="951" y="89">GITHUB ACTIONS</text>
+                  <text class="node-title" x="951" y="112">Health poll</text>
+                  <text class="node-copy" x="951" y="132">GET /api/health</text>
+                  <text class="node-copy" x="951" y="150">through public Nginx</text>
 
-                <rect class="node warn-node" x="590" y="275" width="190" height="80"></rect>
-                <text class="node-title" x="606" y="304">Rollback</text>
-                <text class="node-copy" x="606" y="326">use previous image tag</text>
-                <text class="node-copy" x="606" y="346">recreate services</text>
+                  <rect class="node safe-node" x="1175" y="65" width="165" height="85" rx="6"></rect>
+                  <text class="node-title" x="1191" y="94">Release confirmed</text>
+                  <text class="node-copy" x="1191" y="116">record current SHA</text>
+                  <text class="node-copy" x="1191" y="134">keep prior SHA</text>
 
-                <rect class="node warn-node" x="825" y="275" width="195" height="80"></rect>
-                <text class="node-title" x="841" y="304">Check restored health</text>
-                <text class="node-copy" x="841" y="326">report failed release</text>
-                <text class="node-copy" x="841" y="346">keep diagnostics</text>
+                  <rect class="node warn-node" x="600" y="235" width="200" height="85" rx="6"></rect>
+                  <text class="node-tag" x="616" y="257">AUTOMATED RECOVERY</text>
+                  <text class="node-title" x="616" y="279">Rollback</text>
+                  <text class="node-copy" x="616" y="299">restore prior IMAGE_TAG</text>
+                  <text class="node-copy" x="616" y="315">docker compose up -d</text>
+
+                  <rect class="node warn-node" x="880" y="235" width="195" height="85" rx="6"></rect>
+                  <text class="node-tag" x="896" y="257">FALLBACK VERIFIED</text>
+                  <text class="node-title" x="896" y="279">Check fallback</text>
+                  <text class="node-copy" x="896" y="299">GET /api/health on old tag</text>
+                  <text class="node-copy" x="896" y="315">alert failed deployment</text>
+                </g>
+
+                <!-- 3. Wire Labels (rendered on top, never hidden) -->
+                <g class="pipeline-labels">
+                  <text class="wire-label" text-anchor="middle" x="185" y="110">HTTP :80</text>
+                  <text class="wire-label" text-anchor="middle" x="417" y="110">/api/* proxy</text>
+                  <text class="wire-label" text-anchor="middle" x="655" y="110">DATABASE_URL</text>
+                  <text class="wire-label" text-anchor="middle" x="897" y="110">poll health</text>
+                  <text class="wire-label" text-anchor="middle" x="1140" y="90">200 OK</text>
+                  <text class="wire-label" text-anchor="start" x="1030" y="215">unhealthy</text>
+                  <text class="wire-label" text-anchor="middle" x="450" y="255">recreate prior tag</text>
+                  <text class="wire-label" text-anchor="middle" x="840" y="255">recheck</text>
+                </g>
               </svg>
               <figcaption>
                 A healthy deployment records the new SHA and preserves the

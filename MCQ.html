@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Assessment: Test Safety, PR Gate &amp; Immutable GHCR Delivery · Stages 2, 3 &amp; 4</title>
+  <title>Assessment: Production Compose Contract &amp; Secure EC2 Host · Stages 5 &amp; 6</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -477,6 +477,8 @@ code {
 .stage-section-divider.stage-2 .stage-divider-title { color: var(--blue-text); }
 .stage-section-divider.stage-3 .stage-divider-title { color: var(--purple-text); }
 .stage-section-divider.stage-4 .stage-divider-title { color: var(--amber-text); }
+.stage-section-divider.stage-5 .stage-divider-title { color: var(--blue-text); }
+.stage-section-divider.stage-6 .stage-divider-title { color: var(--emerald-text); }
 
 .stage-divider-badge {
   font-family: var(--font-mono);
@@ -749,8 +751,8 @@ code {
     <div class="topbar-inner">
       <div class="brand-group">
         <div class="brand-spec">
-          <span>SPEC-CI-02-04</span>
-          <span class="badge-rev">STAGES 02, 03 &amp; 04 / 08</span>
+          <span>SPEC-CI-05-06</span>
+          <span class="badge-rev">STAGES 05 &amp; 06 / 08</span>
         </div>
         <nav class="page-nav" aria-label="Page switcher">
           <a href="/index.html" class="nav-tab">Lesson</a>
@@ -774,26 +776,22 @@ code {
     <div class="help-panel" id="help-panel" hidden>
       <div class="help-content">
         <div class="help-head">
-          <h3>Stages 2, 3 &amp; 4 Acronym Glossary</h3>
+          <h3>Stages 5 &amp; 6 Acronym Glossary</h3>
           <button class="help-close-btn" id="help-close" aria-label="Close Help">✕</button>
         </div>
         <ul class="acronym-list">
-          <li><strong>E2E</strong> — <em>End-to-End Testing</em>: Running tests against the complete integrated application in a real headless browser.</li>
-          <li><strong>CI</strong> — <em>Continuous Integration</em>: Automated build and test workflows executed on every pull request.</li>
-          <li><strong>CD</strong> — <em>Continuous Delivery</em>: The automated packaging and deployment of verified code to registry and staging or production servers.</li>
-          <li><strong>PR</strong> — <em>Pull Request</em>: A proposed code change from a branch or fork waiting for automated verification and peer review before merge.</li>
+          <li><strong>EC2</strong> — <em>Elastic Compute Cloud</em>: AWS virtual server running Ubuntu Linux for hosting Docker Compose stacks.</li>
+          <li><strong>SSH</strong> — <em>Secure Shell</em>: Cryptographic network protocol for remote command execution and configuration management.</li>
+          <li><strong>SG</strong> — <em>Security Group</em>: AWS virtual firewall regulating inbound and outbound port traffic at the host hypervisor layer.</li>
           <li><strong>GHCR</strong> — <em>GitHub Container Registry</em>: GitHub's private OCI registry hosted at <code>ghcr.io</code> for storing and distributing versioned Docker images.</li>
-          <li><strong>OCI</strong> — <em>Open Container Initiative</em>: Open industry standards for container image formats, layers, and registry distribution specifications.</li>
-          <li><strong>SHA</strong> — <em>Commit Hash (40-char)</em>: The cryptographic unique identifier of a specific Git commit; used for immutable container image tags.</li>
-          <li><strong>GHA</strong> — <em>GitHub Actions</em>: GitHub's workflow automation runner system executing jobs inside isolated Linux virtual machines.</li>
-          <li><strong>GITHUB_TOKEN</strong> — <em>Automatic Scoped Token</em>: A temporary credentials token generated per workflow run with granular, explicit permissions.</li>
-          <li><strong>Buildx</strong> — <em>Docker BuildKit CLI</em>: Docker's advanced builder offering parallel multi-stage building, cross-platform compilation, and cache backends.</li>
-          <li><strong>TCP</strong> — <em>Transmission Control Protocol</em>: Network connection protocol used to communicate with PostgreSQL socket ports.</li>
-          <li><strong>FIFO</strong> — <em>First-In, First-Out</em>: Sequential ordering guarantee essential when processing database seed queues or teardown hooks.</li>
-          <li><strong>UUID</strong> — <em>Universally Unique Identifier</em>: 128-bit unique IDs used to isolate concurrent test fixtures.</li>
-          <li><strong>SQL</strong> — <em>Structured Query Language</em>: Relational database queries for data assertion, insertion, and truncation.</li>
-          <li><strong>ORM</strong> — <em>Object-Relational Mapping</em>: Database abstraction layer that handles schema migrations and test queries.</li>
-          <li><strong>HTTP</strong> — <em>Hypertext Transfer Protocol</em>: Request-response protocol validated by assertion checks on status codes.</li>
+          <li><strong>PAT</strong> — <em>Personal Access Token</em>: GitHub credential scoped strictly to read-only package access (<code>read:packages</code>) on the host.</li>
+          <li><strong>OCI</strong> — <em>Open Container Initiative</em>: Open standards for container formats, runtime images, and registry specifications.</li>
+          <li><strong>SHA</strong> — <em>Commit Hash (40-char)</em>: Cryptographically unique identifier for a Git commit; used for immutable container image tags.</li>
+          <li><strong>YAML</strong> — <em>YAML Ain't Markup Language</em>: Human-readable data serialization format used to define Docker Compose contracts.</li>
+          <li><strong>DNS</strong> — <em>Domain Name System</em>: Docker's internal embedded resolver at <code>127.0.0.11</code> routing container service names.</li>
+          <li><strong>TCP</strong> — <em>Transmission Control Protocol</em>: Network transport protocol over which HTTP and database sockets communicate.</li>
+          <li><strong>HTTP</strong> — <em>Hypertext Transfer Protocol</em>: Request-response protocol validated by the public <code>/api/health</code> smoke check.</li>
+          <li><strong>ENV</strong> — <em>Environment Variables</em>: Key-value configuration pairs used in <code>release.env</code> and <code>server.env</code>.</li>
         </ul>
       </div>
     </div>
@@ -801,16 +799,16 @@ code {
 
   <main class="shell" id="main">
     <div class="assessment-hero">
-      <div class="hero-eyebrow">STAGES 02, 03 &amp; 04 · COMPREHENSIVE CURRICULUM ASSESSMENT</div>
-      <h1>Assessment: Test Safety, PR Gate &amp; Immutable GHCR Delivery</h1>
+      <div class="hero-eyebrow">STAGES 05 &amp; 06 · COMPREHENSIVE CURRICULUM ASSESSMENT</div>
+      <h1>Assessment: Production Compose Contract &amp; Secure EC2 Host</h1>
       <p>
-        Evaluate your mastery across three core continuous delivery pillars: ephemeral PostgreSQL isolation and Playwright assertions (Stage 2), pull-request CI verification gates and concurrency controls (Stage 3), and immutable SHA container publishing to GHCR (Stage 4). All 20 questions must be answered before submission.
+        Evaluate your mastery across Stages 5 and 6: production Compose contracts, separating source code from prebuilt images, release.env tagging, port exposure rules, EC2 host security, key-only SSH access, permission lockdown (chmod 600), and read-only GHCR token isolation. All 16 questions must be answered before submission.
       </p>
     </div>
 
     <!-- Scoreboard Result Banner -->
     <div class="scoreboard" id="scoreboard">
-      <div class="score-title" id="score-headline">Score: 0 / 20 (0%)</div>
+      <div class="score-title" id="score-headline">Score: 0 / 16 (0%)</div>
       <p class="score-desc" id="score-sub">Detailed feedback will display below.</p>
     </div>
 
@@ -821,7 +819,7 @@ code {
 
     <!-- Submit & Progress Bar -->
     <div class="submit-bar">
-      <span class="counter-info" id="answer-counter">0 of 20 answered</span>
+      <span class="counter-info" id="answer-counter">0 of 16 answered</span>
       <div class="btn-group">
         <button class="btn-retry" id="retry-btn">Retake Assessment</button>
       </div>
@@ -832,319 +830,254 @@ code {
     (function() {
       "use strict";
 
-      const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-02-03-04:mcq";
+      const STORAGE_KEY = "learning-ai:cicd-ghcr-ec2:stage-05-06:mcq";
 
       const questions = [
         // =========================================================================
-        // STAGE 2: MAKE TESTS SAFE AND REPEATABLE (Q1 - Q8)
+        // STAGE 5: DEFINE THE PRODUCTION COMPOSE CONTRACT (Q1 - Q8)
         // =========================================================================
         {
           id: "q1",
-          stage: 2,
-          stageTitle: "Stage 2: Safe & Repeatable Tests (Questions 1–8)",
-          stageClass: "stage-2",
-          prompt: "Why is pointing integration tests at a remote cloud database (such as Neon) during CI pull-request runs considered a critical anti-pattern in continuous delivery?",
+          stage: 5,
+          stageTitle: "Stage 5: Define the Production Compose Contract (Questions 1–8)",
+          stageClass: "stage-5",
+          prompt: "Why does compose.prod.yaml specify prebuilt GHCR images (image: ghcr.io/...:${IMAGE_TAG}) rather than containing build: . directives on the production EC2 host?",
           options: [
-            "Cloud PostgreSQL instances do not support standard SQL schema migrations or foreign key constraint checks during automated test runs.",
-            "Parallel test workers collide on shared tables causing non-deterministic flakiness, network latency slows down CI, and destructive teardown queries risk truncating real staging or production records.",
-            "Cloud databases block connections coming from GitHub Actions runners because public runner IP addresses cannot resolve external DNS names.",
-            "Automated test suites require PostgreSQL to run in single-user mode, which is prohibited by serverless cloud providers."
+            "EC2 instances cannot install Node.js or Docker build tools due to AWS hypervisor isolation policies.",
+            "Building code on production EC2 wastes host CPU and RAM, risks build-time dependencies leaking into runtime, creates non-deterministic artifacts, and bypasses CI validation where images are already built, scanned, and tested.",
+            "Docker Compose v2 deprecated the build directive entirely in favor of Dockerfile-only single-container workflows.",
+            "GitHub Container Registry requires all images to be pushed directly by developer workstations, prohibiting CI pushes."
           ],
           correct: 1,
-          explanation: "Shared cloud databases create three catastrophic failure modes in CI: concurrent test jobs overwrite each other's test data causing flaky assertions, WAN network latency triples test execution time, and cleanup scripts (TRUNCATE / DROP) can inadvertently destroy live database tables."
+          explanation: "Production EC2 instances are lean deployment runtimes, not build machines. Building on the host consumes precious CPU/memory (risking crashing running containers), requires full source code and build tools to live on the server, and defeats the core value of CI: validating and publishing an immutable, tested artifact before deployment."
         },
         {
           id: "q2",
-          stage: 2,
-          stageTitle: "Stage 2: Safe & Repeatable Tests (Questions 1–8)",
-          stageClass: "stage-2",
-          prompt: "When starting a PostgreSQL service container in Docker Compose for testing, why is a healthcheck using pg_isready necessary before triggering database migrations?",
+          stage: 5,
+          stageTitle: "Stage 5: Define the Production Compose Contract (Questions 1–8)",
+          stageClass: "stage-5",
+          prompt: "In the production Compose architecture (compose.prod.yaml), how are the services networked so that external internet traffic reaches the app safely?",
           options: [
-            "Docker immediately marks the container as running once the process starts, but the PostgreSQL daemon requires several seconds to complete cluster startup and accept socket connections.",
-            "PostgreSQL will silently drop incoming TCP connection packets and log them as security breaches unless an initial healthcheck ping authenticates the superuser.",
-            "The pg_isready binary compiles TypeScript database migrations into native C binary extensions before the test suite begins.",
-            "Without an explicit healthcheck, Docker Compose automatically mounts database volumes in read-only mode to prevent disk corruption."
+            "All three services (nginx, api, and db) expose host ports to 0.0.0.0 so they can communicate over public IP addresses.",
+            "Docker Compose creates three separate isolated bridge networks with no inter-container routing permitted.",
+            "Only Nginx maps host port 80 (80:80) to the public internet; the api and db services omit public host port bindings and communicate exclusively over the internal Docker bridge network.",
+            "All traffic bypasses Docker completely and uses AWS CloudFront lambda functions to invoke Express container processes directly."
           ],
-          correct: 0,
-          explanation: "There is an inherent startup latency between Docker container initialization and PostgreSQL's TCP port 5432 readiness. Without waiting for pg_isready, migrations run before the daemon accepts socket connections, causing immediate ECONNREFUSED crashes."
+          correct: 2,
+          explanation: "Minimizing network surface area is essential: only the reverse proxy (Nginx) binds to the host port 80. The Express API and PostgreSQL database run on the private Docker bridge network where Nginx proxies /api traffic internally, preventing public internet probing or direct database brute-force attacks."
         },
         {
           id: "q3",
-          stage: 2,
-          stageTitle: "Stage 2: Safe & Repeatable Tests (Questions 1–8)",
-          stageClass: "stage-2",
-          prompt: "Consider a test script where an API request fails with status code 500, but the test logs console.error('Request failed') inside a catch block and completes without throwing an error. How will GitHub Actions interpret this test run?",
+          stage: 5,
+          stageTitle: "Stage 5: Define the Production Compose Contract (Questions 1–8)",
+          stageClass: "stage-5",
+          prompt: "How should production secrets (such as POSTGRES_PASSWORD, DATABASE_URL, and JWT_SECRET) be managed alongside compose.prod.yaml on the EC2 host?",
           options: [
-            "GitHub Actions parses stdout with regex, detects the phrase 'Request failed', and marks the job as failed with a warning.",
-            "The runner pauses and prompts the user to inspect the logs before deciding whether to pass or fail the workflow.",
-            "The Node.js process exits with status code 0 ('Success'), causing GitHub Actions to mark the CI check as green despite the internal failure.",
-            "The Linux kernel traps unhandled console output and automatically converts the exit code to 137."
+            "Stored in an uncommitted .env file on the EC2 host with restricted file permissions (chmod 600 .env), referenced dynamically by Compose at runtime rather than committed to Git or baked into images.",
+            "Committed directly into compose.prod.yaml in the Git repository so all environments share identical credentials automatically.",
+            "Baked into the Dockerfile as default ENV instructions during the GitHub Actions workflow build step.",
+            "Appended to client-side JavaScript bundles so the browser can authenticate directly with PostgreSQL."
           ],
-          correct: 2,
-          explanation: "CI runners rely strictly on process exit codes. If an error is caught and only logged via console.error without throwing an unhandled exception or calling process.exit(1), Node.js exits with code 0. GitHub Actions interprets exit code 0 as a successful pass, allowing broken code into main."
+          correct: 0,
+          explanation: "Secrets must never be stored in version control or baked into immutable Docker image layers. Placing them in a secured .env file on the host (chmod 600 .env so only the owner can read it) allows Docker Compose to inject environment variables at runtime while keeping Git repositories and registry images clean."
         },
         {
           id: "q4",
-          stage: 2,
-          stageTitle: "Stage 2: Safe & Repeatable Tests (Questions 1–8)",
-          stageClass: "stage-2",
-          prompt: "Why should ephemeral PostgreSQL containers used in CI integration testing leverage tmpfs mounts (e.g., tmpfs: /var/lib/postgresql/data) rather than persistent named Docker volumes?",
+          stage: 5,
+          stageTitle: "Stage 5: Define the Production Compose Contract (Questions 1–8)",
+          stageClass: "stage-5",
+          prompt: "How does persistent database storage differ between local development and production in Docker Compose?",
           options: [
-            "Temporary file storage (tmpfs) resides entirely in RAM, significantly accelerating database write operations and guaranteeing complete data destruction upon container termination.",
-            "Named volumes are unsupported on Linux-based GitHub Actions runner architectures.",
-            "Mounting data on disk prevents PostgreSQL from executing transaction rollbacks and triggers memory leaks in Docker Engine.",
-            "tmpfs automatically synchronizes test records across distinct EC2 deployment hosts without requiring SSH credentials."
+            "Local development disables databases, whereas production connects directly to AWS S3 buckets for table storage.",
+            "Development uses named Docker volumes, while production uses host bind mounts to ./db-data for easier direct file editing.",
+            "Production runs PostgreSQL in RAM-only mode (tmpfs) to maximize transaction speed across reboots.",
+            "Development frequently uses host bind mounts for convenience, whereas production uses a dedicated named Docker volume (volumes: db-data:) to prevent accidental host path corruption and survive container lifecycle events."
           ],
-          correct: 0,
-          explanation: "tmpfs stores PostgreSQL data directly in volatile host memory. This delivers high write throughput for fast test cycles and ensures that as soon as the container terminates, all test artifacts are wiped instantly without leaving residual volume clutter."
+          correct: 3,
+          explanation: "In production, named Docker volumes (e.g. volumes: db-data:) are managed by the Docker daemon within /var/lib/docker/volumes/. This decouples database files from container lifecycles, ensures persistence across docker compose down and docker compose up, and avoids host filesystem permission mismatches common with directory bind mounts."
         },
         {
           id: "q5",
-          stage: 2,
-          stageTitle: "Stage 2: Safe & Repeatable Tests (Questions 1–8)",
-          stageClass: "stage-2",
-          prompt: "In an integration test suite using Node.js and the pg library, what happens if the global test teardown hook fails to call await pool.end()?",
+          stage: 5,
+          stageTitle: "Stage 5: Define the Production Compose Contract (Questions 1–8)",
+          stageClass: "stage-5",
+          prompt: "Why is restart: unless-stopped (or restart: always) a standard specification for services in compose.prod.yaml?",
           options: [
-            "PostgreSQL terminates all existing database tables to protect data consistency.",
-            "The active TCP socket connections in the connection pool keep the Node.js event loop alive, causing the CI runner job to hang indefinitely until timeout.",
-            "Subsequent test runs automatically inherit the unclosed pool connections without re-authenticating.",
-            "Node.js detects the hanging handles and forces an immediate clean shutdown with exit code 0."
+            "It forces Docker to poll GHCR every 30 seconds for newly published images.",
+            "It instructs the Docker daemon to automatically restart containers if their process crashes, encounters an OOM termination, or when the EC2 host reboots.",
+            "It prevents developers from stopping containers using standard CLI commands like docker compose stop.",
+            "It runs database migrations automatically every time an HTTP 500 error is returned."
           ],
           correct: 1,
-          explanation: "Node.js does not terminate its process while active asynchronous network handles or open TCP sockets remain registered on the event loop. Failing to close the connection pool with pool.end() leaves sockets open, freezing the CI workflow until the runner reaches its execution timeout."
+          explanation: "restart: unless-stopped ensures production resiliency: if an unhandled Node exception or OOM kill terminates a container, or if AWS maintenance reboots the virtual machine, Docker daemon automatically revives the service containers as soon as the host is running."
         },
         {
           id: "q6",
-          stage: 2,
-          stageTitle: "Stage 2: Safe & Repeatable Tests (Questions 1–8)",
-          stageClass: "stage-2",
-          prompt: "When cleaning up test state between individual integration test cases, why is 'TRUNCATE TABLE todos RESTART IDENTITY CASCADE;' preferred over dropping and recreating the entire database schema?",
+          stage: 5,
+          stageTitle: "Stage 5: Define the Production Compose Contract (Questions 1–8)",
+          stageClass: "stage-5",
+          prompt: "What does the command docker compose -f compose.prod.yaml config accomplish during deployment testing?",
           options: [
-            "Dropping tables removes database indexes permanently, preventing foreign keys from being added back in PostgreSQL.",
-            "Truncating tables rapidly purges row data and resets auto-incrementing ID sequences in milliseconds without the heavy overhead of re-executing DDL migrations.",
-            "TRUNCATE prevents PostgreSQL write-ahead logs (WAL) from recording schema modifications to Neon.",
-            "Dropping schemas in PostgreSQL requires stopping and restarting the Docker container daemon between every single test."
+            "It initializes an empty PostgreSQL database and applies all Prisma/TypeORM schema migrations.",
+            "It launches all production containers in detached background mode.",
+            "It parses the Compose file, validates YAML syntax, resolves environment variable interpolations, and outputs the final canonical specification without starting any containers.",
+            "It generates a new SSH keypair and uploads it to AWS EC2 metadata."
           ],
-          correct: 1,
-          explanation: "Re-running DDL migrations (drop/create table) before every single test case introduces massive I/O and schema lock overhead. TRUNCATE ... RESTART IDENTITY flushes all rows and resets sequence generators in single-digit milliseconds, providing a clean sandbox for the next test."
+          correct: 2,
+          explanation: "docker compose ... config is a dry-run linter and resolver. It catches syntax errors, missing required environment variables, and malformed volume or port declarations before you attempt to pull images or start containers on the live server."
         },
         {
           id: "q7",
-          stage: 2,
-          stageTitle: "Stage 2: Safe & Repeatable Tests (Questions 1–8)",
-          stageClass: "stage-2",
-          prompt: "In a full-stack E2E test setup running Playwright against Docker containers, what is the role of the command 'docker compose -f docker-compose.test.yml down -v' at the conclusion of the test run?",
+          stage: 5,
+          stageTitle: "Stage 5: Define the Production Compose Contract (Questions 1–8)",
+          stageClass: "stage-5",
+          prompt: "In compose.prod.yaml, the image is declared as image: ghcr.io/${GH_OWNER}/todo-api:${IMAGE_TAG}. Where does Docker Compose obtain these variable values during deployment?",
           options: [
-            "It compresses Playwright screenshot artifacts and uploads them to GitHub Container Registry.",
-            "It shuts down the client, server, and test database containers while the -v flag removes attached Docker volumes, ensuring complete isolation for subsequent runs.",
-            "It creates a backup snapshot of the container state and deploys it to the EC2 staging environment.",
-            "The -v flag instructs Docker to validate container network security certificates before powering off."
+            "From host shell environment variables exported before the command runs, or from a local .env file in the same directory.",
+            "From the GitHub Container Registry GraphQL API queried dynamically at container start.",
+            "From the comments inside the application's package.json file.",
+            "From the Git commit message of the last commit pushed to the main branch."
           ],
-          correct: 1,
-          explanation: "Running docker compose down -v ensures hermetic cleanup. Stopping containers without -v leaves behind allocated storage volumes containing stale records. The -v flag deletes both anonymous and named volumes declared in the Compose file, leaving the host filesystem in a pristine state."
+          correct: 0,
+          explanation: "Docker Compose interpolates ${VAR} placeholders using ambient environment variables exported in the host shell (e.g., export IMAGE_TAG=sha-e8f91c0) or defined in an adjacent .env file. If neither is set, Compose emits a warning or error if a default is not provided."
         },
         {
           id: "q8",
-          stage: 2,
-          stageTitle: "Stage 2: Safe & Repeatable Tests (Questions 1–8)",
-          stageClass: "stage-2",
-          prompt: "Why are full-stack browser tests with Playwright required in addition to backend integration tests that verify HTTP endpoints?",
+          stage: 5,
+          stageTitle: "Stage 5: Define the Production Compose Contract (Questions 1–8)",
+          stageClass: "stage-5",
+          prompt: "Why must source code bind mounts (such as ./backend:/app or ./frontend/src:/app/src) be strictly excluded from production Compose files?",
           options: [
-            "Integration tests cannot connect to PostgreSQL databases, whereas Playwright communicates directly with database engines via WebSockets.",
-            "Playwright is required to compile React JSX components into production Nginx configuration files.",
-            "Integration tests only verify that the API server functions in isolation; Playwright verifies that the compiled frontend bundle, Nginx reverse-proxy routing, and API communication work together seamlessly in a real browser runtime.",
-            "GitHub Actions requires Playwright test output logs before it allows Docker images to be built."
+            "Linux kernel filesystem drivers cannot read directories mounted from outside /etc.",
+            "Bind mounts disable HTTP/2 and WebSocket protocol support inside Node.js applications.",
+            "Docker Compose automatically converts all host directories into read-only squashfs images.",
+            "Bind mounts shadow the immutable image contents with host files, destroying reproducibility, reintroducing host environment drift, and requiring full source code and build tools to be stored on the EC2 host."
           ],
-          correct: 2,
-          explanation: "API integration tests pass even if the frontend JavaScript bundle fails to parse, client-side routing breaks, or Nginx misconfigures its reverse proxy headers. Full-stack Playwright tests validate the entire real user experience from browser DOM interaction down to container persistence."
+          correct: 3,
+          explanation: "Development bind mounts exist to allow hot reloading. In production, having host bind mounts overwrites the carefully verified code baked inside the container image, makes deployments dependent on server directory files, and defeats the entire guarantee of deploying immutable, CI-tested images."
         },
-
         // =========================================================================
-        // STAGE 3: BUILD THE PULL-REQUEST CI GATE (Q9 - Q14)
+        // STAGE 6: PREPARE AND SECURE EC2 (Q9 - Q16)
         // =========================================================================
         {
           id: "q9",
-          stage: 3,
-          stageTitle: "Stage 3: Pull-Request CI Gate (Questions 9–14)",
-          stageClass: "stage-3",
-          prompt: "In a GitHub Actions workflow handling both pull requests and releases, why is it dangerous to attach container registry publishing or cloud deployment credentials directly to the 'pull_request' trigger?",
+          stage: 6,
+          stageTitle: "Stage 6: Prepare and Secure EC2 (Questions 9–16)",
+          stageClass: "stage-6",
+          prompt: "What is the recommended, least-privilege AWS Security Group ingress configuration for an EC2 instance hosting this containerized application?",
           options: [
-            "Pull requests from external forks or untrusted branches could execute arbitrary modified workflow steps or malicious test scripts that extract secrets or push poisoned images to your registry.",
-            "GitHub Actions automatically quadruples the per-minute runner rate whenever deployment credentials are accessed during a pull request.",
-            "The pull_request event runs in an isolated network namespace that cannot establish outbound TCP connections to ghcr.io.",
-            "Docker Buildx crashes if invoked inside a pull request workflow that lacks a verified GPG commit signature."
+            "Allow inbound 0.0.0.0/0 on all ports (0–65535) so that APIs, databases, and monitoring agents never suffer connection drops.",
+            "Allow inbound port 80 (HTTP) from 0.0.0.0/0 for web traffic; restrict port 22 (SSH) to the administrator's specific IP or CIDR; ensure backend (3000) and database (5432) ports are completely closed to inbound internet traffic.",
+            "Allow inbound port 5432 from 0.0.0.0/0 so developers can run migrations and debug database issues directly from local laptops.",
+            "Allow inbound port 22 from 0.0.0.0/0 with password authentication enabled on the root account."
           ],
-          correct: 0,
-          explanation: "Pull requests from forks or feature branches are untrusted code. If the pull_request workflow has access to package write tokens or cloud credentials, an attacker could open a PR containing code that logs secrets to stdout or publishes compromised Docker containers to your production registry."
+          correct: 1,
+          explanation: "Security Groups act as a stateful host firewall. Ingress must follow least privilege: port 80/443 open to the public for HTTP traffic, port 22 restricted strictly to trusted administrative IP addresses (or AWS Systems Manager), and internal application ports (3000, 5432) completely blocked from the public internet."
         },
         {
           id: "q10",
-          stage: 3,
-          stageTitle: "Stage 3: Pull-Request CI Gate (Questions 9–14)",
-          stageClass: "stage-3",
-          prompt: "Why is declaring 'concurrency: group: ${{ github.workflow }}-${{ github.ref }}, cancel-in-progress: true' standard practice for pull-request CI workflows?",
+          stage: 6,
+          stageTitle: "Stage 6: Prepare and Secure EC2 (Questions 9–16)",
+          stageClass: "stage-6",
+          prompt: "When preparing an SSH private key (todo-deploy-key.pem or id_ed25519) on your machine to connect to EC2, why does OpenSSH fail with 'UNPROTECTED PRIVATE KEY FILE!' if permissions are not set to chmod 600 or chmod 400?",
           options: [
-            "It prevents PostgreSQL service containers from opening more than one active database connection pool per commit.",
-            "When a developer pushes multiple commits in rapid succession to the same PR, it automatically aborts redundant in-flight test runs, freeing runner capacity and eliminating outdated feedback.",
-            "It instructs the GitHub Actions runner to execute all test jobs on a single CPU thread to prevent race conditions.",
-            "It locks the Git repository so other team members cannot push to main while tests are executing."
+            "AWS IAM services actively monitor workstation filesystems and revoke credentials that have read permissions.",
+            "Linux file permissions must be even numbers in order to load into OpenSSL memory buffers.",
+            "OpenSSH client software deliberately refuses to use private keys that are readable by group members or other local users on the workstation, guarding against credential theft.",
+            "The private key must be made executable (chmod +x) before SSH can negotiate the cryptographic handshake."
           ],
-          correct: 1,
-          explanation: "Developers frequently push incremental fixes in rapid succession. Without cancel-in-progress: true, every intermediate commit executes the entire test suite, consuming runner minutes and cluttering PR status checks with superseded runs."
+          correct: 2,
+          explanation: "OpenSSH requires private keys to be protected against unauthorized access on multi-user systems. If permissions are too open (e.g., readable by others or group), ssh aborts connection attempts with an explicit warning to prevent compromised key usage."
         },
         {
           id: "q11",
-          stage: 3,
-          stageTitle: "Stage 3: Pull-Request CI Gate (Questions 9–14)",
-          stageClass: "stage-3",
-          prompt: "In the client verification job, why is 'pnpm install --frozen-lockfile' paired with GitHub Actions dependency caching ('cache: pnpm')?",
+          stage: 6,
+          stageTitle: "Stage 6: Prepare and Secure EC2 (Questions 9–16)",
+          stageClass: "stage-6",
+          prompt: "Why should Docker Engine and the Docker Compose plugin on Ubuntu EC2 instances be installed from Docker's official apt repository (download.docker.com) rather than using apt-get install docker.io from standard Ubuntu repos?",
           options: [
-            "--frozen-lockfile downloads pre-compiled native binaries, while caching stores the compiled Vite production bundle in /var/cache.",
-            "Caching restores the package store directly from GitHub's internal SSD to avoid re-downloading hundreds of megabytes, while --frozen-lockfile guarantees that CI fails immediately if package.json was edited without updating pnpm-lock.yaml.",
-            "--frozen-lockfile tells pnpm to ignore all external network requests and only install packages found in local git history.",
-            "GitHub Actions blocks the installation of npm packages unless the lockfile timestamp is less than 24 hours old."
+            "Official Docker repositories provide the modern docker compose v2 CLI plugin, up-to-date container runtimes, and critical security patches, whereas docker.io is often outdated and bundles deprecated Python v1 docker-compose.",
+            "Ubuntu's standard docker.io package only supports ARM architectures and cannot run on AWS x86_64 instances.",
+            "Official Docker packages bypass the Linux kernel cgroups controller to avoid memory limits.",
+            "Ubuntu package repositories do not allow pulling images from GitHub Container Registry."
           ],
-          correct: 1,
-          explanation: "Caching the pnpm virtual store cuts install times from minutes to seconds. Combining it with --frozen-lockfile ensures strict determinism: if dependencies in package.json drift without an updated lockfile, the CI build fails instead of silently resolving different package versions."
+          correct: 0,
+          explanation: "Distribution packages like docker.io often lag multiple versions behind, miss CVE patches, and use legacy package structures. Installing from download.docker.com provides modern Docker CE and the integrated docker compose (Compose v2) plugin."
         },
         {
           id: "q12",
-          stage: 3,
-          stageTitle: "Stage 3: Pull-Request CI Gate (Questions 9–14)",
-          stageClass: "stage-3",
-          prompt: "When defining a PostgreSQL service container in a GitHub Actions job running on 'ubuntu-latest', why can the integration test step connect directly to 'localhost:5432'?",
+          stage: 6,
+          stageTitle: "Stage 6: Prepare and Secure EC2 (Questions 9–16)",
+          stageClass: "stage-6",
+          prompt: "What is the primary operational reason for adding the EC2 non-root user to the docker group (sudo usermod -aG docker ubuntu)?",
           options: [
-            "GitHub Actions automatically runs all runner steps inside the PostgreSQL container's file system root.",
-            "The runner host VM bridges the service container's published port ('ports: - 5432:5432') directly to the host's loopback network interface.",
-            "localhost is intercepted by a kernel-level DNS proxy that reroutes SQL queries over SSH to Neon cloud servers.",
-            "PostgreSQL alpine images automatically disable container network isolation when executed inside GitHub Actions."
+            "It enables hardware virtualization acceleration inside Docker containers.",
+            "It allows Docker containers to write directly to AWS CloudWatch logs without IAM roles.",
+            "It eliminates the need for an SSH keypair when connecting to the EC2 instance.",
+            "It allows the user and automated deployment scripts to interact with the Docker Unix socket without prefixing every command with sudo."
           ],
-          correct: 1,
-          explanation: "When job steps execute directly on the virtual machine runner (runs-on: ubuntu-latest), service containers mapped with 'ports: - 5432:5432' bind their ports to the runner VM's loopback interface (localhost:5432), allowing Node.js test scripts on the host to communicate directly with the container."
+          correct: 3,
+          explanation: "By default, the Docker daemon socket (/var/run/docker.sock) is owned by root:docker. Adding the deployment user to the docker group permits running docker and docker compose commands directly, simplifying deployment scripts and CI automation without requiring passwordless root sudo escalation."
         },
         {
           id: "q13",
-          stage: 3,
-          stageTitle: "Stage 3: Pull-Request CI Gate (Questions 9–14)",
-          stageClass: "stage-3",
-          prompt: "In a headless CI environment, why should the workflow include 'uses: actions/upload-artifact@v4' with the conditional 'if: failure()' after running Playwright tests?",
+          stage: 6,
+          stageTitle: "Stage 6: Prepare and Secure EC2 (Questions 9–16)",
+          stageClass: "stage-6",
+          prompt: "When authenticating the EC2 host to pull private container images from GitHub Container Registry (ghcr.io), which token configuration follows the principle of least privilege?",
           options: [
-            "Failed Playwright test results must be uploaded to GitHub Container Registry so developers can pull them via Docker CLI.",
-            "If a test fails in headless Linux, developers cannot observe the screen; preserving trace zips, DOM snapshots, and screenshots gives engineers full diagnostic visibility into the failure.",
-            "Without uploading artifacts, GitHub Actions automatically restarts the entire workflow from the beginning up to three times.",
-            "The artifact upload step resets the PostgreSQL database sequence generator before the next commit."
+            "Using the GitHub user's personal password with two-factor authentication recovery codes.",
+            "A GitHub Personal Access Token (classic or fine-grained) scoped strictly to read:packages, avoiding full repository write or administrative privileges.",
+            "A Personal Access Token granted repo, admin:org, and delete:packages scopes so deployment scripts have emergency administrative override capabilities.",
+            "Disabling GitHub Container Registry authentication entirely so that anyone on the internet can pull the container images."
           ],
           correct: 1,
-          explanation: "Because CI runs headless on remote Linux VMs without a display, failure traces, video clips, and DOM snapshots uploaded via actions/upload-artifact are the only diagnostic tools developers have to investigate why an assertion failed."
+          explanation: "If an EC2 host is compromised, any stored credentials risk exfiltration. A token granted only read:packages can only pull container images. It cannot modify repositories, read private source code, push rogue images, or alter organization settings."
         },
         {
           id: "q14",
-          stage: 3,
-          stageTitle: "Stage 3: Pull-Request CI Gate (Questions 9–14)",
-          stageClass: "stage-3",
-          prompt: "How does a failing assertion in an integration test or Playwright run physically prevent broken code from being merged into 'main' in GitHub?",
+          stage: 6,
+          stageTitle: "Stage 6: Prepare and Secure EC2 (Questions 9–16)",
+          stageClass: "stage-6",
+          prompt: "When logging in to GHCR on the EC2 command line, why is echo $GHCR_PAT | docker login ghcr.io -u USERNAME --password-stdin strongly recommended over docker login ghcr.io -u USERNAME -p $GHCR_PAT?",
           options: [
-            "The test runner sends a Git command that deletes the author's local repository branch.",
-            "The failure produces a non-zero exit code that marks the job status as failed, which GitHub's Branch Protection rules evaluate to disable the 'Merge pull request' button.",
-            "GitHub automatically rolls back the entire repository Git history to the initial commit.",
-            "The runner emits a webhook that shuts down the EC2 production instance until an administrator logs in."
+            "The -p flag is not supported on Linux operating systems.",
+            "Piping via stdin automatically encrypts the password with RSA-4096 before sending to the registry.",
+            "Passing passwords in command-line arguments exposes them in plain text in process listings (ps aux), /proc, shell history files (~/.bash_history), and system logging daemons.",
+            "Docker rejects any password passed through a flag that contains numbers or symbols."
           ],
-          correct: 1,
-          explanation: "A failed test assertion causes the process to exit with a non-zero exit code (e.g. exit 1). GitHub Actions marks the job as failed. When GitHub repository Branch Protection requires required status checks to pass, GitHub blocks the merge button until all required jobs report green."
+          correct: 2,
+          explanation: "Command-line flags are visible to any user or monitoring tool with access to ps or process tables, and are logged into shell history files. Using --password-stdin passes the secret over a standard input stream without exposing it in process tables or history logs."
         },
-
-        // =========================================================================
-        // STAGE 4: PUBLISH IMMUTABLE IMAGES TO GHCR (Q15 - Q20)
-        // =========================================================================
         {
           id: "q15",
-          stage: 4,
-          stageTitle: "Stage 4: Publish Immutable Images to GHCR (Questions 15–20)",
-          stageClass: "stage-4",
-          prompt: "Consider the job definition: 'needs: [test-client, test-server, test-e2e]' with 'if: github.event_name == push && github.ref == refs/heads/main'. What catastrophic scenario occurs if 'needs: [...]' is accidentally removed?",
+          stage: 6,
+          stageTitle: "Stage 6: Prepare and Secure EC2 (Questions 9–16)",
+          stageClass: "stage-6",
+          prompt: "What is the role of an application healthcheck endpoint (such as GET /api/health) during manual and automated smoke testing on EC2?",
           options: [
-            "GitHub Actions refuses to parse the YAML file and displays a schema validation syntax error.",
-            "The publish-images job executes in parallel with the test suites on push to main, potentially building, tagging, and pushing broken images to GHCR before the tests finish and fail.",
-            "Docker Buildx falls back to building images using uncompressed x86 architecture layers.",
-            "The workflow automatically deploys the previous release tag to EC2 twice."
+            "It validates the end-to-end operational health of the stack (routing via Nginx, backend process responsiveness, and database query capability) rather than merely confirming that container processes are alive.",
+            "It triggers automatic scaling of the EC2 instance to a larger instance type when CPU load is high.",
+            "It re-downloads and re-installs all npm dependencies inside the running container.",
+            "It clears the PostgreSQL transaction log to free disk space after each deployment."
           ],
-          correct: 1,
-          explanation: "By default, all jobs in a GitHub Actions workflow execute concurrently in parallel. If needs: [...] is omitted, the image publishing job starts immediately alongside the tests, meaning a broken commit could be pushed to GHCR before tests report failure."
+          correct: 0,
+          explanation: "A process can be running in Docker while internally wedged, misconfigured, or unable to reach the database. A comprehensive /api/health endpoint verifies end-to-end functionality (Nginx routing, Express handling, database SELECT 1;), proving the application stack is genuinely functional."
         },
         {
           id: "q16",
-          stage: 4,
-          stageTitle: "Stage 4: Publish Immutable Images to GHCR (Questions 15–20)",
-          stageClass: "stage-4",
-          prompt: "Why is logging into 'ghcr.io' using '${{ secrets.GITHUB_TOKEN }}' with explicit 'permissions: packages: write' preferred over creating a long-lived Personal Access Token (PAT) stored in repository secrets?",
+          stage: 6,
+          stageTitle: "Stage 6: Prepare and Secure EC2 (Questions 9–16)",
+          stageClass: "stage-6",
+          prompt: "After running docker compose -f compose.prod.yaml up -d on EC2, curl http://localhost/api/health succeeds from within the EC2 terminal, but an external browser accessing http://<EC2-PUBLIC-IP>/api/health hangs and times out. What is the most likely diagnosis?",
           options: [
-            "The built-in GITHUB_TOKEN is ephemeral, automatically scoped to the repository, expires when the workflow run finishes, and cannot be used to compromise other repositories if leaked.",
-            "ghcr.io does not support Personal Access Tokens for private container image repositories.",
-            "Personal Access Tokens require an enterprise license and cannot push multi-stage Docker builds.",
-            "GITHUB_TOKEN automatically encrypts container layers with AWS KMS before storing them."
-          ],
-          correct: 0,
-          explanation: "Personal Access Tokens (PATs) are long-lived user-level credentials. If leaked, they expose all repositories the creator has access to. The built-in GITHUB_TOKEN is generated dynamically per workflow run, scoped strictly to the current repository, and automatically revoked when the run completes."
-        },
-        {
-          id: "q17",
-          stage: 4,
-          stageTitle: "Stage 4: Publish Immutable Images to GHCR (Questions 15–20)",
-          stageClass: "stage-4",
-          prompt: "When building container images in GitHub Actions with 'docker/build-push-action', what is the advantage of specifying 'cache-from: type=gha' and 'cache-to: type=gha,mode=max'?",
-          options: [
-            "It compresses image layers into gzip archives and emails them to the development team.",
-            "It caches intermediate multi-stage build layers (such as pnpm install and TypeScript compilation) directly in GitHub Actions cache storage, drastically accelerating subsequent builds when source files don't change.",
-            "It eliminates the need for a Dockerfile by generating container images from git commits on the fly.",
-            "It forces Docker to build containers inside an isolated RAM disk instead of using runner virtual storage."
+            "The Express application has crashed and needs to be rebuilt with Docker Buildx.",
+            "The AWS Security Group inbound rules block port 80 from the external client IP, preventing incoming TCP packets from reaching the EC2 network interface.",
+            "Nginx refuses to serve web traffic over public IP addresses unless an SSL certificate is already installed.",
+            "The PostgreSQL container is rejecting incoming connections from the Nginx reverse proxy."
           ],
           correct: 1,
-          explanation: "type=gha stores BuildKit cache layers directly in GitHub Actions cache storage. With mode=max, BuildKit preserves intermediate multi-stage layers (like dependency installations) rather than just the final stage, allowing subsequent commits with minor code changes to finish in seconds."
-        },
-        {
-          id: "q18",
-          stage: 4,
-          stageTitle: "Stage 4: Publish Immutable Images to GHCR (Questions 15–20)",
-          stageClass: "stage-4",
-          prompt: "Why is embedding OCI annotations such as 'org.opencontainers.image.source' and 'org.opencontainers.image.revision' into container images using 'docker/metadata-action' critical for production operations?",
-          options: [
-            "Docker Engine refuses to run any container whose manifest lacks Open Container Initiative (OCI) revision metadata.",
-            "It creates a verifiable, immutable audit trail inside the image manifest that links the running production container directly back to its repository URL and the exact 40-character Git commit SHA.",
-            "OCI metadata reduces the image layer size by stripping unused Node.js debugging symbols.",
-            "Embedded OCI labels allow Nginx to dynamically configure SSL certificates on port 80."
-          ],
-          correct: 1,
-          explanation: "In production, being able to inspect an image manifest (docker inspect) and see the exact repository source and Git commit SHA (revision) eliminates guesswork during incidents, audits, and rollbacks, establishing complete traceability between code and runtime."
-        },
-        {
-          id: "q19",
-          stage: 4,
-          stageTitle: "Stage 4: Publish Immutable Images to GHCR (Questions 15–20)",
-          stageClass: "stage-4",
-          prompt: "Why is deploying containers tagged with ':latest' considered a dangerous anti-pattern in production environments, compared to deploying immutable tags like ':sha-e8f91c0'?",
-          options: [
-            "The :latest tag can only be pulled once per 24 hours due to Docker registry rate limits.",
-            ":latest is a mutable pointer: it is ambiguous which commit is running, Docker host caching may skip pulling updated layers, and reliable automated rollbacks become impossible because the prior :latest image is overwritten.",
-            "Linux kernel security modules (SELinux / AppArmor) block containers named latest from binding to host network ports.",
-            "The :latest tag is only supported for public Docker Hub repositories, not GitHub Container Registry."
-          ],
-          correct: 1,
-          explanation: ":latest is a mutable tag that constantly overwrites itself. When things break in production, you cannot identify which commit is deployed, docker compose pull may skip updates if a local latest exists, and you cannot roll back to 'yesterday's latest' because it no longer exists. Immutable SHA tags guarantee determinism."
-        },
-        {
-          id: "q20",
-          stage: 4,
-          stageTitle: "Stage 4: Publish Immutable Images to GHCR (Questions 15–20)",
-          stageClass: "stage-4",
-          prompt: "In the production Docker Compose architecture for this Todo app, why is only port 80 (Nginx) exposed on the EC2 host, while the Express API and PostgreSQL have no public host port mappings?",
-          options: [
-            "Express and PostgreSQL do not support TCP networking when running in production mode.",
-            "Exposing only Nginx on port 80 minimizes the attack surface: Nginx routes traffic internally over the private Docker network to Express, preventing external internet attackers from probing the API or database directly.",
-            "AWS EC2 security groups only allow a single port to be bound per virtual machine instance.",
-            "Docker Compose crashes if more than one container binds to host ports simultaneously."
-          ],
-          correct: 1,
-          explanation: "Minimizing the public network surface is a core security principle. Nginx handles external HTTP requests on port 80 and proxies /api traffic internally over the private Docker bridge network. Keeping the API and database ports private prevents unauthorized direct access from the public internet."
+          explanation: "If curl http://localhost succeeds on the host, the container stack, Nginx reverse proxy, and local port binding (80:80) are working correctly. A timeout from an external client indicates that packets are being silently dropped before reaching the host OS—the classic signature of an AWS Security Group missing an inbound allow rule on port 80."
         }
       ];
 
@@ -1433,7 +1366,7 @@ code {
 
           if (correctCount === total) {
             scoreboard.className = "scoreboard visible pass";
-            scoreSub.textContent = "Outstanding! You scored 100% (20/20) and demonstrated mastery of test safety (Stage 2), pull-request CI verification gates (Stage 3), and immutable GHCR container releases (Stage 4). You are fully prepared to advance to Stage 5: Production Compose Contract!";
+            scoreSub.textContent = "Outstanding! You scored 100% (16/16) and demonstrated complete mastery of the Production Compose Contract (Stage 5) and EC2 Host Hardening & Security (Stage 6). You are fully prepared to advance to Stage 7: Continuous Deployment Pipeline!";
           } else {
             scoreboard.className = "scoreboard visible review-needed";
             scoreSub.textContent = `Review the highlighted concepts for the ${total - correctCount} question(s) you missed below, then retake the stages you want to improve.`;

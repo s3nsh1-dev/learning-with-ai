@@ -67,7 +67,7 @@ is safer than `latest` for deployment.
 
 ## Stage 2: Make tests safe and repeatable
 
-**Status:** Current (Combined with Stages 3 & 4 per user request)
+**Status:** Complete
 
 Turn the existing checks into reliable CI inputs. The current server test
 writes to its configured database, and the browser tests need a full stack.
@@ -85,7 +85,7 @@ a clean checkout, and leave no containers or test data behind.
 
 ## Stage 3: Build the pull-request CI gate
 
-**Status:** Current (Combined with Stages 2 & 4 per user request)
+**Status:** Complete
 
 Create the first version of the GitHub Actions workflow. Learn triggers,
 jobs, permissions, dependency caching, service containers, artifacts, and
@@ -105,7 +105,7 @@ or deployed anything.
 
 ## Stage 4: Publish immutable images to GHCR
 
-**Status:** Current (Combined with Stages 2 & 3 per user request)
+**Status:** Current (Combined with Stages 5 & 6 per user request)
 
 Package the client and server only after trusted checks pass. Learn registry
 authentication, job permissions, build cache, image labels, and immutable
@@ -126,6 +126,8 @@ packages.
 
 ## Stage 5: Define the production Compose contract
 
+**Status:** Current (Combined with Stages 4 & 6 per user request)
+
 Split local Docker development from production deployment. Learn why
 production pulls prebuilt images instead of building source code on EC2.
 
@@ -142,6 +144,8 @@ covering production Compose contracts, separating source from prebuilt images,
 file and changing only `IMAGE_TAG` selects a different complete release.
 
 ## Stage 6: Prepare and secure EC2
+
+**Status:** Current (Combined with Stages 4 & 5 per user request)
 
 Create a small Ubuntu 24.04 x86 EC2 instance and make it a predictable Docker
 host. Learn the minimum roles of a security group, SSH keys, environment
