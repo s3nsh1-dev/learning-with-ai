@@ -1,1 +1,2 @@
 Stage 4: Publish immutable images to GHCR, Stage 5: Define the production Compose contract, and Stage 6: Prepare and secure EC2
+

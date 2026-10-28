@@ -1,13 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="A practical guide to container registries, GHCR, Docker Hub, image manifests, and Git commit SHAs in Stage 4."
-    />
-    <title>Where Docker Images Live</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demystifying CI/CD Deployment: Git SHAs, Image Tags, Digests &amp; Manifests</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,2080 +11,2118 @@
       rel="stylesheet"
     />
     <style>
+      /* ==================================================================
+         Visual Explainer Stylesheet
+         Standard Lexend typography across body, controls, and headings.
+         Fluid, full-width responsive layout (Strictly no centered shells or max-width).
+         ================================================================== */
+
       :root {
-        color-scheme: light;
-        --ground: #f1f5f8;
-        --panel: #ffffff;
-        --panel-2: #e5edf3;
-        --ink: #172936;
-        --muted: #536b7b;
-        --line: #bdccd6;
-        --github: #245e83;
-        --github-wash: #dfedf5;
-        --docker: #a6532c;
-        --docker-wash: #f6e8df;
-        --safe: #286a51;
-        --safe-wash: #e2f1e9;
-        --caution: #815d1c;
-        --caution-wash: #f5eedb;
-        --pad-x: clamp(1rem, 3.5vw, 3.5rem);
-        --font-body:
-          "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, sans-serif;
-        --font-ui:
-          "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, sans-serif;
-        --font-heading:
-          "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, sans-serif;
-        --font-mono:
-          ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas,
-          "Liberation Mono", monospace;
+        --bg: #fbfaf7;
+        --surface: #ffffff;
+        --surface-2: #f2f1ea;
+        --ink: #21201b;
+        --ink-2: #474440;
+        --ink-muted: #6f6b63;
+        --ink-faint: #9d988d;
+        --line: #e4e2da;
+        --line-strong: #b8b4a9;
+
+        --blue: #1e5fbf;
+        --blue-soft: #edf3fc;
+        --blue-line: #c3d6f1;
+        --blue-text: #17479c;
+
+        --emerald: #147a52;
+        --emerald-soft: #ecf4ee;
+        --emerald-line: #b9dfd0;
+        --emerald-text: #116340;
+
+        --amber: #96650a;
+        --amber-soft: #faf3e1;
+        --amber-line: #e6d6ac;
+        --amber-text: #775105;
+
+        --rose: #b3252c;
+        --rose-soft: #fbeeee;
+        --rose-line: #eec5c5;
+        --rose-text: #991f26;
+
+        --purple: #6449b8;
+        --purple-soft: #f1eefb;
+        --purple-line: #d5cdf0;
+        --purple-text: #4f3894;
+
+        --code-bg: #f5f4ef;
+        --code-ink: #26251f;
+        --code-border: #e4e2da;
+
+        --font-body: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --font-ui: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --font-heading: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+
+        --pad-x: clamp(1rem, 2.5vw, 2.5rem);
+        font-size: 16px;
       }
 
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme="light"]) {
-          color-scheme: dark;
-          --ground: #111c25;
-          --panel: #192a36;
-          --panel-2: #223846;
-          --ink: #edf4f7;
-          --muted: #b5c5ce;
-          --line: #405867;
-          --github: #8bc8e8;
-          --github-wash: #1c3b4c;
-          --docker: #efab84;
-          --docker-wash: #492f27;
-          --safe: #8ed2ad;
-          --safe-wash: #1d3e32;
-          --caution: #e8c979;
-          --caution-wash: #41371f;
+          --bg: #14171d;
+          --surface: #1a1e26;
+          --surface-2: #222733;
+          --ink: #e8ebf0;
+          --ink-2: #c4cad4;
+          --ink-muted: #959fad;
+          --ink-faint: #677180;
+          --line: #2b3342;
+          --line-strong: #465366;
+
+          --blue: #6aa8f7;
+          --blue-soft: rgba(106, 168, 247, 0.12);
+          --blue-line: #294977;
+          --blue-text: #96c2f9;
+
+          --emerald: #47c98b;
+          --emerald-soft: rgba(71, 201, 139, 0.12);
+          --emerald-line: #21593e;
+          --emerald-text: #7adcb0;
+
+          --amber: #e5b349;
+          --amber-soft: rgba(229, 179, 73, 0.12);
+          --amber-line: #6c5422;
+          --amber-text: #edd082;
+
+          --rose: #e66d77;
+          --rose-soft: rgba(230, 109, 119, 0.12);
+          --rose-line: #713137;
+          --rose-text: #f09ea5;
+
+          --purple: #aa98f0;
+          --purple-soft: rgba(170, 152, 240, 0.12);
+          --purple-line: #493e75;
+          --purple-text: #c7bcfa;
+
+          --code-bg: #0f1217;
+          --code-ink: #dbe0e8;
+          --code-border: #2b3342;
         }
       }
 
       :root[data-theme="dark"] {
-        color-scheme: dark;
-        --ground: #111c25;
-        --panel: #192a36;
-        --panel-2: #223846;
-        --ink: #edf4f7;
-        --muted: #b5c5ce;
-        --line: #405867;
-        --github: #8bc8e8;
-        --github-wash: #1c3b4c;
-        --docker: #efab84;
-        --docker-wash: #492f27;
-        --safe: #8ed2ad;
-        --safe-wash: #1d3e32;
-        --caution: #e8c979;
-        --caution-wash: #41371f;
+        --bg: #14171d;
+        --surface: #1a1e26;
+        --surface-2: #222733;
+        --ink: #e8ebf0;
+        --ink-2: #c4cad4;
+        --ink-muted: #959fad;
+        --ink-faint: #677180;
+        --line: #2b3342;
+        --line-strong: #465366;
+
+        --blue: #6aa8f7;
+        --blue-soft: rgba(106, 168, 247, 0.12);
+        --blue-line: #294977;
+        --blue-text: #96c2f9;
+
+        --emerald: #47c98b;
+        --emerald-soft: rgba(71, 201, 139, 0.12);
+        --emerald-line: #21593e;
+        --emerald-text: #7adcb0;
+
+        --amber: #e5b349;
+        --amber-soft: rgba(229, 179, 73, 0.12);
+        --amber-line: #6c5422;
+        --amber-text: #edd082;
+
+        --rose: #e66d77;
+        --rose-soft: rgba(230, 109, 119, 0.12);
+        --rose-line: #713137;
+        --rose-text: #f09ea5;
+
+        --purple: #aa98f0;
+        --purple-soft: rgba(170, 152, 240, 0.12);
+        --purple-line: #493e75;
+        --purple-text: #c7bcfa;
+
+        --code-bg: #0f1217;
+        --code-ink: #dbe0e8;
+        --code-border: #2b3342;
       }
 
       *,
       *::before,
       *::after {
         box-sizing: border-box;
-      }
-
-      html {
-        scroll-behavior: smooth;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        min-height: 100vh;
-        margin: 0;
-        background: var(--ground);
+        font-family: var(--font-body);
+        font-size: 1.02rem;
+        line-height: 1.68;
         color: var(--ink);
-        font: 16px/1.7 var(--font-body);
+        background: var(--bg);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
       }
 
-      h1,
-      h2,
-      h3,
-      p,
-      figure,
-      pre {
-        margin: 0;
-      }
-
-      h1,
-      h2,
-      h3 {
-        font-family: var(--font-heading);
-        text-wrap: balance;
-      }
-
-      p,
-      li {
-        color: var(--muted);
+      button, select, input {
+        font: inherit;
+        color: inherit;
       }
 
       a {
-        color: var(--github);
-        text-underline-offset: 0.18em;
-      }
-
-      a:hover {
-        color: var(--ink);
-      }
-
-      code,
-      pre {
-        font-family: var(--font-mono);
-      }
-
-      code {
-        overflow-wrap: anywhere;
-        color: var(--ink);
-        font-size: 0.92em;
-      }
-
-      button,
-      select {
-        color: inherit;
-        font: inherit;
-      }
-
-      button {
-        cursor: pointer;
+        color: var(--blue-text);
+        text-decoration: underline;
+        text-underline-offset: 2px;
       }
 
       :focus-visible {
-        outline: 3px solid var(--github);
-        outline-offset: 3px;
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
       }
+
+      /* ------------------------------ Top bar ------------------------------ */
 
       .topbar {
         position: sticky;
-        z-index: 5;
         top: 0;
+        z-index: 40;
+        background: var(--surface);
         border-bottom: 1px solid var(--line);
-        background: var(--panel);
       }
 
-      .topbar-row {
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.6rem 1rem;
+        padding: 0.55rem var(--pad-x);
+      }
+
+      .brand-group {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        gap: 0.65rem 1rem;
-        padding: 0.7rem var(--pad-x);
+        gap: 0.6rem 1rem;
       }
 
-      .brand {
-        color: var(--ink);
-        font: 700 0.78rem var(--font-mono);
-        letter-spacing: 0.08em;
-      }
-
-      .nav,
-      .tools {
+      .brand-spec {
         display: flex;
         align-items: center;
-        flex-wrap: wrap;
-        gap: 0.35rem;
-      }
-
-      .nav a {
-        padding: 0.3rem 0.55rem;
-        color: var(--muted);
-        font-size: 0.84rem;
-        text-decoration: none;
-      }
-
-      .nav a:hover,
-      .nav a[aria-current="page"] {
-        background: var(--panel-2);
-        color: var(--ink);
-      }
-
-      .tools {
-        margin-left: auto;
         gap: 0.55rem;
+        font-family: var(--font-mono);
+        font-size: 0.74rem;
+        letter-spacing: 0.03em;
+        color: var(--ink-muted);
       }
 
-      .help,
-      .theme {
+      .badge-rev {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.03em;
+        padding: 0.14rem 0.45rem;
         border: 1px solid var(--line);
-        background: var(--panel);
-        padding: 0.28rem 0.52rem;
-        font-size: 0.78rem;
+        border-radius: 4px;
+        color: var(--ink-faint);
       }
 
-      .help[aria-expanded="true"] {
-        border-color: var(--github);
-        background: var(--github-wash);
-        color: var(--github);
+      .sidebar-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-family: var(--font-ui);
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 0.32rem 0.65rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--ink-2);
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .sidebar-toggle-btn:hover {
+        background: var(--surface-2);
+        color: var(--ink);
+        border-color: var(--line-strong);
+      }
+      .sidebar-toggle-btn[aria-expanded="false"] {
+        background: transparent;
+        color: var(--ink-muted);
+        border-color: var(--line);
+      }
+      .sidebar-toggle-btn[aria-expanded="true"] {
+        background: var(--blue-soft);
+        color: var(--blue-text);
+        border-color: var(--blue-line);
       }
 
-      .theme-label {
-        color: var(--muted);
-        font-size: 0.78rem;
+      .page-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.2rem;
+        border-left: 1px solid var(--line);
+        padding-left: 0.9rem;
+        margin-left: 0.25rem;
       }
+
+      .nav-tab {
+        font-family: var(--font-ui);
+        font-size: 0.86rem;
+        text-decoration: none;
+        padding: 0.32rem 0.65rem;
+        border-radius: 4px;
+        color: var(--ink-muted);
+      }
+      .nav-tab:hover {
+        color: var(--ink);
+        background: var(--surface-2);
+      }
+      .nav-tab.active {
+        color: var(--ink);
+        background: var(--surface-2);
+        font-weight: 600;
+      }
+
+      .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      .btn-help {
+        font-family: var(--font-ui);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        padding: 0.3rem 0.7rem;
+        border: 1px solid var(--line-strong);
+        border-radius: 4px;
+        background: transparent;
+        color: var(--ink-2);
+        cursor: pointer;
+      }
+      .btn-help:hover {
+        background: var(--surface-2);
+      }
+      .btn-help[aria-expanded="true"] {
+        background: var(--surface-2);
+        border-color: var(--blue);
+        color: var(--blue-text);
+      }
+
+      .theme-picker {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        color: var(--ink-muted);
+      }
+
+      .theme-select {
+        font-family: var(--font-ui);
+        font-size: 0.8rem;
+        padding: 0.3rem 0.45rem;
+        border: 1px solid var(--line-strong);
+        border-radius: 4px;
+        background: var(--surface);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      /* ---------------------------- Help panel ----------------------------- */
 
       .help-panel {
-        border-top: 1px solid var(--line);
-        background: var(--panel-2);
-        padding: 1rem var(--pad-x);
-      }
-
-      .help-panel[hidden] {
-        display: none;
-      }
-
-      .help-panel h2 {
-        font-size: 1rem;
-      }
-
-      .terms {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 0.6rem 1.2rem;
-        margin-top: 0.7rem;
-      }
-
-      .term {
-        color: var(--muted);
-        font-size: 0.78rem;
-      }
-
-      .term b {
-        color: var(--ink);
-        font-family: var(--font-mono);
-      }
-
-      main {
-        padding: clamp(1.7rem, 4vw, 3.5rem) var(--pad-x) 4rem;
-      }
-
-      article {
-        display: grid;
-        gap: clamp(2.5rem, 6vw, 5rem);
-      }
-
-      .hero {
-        display: grid;
-        grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.6fr);
-        align-items: end;
-        gap: 2rem;
-      }
-
-      .hero-copy {
-        display: grid;
-        gap: 0.9rem;
-      }
-
-      .eyebrow,
-      .label {
-        font: 700 0.7rem var(--font-mono);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-
-      .eyebrow {
-        color: var(--github);
-      }
-
-      h1 {
-        max-width: 17ch;
-        font-size: clamp(2.5rem, 6.5vw, 6rem);
-        line-height: 0.98;
-        letter-spacing: -0.065em;
-      }
-
-      .lede {
-        max-width: 68ch;
-        font-size: clamp(1rem, 1.4vw, 1.2rem);
-      }
-
-      .short-answer {
-        display: grid;
-        gap: 0.5rem;
-        border-left: 5px solid var(--github);
-        background: var(--github-wash);
-        padding: 1rem 1.1rem;
-      }
-
-      .short-answer b {
-        font-size: 0.85rem;
-      }
-
-      .short-answer p {
-        color: var(--ink);
-        font-size: 0.88rem;
-      }
-
-      .section {
-        display: grid;
-        gap: 1rem;
-        scroll-margin-top: 6rem;
-      }
-
-      .section-head {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(240px, 0.65fr);
-        align-items: end;
-        gap: 1rem;
         border-bottom: 1px solid var(--line);
-        padding-bottom: 0.85rem;
+        background: var(--surface);
+      }
+      .help-panel[hidden] {
+        display: none !important;
       }
 
-      .section-title {
+      .help-content {
+        padding: 1.1rem var(--pad-x) 1.35rem;
+      }
+
+      .help-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-bottom: 0.6rem;
+        margin-bottom: 0.85rem;
+        border-bottom: 1px solid var(--line);
+      }
+      .help-head h3 {
+        font-family: var(--font-ui);
+        font-size: 0.86rem;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .help-close-btn {
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 0.15rem 0.5rem;
+        font-size: 0.8rem;
+        color: var(--ink-muted);
+        cursor: pointer;
+      }
+      .help-close-btn:hover {
+        background: var(--surface-2);
+      }
+
+      .acronym-list {
+        list-style: none;
         display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 0.65rem 2rem;
+        font-size: 0.87rem;
+        line-height: 1.5;
+        color: var(--ink-2);
+      }
+      .acronym-list strong {
+        font-family: var(--font-mono);
+        font-size: 0.82em;
+        color: var(--ink);
+      }
+
+      /* ------------------------- Layout: sidebar + main -------------------- */
+
+      .shell {
+        display: grid;
+        grid-template-columns: 340px minmax(0, 1fr);
+        gap: 1.5rem;
+        padding: 1.5rem var(--pad-x) 4rem;
+        transition: grid-template-columns 0.25s ease;
+        width: 100%;
+      }
+
+      .shell.sidebar-collapsed {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .shell.sidebar-collapsed .sidebar {
+        display: none !important;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 4.2rem;
+        align-self: start;
+        max-height: calc(100vh - 5.2rem);
+        overflow-y: auto;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1.25rem;
+        scrollbar-width: thin;
+        scrollbar-color: var(--line-strong) transparent;
+      }
+
+      .sidebar-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .stage-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.05em;
+        color: var(--blue-text);
+        background: var(--blue-soft);
+        border: 1px solid var(--blue-line);
+        padding: 0.2rem 0.55rem;
+        border-radius: 4px;
+        font-weight: 600;
+      }
+
+      .sidebar-close-btn {
+        display: none;
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.78rem;
+        cursor: pointer;
+        color: var(--ink-muted);
+      }
+
+      .sidebar-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 0.4rem;
+        margin-bottom: 0.25rem;
+        line-height: 1.35;
+      }
+
+      .sidebar-subtitle {
+        font-size: 0.8rem;
+        color: var(--ink-muted);
+        line-height: 1.45;
+        margin-bottom: 1rem;
+      }
+
+      .progress-card {
+        padding: 0.75rem 0.85rem;
+        background: var(--surface-2);
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        margin-bottom: 1.25rem;
+      }
+
+      .progress-label-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.76rem;
+        font-family: var(--font-ui);
+        font-weight: 600;
+        color: var(--ink-muted);
+        margin-bottom: 0.45rem;
+      }
+
+      .progress-track {
+        height: 6px;
+        background: var(--line);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: var(--blue);
+        border-radius: 999px;
+        transition: width 0.25s ease;
+      }
+
+      .topic-list {
+        display: flex;
+        flex-direction: column;
         gap: 0.35rem;
       }
 
-      h2 {
-        font-size: clamp(1.4rem, 2.6vw, 2.2rem);
-        line-height: 1.16;
-        letter-spacing: -0.035em;
-      }
-
-      .section-note {
-        font-size: 0.88rem;
-      }
-
-      .definition-grid,
-      .choice-grid,
-      .concept-grid,
-      .faq-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1rem;
-      }
-
-      .panel {
-        display: grid;
-        align-content: start;
-        gap: 0.65rem;
-        border: 1px solid var(--line);
-        background: var(--panel);
-        padding: clamp(0.9rem, 2vw, 1.25rem);
-      }
-
-      .panel h3 {
-        font-size: 1.08rem;
-      }
-
-      .panel p,
-      .panel li {
-        font-size: 0.88rem;
-      }
-
-      .panel ul,
-      .panel ol {
-        display: grid;
-        gap: 0.45rem;
-        padding-left: 1.2rem;
-      }
-
-      .panel.github {
-        border-top: 4px solid var(--github);
-      }
-
-      .panel.docker {
-        border-top: 4px solid var(--docker);
-      }
-
-      .label.github-text {
-        color: var(--github);
-      }
-
-      .label.docker-text {
-        color: var(--docker);
-      }
-
-      .flow-board,
-      .process-board {
-        border: 1px solid var(--line);
-        background: var(--panel);
-      }
-
-      .provider-tabs {
+      .topic-btn {
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        border-bottom: 1px solid var(--line);
-        padding: 0.75rem;
-      }
-
-      .provider-tab {
-        border: 1px solid var(--line);
-        background: var(--panel);
-        padding: 0.42rem 0.65rem;
-        font-size: 0.82rem;
-      }
-
-      .provider-tab[aria-pressed="true"][data-provider="ghcr"] {
-        border-color: var(--github);
-        background: var(--github-wash);
-        color: var(--github);
-      }
-
-      .provider-tab[aria-pressed="true"][data-provider="hub"] {
-        border-color: var(--docker);
-        background: var(--docker-wash);
-        color: var(--docker);
-      }
-
-      .flow-content {
-        display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(250px, 0.8fr);
-        gap: 1.1rem;
-        padding: 1rem;
-      }
-
-      .figure {
-        min-width: 0;
-        overflow-x: auto;
-      }
-
-      .figure svg {
-        display: block;
+        align-items: center;
+        gap: 0.75rem;
         width: 100%;
-        min-width: 660px;
-        height: auto;
-        color: var(--ink);
-      }
-
-      .figure figcaption {
-        margin-top: 0.55rem;
-        color: var(--muted);
-        font-size: 0.78rem;
-      }
-
-      .svg-node {
-        fill: var(--panel-2);
-        stroke: var(--line);
-        stroke-width: 1.5;
-      }
-
-      .svg-node.registry {
-        fill: var(--github-wash);
-        stroke: var(--github);
-      }
-
-      .svg-line {
-        fill: none;
-        stroke: var(--github);
-        stroke-width: 2;
-        marker-end: url("#flow-arrow");
-      }
-
-      .svg-title {
-        fill: var(--ink);
-        font: 600 13px var(--font-heading);
-      }
-
-      .svg-copy {
-        fill: var(--muted);
-        font: 11px var(--font-ui);
-      }
-
-      .flow-explain {
-        display: grid;
-        align-content: start;
-        gap: 0.7rem;
-        border-left: 1px solid var(--line);
-        padding-left: 1rem;
-      }
-
-      .flow-explain h3 {
-        font-size: 1.08rem;
-      }
-
-      .flow-explain p {
-        color: var(--muted);
+        padding: 0.65rem 0.8rem;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
         font-size: 0.86rem;
+        color: var(--ink-2);
+        transition: all 0.15s ease;
       }
-
-      .command {
-        overflow-x: auto;
-        border: 1px solid var(--line);
-        background: var(--panel-2);
-        padding: 0.8rem;
+      .topic-btn:hover {
+        background: var(--surface-2);
         color: var(--ink);
-        font: 0.78rem/1.7 var(--font-mono);
+      }
+      .topic-btn[aria-current="step"] {
+        background: var(--surface-2);
+        border-color: var(--line-strong);
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .topic-btn.is-complete .topic-check {
+        color: var(--emerald);
+        border-color: var(--emerald-line);
+        background: var(--emerald-soft);
       }
 
-      .steps {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 0.65rem;
-        counter-reset: release-step;
+      .topic-num {
+        font-family: var(--font-mono);
+        font-size: 0.74rem;
+        color: var(--ink-faint);
+        min-width: 1.4rem;
       }
 
-      .step {
-        display: grid;
-        align-content: start;
-        gap: 0.45rem;
-        border-top: 3px solid var(--github);
-        background: var(--panel);
-        padding: 0.8rem;
-        counter-increment: release-step;
+      .topic-title-text {
+        flex: 1;
+        line-height: 1.35;
       }
 
-      .step::before {
-        color: var(--github);
-        content: "0" counter(release-step);
-        font: 700 0.72rem var(--font-mono);
+      .topic-check {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        font-size: 0.7rem;
+        color: transparent;
       }
 
-      .step h3 {
+      /* ---------------------------- Main Content --------------------------- */
+
+      main {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .topic-section {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: clamp(1.25rem, 3vw, 2.5rem);
+      }
+
+      .topic-section[hidden] {
+        display: none !important;
+      }
+
+      .topic-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .topic-eyebrow {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--blue-text);
+        margin-bottom: 0.4rem;
+      }
+
+      .topic-title {
+        font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--ink);
+        margin-bottom: 1rem;
+      }
+
+      .user-query-box {
+        background: var(--surface-2);
+        border-left: 4px solid var(--purple);
+        border-radius: 0 8px 8px 0;
+        padding: 0.9rem 1.2rem;
+        margin-top: 1rem;
         font-size: 0.95rem;
       }
-
-      .step p {
-        font-size: 0.8rem;
+      .user-query-box b {
+        color: var(--purple-text);
+        display: block;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
       }
-
-      .code-panel {
-        display: grid;
-        gap: 0.5rem;
-        border: 1px solid var(--line);
-        background: var(--panel);
-        padding: 1rem;
-      }
-
-      .code-panel pre {
-        overflow-x: auto;
-        border: 1px solid var(--line);
-        background: var(--panel-2);
-        padding: 1rem;
+      .user-query-box p {
         color: var(--ink);
-        font-size: 0.79rem;
-        line-height: 1.65;
+        font-style: italic;
       }
 
-      .code-note {
+      .short-answer-card {
+        background: var(--blue-soft);
+        border: 1px solid var(--blue-line);
+        border-radius: 10px;
+        padding: 1.1rem 1.35rem;
+        margin: 1.5rem 0;
+      }
+      .short-answer-card b {
+        display: block;
+        font-family: var(--font-ui);
         font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--blue-text);
+        margin-bottom: 0.35rem;
+      }
+      .short-answer-card p {
+        color: var(--ink);
+        font-size: 1.05rem;
+        font-weight: 500;
+        line-height: 1.6;
       }
 
-      .comparison {
+      .section-block {
+        margin-top: 2rem;
+      }
+
+      .section-block h3 {
+        font-size: 1.28rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 0.8rem;
+        line-height: 1.35;
+      }
+
+      .section-block p {
+        color: var(--ink-2);
+        margin-bottom: 1rem;
+      }
+
+      .section-block ul, .section-block ol {
+        margin-left: 1.4rem;
+        margin-bottom: 1.2rem;
+        color: var(--ink-2);
+      }
+
+      .section-block li {
+        margin-bottom: 0.5rem;
+      }
+
+      code {
+        font-family: var(--font-mono);
+        font-size: 0.88em;
+        background: var(--code-bg);
+        color: var(--ink);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        border: 1px solid var(--code-border);
+      }
+
+      .code-snippet {
+        position: relative;
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        border-radius: 10px;
+        padding: 1.1rem 1.25rem;
+        margin: 1.25rem 0;
+        overflow-x: auto;
+      }
+
+      .code-snippet pre {
+        font-family: var(--font-mono);
+        font-size: 0.88rem;
+        line-height: 1.55;
+        color: var(--code-ink);
+        margin: 0;
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 0.6rem;
+        right: 0.6rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 0.2rem 0.55rem;
+        font-size: 0.72rem;
+        font-family: var(--font-ui);
+        color: var(--ink-muted);
+        cursor: pointer;
+      }
+      .copy-btn:hover {
+        background: var(--surface-2);
+        color: var(--ink);
+      }
+
+      /* Callout Boxes */
+      .callout {
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        margin: 1.25rem 0;
+        font-size: 0.95rem;
+        border-left: 4px solid var(--line-strong);
+      }
+      .callout.tip {
+        background: var(--emerald-soft);
+        border-left-color: var(--emerald);
+      }
+      .callout.tip b {
+        color: var(--emerald-text);
+      }
+      .callout.warning {
+        background: var(--amber-soft);
+        border-left-color: var(--amber);
+      }
+      .callout.warning b {
+        color: var(--amber-text);
+      }
+      .callout.danger {
+        background: var(--rose-soft);
+        border-left-color: var(--rose);
+      }
+      .callout.danger b {
+        color: var(--rose-text);
+      }
+      .callout b {
+        display: block;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
+      }
+
+      /* Comparison Table */
+      .data-table-wrap {
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .data-table {
         width: 100%;
         border-collapse: collapse;
-        background: var(--panel);
-        font-size: 0.84rem;
-      }
-
-      .table-wrap {
-        overflow-x: auto;
-        border: 1px solid var(--line);
-      }
-
-      .comparison th,
-      .comparison td {
-        min-width: 150px;
-        border-bottom: 1px solid var(--line);
-        padding: 0.75rem;
+        font-size: 0.92rem;
         text-align: left;
-        vertical-align: top;
       }
-
-      .comparison th {
-        background: var(--panel-2);
+      .data-table th, .data-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--line);
+      }
+      .data-table th {
+        background: var(--surface-2);
+        font-weight: 600;
         color: var(--ink);
-        font-size: 0.78rem;
+      }
+      .data-table tr:last-child td {
+        border-bottom: none;
+      }
+      .data-table tr:hover td {
+        background: var(--surface-2);
       }
 
-      .comparison td {
-        color: var(--muted);
+      /* Interactive Diagrams (Inline SVG) */
+      .diagram-card {
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin: 1.5rem 0;
       }
 
-      .comparison tr:last-child td {
-        border-bottom: 0;
-      }
-
-      .callout {
-        border-left: 4px solid var(--caution);
-        background: var(--caution-wash);
-        padding: 0.9rem 1rem;
-        color: var(--ink);
-        font-size: 0.88rem;
-      }
-
-      .question {
-        border-top: 3px solid var(--line);
-      }
-
-      .sources {
+      .diagram-toolbar {
         display: flex;
+        align-items: center;
+        justify-content: space-between;
         flex-wrap: wrap;
-        gap: 0.6rem 1.2rem;
-        border-top: 1px solid var(--line);
-        padding-top: 1rem;
-        font-size: 0.82rem;
-      }
-
-      .footer-note {
-        color: var(--muted);
-        font-size: 0.8rem;
-      }
-
-      .delivery-map {
-        border-top: 3px solid var(--github);
-        padding-top: 1.2rem;
-      }
-
-      .map-intro {
-        max-width: 78ch;
-      }
-
-      .map-part {
-        display: grid;
         gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .diagram-title {
+        font-family: var(--font-ui);
+        font-size: 0.84rem;
+        font-weight: 600;
+        color: var(--ink);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .btn-group {
+        display: inline-flex;
+        border-radius: 6px;
+        border: 1px solid var(--line-strong);
+        overflow: hidden;
+        background: var(--surface);
+      }
+
+      .sim-btn {
+        background: transparent;
+        border: none;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--ink-muted);
+        cursor: pointer;
+        border-right: 1px solid var(--line);
+        transition: all 0.15s ease;
+      }
+      .sim-btn:last-child {
+        border-right: none;
+      }
+      .sim-btn:hover {
+        background: var(--surface-2);
+        color: var(--ink);
+      }
+      .sim-btn.active {
+        background: var(--blue-soft);
+        color: var(--blue-text);
+        font-weight: 600;
+      }
+
+      .diagram-caption {
+        font-size: 0.88rem;
+        color: var(--ink-2);
+        line-height: 1.55;
+        margin-top: 0.85rem;
+        padding: 0.6rem 0.85rem;
+        background: var(--surface);
         border: 1px solid var(--line);
-        background: var(--panel);
-        padding: clamp(0.8rem, 2vw, 1.2rem);
+        border-radius: 6px;
       }
 
-      .map-part-head {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(220px, 0.65fr);
-        align-items: end;
-        gap: 0.8rem 1.2rem;
-      }
-
-      .map-part-head h3 {
-        font-size: clamp(1.05rem, 1.8vw, 1.35rem);
-      }
-
-      .map-part-head p {
-        font-size: 0.82rem;
-      }
-
-      .map-figure {
-        min-width: 0;
-        overflow-x: auto;
-        border: 1px solid var(--line);
-        background: var(--ground);
-      }
-
-      .map-figure svg {
-        display: block;
+      .svg-canvas {
         width: 100%;
-        min-width: 980px;
         height: auto;
-        color: var(--ink);
+        display: block;
+        overflow: visible;
       }
 
-      .map-figure figcaption {
+      /* SVG node styles */
+      .svg-node {
+        transition: all 0.25s ease;
+      }
+      .svg-node-box {
+        fill: var(--surface);
+        stroke: var(--line-strong);
+        stroke-width: 1.5;
+        rx: 8;
+        transition: all 0.25s ease;
+      }
+      .svg-node-box.blue {
+        fill: var(--blue-soft);
+        stroke: var(--blue);
+      }
+      .svg-node-box.emerald {
+        fill: var(--emerald-soft);
+        stroke: var(--emerald);
+      }
+      .svg-node-box.amber {
+        fill: var(--amber-soft);
+        stroke: var(--amber);
+      }
+      .svg-node-box.rose {
+        fill: var(--rose-soft);
+        stroke: var(--rose);
+      }
+      .svg-node-box.purple {
+        fill: var(--purple-soft);
+        stroke: var(--purple);
+      }
+
+      .svg-wire {
+        fill: none;
+        stroke: var(--line-strong);
+        stroke-width: 2;
+        stroke-dasharray: none;
+        transition: all 0.25s ease;
+      }
+      .svg-wire.active {
+        stroke: var(--blue);
+        stroke-width: 2.5;
+      }
+      .svg-wire.success {
+        stroke: var(--emerald);
+        stroke-width: 2.5;
+      }
+      .svg-wire.warning {
+        stroke: var(--amber);
+        stroke-width: 2.5;
+      }
+      .svg-wire.danger {
+        stroke: var(--rose);
+        stroke-dasharray: 4 3;
+        stroke-width: 2;
+      }
+
+      .svg-text-title {
+        font-family: var(--font-ui);
+        font-size: 13px;
+        font-weight: 700;
+        fill: var(--ink);
+      }
+      .svg-text-sub {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        fill: var(--ink-muted);
+      }
+      .svg-text-wire {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        font-weight: 600;
+        fill: var(--ink-muted);
+      }
+
+      /* Bottom Navigation Bar */
+      .topic-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 3rem;
+        padding-top: 1.5rem;
         border-top: 1px solid var(--line);
-        padding: 0.6rem 0.8rem;
-        color: var(--muted);
-        font-size: 0.78rem;
       }
 
-      .pipeline-diagram .node {
-        fill: var(--panel);
-        stroke: var(--line);
-        stroke-width: 1.5;
-        rx: 6px;
-      }
-
-      .pipeline-diagram .node.source {
-        fill: var(--panel-2);
-      }
-
-      .pipeline-diagram .node.github-node {
-        fill: var(--github-wash);
-        stroke: var(--github);
-      }
-
-      .pipeline-diagram .node.docker-node {
-        fill: var(--docker-wash);
-        stroke: var(--docker);
-      }
-
-      .pipeline-diagram .node.safe-node {
-        fill: var(--safe-wash);
-        stroke: var(--safe);
-      }
-
-      .pipeline-diagram .node.warn-node {
-        fill: var(--caution-wash);
-        stroke: var(--caution);
-      }
-
-      .pipeline-diagram .wire {
-        fill: none;
-        stroke: var(--muted);
-        stroke-width: 1.8;
-      }
-
-      .pipeline-diagram .wire.github-wire {
-        stroke: var(--github);
-      }
-
-      .pipeline-diagram .wire.safe-wire {
-        stroke: var(--safe);
-      }
-
-      .pipeline-diagram .wire.warn-wire {
-        stroke: var(--caution);
-      }
-
-      .pipeline-diagram .bus {
-        fill: none;
-        stroke: var(--line);
-        stroke-width: 1.5;
-      }
-
-      .pipeline-diagram .node-title {
-        fill: var(--ink);
-        font: 600 13px var(--font-heading);
-      }
-
-      .pipeline-diagram .node-copy {
-        fill: var(--muted);
-        font: 11px var(--font-ui);
-      }
-
-      .pipeline-diagram .wire-label {
-        fill: var(--ink);
-        font: 600 11px var(--font-mono);
-        letter-spacing: 0.02em;
-        paint-order: stroke fill;
-        stroke: var(--ground);
-        stroke-width: 4px;
-        stroke-linejoin: round;
-        stroke-linecap: round;
-      }
-
-      .pipeline-diagram .node-tag {
-        fill: var(--github);
-        font: 700 9px var(--font-mono);
-        letter-spacing: 0.06em;
-      }
-
-      .map-caution {
-        border-left: 4px solid var(--caution);
-        background: var(--caution-wash);
-        padding: 0.85rem 1rem;
+      .btn-nav {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-ui);
+        font-size: 0.88rem;
+        font-weight: 600;
+        padding: 0.55rem 1.1rem;
+        border-radius: 8px;
+        border: 1px solid var(--line-strong);
+        background: var(--surface);
         color: var(--ink);
-        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .btn-nav:hover:not(:disabled) {
+        background: var(--surface-2);
+        border-color: var(--ink-muted);
+      }
+      .btn-nav:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
       }
 
+      .btn-complete {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-ui);
+        font-size: 0.88rem;
+        font-weight: 600;
+        padding: 0.55rem 1.25rem;
+        border-radius: 8px;
+        border: 1px solid var(--emerald-line);
+        background: var(--emerald-soft);
+        color: var(--emerald-text);
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .btn-complete:hover {
+        background: var(--emerald);
+        color: #ffffff;
+      }
+      .btn-complete[aria-pressed="true"] {
+        background: var(--emerald);
+        color: #ffffff;
+      }
+
+      /* Mobile adjustments */
       @media (max-width: 900px) {
-        .hero,
-        .section-head,
-        .flow-content,
-        .map-part-head {
-          grid-template-columns: 1fr;
+        .shell {
+          grid-template-columns: minmax(0, 1fr);
         }
-
-        .flow-explain {
-          border-top: 1px solid var(--line);
-          border-left: 0;
-          padding-top: 0.9rem;
-          padding-left: 0;
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: 320px;
+          max-width: 85vw;
+          z-index: 100;
+          max-height: 100vh;
+          border-radius: 0;
+          box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+          transform: translateX(-100%);
+          transition: transform 0.25s ease;
         }
-
-        .steps {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+        .sidebar.is-open {
+          transform: translateX(0);
         }
-      }
-
-      @media (max-width: 600px) {
-        .tools {
-          margin-left: 0;
+        .sidebar-close-btn {
+          display: block;
         }
-
-        .terms,
-        .definition-grid,
-        .choice-grid,
-        .concept-grid,
-        .faq-grid,
-        .steps {
-          grid-template-columns: 1fr;
+        .sidebar-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 99;
+          display: none;
         }
-
-        .flow-content {
-          padding: 0.65rem;
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        html {
-          scroll-behavior: auto;
+        .sidebar-backdrop.is-open {
+          display: block;
         }
       }
     </style>
   </head>
   <body>
+    <!-- Topbar -->
     <header class="topbar">
-      <div class="topbar-row">
-        <div class="brand">STAGE 4 FIELD NOTES</div>
-        <nav class="nav" aria-label="Page navigation">
-          <a href="/index.html">Lesson</a>
-          <a href="/MCQ.html">Assessment</a>
-          <a href="/disposable.html" aria-current="page">Scratchpad</a>
-        </nav>
-        <div class="tools">
+      <div class="topbar-inner">
+        <div class="brand-group">
           <button
-            id="help-button"
-            class="help"
-            type="button"
+            id="sidebar-toggle-btn"
+            class="sidebar-toggle-btn"
+            aria-label="Toggle Topic Sidebar"
+            aria-expanded="true"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M1 3h14v2H1V3zm0 4h14v2H1V7zm0 4h14v2H1v-2z" />
+            </svg>
+            <span>Topics</span>
+          </button>
+          <div class="brand-spec">
+            <strong>LEARNING WITH AI</strong>
+            <span class="badge-rev">DEEP DIVE EXPLAINER</span>
+          </div>
+          <nav class="page-nav" aria-label="Page Navigation">
+            <a href="index.html" class="nav-tab">Lesson (Curriculum)</a>
+            <a href="MCQ.html" class="nav-tab">Assessment (MCQ)</a>
+            <a href="disposable.html" class="nav-tab active" aria-current="page">Deep Dive (Scratchpad)</a>
+          </nav>
+        </div>
+        <div class="topbar-actions">
+          <button
+            id="help-toggle"
+            class="btn-help"
             aria-expanded="false"
             aria-controls="help-panel"
           >
-            [HELP]
+            [HELP] Acronyms
           </button>
-          <label class="theme-label" for="theme">Theme</label>
-          <select id="theme" class="theme" aria-label="Choose color theme">
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
+          <div class="theme-picker">
+            <label for="theme-select">Theme:</label>
+            <select id="theme-select" class="theme-select">
+              <option value="system">System</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
         </div>
       </div>
-      <section id="help-panel" class="help-panel" hidden aria-label="Acronym guide">
-        <h2>Acronyms and short forms on this page</h2>
-        <div class="terms">
-          <div class="term"><b>API</b> A defined way for software to request work from another program.</div>
-          <div class="term"><b>CI</b> Continuous Integration. Automated checks run when code changes.</div>
-          <div class="term"><b>CD</b> Continuous Delivery. A verified build is published so a host can fetch it.</div>
-          <div class="term"><b>GHCR</b> GitHub Container Registry, GitHub's service for storing container images.</div>
-          <div class="term"><b>JSON</b> A text format for structured data made of fields, lists, and values.</div>
-          <div class="term"><b>OCI</b> Open Container Initiative, the group that publishes common container formats.</div>
-          <div class="term"><b>PAT</b> Personal Access Token, a credential tied to a user's account.</div>
-          <div class="term"><b>SHA</b> Secure Hash Algorithm. Git uses hash-based object IDs to identify commits.</div>
+
+      <!-- Acronym Help Panel -->
+      <aside id="help-panel" class="help-panel" hidden>
+        <div class="help-content">
+          <div class="help-head">
+            <h3>Technical Acronym &amp; Terminology Reference</h3>
+            <button id="help-close" class="help-close-btn" aria-label="Close acronym glossary">Close ✕</button>
+          </div>
+          <ul class="acronym-list">
+            <li><strong>CI / CD:</strong> Continuous Integration and Continuous Deployment — the automated practice of building, testing, and shipping code on every push.</li>
+            <li><strong>Git SHA:</strong> Secure Hash Algorithm — the 40-character hexadecimal fingerprint (e.g., <code>e8f91c0...</code>) uniquely identifying a commit's source code tree.</li>
+            <li><strong>Image Tag:</strong> A human-readable, mutable label (like <code>:sha-e8f91c0</code> or <code>:v1.2.0</code>) assigned to point to a container image.</li>
+            <li><strong>Content Digest:</strong> The cryptographic, immutable SHA-256 hash (<code>sha256:4a8b...</code>) calculated directly from the image manifest's bytes.</li>
+            <li><strong>Image Manifest:</strong> The JSON specification document listing all filesystem layers, CPU architecture, and configuration of a container image.</li>
+            <li><strong>GHCR:</strong> GitHub Container Registry (<code>ghcr.io</code>) — GitHub's native hosting service for Docker and OCI container images.</li>
+            <li><strong>OCI:</strong> Open Container Initiative — the open industry standard for container formats and runtime specifications.</li>
+            <li><strong>EC2:</strong> Amazon Elastic Compute Cloud — the cloud virtual machine where the production Docker containers actually run.</li>
+            <li><strong>CVE:</strong> Common Vulnerabilities and Exposures — a public database of known software security flaws used by automated image scanners.</li>
+          </ul>
         </div>
-      </section>
+      </aside>
     </header>
 
-    <main>
-      <article>
-        <header class="hero">
-          <div class="hero-copy">
-            <p class="eyebrow">Stage 4, publishing images</p>
-            <h1>Build it here.<br />Pull it there.</h1>
-            <p class="lede">
-              A Docker image is the packaged application. A container registry
-              stores that package so GitHub Actions, a developer's laptop, or
-              the EC2 server can upload and download it.
-            </p>
-          </div>
-          <aside class="short-answer">
-            <b>Short answer</b>
-            <p>
-              GHCR was chosen because this project already uses GitHub. Actions
-              can publish with a short-lived, narrowly permissioned token, and
-              the image package can live beside its source repository. Docker
-              Hub can store the same image. The project could use it instead.
-            </p>
-          </aside>
-        </header>
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
 
-        <section class="section" id="registry" aria-labelledby="registry-title">
-          <div class="section-head">
-            <div class="section-title">
-              <p class="eyebrow">First, the basic idea</p>
-              <h2 id="registry-title">What is a container registry?</h2>
-            </div>
-            <p class="section-note">
-              Think of the registry as a remote package store. It does not run
-              the application. It keeps published images and serves them to
-              software that asks for a particular image.
-            </p>
-          </div>
-          <div class="definition-grid">
-            <article class="panel">
-              <h3>Image: the thing you build</h3>
-              <p>
-                A Dockerfile describes how to assemble the application and its
-                runtime files into an image. The image is made of a config and
-                filesystem layers. A running container is created from an
-                image.
-              </p>
-              <p>
-                In this project, the client and server are separate images
-                because they are separate app parts with different build and
-                runtime needs.
-              </p>
-            </article>
-            <article class="panel">
-              <h3>Registry: where you publish it</h3>
-              <p>
-                A registry accepts image uploads, stores image data, and lets
-                authorized users download it later. It usually organizes
-                images into repositories and uses tags or digests to identify
-                versions.
-              </p>
-              <p>
-                GitHub Actions builds and pushes the images. EC2 later
-                authenticates and pulls them. The registry is the handoff point
-                between those two machines.
-              </p>
-            </article>
-          </div>
-        </section>
+    <div id="shell" class="shell">
+      <!-- Sidebar Navigation -->
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header-row">
+          <span class="stage-tag">DEEP DIVE · CI/CD &amp; DOCKER</span>
+          <button id="sidebar-close-btn" class="sidebar-close-btn" aria-label="Close sidebar">✕</button>
+        </div>
+        <h2 class="sidebar-title">Demystifying Deployment</h2>
+        <p class="sidebar-subtitle">Git SHAs, Image Tags, Manifests &amp; Cryptographic Digests</p>
 
-        <section class="section" id="provider" aria-labelledby="provider-title">
-          <div class="section-head">
-            <div class="section-title">
-              <p class="eyebrow">Same package, different address</p>
-              <h2 id="provider-title">GHCR or Docker Hub?</h2>
-            </div>
-            <p class="section-note">
-              Select a destination. The build and Docker image format stay the
-              same. The image name, login, access settings, and registry
-              account change.
-            </p>
+        <div class="progress-card">
+          <div class="progress-label-row">
+            <span>Progress</span>
+            <span id="progress-text">0 / 4 complete</span>
           </div>
-          <div class="flow-board">
-            <div class="provider-tabs" role="group" aria-label="Choose a registry">
-              <button
-                class="provider-tab"
-                type="button"
-                data-provider="ghcr"
-                aria-pressed="true"
-              >
-                This project: GHCR
-              </button>
-              <button
-                class="provider-tab"
-                type="button"
-                data-provider="hub"
-                aria-pressed="false"
-              >
-                Alternative: Docker Hub
-              </button>
-            </div>
-            <div class="flow-content">
-              <figure class="figure">
-                <svg
-                  viewBox="0 0 780 210"
-                  role="img"
-                  aria-label="GitHub Actions builds an image, authenticates to GHCR, pushes it to the registry, and EC2 pulls it."
-                >
-                  <defs>
-                    <marker
-                      id="flow-arrow"
-                      markerWidth="8"
-                      markerHeight="8"
-                      refX="6"
-                      refY="4"
-                      orient="auto"
-                    >
-                      <path d="M0 0 L8 4 L0 8 Z" fill="currentColor"></path>
-                    </marker>
-                  </defs>
-                  <path class="svg-line" d="M170 102 H225"></path>
-                  <path class="svg-line" d="M365 102 H420"></path>
-                  <path class="svg-line" d="M560 102 H615"></path>
-                  <rect class="svg-node" x="20" y="65" width="150" height="74"></rect>
-                  <text class="svg-title" x="38" y="94">GitHub Actions</text>
-                  <text class="svg-copy" x="38" y="116">builds image</text>
-                  <rect class="svg-node" x="225" y="65" width="140" height="74"></rect>
-                  <text class="svg-title" x="242" y="94">Login</text>
-                  <text id="auth-copy" class="svg-copy" x="242" y="116">GITHUB_TOKEN</text>
-                  <rect class="svg-node registry" x="420" y="65" width="140" height="74"></rect>
-                  <text id="registry-title-svg" class="svg-title" x="437" y="94">GHCR</text>
-                  <text id="registry-host-svg" class="svg-copy" x="437" y="116">ghcr.io</text>
-                  <rect class="svg-node" x="615" y="65" width="145" height="74"></rect>
-                  <text class="svg-title" x="632" y="94">EC2 host</text>
-                  <text class="svg-copy" x="632" y="116">pulls image</text>
-                  <text class="svg-copy" text-anchor="middle" x="198" y="88">push</text>
-                  <text class="svg-copy" text-anchor="middle" x="392" y="88">stores</text>
-                  <text class="svg-copy" text-anchor="middle" x="588" y="88">pull</text>
-                  <text id="image-name-svg" class="svg-copy" x="420" y="170">
-                    ghcr.io/s3nsh1-dev/docker-beginner-simulation-client
-                  </text>
-                </svg>
-                <figcaption>
-                  The registry changes, but the flow does not: build, log in,
-                  push, then pull on the server.
-                </figcaption>
-              </figure>
-              <div class="flow-explain" aria-live="polite">
-                <h3 id="provider-heading">Why this project uses GHCR</h3>
-                <p id="provider-copy">
-                  The repository and workflow already live on GitHub. A
-                  publishing job can use its job-scoped GITHUB_TOKEN with
-                  packages: write instead of storing a Docker Hub password in
-                  repository secrets.
-                </p>
-                <pre id="provider-address" class="command">ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:&lt;commit-sha&gt;</pre>
-              </div>
-            </div>
+          <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="4">
+            <div id="progress-bar" class="progress-bar"></div>
           </div>
-        </section>
+        </div>
 
-        <section class="section" aria-labelledby="comparison-title">
-          <div class="section-head">
-            <div class="section-title">
-              <p class="eyebrow">Pick based on the project</p>
-              <h2 id="comparison-title">When would you choose each one?</h2>
-            </div>
-            <p class="section-note">
-              Neither service is inherently the right registry for every team.
-              Compare account ownership, who needs access, automation, pricing,
-              storage rules, and image pull limits.
-            </p>
-          </div>
-          <div class="table-wrap">
-            <table class="comparison">
-              <thead>
-                <tr>
-                  <th scope="col">Question</th>
-                  <th scope="col">GHCR</th>
-                  <th scope="col">Docker Hub</th>
-                  <th scope="col">Another registry</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Good fit when...</td>
-                  <td>The code and CI already live on GitHub, and package access should follow GitHub accounts or teams.</td>
-                  <td>You want a familiar, widely used public image location or already manage Docker Hub repositories.</td>
-                  <td>Your cloud provider or company already manages a registry, such as Amazon ECR for an AWS-centered setup.</td>
-                </tr>
-                <tr>
-                  <td>Workflow login</td>
-                  <td>GitHub Actions can use GITHUB_TOKEN with explicit package write permission.</td>
-                  <td>Use Docker Hub credentials or an access token stored as GitHub Actions secrets.</td>
-                  <td>Usually use that provider's identity and access controls. Setup depends on the registry.</td>
-                </tr>
-                <tr>
-                  <td>Image address</td>
-                  <td><code>ghcr.io/owner/image:tag</code></td>
-                  <td><code>docker.io/namespace/image:tag</code></td>
-                  <td>For Amazon ECR, an account and region are part of the address.</td>
-                </tr>
-                <tr>
-                  <td>Can Docker pull it?</td>
-                  <td>Yes, after login if the package is private.</td>
-                  <td>Yes, after login if the repository is private.</td>
-                  <td>Yes, after using that registry's authentication method.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <aside class="callout">
-            Moving from GHCR to Docker Hub would not mean rewriting the
-            Dockerfile. You would change the image name, configure a Docker Hub
-            repository, change workflow login credentials, update the server's
-            pull address, and grant the right people access.
-          </aside>
-        </section>
+        <nav id="topic-nav-container" class="topic-list" aria-label="Lesson Topics">
+          <!-- Populated by JavaScript -->
+        </nav>
+      </aside>
 
-        <section class="section" id="release" aria-labelledby="release-title">
-          <div class="section-head">
-            <div class="section-title">
-              <p class="eyebrow">The Stage 4 path</p>
-              <h2 id="release-title">What happens after a merge?</h2>
-            </div>
-            <p class="section-note">
-              This project publishes the client and server images after trusted
-              checks pass on the merged commit. A pull request can run tests,
-              but it should not publish production packages.
-            </p>
-          </div>
-          <div class="steps" aria-label="Steps from source commit to deployed image">
-            <article class="step">
-              <h3>Git names the commit</h3>
-              <p>A commit has an object ID, often called its commit SHA.</p>
-            </article>
-            <article class="step">
-              <h3>Actions checks it</h3>
-              <p>Tests and builds must pass before the publish job runs.</p>
-            </article>
-            <article class="step">
-              <h3>Build and push</h3>
-              <p>Buildx packages each app part and uploads it to GHCR.</p>
-            </article>
-            <article class="step">
-              <h3>Registry records it</h3>
-              <p>Tags point to manifests, which describe image config and layers.</p>
-            </article>
-            <article class="step">
-              <h3>EC2 pulls it</h3>
-              <p>The host downloads the selected image and starts its container.</p>
-            </article>
-          </div>
-          <div class="code-panel">
-            <h3>These are two different packages</h3>
-            <pre><code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:&lt;full-commit-sha&gt;
-ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:&lt;full-commit-sha&gt;</code></pre>
-            <p class="code-note">
-              The client and server use the same source commit value in their
-              tags, but each name points to a different image. EC2 can pull
-              both tags and run that release together.
-            </p>
-          </div>
-        </section>
+      <!-- Main Learning Content -->
+      <main id="main-content">
+        <div id="status-announcer" class="sr-only" aria-live="polite"></div>
 
-        <section class="section" aria-labelledby="manifest-title">
-          <div class="section-head">
-            <div class="section-title">
-              <p class="eyebrow">What the registry stores</p>
-              <h2 id="manifest-title">What is an image manifest?</h2>
-            </div>
-            <p class="section-note">
-              A manifest is a small data record that tells a container tool
-              which config and filesystem layers make up one image for one
-              platform.
-            </p>
-          </div>
-          <div class="concept-grid">
-            <article class="panel">
-              <h3>It points to the pieces</h3>
-              <p>
-                The registry stores image data as blobs. The manifest lists
-                descriptors for the image configuration and its layers. Each
-                descriptor includes a content digest and size, so the client
-                knows what to request and can check what it received.
-              </p>
-              <pre class="command">{
-  "schemaVersion": 2,
-  "mediaType": "application/vnd.oci.image.manifest.v1+json",
-  "config": { "digest": "sha256:..." },
-  "layers": [
-    { "digest": "sha256:..." },
-    { "digest": "sha256:..." }
-  ]
-}</pre>
-            </article>
-            <article class="panel">
-              <h3>A pull is a lookup, then downloads</h3>
-              <ol>
-                <li>Docker asks the registry for an image by name and tag.</li>
-                <li>The registry resolves that tag to a manifest or image index.</li>
-                <li>Docker downloads the referenced config and missing layers.</li>
-                <li>Docker checks their digests and assembles the image locally.</li>
-              </ol>
-            </article>
-          </div>
-          <aside class="callout">
-            A multi-platform image can start with an image index, which points
-            to separate manifests such as <code>linux/amd64</code> and
-            <code>linux/arm64</code>. Docker selects the one that matches the
-            machine. That is why Stage 4 mentions multi-platform tagging.
-          </aside>
-        </section>
-
-        <section class="section" aria-labelledby="sha-title">
-          <div class="section-head">
-            <div class="section-title">
-              <p class="eyebrow">Trace a release to source</p>
-              <h2 id="sha-title">What is a Git commit SHA?</h2>
-            </div>
-            <p class="section-note">
-              It is the object ID Git uses to identify a commit. It identifies
-              that commit record, which includes the project tree and commit
-              metadata, not merely a filename or a Docker image.
-            </p>
-          </div>
-          <div class="concept-grid">
-            <article class="panel">
-              <h3>Get it from your checkout</h3>
-              <pre class="command">git rev-parse HEAD
-git show -s --format='%H%n%s' HEAD</pre>
-              <p>
-                <code>HEAD</code> means the commit currently checked out. The
-                first command prints its full object ID. The second prints the
-                ID and the commit subject line. A short form such as
-                <code>8e91c2d</code> is easier to read, but use the full value
-                for an unambiguous release tag.
-              </p>
-            </article>
-            <article class="panel">
-              <h3>Why put it on the image tag?</h3>
-              <p>
-                If the image tag includes the source commit ID, a deploy log
-                gives you a direct lead back to the code change. You can ask,
-                "Which commit built the client running on EC2?" and inspect
-                that commit in GitHub.
-              </p>
-              <p>
-                A tag like <code>latest</code> does not answer that question by
-                itself because it usually gets moved to a newer image.
-              </p>
-            </article>
-          </div>
-          <div class="code-panel">
-            <h3>A commit tag and an image digest identify different things</h3>
-            <pre><code>IMAGE_TAG="$(git rev-parse HEAD)"
-docker pull "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:${IMAGE_TAG}"
-
-# A registry can also address the exact image content by digest:
-docker pull "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client@sha256:&lt;manifest-digest&gt;"</code></pre>
-            <p class="code-note">
-              The commit SHA identifies source history. The
-              <code>sha256:...</code> image digest identifies image content.
-              The build connects them through the tag and image metadata.
-            </p>
-          </div>
-          <aside class="callout">
-            A SHA-looking tag is not automatically immutable. Docker tags are
-            names that can be reassigned unless registry policy prevents it.
-            A commit-SHA tag is a useful release convention, but the image
-            digest is the content-derived identifier. Stage 4's "immutable
-            SHA tag" means "tagged to a specific source commit"; do not assume
-            the registry rejects someone moving that tag.
-          </aside>
-        </section>
-
-        <section class="section" aria-labelledby="questions-title">
-          <div class="section-head">
-            <div class="section-title">
-              <p class="eyebrow">Questions that come up while wiring it</p>
-              <h2 id="questions-title">A few practical clarifications</h2>
-            </div>
-            <p class="section-note">
-              These are the distinctions that make registry setup easier to
-              troubleshoot.
-            </p>
-          </div>
-          <div class="faq-grid">
-            <article class="panel question">
-              <h3>Why did ghcr.io open a GitHub Actions page?</h3>
-              <p>
-                Visiting <code>https://ghcr.io</code> in a browser currently
-                redirects to GitHub's Actions feature page. That root address
-                is not the registry's package browser. Docker tools use
-                <code>ghcr.io</code> as the registry hostname with a full image
-                path, such as
-                <code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:tag</code>.
-              </p>
-              <p>
-                Actions and GHCR are separate services. Actions runs the
-                workflow; GHCR stores and serves the image. The direct
-                <a href="https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry">container registry docs</a>
-                explain the package service.
-              </p>
-            </article>
-            <article class="panel question">
-              <h3>Is GHCR outdated, or does GitHub Actions replace it?</h3>
-              <p>
-                No. Current GitHub documentation still describes publishing
-                images to GitHub Packages and container registries. Actions is
-                one way to automate a build and push. GHCR is one place to
-                store the result.
-              </p>
-            </article>
-            <article class="panel question">
-              <h3>Does the registry build the image?</h3>
-              <p>
-                Usually the CI runner builds it from the Dockerfile and pushes
-                the finished image. Some registry services also offer
-                automated builds, but this project builds in GitHub Actions.
-                The registry's job here is storage and distribution.
-              </p>
-            </article>
-            <article class="panel question">
-              <h3>What does the workflow token actually allow?</h3>
-              <p>
-                The publishing job requests only the permissions it needs, such
-                as <code>contents: read</code> to check out source and
-                <code>packages: write</code> to publish the image. Pull
-                requests should not get that publish permission. EC2 uses
-                separate, read-only registry credentials to pull private
-                images.
-              </p>
-            </article>
-          </div>
-        </section>
-
-        <section class="section" aria-labelledby="stage-map-title">
-          <div class="section-head">
-            <div class="section-title">
-              <p class="eyebrow">Back to the lesson</p>
-              <h2 id="stage-map-title">What Stage 4 is asking you to wire up</h2>
-            </div>
-            <p class="section-note">
-              Stage 4 is the publish step after Stage 3's checks. It does not
-              deploy the app to EC2 yet. Later stages configure the host to
-              pull and run these images.
-            </p>
-          </div>
-          <div class="definition-grid">
-            <article class="panel github">
-              <span class="label github-text">GitHub Actions job</span>
-              <ul>
-                <li>Run only for a trusted commit after the checks pass.</li>
-                <li>Grant <code>contents: read</code> and <code>packages: write</code> to the publish job.</li>
-                <li>Log in to <code>ghcr.io</code> with that job's <code>GITHUB_TOKEN</code>.</li>
-                <li>Build and push separate client and server images, tagged with the commit ID.</li>
-              </ul>
-            </article>
-            <article class="panel">
-              <span class="label">Later, on EC2</span>
-              <ul>
-                <li>Log in with credentials that can read the private packages.</li>
-                <li>Set the release tag to the commit that should run.</li>
-                <li>Use Docker Compose to pull both matching images.</li>
-                <li>Start the services and check application health.</li>
-              </ul>
-            </article>
-          </div>
-          <p class="footer-note">
-            For the exact GitHub workflow syntax, the
-            <a href="https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images">GitHub publishing guide</a>
-            covers GHCR and Docker Hub. The
-            <a href="https://docs.docker.com/docker-hub/repos/">Docker Hub repository guide</a>
-            explains Hub repositories. The
-            <a href="https://github.com/opencontainers/image-spec/blob/main/manifest.md">OCI manifest spec</a>
-            defines image manifests. The
-            <a href="https://git-scm.com/book/en/v2/Git-Internals-Git-Objects">Git object guide</a>
-            explains Git object IDs.
-          </p>
-        </section>
-
+        <!-- ================================================================= -->
+        <!-- TOPIC 1: Git Commit SHA in CI/CD -->
+        <!-- ================================================================= -->
         <section
-          class="section delivery-map"
-          aria-labelledby="delivery-map-title"
+          id="topic-1"
+          class="topic-section"
+          data-id="topic-1"
+          data-title="1. Git Commit SHA in CI/CD"
         >
-          <div class="section-head">
-            <div class="section-title">
-              <p class="eyebrow">The complete capstone route</p>
-              <h2 id="delivery-map-title">
-                From app code to a checked release on EC2
-              </h2>
+          <header class="topic-header">
+            <div class="topic-eyebrow">Topic 01 · Conceptual Foundations</div>
+            <h1 class="topic-title">Git Commit SHA: The Digital Birth Certificate</h1>
+            <div class="user-query-box">
+              <b>Your Question / Confusion:</b>
+              <p>"I am new to this deployment and CI/CD so whenever I read Git commit SHA I think about GitHub commit, and this gets more hard to connect and make sense of."</p>
             </div>
-            <p class="section-note map-intro">
-              Follow the numbered parts in order. Each diagram keeps the
-              checkpoints visible, including the pull request stop, both image
-              builds, the host's private files, the health check, and rollback.
-              On a narrow screen, scroll inside a diagram rather than losing a
-              step.
+          </header>
+
+          <div class="short-answer-card">
+            <b>Short Answer:</b>
+            <p>Your intuition is 100% correct: it <em>is</em> the exact commit hash from your Git repository. In CI/CD, we stamp that exact Git SHA onto the Docker image as its name tag so that any running container on EC2 can be traced directly back to the exact lines of code that created it.</p>
+          </div>
+
+          <div class="section-block">
+            <h3>Why You Naturally Think of GitHub (And Why You're Right!)</h3>
+            <p>
+              When you commit code with <code>git commit -m "fix login bug"</code>, Git computes a unique 40-character cryptographic hash based on the exact files, author, timestamp, and previous commit (for example, <code>e8f91c0b395...</code>, usually shortened to <code>e8f91c0</code>). That hash represents a frozen snapshot of your source code.
+            </p>
+            <p>
+              When people new to CI/CD see <code>e8f91c0</code> appearing in Docker commands, container registries, and EC2 deployment scripts, they often ask: <em>"Why is my Git commit hash showing up inside Docker and AWS?"</em>
+            </p>
+            <p>
+              The reason is simple: <strong>Git and Docker are two completely separate systems that know nothing about each other.</strong>
+            </p>
+            <ul>
+              <li><strong>The Source Code World (Git / GitHub):</strong> Stores text files (<code>.js</code>, <code>.tsx</code>, <code>Dockerfile</code>), branches, and pull requests.</li>
+              <li><strong>The Runtime World (Docker / EC2):</strong> Stores binary filesystem layers, Linux namespaces, and running processes.</li>
+            </ul>
+            <p>
+              If you build a Docker image locally with <code>docker build -t my-app .</code>, Docker packages whatever files happen to be in your folder, slaps the name <code>my-app</code> on it, and forgets everything else. Docker doesn't know who wrote the code, which branch it came from, or whether tests passed.
             </p>
           </div>
 
-          <article class="map-part">
-            <header class="map-part-head">
-              <div>
-                <p class="eyebrow">01 / Verify a proposed change</p>
-                <h3>Source code enters the pull request gate</h3>
+          <div class="section-block">
+            <h3>The Problem: The "Blind Deployment"</h3>
+            <p>
+              Suppose an engineer tags an image as <code>my-app:latest</code> or <code>my-app:v1</code> and pushes it to an EC2 server. Two days later, at 3:00 AM, the server crashes with a memory leak.
+            </p>
+            <p>
+              The engineer on call logs into EC2 and checks running containers. They see <code>my-app:latest</code>.
+            </p>
+            <div class="callout danger">
+              <b>The Nightmare of Untraced Releases:</b>
+              What code is actually running inside that container? Is it yesterday's commit? Last week's commit? Did someone test an experimental branch? Did someone build it on a laptop without committing changes? <strong>Nobody knows.</strong> You cannot debug code if you don't know what code is running.
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3>How CI/CD Bridges the Two Worlds</h3>
+            <p>
+              In modern CI/CD, GitHub Actions acts as the bridge. When code merges to <code>main</code>, the GitHub Actions runner automatically receives GitHub's built-in variable: <code>${{ github.sha }}</code>.
+            </p>
+            <div class="code-snippet">
+              <button class="copy-btn">Copy</button>
+              <pre><code># Inside .github/workflows/deploy.yml
+- name: Build and Push Docker Image
+  uses: docker/build-push-action@v5
+  with:
+    context: .
+    push: true
+    # We stamp the exact 7-character Git commit SHA onto the Docker image tag:
+    tags: ghcr.io/s3nsh1-dev/todo-server:sha-${{ github.sha }}</code></pre>
+            </div>
+            <p>
+              Now, when EC2 runs <code>ghcr.io/s3nsh1-dev/todo-server:sha-e8f91c0</code>, the running container has its <strong>digital birth certificate</strong> stamped right on its forehead.
+            </p>
+            <p>
+              If anything fails on EC2, you take <code>e8f91c0</code>, paste it into GitHub or type <code>git checkout e8f91c0</code>, and you immediately see:
+            </p>
+            <ol>
+              <li>The exact line-by-line diff of code running in production.</li>
+              <li>Who authored and approved the pull request.</li>
+              <li>The exact CI test logs (Playwright, Jest, ESLint) that verified this build.</li>
+            </ol>
+          </div>
+
+          <!-- Interactive SVG Diagram 1 -->
+          <div class="diagram-card">
+            <div class="diagram-toolbar">
+              <span class="diagram-title">Mechanism Diagram: The Git-to-EC2 Traceability Bridge</span>
+              <div class="btn-group" id="bridge-sim-btn-group">
+                <button class="sim-btn active" data-mode="sha">Traceable Release (Git SHA Tag)</button>
+                <button class="sim-btn" data-mode="blind">Blind Release (:latest / No SHA)</button>
               </div>
-              <p>
-                Client, server, and end-to-end checks can run in parallel.
-                Their results join at one merge decision.
-              </p>
-            </header>
-            <figure class="map-figure">
-              <svg
-                class="pipeline-diagram"
-                viewBox="0 0 1340 380"
-                role="img"
-                aria-label="Client and server code with Dockerfiles enter a pull request. GitHub Actions runs client checks, server checks with disposable PostgreSQL, and Playwright end-to-end checks in parallel. All required checks must pass to merge. A failed check blocks the pull request and cannot publish or deploy."
-              >
-                <defs>
-                  <marker
-                    id="m-pr-github"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--github)"></path>
-                  </marker>
-                  <marker
-                    id="m-pr-safe"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--safe)"></path>
-                  </marker>
-                  <marker
-                    id="m-pr-warn"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--caution)"></path>
-                  </marker>
-                </defs>
+            </div>
 
-                <!-- 1. Pipeline Wires -->
-                <g class="pipeline-wires">
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pr-github)"
-                    d="M180 190 H245"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pr-github)"
-                    d="M390 190 H455"
-                  ></path>
-                  <path class="wire github-wire" d="M620 190 H665"></path>
-                  <path class="bus" d="M665 87 V293"></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pr-github)"
-                    d="M665 87 H710"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pr-github)"
-                    d="M665 190 H710"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pr-github)"
-                    d="M665 293 H710"
-                  ></path>
-                  <path class="wire github-wire" d="M975 87 H1015"></path>
-                  <path class="wire github-wire" d="M975 190 H1015"></path>
-                  <path class="wire github-wire" d="M975 293 H1015"></path>
-                  <path class="bus" d="M1015 87 V293"></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pr-github)"
-                    d="M1015 190 H1060"
-                  ></path>
-                  <path
-                    class="wire safe-wire"
-                    marker-end="url(#m-pr-safe)"
-                    d="M1195 167 H1225 V87 H1255"
-                  ></path>
-                  <path
-                    class="wire warn-wire"
-                    marker-end="url(#m-pr-warn)"
-                    d="M1195 213 H1225 V293 H1255"
-                  ></path>
-                </g>
+            <svg
+              id="svg-bridge"
+              class="svg-canvas"
+              viewBox="0 0 960 260"
+              role="img"
+              aria-label="Interactive diagram illustrating how Git commit SHAs bridge GitHub repositories and EC2 Docker containers"
+            >
+              <defs>
+                <marker id="m-arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--blue)" />
+                </marker>
+                <marker id="m-arrow-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--rose)" />
+                </marker>
+                <marker id="m-arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--emerald)" />
+                </marker>
+              </defs>
 
-                <!-- 2. Pipeline Nodes -->
-                <g class="pipeline-nodes">
-                  <rect class="node source" x="20" y="130" width="160" height="120" rx="6"></rect>
-                  <text class="node-tag" x="36" y="154">REPOSITORY</text>
-                  <text class="node-title" x="36" y="180">App source</text>
-                  <text class="node-copy" x="36" y="202">React + Nginx client</text>
-                  <text class="node-copy" x="36" y="222">Express server + Dockerfiles</text>
+              <!-- Node 1: GitHub Source Code -->
+              <g class="svg-node" id="bridge-node-git" transform="translate(30, 40)">
+                <rect class="svg-node-box blue" width="200" height="150" />
+                <text class="svg-text-title" x="20" y="34">1. Git Repository</text>
+                <text class="svg-text-sub" x="20" y="58">Commit: e8f91c0</text>
+                <text class="svg-text-sub" x="20" y="82">Branch: refs/heads/main</text>
+                <text class="svg-text-sub" x="20" y="106">Author: alice@dev.io</text>
+                <text class="svg-text-sub" x="20" y="130" fill="var(--blue-text)">PR #42 Merged ✓</text>
+              </g>
 
-                  <rect class="node github-node" x="245" y="145" width="145" height="90" rx="6"></rect>
-                  <text class="node-tag" x="261" y="169">GIT</text>
-                  <text class="node-title" x="261" y="193">Feature branch</text>
-                  <text class="node-copy" x="261" y="214">commit opens PR</text>
+              <!-- Wire 1: Git to CI -->
+              <path id="bridge-wire-1" class="svg-wire active" d="M 230 115 H 280" marker-end="url(#m-arrow-blue)" />
 
-                  <rect class="node github-node" x="455" y="145" width="165" height="90" rx="6"></rect>
-                  <text class="node-tag" x="471" y="169">GITHUB ACTIONS</text>
-                  <text class="node-title" x="471" y="193">PR workflow</text>
-                  <text class="node-copy" x="471" y="214">read-only permissions</text>
+              <!-- Node 2: GitHub Actions CI/CD -->
+              <g class="svg-node" id="bridge-node-ci" transform="translate(280, 40)">
+                <rect class="svg-node-box blue" width="200" height="150" />
+                <text class="svg-text-title" x="20" y="34">2. GitHub Actions</text>
+                <text class="svg-text-sub" x="20" y="58">Runner reads ${{ github.sha }}</text>
+                <text class="svg-text-sub" x="20" y="82">Passes Playwright E2E ✓</text>
+                <text class="svg-text-sub" x="20" y="106">Builds &amp; stamps tag:</text>
+                <text id="bridge-txt-ci-tag" class="svg-text-sub" x="20" y="130" fill="var(--blue-text)">:sha-e8f91c0</text>
+              </g>
 
-                  <rect class="node" x="710" y="55" width="265" height="64" rx="6"></rect>
-                  <text class="node-title" x="726" y="80">Client verification</text>
-                  <text class="node-copy" x="726" y="101">pnpm install → lint → build</text>
+              <!-- Wire 2: CI to Registry -->
+              <path id="bridge-wire-2" class="svg-wire active" d="M 480 115 H 530" marker-end="url(#m-arrow-blue)" />
 
-                  <rect class="node" x="710" y="158" width="265" height="64" rx="6"></rect>
-                  <text class="node-title" x="726" y="183">Server verification</text>
-                  <text class="node-copy" x="726" y="204">typecheck + integration tests / test DB</text>
+              <!-- Node 3: Container Registry GHCR -->
+              <g class="svg-node" id="bridge-node-ghcr" transform="translate(530, 40)">
+                <rect class="svg-node-box blue" width="190" height="150" />
+                <text class="svg-text-title" x="20" y="34">3. GHCR Registry</text>
+                <text class="svg-text-sub" x="20" y="58">ghcr.io/s3nsh1-dev/...</text>
+                <text id="bridge-txt-ghcr-tag" class="svg-text-sub" x="20" y="85" font-weight="bold">Tag: :sha-e8f91c0</text>
+                <text class="svg-text-sub" x="20" y="110">Digest: sha256:7f1b...</text>
+                <text class="svg-text-sub" x="20" y="132" fill="var(--emerald-text)">Immutable Artifact</text>
+              </g>
 
-                  <rect class="node" x="710" y="261" width="265" height="64" rx="6"></rect>
-                  <text class="node-title" x="726" y="286">Full-stack Playwright</text>
-                  <text class="node-copy" x="726" y="307">browser → client → API → test DB</text>
+              <!-- Wire 3: Registry to EC2 -->
+              <path id="bridge-wire-3" class="svg-wire active" d="M 720 115 H 770" marker-end="url(#m-arrow-blue)" />
 
-                  <rect class="node github-node" x="1060" y="145" width="135" height="90" rx="6"></rect>
-                  <text class="node-title" x="1076" y="176">All checks</text>
-                  <text class="node-title" x="1076" y="196">green?</text>
-                  <text class="node-copy" x="1076" y="217">required status gate</text>
+              <!-- Node 4: EC2 Server -->
+              <g class="svg-node" id="bridge-node-ec2" transform="translate(770, 40)">
+                <rect id="bridge-box-ec2" class="svg-node-box emerald" width="160" height="150" />
+                <text class="svg-text-title" x="18" y="34">4. AWS EC2 Host</text>
+                <text class="svg-text-sub" x="18" y="58">Docker Compose</text>
+                <text id="bridge-txt-ec2-run" class="svg-text-sub" x="18" y="85">image: ...:sha-e8f91c0</text>
+                <text id="bridge-txt-ec2-status" class="svg-text-sub" x="18" y="115" fill="var(--emerald-text)" font-weight="bold">100% Traceable ✓</text>
+                <text class="svg-text-sub" x="18" y="135">Zero Guesswork</text>
+              </g>
 
-                  <rect class="node safe-node" x="1255" y="55" width="75" height="64" rx="6"></rect>
-                  <text class="node-title" x="1267" y="80">Merge</text>
-                  <text class="node-copy" x="1267" y="101">to main</text>
+              <!-- Bidirectional Audit Loop Wire (Only visible in SHA mode) -->
+              <path id="bridge-wire-audit" class="svg-wire success" d="M 850 190 V 225 H 130 V 190" marker-end="url(#m-arrow-emerald)" />
+              <text id="bridge-txt-audit" class="svg-text-wire" x="480" y="242" text-anchor="middle" fill="var(--emerald-text)">
+                Reverse Audit Trail: Instant link from running container back to Git commit &amp; author
+              </text>
+            </svg>
 
-                  <rect class="node warn-node" x="1255" y="261" width="75" height="64" rx="6"></rect>
-                  <text class="node-title" x="1267" y="286">Blocked</text>
-                  <text class="node-copy" x="1267" y="307">fix + retry</text>
-
-                  <text class="node-copy" x="975" y="365">PRs cannot publish images or deploy to EC2.</text>
-                </g>
-
-                <!-- 3. Wire Labels (rendered on top, never hidden) -->
-                <g class="pipeline-labels">
-                  <text class="wire-label" text-anchor="middle" x="212" y="176">push branch</text>
-                  <text class="wire-label" text-anchor="middle" x="422" y="176">open PR</text>
-                  <text class="wire-label" text-anchor="middle" x="665" y="58">parallel jobs</text>
-                  <text class="wire-label" text-anchor="middle" x="1037" y="176">all pass</text>
-                  <text class="wire-label" text-anchor="middle" x="1225" y="74">yes</text>
-                  <text class="wire-label" text-anchor="middle" x="1225" y="315">no</text>
-                </g>
-              </svg>
-              <figcaption>
-                A failure stops at the PR. Only a merge to the protected main
-                branch moves the change into the release path.
-              </figcaption>
-            </figure>
-          </article>
-
-          <article class="map-part">
-            <header class="map-part-head">
-              <div>
-                <p class="eyebrow">02 / Publish the approved commit</p>
-                <h3>Checks unlock two separate GHCR images</h3>
-              </div>
-              <p>
-                A push to main runs the checks again. The publish job depends
-                on all of them and tags both images from the same source
-                commit.
-              </p>
-            </header>
-            <figure class="map-figure">
-              <svg
-                class="pipeline-diagram"
-                viewBox="0 0 1340 370"
-                role="img"
-                aria-label="A main branch push and commit SHA rerun all verification jobs. When those jobs pass, a main-only publish job checks out source with contents read permission, authenticates to GHCR with GITHUB_TOKEN and packages write permission, uses Buildx and cache, builds client and server images separately with the same commit SHA tag and OCI metadata, then pushes both private images and their manifests to GHCR."
-              >
-                <defs>
-                  <marker
-                    id="m-pub-github"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--github)"></path>
-                  </marker>
-                  <marker
-                    id="m-pub-muted"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--muted)"></path>
-                  </marker>
-                </defs>
-
-                <!-- 1. Pipeline Wires -->
-                <g class="pipeline-wires">
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pub-github)"
-                    d="M165 165 H230"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pub-github)"
-                    d="M395 165 H460"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pub-github)"
-                    d="M625 165 H690"
-                  ></path>
-                  <path class="wire github-wire" d="M855 165 H895"></path>
-                  <path class="bus" d="M895 95 V235"></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pub-github)"
-                    d="M895 95 H945"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-pub-github)"
-                    d="M895 235 H945"
-                  ></path>
-                  <path
-                    class="wire"
-                    marker-end="url(#m-pub-muted)"
-                    d="M1135 95 H1200"
-                  ></path>
-                  <path
-                    class="wire"
-                    marker-end="url(#m-pub-muted)"
-                    d="M1135 235 H1200"
-                  ></path>
-                </g>
-
-                <!-- 2. Pipeline Nodes -->
-                <g class="pipeline-nodes">
-                  <rect class="node source" x="20" y="120" width="145" height="90" rx="6"></rect>
-                  <text class="node-tag" x="36" y="144">TRUSTED SOURCE</text>
-                  <text class="node-title" x="36" y="169">main commit</text>
-                  <text class="node-copy" x="36" y="190">source: $GITHUB_SHA</text>
-
-                  <rect class="node github-node" x="230" y="120" width="165" height="90" rx="6"></rect>
-                  <text class="node-title" x="246" y="150">Rerun PR checks</text>
-                  <text class="node-copy" x="246" y="172">client + server + E2E</text>
-                  <text class="node-copy" x="246" y="192">publish needs all 3</text>
-
-                  <rect class="node github-node" x="460" y="120" width="165" height="90" rx="6"></rect>
-                  <text class="node-tag" x="476" y="144">MAIN ONLY</text>
-                  <text class="node-title" x="476" y="169">Publish job</text>
-                  <text class="node-copy" x="476" y="190">contents: read</text>
-                  <text class="node-copy" x="476" y="205">packages: write</text>
-
-                  <rect class="node" x="690" y="120" width="165" height="90" rx="6"></rect>
-                  <text class="node-title" x="706" y="150">GHCR login</text>
-                  <text class="node-copy" x="706" y="172">GITHUB_TOKEN</text>
-                  <text class="node-copy" x="706" y="192">Buildx + layer cache</text>
-
-                  <rect class="node" x="945" y="55" width="190" height="80" rx="6"></rect>
-                  <text class="node-title" x="961" y="83">Build client</text>
-                  <text class="node-copy" x="961" y="104">client Dockerfile + context</text>
-                  <text class="node-copy" x="961" y="122">tag: sha-&lt;commit&gt;</text>
-
-                  <rect class="node" x="945" y="195" width="190" height="80" rx="6"></rect>
-                  <text class="node-title" x="961" y="223">Build server</text>
-                  <text class="node-copy" x="961" y="244">server Dockerfile + context</text>
-                  <text class="node-copy" x="961" y="262">tag: sha-&lt;commit&gt;</text>
-
-                  <rect class="node docker-node" x="1200" y="45" width="130" height="100" rx="6"></rect>
-                  <text class="node-tag" x="1212" y="67">PRIVATE GHCR</text>
-                  <text class="node-title" x="1212" y="91">client image</text>
-                  <text class="node-copy" x="1212" y="111">manifest + layers</text>
-                  <text class="node-copy" x="1212" y="129">OCI source / rev</text>
-
-                  <rect class="node docker-node" x="1200" y="185" width="130" height="100" rx="6"></rect>
-                  <text class="node-tag" x="1212" y="207">PRIVATE GHCR</text>
-                  <text class="node-title" x="1212" y="231">server image</text>
-                  <text class="node-copy" x="1212" y="251">manifest + layers</text>
-                  <text class="node-copy" x="1212" y="269">OCI source / rev</text>
-
-                  <text class="node-copy" x="24" y="335">
-                    Both image tags use the same source commit; the image digests identify the built contents.
-                  </text>
-                </g>
-
-                <!-- 3. Wire Labels (rendered on top, never hidden) -->
-                <g class="pipeline-labels">
-                  <text class="wire-label" text-anchor="middle" x="197" y="150">push main</text>
-                  <text class="wire-label" text-anchor="middle" x="427" y="150">checks pass</text>
-                  <text class="wire-label" text-anchor="middle" x="657" y="150">auth token</text>
-                  <text class="wire-label" text-anchor="middle" x="895" y="42">build separately</text>
-                  <text class="wire-label" text-anchor="middle" x="920" y="82">client</text>
-                  <text class="wire-label" text-anchor="middle" x="920" y="222">server</text>
-                  <text class="wire-label" text-anchor="middle" x="1167" y="82">push</text>
-                  <text class="wire-label" text-anchor="middle" x="1167" y="222">push</text>
-                </g>
-              </svg>
-              <figcaption>
-                The commit SHA ties both packages to one source revision. Each
-                image has its own manifest and content digest in GHCR.
-              </figcaption>
-            </figure>
-          </article>
-
-          <article class="map-part">
-            <header class="map-part-head">
-              <div>
-                <p class="eyebrow">03 / Send the release to EC2</p>
-                <h3>Deploy the exact two tags, not source code</h3>
-              </div>
-              <p>
-                The deploy job serializes releases, verifies the SSH host, and
-                tells EC2 which already-built commit to run.
-              </p>
-            </header>
-            <figure class="map-figure">
-              <svg
-                class="pipeline-diagram"
-                viewBox="0 0 1380 370"
-                role="img"
-                aria-label="After publish succeeds, a serialized GitHub Actions deploy job uses protected SSH secrets and verifies the EC2 host key, copies the production Compose file, and sends the release commit SHA. EC2 stores IMAGE_TAG in release.env and DATABASE_URL in permission-restricted server.env, logs into private GHCR using read-only credentials, and Docker Compose pulls the client and server images tagged with the release SHA."
-              >
-                <defs>
-                  <marker
-                    id="m-dep-github"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--github)"></path>
-                  </marker>
-                  <marker
-                    id="m-dep-safe"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--safe)"></path>
-                  </marker>
-                  <marker
-                    id="m-dep-muted"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--muted)"></path>
-                  </marker>
-                </defs>
-
-                <!-- 1. Pipeline Wires -->
-                <g class="pipeline-wires">
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-dep-github)"
-                    d="M170 165 H240"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-dep-github)"
-                    d="M420 165 H495"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-dep-github)"
-                    d="M700 165 H780"
-                  ></path>
-                  <path
-                    class="wire safe-wire"
-                    marker-end="url(#m-dep-safe)"
-                    d="M970 165 H1045"
-                  ></path>
-                  <path class="wire safe-wire" d="M1200 165 H1235"></path>
-                  <path class="bus" d="M1235 95 V235"></path>
-                  <path
-                    class="wire safe-wire"
-                    marker-end="url(#m-dep-safe)"
-                    d="M1235 95 H1265"
-                  ></path>
-                  <path
-                    class="wire safe-wire"
-                    marker-end="url(#m-dep-safe)"
-                    d="M1235 235 H1265"
-                  ></path>
-                </g>
-
-                <!-- 2. Pipeline Nodes -->
-                <g class="pipeline-nodes">
-                  <rect class="node github-node" x="20" y="120" width="150" height="90" rx="6"></rect>
-                  <text class="node-tag" x="36" y="144">DEPLOY JOB</text>
-                  <text class="node-title" x="36" y="169">Serialized</text>
-                  <text class="node-copy" x="36" y="190">one deploy at a time</text>
-
-                  <rect class="node github-node" x="240" y="105" width="180" height="120" rx="6"></rect>
-                  <text class="node-tag" x="256" y="129">SECURITY</text>
-                  <text class="node-title" x="256" y="152">Protect SSH</text>
-                  <text class="node-copy" x="256" y="174">GitHub secrets: key + host</text>
-                  <text class="node-copy" x="256" y="194">verify known host key</text>
-                  <text class="node-copy" x="256" y="212">no secrets in logs</text>
-
-                  <rect class="node github-node" x="495" y="105" width="205" height="120" rx="6"></rect>
-                  <text class="node-tag" x="511" y="129">TRANSFER CONTRACT</text>
-                  <text class="node-title" x="511" y="152">Transfer release</text>
-                  <text class="node-copy" x="511" y="174">production Compose file</text>
-                  <text class="node-copy" x="511" y="194">release.env: IMAGE_TAG</text>
-                  <text class="node-copy" x="511" y="212">keep prior SHA for rollback</text>
-
-                  <rect class="node source" x="780" y="90" width="190" height="150" rx="6"></rect>
-                  <text class="node-tag" x="796" y="114">UBUNTU EC2</text>
-                  <text class="node-title" x="796" y="138">Host-only settings</text>
-                  <text class="node-copy" x="796" y="160">server.env: DATABASE_URL</text>
-                  <text class="node-copy" x="796" y="180">file mode: chmod 600</text>
-                  <text class="node-copy" x="796" y="200">GHCR read-only login</text>
-                  <text class="node-copy" x="796" y="220">no secrets in images</text>
-
-                  <rect class="node docker-node" x="1045" y="120" width="155" height="90" rx="6"></rect>
-                  <text class="node-title" x="1061" y="150">Compose pull</text>
-                  <text class="node-copy" x="1061" y="172">uses release.env tag</text>
-                  <text class="node-copy" x="1061" y="192">pulls prebuilt images</text>
-
-                  <rect class="node docker-node" x="1265" y="55" width="105" height="80" rx="6"></rect>
-                  <text class="node-title" x="1277" y="83">client</text>
-                  <text class="node-copy" x="1277" y="104">image: SHA</text>
-                  <text class="node-copy" x="1277" y="122">Nginx (:80)</text>
-
-                  <rect class="node docker-node" x="1265" y="195" width="105" height="80" rx="6"></rect>
-                  <text class="node-title" x="1277" y="223">server</text>
-                  <text class="node-copy" x="1277" y="244">image: SHA</text>
-                  <text class="node-copy" x="1277" y="262">API internal</text>
-
-                  <text class="node-copy" x="24" y="325">
-                    Network exposure: port 80 reaches Nginx; the Express API has no public host port.
-                  </text>
-                </g>
-
-                <!-- 3. Wire Labels (rendered on top, never hidden) -->
-                <g class="pipeline-labels">
-                  <text class="wire-label" text-anchor="middle" x="205" y="150">publish passed</text>
-                  <text class="wire-label" text-anchor="middle" x="457" y="150">verified SSH</text>
-                  <text class="wire-label" text-anchor="middle" x="740" y="150">send release.env</text>
-                  <text class="wire-label" text-anchor="middle" x="1007" y="150">pull by SHA</text>
-                  <text class="wire-label" text-anchor="middle" x="1245" y="82">client</text>
-                  <text class="wire-label" text-anchor="middle" x="1245" y="222">server</text>
-                </g>
-              </svg>
-              <figcaption>
-                EC2 receives a Compose file and release value, then pulls the
-                images from GHCR. The database URL stays in a protected
-                host-only file.
-              </figcaption>
-            </figure>
-          </article>
-
-          <article class="map-part">
-            <header class="map-part-head">
-              <div>
-                <p class="eyebrow">04 / Prove the release is healthy</p>
-                <h3>Route traffic, check health, restore if needed</h3>
-              </div>
-              <p>
-                Deployment is not done when containers start. The workflow
-                checks the public health route and has a previous SHA to
-                restore if the new release fails.
-              </p>
-            </header>
-            <figure class="map-figure">
-              <svg
-                class="pipeline-diagram"
-                viewBox="0 0 1360 380"
-                role="img"
-                aria-label="A browser sends requests to the EC2 public port 80, Nginx serves the client and proxies API requests to the internal Express server, which connects to Neon PostgreSQL using DATABASE_URL from server.env. GitHub Actions polls the public API health endpoint. On success it records the new SHA as current and keeps the previous SHA. On failure it restores the prior IMAGE_TAG, reruns Docker Compose, checks health again, and reports deployment failure without exposing secrets."
-              >
-                <defs>
-                  <marker
-                    id="m-hlt-github"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--github)"></path>
-                  </marker>
-                  <marker
-                    id="m-hlt-safe"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--safe)"></path>
-                  </marker>
-                  <marker
-                    id="m-hlt-warn"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--caution)"></path>
-                  </marker>
-                  <marker
-                    id="m-hlt-muted"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path d="M0 0 L8 4 L0 8 Z" fill="var(--muted)"></path>
-                  </marker>
-                </defs>
-
-                <!-- 1. Pipeline Wires -->
-                <g class="pipeline-wires">
-                  <path
-                    class="wire"
-                    marker-end="url(#m-hlt-muted)"
-                    d="M150 125 H220"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-hlt-github)"
-                    d="M380 125 H455"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-hlt-github)"
-                    d="M615 125 H695"
-                  ></path>
-                  <path
-                    class="wire github-wire"
-                    marker-end="url(#m-hlt-github)"
-                    d="M860 125 H935"
-                  ></path>
-                  <path
-                    class="wire safe-wire"
-                    marker-end="url(#m-hlt-safe)"
-                    d="M1105 105 H1175"
-                  ></path>
-                  <!-- Rollback branches -->
-                  <path
-                    class="wire warn-wire"
-                    marker-end="url(#m-hlt-warn)"
-                    d="M1020 170 V270 H800"
-                  ></path>
-                  <path
-                    class="wire warn-wire"
-                    marker-end="url(#m-hlt-warn)"
-                    d="M600 270 H300 V165"
-                  ></path>
-                  <path
-                    class="wire warn-wire"
-                    marker-end="url(#m-hlt-warn)"
-                    d="M800 270 H880"
-                  ></path>
-                </g>
-
-                <!-- 2. Pipeline Nodes -->
-                <g class="pipeline-nodes">
-                  <rect class="node source" x="20" y="85" width="130" height="80" rx="6"></rect>
-                  <text class="node-title" x="36" y="114">Browser</text>
-                  <text class="node-copy" x="36" y="136">public request</text>
-
-                  <rect class="node docker-node" x="220" y="85" width="160" height="80" rx="6"></rect>
-                  <text class="node-title" x="236" y="114">Nginx client</text>
-                  <text class="node-copy" x="236" y="136">host port 80 only</text>
-
-                  <rect class="node docker-node" x="455" y="85" width="160" height="80" rx="6"></rect>
-                  <text class="node-title" x="471" y="114">Express API</text>
-                  <text class="node-copy" x="471" y="136">Compose network</text>
-
-                  <rect class="node source" x="695" y="85" width="165" height="80" rx="6"></rect>
-                  <text class="node-title" x="711" y="114">Neon Postgres</text>
-                  <text class="node-copy" x="711" y="136">URL: server.env</text>
-
-                  <rect class="node github-node" x="935" y="65" width="170" height="105" rx="6"></rect>
-                  <text class="node-tag" x="951" y="89">GITHUB ACTIONS</text>
-                  <text class="node-title" x="951" y="112">Health poll</text>
-                  <text class="node-copy" x="951" y="132">GET /api/health</text>
-                  <text class="node-copy" x="951" y="150">through public Nginx</text>
-
-                  <rect class="node safe-node" x="1175" y="65" width="165" height="85" rx="6"></rect>
-                  <text class="node-title" x="1191" y="94">Release confirmed</text>
-                  <text class="node-copy" x="1191" y="116">record current SHA</text>
-                  <text class="node-copy" x="1191" y="134">keep prior SHA</text>
-
-                  <rect class="node warn-node" x="600" y="235" width="200" height="85" rx="6"></rect>
-                  <text class="node-tag" x="616" y="257">AUTOMATED RECOVERY</text>
-                  <text class="node-title" x="616" y="279">Rollback</text>
-                  <text class="node-copy" x="616" y="299">restore prior IMAGE_TAG</text>
-                  <text class="node-copy" x="616" y="315">docker compose up -d</text>
-
-                  <rect class="node warn-node" x="880" y="235" width="195" height="85" rx="6"></rect>
-                  <text class="node-tag" x="896" y="257">FALLBACK VERIFIED</text>
-                  <text class="node-title" x="896" y="279">Check fallback</text>
-                  <text class="node-copy" x="896" y="299">GET /api/health on old tag</text>
-                  <text class="node-copy" x="896" y="315">alert failed deployment</text>
-                </g>
-
-                <!-- 3. Wire Labels (rendered on top, never hidden) -->
-                <g class="pipeline-labels">
-                  <text class="wire-label" text-anchor="middle" x="185" y="110">HTTP :80</text>
-                  <text class="wire-label" text-anchor="middle" x="417" y="110">/api/* proxy</text>
-                  <text class="wire-label" text-anchor="middle" x="655" y="110">DATABASE_URL</text>
-                  <text class="wire-label" text-anchor="middle" x="897" y="110">poll health</text>
-                  <text class="wire-label" text-anchor="middle" x="1140" y="90">200 OK</text>
-                  <text class="wire-label" text-anchor="start" x="1030" y="215">unhealthy</text>
-                  <text class="wire-label" text-anchor="middle" x="450" y="255">recreate prior tag</text>
-                  <text class="wire-label" text-anchor="middle" x="840" y="255">recheck</text>
-                </g>
-              </svg>
-              <figcaption>
-                A healthy deployment records the new SHA and preserves the
-                previous one. If health fails, Compose restores the previous
-                tag and the workflow reports the failed release.
-              </figcaption>
-            </figure>
-          </article>
-
-          <aside class="map-caution">
-            <b>Scope note.</b> This is the full target flow in the curriculum's
-            capstone. The workflow example on the Stage 4 lesson page currently
-            ends after publishing to GHCR. Production Compose, EC2 setup,
-            serialized SSH deployment, health polling, and rollback are added
-            in later stages.
-          </aside>
+            <div id="bridge-sim-caption" class="diagram-caption">
+              <strong>Traceable Release Active:</strong> The Git commit SHA (<code>e8f91c0</code>) passes from GitHub to the Actions workflow, becomes the Docker image tag in GHCR, and is deployed to EC2. If an incident happens on EC2, engineers have an immediate 1-to-1 reverse audit trail back to GitHub.
+            </div>
+          </div>
         </section>
-      </article>
-    </main>
+
+        <!-- ================================================================= -->
+        <!-- TOPIC 2: What is an Image Tag, When, Where, Who -->
+        <!-- ================================================================= -->
+        <section
+          id="topic-2"
+          class="topic-section"
+          data-id="topic-2"
+          data-title="2. Image Tags: What, When, Where &amp; Who"
+          hidden
+        >
+          <header class="topic-header">
+            <div class="topic-eyebrow">Topic 02 · Mechanics &amp; Terminology</div>
+            <h1 class="topic-title">Image Tags: What, When, Where &amp; Who</h1>
+            <div class="user-query-box">
+              <b>Your Question / Confusion:</b>
+              <p>"What is an image tag and when and where is it applied and who?"</p>
+            </div>
+          </header>
+
+          <div class="short-answer-card">
+            <b>Short Answer:</b>
+            <p>An image tag is a human-readable text label attached after the colon in a Docker image address (e.g., <code>:sha-e8f91c0</code> or <code>:v1.2.0</code>). In automated CI/CD, it is applied by GitHub Actions (the "who") right after automated tests pass (the "when"), stored inside the container registry (the "where"), and acts as a bookmark (the "what") so servers know exactly which build to pull.</p>
+          </div>
+
+          <div class="section-block">
+            <h3>The Anatomy of a Full Container Image Name</h3>
+            <p>
+              To understand what an image tag is, look at the full address of a production container image:
+            </p>
+            <div class="code-snippet">
+              <pre><code>ghcr.io / s3nsh1-dev / docker-beginner-simulation-client : sha-e8f91c0
+└──┬──┘   └───┬────┘   └──────────────────┬───────────┘   └───┬──────┘
+   │          │                           │                   │
+1. Host    2. Namespace (Owner)        3. Repository Name   4. TAG (The Label)</code></pre>
+            </div>
+            <p>
+              The tag is the component after the colon (<code>:</code>). If you don't provide a tag when running <code>docker pull ubuntu</code>, Docker quietly defaults to <code>ubuntu:latest</code>.
+            </p>
+          </div>
+
+          <div class="section-block">
+            <h3>Breaking Down the 4 W's</h3>
+
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>CI/CD Production Reality</th>
+                    <th>Local Developer Machine</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>WHAT is it?</strong></td>
+                    <td>A pointer or alias (like a sticky label on a box) that gives a human-readable name to a specific container image manifest.</td>
+                    <td>Same — a named pointer pointing to a local image ID on disk.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>WHEN is it applied?</strong></td>
+                    <td>During the release job in GitHub Actions, <em>immediately after</em> all quality, lint, and end-to-end browser tests have passed.</td>
+                    <td>When running <code>docker build -t name:tag .</code> or <code>docker tag src target:tag</code>.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>WHERE is it applied?</strong></td>
+                    <td>Constructed on the CI runner, then registered inside the <strong>Container Registry</strong> (GHCR) when pushed.</td>
+                    <td>Registered inside the local Docker daemon engine (<code>/var/lib/docker</code>).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>WHO applies it?</strong></td>
+                    <td>The automated CI pipeline (<strong>GitHub Actions runner</strong> running the Docker Buildx build step). No human manually types the command.</td>
+                    <td>The <strong>developer</strong> typing CLI commands in their terminal.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3>The Hidden Danger: Image Tags Are Mutable!</h3>
+            <p>
+              Here is the most critical fact about image tags that trips up beginners: <strong>Image tags are mutable pointers.</strong>
+            </p>
+            <p>
+              Think of a tag like a sticky note on a physical filing box. If someone has write access to your container registry, they can pull off the sticky note labelled <code>v1.0</code> or <code>latest</code> and stick it onto a completely different box with completely different code.
+            </p>
+            <div class="callout warning">
+              <b>Why <code>:latest</code> is Forbidden in Production Deployments:</b>
+              If your EC2 <code>docker-compose.yml</code> specifies <code>image: ghcr.io/my-org/todo-client:latest</code>, you have created a time-bomb. If two EC2 servers restart at different times, Server A might pull yesterday's <code>latest</code>, while Server B pulls today's <code>latest</code>. Your production fleet is now running two completely different versions of code simultaneously!
+            </div>
+            <p>
+              To fix this, production pipelines adopt <strong>immutable tagging conventions</strong>:
+            </p>
+            <ul>
+              <li><strong>Git Commit SHA tags:</strong> <code>:sha-e8f91c0</code> (Created for every commit merged into <code>main</code>).</li>
+              <li><strong>Semantic Version tags:</strong> <code>:v1.4.2</code> (Created when a Git release or Git tag is published).</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TOPIC 3: Why We Need This Much Metadata -->
+        <!-- ================================================================= -->
+        <section
+          id="topic-3"
+          class="topic-section"
+          data-id="topic-3"
+          data-title="3. Why So Much Deployment Metadata?"
+          hidden
+        >
+          <header class="topic-header">
+            <div class="topic-eyebrow">Topic 03 · Operational Reliability</div>
+            <h1 class="topic-title">Why So Much Metadata with Version Releasing?</h1>
+            <div class="user-query-box">
+              <b>Your Question / Confusion:</b>
+              <p>"Why we need this much metadata with deployment and version releasing?"</p>
+            </div>
+          </header>
+
+          <div class="short-answer-card">
+            <b>Short Answer:</b>
+            <p>Metadata exists because software in production will inevitably fail. Rich metadata (Git commit SHAs, build timestamps, author provenance, base image hashes, and release tags) transforms a catastrophic outage from hours of panic and guessing into an immediate 10-second diagnosis and a 30-second safe rollback.</p>
+          </div>
+
+          <div class="section-block">
+            <h3>The 4 Pillars of Production Metadata</h3>
+            <p>
+              When building hobby projects, you can copy files to a server with <code>scp</code> or <code>rsync</code> and run <code>npm restart</code>. But in real-world systems handling financial transactions, user data, or production traffic, that approach quickly causes outages.
+            </p>
+            <p>Here are the 4 fundamental reasons why CI/CD requires rich deployment metadata:</p>
+
+            <!-- Pillar 1 -->
+            <div class="callout tip">
+              <b>1. Instant Auditability &amp; Provenance ("Who Shipped This Bug?")</b>
+              When customer complaints flood in, you don't have time to inspect file modification dates. You run <code>docker ps</code> on EC2 and see:
+              <br /><code>ghcr.io/s3nsh1-dev/todo-server:sha-e8f91c0</code>
+              <br />In 15 seconds, you know: Pull Request #42, merged by Alice at 2:15 PM, commit message "Update authentication cookie settings".
+            </div>
+
+            <!-- Pillar 2 -->
+            <div class="callout tip">
+              <b>2. Deterministic &amp; Instant Rollback ("Time Travel Without Guessing")</b>
+              If the new release breaks production, you cannot "un-bake" code on the server. Because the CI pipeline pushes every release with its unique Git SHA tag, GHCR still holds the previous stable image (e.g., <code>:sha-3f9e1a0</code>).
+              <br />Rolling back doesn't require rebuilding or recompiling code. You simply tell Docker Compose on EC2 to run <code>image: ...:sha-3f9e1a0</code>. It restarts in seconds with the guaranteed working version.
+            </div>
+
+            <!-- Pillar 3 -->
+            <div class="callout tip">
+              <b>3. Artifact Immutability (Build Once, Run Everywhere)</b>
+              A major rule of software delivery is: <strong>Never rebuild code on the production server.</strong>
+              <br />If you build on EC2, an <code>npm install</code> could fetch a new sub-dependency that was updated 5 minutes ago, or your build tool could run out of memory. Metadata ensures that the exact Docker image built and tested in CI on GitHub Actions is byte-for-byte identical to what runs on EC2.
+            </div>
+
+            <!-- Pillar 4 -->
+            <div class="callout tip">
+              <b>4. Automated Security &amp; Vulnerability Scanning</b>
+              Modern registries scan images for known security vulnerabilities (CVEs). Container metadata tells the scanner: <em>"This image was built using Node 20.11 on Alpine 3.19."</em> When an OpenSSL or Linux kernel vulnerability is announced, security dashboards immediately alert you: <em>"Server running commit sha-e8f91c0 has a critical flaw and must be patched."</em>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3>Metadata in Action: Primitive vs. Production Pipelines</h3>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Scenario</th>
+                    <th>Primitive Deployment (No Metadata / <code>:latest</code>)</th>
+                    <th>Metadata-Driven CI/CD (<code>:sha-e8f91c0</code>)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Production Outage</strong></td>
+                    <td>Engineers spend 2 hours diffing files on the server trying to figure out what version is running.</td>
+                    <td>10-second inspection of the container tag links directly to the GitHub commit and commit diff.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Emergency Rollback</strong></td>
+                    <td>Panic. You must find the old code, try to build it on the server, and hope npm dependencies still resolve.</td>
+                    <td>Change 1 line in Compose to the previous Git SHA tag. Docker pulls the cached old image and starts in 5 seconds.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Multi-Server Consistency</strong></td>
+                    <td>Server 1 and Server 2 pull <code>:latest</code> at different times and run two different codebases (drift).</td>
+                    <td>Both servers pull <code>:sha-e8f91c0</code>. 100% mathematical guarantee of running identical binaries.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Compliance &amp; Auditing</strong></td>
+                    <td>Fails SOC2 and ISO compliance because there is no paper trail connecting deployed binaries to code reviews.</td>
+                    <td>Passes compliance: every production container links to an approved PR, test run, and author.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TOPIC 4: Tag vs Digest vs Manifest -->
+        <!-- ================================================================= -->
+        <section
+          id="topic-4"
+          class="topic-section"
+          data-id="topic-4"
+          data-title="4. Tag vs. Digest vs. Manifest"
+          hidden
+        >
+          <header class="topic-header">
+            <div class="topic-eyebrow">Topic 04 · Architecture &amp; Deep Mechanics</div>
+            <h1 class="topic-title">Tag vs. Content Digest vs. Manifest</h1>
+            <div class="user-query-box">
+              <b>Your Question / Confusion:</b>
+              <p>"difference between image tag and content digest and manifest. if both provide unique identification to the image then why need 2 ? according to my understanding image tag is for who want to use the image in his own project so he will get every metadata for work with his project and commit sha uniqueness gives us the the help to have ec2 connect with image + hold an record of what repo is responsible for the image and what is the versioning in this. correct me"</p>
+            </div>
+          </header>
+
+          <div class="short-answer-card">
+            <b>Short Answer:</b>
+            <p>An <strong>Image Tag</strong> is a human-friendly bookmark (mutable alias), a <strong>Manifest</strong> is a JSON packing slip listing all filesystem layers and architecture metadata, and a <strong>Content Digest</strong> is the unforgeable cryptographic SHA-256 hash of that manifest. You need both tags and digests because humans cannot remember 64-character hashes, while servers and security systems require mathematical proof that the container was not tampered with.</p>
+          </div>
+
+          <div class="section-block">
+            <h3>Checking Your Understanding: What You Got Right &amp; Corrections</h3>
+            <p>
+              Your intuition touched on several real concepts, but there are three crucial corrections to make in your mental model:
+            </p>
+
+            <div class="callout warning">
+              <b>Correction 1: Image Tags do NOT provide unique or guaranteed identification!</b>
+              You asked: <em>"if both provide unique identification to the image then why need 2?"</em>
+              <br />
+              <strong>Correction:</strong> Tags do <strong>not</strong> guarantee uniqueness! An image tag is just a movable label. If you push a tag <code>my-image:v1</code> today, you can push a completely different image with the same tag <code>my-image:v1</code> tomorrow. The tag will now point to the new image, completely erasing the link to the old one.
+              <br />
+              <strong>Only the Content Digest</strong> (<code>sha256:...</code>) is mathematically unique and immutable because it is derived directly from the binary contents of the image.
+            </div>
+
+            <div class="callout warning">
+              <b>Correction 2: The Tag doesn't contain the metadata — the Manifest does!</b>
+              You wrote: <em>"image tag is for who want to use the image in his own project so he will get every metadata for work with his project"</em>
+              <br />
+              <strong>Correction:</strong> The image tag is just a plain string (like <code>:v1.2.0</code> or <code>:sha-e8f91c0</code>). It contains zero metadata inside itself. The <strong>Manifest</strong> is the actual JSON document that contains all the metadata (OS architecture, layer hashes, environment variables, exposed ports, and command entrypoints). The tag is merely an address book entry pointing to that manifest.
+            </div>
+
+            <div class="callout tip">
+              <b>Validation &amp; Nuance: Connecting EC2 and Git Commit SHAs</b>
+              You wrote: <em>"commit sha uniqueness gives us the help to have ec2 connect with image + hold an record of what repo is responsible for the image and what is the versioning in this."</em>
+              <br />
+              <strong>Validation:</strong> You are spot on about the purpose! Stamping the Git commit SHA into the image tag (<code>:sha-e8f91c0</code>) gives EC2 and developers the exact record of which code repository and version created the image.
+              <br />
+              <strong>Nuance:</strong> EC2 doesn't connect to GitHub on its own; your CI workflow explicitly puts the Git SHA into the tag and injects OCI labels into the manifest so Docker Compose knows which image to pull.
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3>The Shipping Crate Analogy: The Registry Triad</h3>
+            <p>To keep the relationship permanently clear in your head, picture a physical shipping crate:</p>
+
+            <ol>
+              <li>
+                <strong>The Image Tag (The Sticky Note on the Crate):</strong>
+                <br />
+                A label written in marker: <em>"Todo Server Release 42"</em> or <code>:sha-e8f91c0</code>.
+                <br />
+                <strong>Purpose:</strong> Human ergonomics. It is easy for humans to read, type, and remember in Dockerfiles and Compose files.
+                <br />
+                <strong>Limitation:</strong> Anyone with warehouse access can peel the sticker off and put it on a different crate tomorrow.
+              </li>
+              <li style="margin-top: 0.8rem;">
+                <strong>The Manifest (The Itemized Packing Slip):</strong>
+                <br />
+                A plastic pouch attached to the crate containing a detailed JSON document. It lists:
+                <br />
+                - Layer 1: Alpine Linux OS filesystem (size: 7.3 MB, hash: <code>sha256:a1b2...</code>)
+                <br />
+                - Layer 2: Node.js runtime binaries (size: 38.4 MB, hash: <code>sha256:c3d4...</code>)
+                <br />
+                - Layer 3: Application code &amp; dependencies (size: 4.1 MB, hash: <code>sha256:e5f6...</code>)
+                <br />
+                - Architecture: <code>linux/amd64</code> (Intel/AMD x86_64 CPU)
+                <br />
+                - Metadata labels: Git repo URL, commit author, build timestamp.
+              </li>
+              <li style="margin-top: 0.8rem;">
+                <strong>The Content Digest (The Tamper-Proof Cryptographic Barcode):</strong>
+                <br />
+                The mathematical SHA-256 hash calculated from the exact bytes of the Packing Slip (Manifest).
+                <br />
+                Example: <code>sha256:4a8b9c1d2e3f...</code> (64 hexadecimal characters).
+                <br />
+                <strong>Purpose:</strong> Cryptographic security and immutability. If a hacker alters even a single byte inside any layer, or tampers with the manifest text, the calculated hash completely changes, and Docker rejects the download immediately.
+              </li>
+            </ol>
+          </div>
+
+          <div class="section-block">
+            <h3>Why Do We Need Both If Both Identify the Image?</h3>
+            <p>
+              Why not just use tags? Or why not just use digests?
+            </p>
+            <ul>
+              <li>
+                <strong>Why tags alone aren't enough:</strong> Because tags are mutable. If a malicious attacker or an accidental script overwrites <code>node:20-alpine</code> on Docker Hub, every server in the world that downloads <code>node:20-alpine</code> would pull compromised code. Tags cannot prove that code hasn't changed.
+              </li>
+              <li>
+                <strong>Why digests alone aren't enough:</strong> Because humans cannot work with <code>ghcr.io/s3nsh1-dev/client@sha256:7b1e4a5598cf8813bc94a9089012a9...</code>. You cannot easily glance at that hash and know if it is version 1 or version 2, whether it was built today or last year, or whether it contains Alice's PR or Bob's PR.
+              </li>
+            </ul>
+            <p>
+              <strong>The Best Practice:</strong> We use <strong>Tags</strong> for human clarity in development and release management (using Git SHAs: <code>:sha-e8f91c0</code>), while deployment engines and Kubernetes clusters can pin the <strong>Digest</strong> under the hood to ensure cryptographic immutability.
+            </p>
+          </div>
+
+          <!-- Interactive SVG Diagram 2 -->
+          <div class="diagram-card">
+            <div class="diagram-toolbar">
+              <span class="diagram-title">Interactive Inspector: The Tag, Manifest &amp; Digest Triad</span>
+              <div class="btn-group" id="triad-sim-btn-group">
+                <button class="sim-btn active" data-view="all">Full Architecture</button>
+                <button class="sim-btn" data-view="tag">1. Image Tag</button>
+                <button class="sim-btn" data-view="manifest">2. Manifest JSON</button>
+                <button class="sim-btn" data-view="digest">3. Content Digest</button>
+              </div>
+            </div>
+
+            <svg
+              id="svg-triad"
+              class="svg-canvas"
+              viewBox="0 0 960 320"
+              role="img"
+              aria-label="Interactive architectural diagram showing the relationship between Image Tag, Manifest JSON, Content Digest, and Filesystem Layers"
+            >
+              <!-- 1. The Tag -->
+              <g class="svg-node" id="triad-node-tag" transform="translate(40, 40)">
+                <rect id="triad-box-tag" class="svg-node-box blue" width="220" height="110" />
+                <text class="svg-text-title" x="18" y="32">IMAGE TAG (Human Bookmark)</text>
+                <text class="svg-text-sub" x="18" y="56" fill="var(--blue-text)" font-weight="bold">:sha-e8f91c0</text>
+                <text class="svg-text-sub" x="18" y="78">• Mutable pointer</text>
+                <text class="svg-text-sub" x="18" y="98">• Human-readable name</text>
+              </g>
+
+              <!-- Wire Tag to Manifest -->
+              <path id="triad-wire-tag-manifest" class="svg-wire active" d="M 260 95 H 330" marker-end="url(#m-arrow-blue)" />
+              <text class="svg-text-wire" x="295" y="85" text-anchor="middle">points to</text>
+
+              <!-- 2. The Manifest -->
+              <g class="svg-node" id="triad-node-manifest" transform="translate(330, 20)">
+                <rect id="triad-box-manifest" class="svg-node-box purple" width="280" height="270" />
+                <text class="svg-text-title" x="18" y="32">MANIFEST JSON (Packing Slip)</text>
+                <text class="svg-text-sub" x="18" y="54" fill="var(--purple-text)">schemaVersion: 2</text>
+                <text class="svg-text-sub" x="18" y="74">architecture: "linux/amd64"</text>
+                <text class="svg-text-sub" x="18" y="94">config: { env: ["NODE_ENV=prod"] }</text>
+                <text class="svg-text-sub" x="18" y="118" font-weight="bold">layers: [</text>
+                <text class="svg-text-sub" x="28" y="138">1. OS: sha256:8a1b... (7.3MB)</text>
+                <text class="svg-text-sub" x="28" y="158">2. Node: sha256:9c2d... (38MB)</text>
+                <text class="svg-text-sub" x="28" y="178">3. App: sha256:7f4e... (4.1MB)</text>
+                <text class="svg-text-sub" x="18" y="202">]</text>
+                <text class="svg-text-sub" x="18" y="226" fill="var(--ink-muted)">labels: { git.sha: "e8f91c0" }</text>
+                <text class="svg-text-sub" x="18" y="248" fill="var(--purple-text)" font-weight="bold">Holds All Metadata!</text>
+              </g>
+
+              <!-- Wire Manifest to Digest -->
+              <path id="triad-wire-manifest-digest" class="svg-wire active" d="M 470 290 V 305 H 150 V 225 H 150" marker-end="url(#m-arrow-blue)" />
+
+              <!-- 3. The Content Digest -->
+              <g class="svg-node" id="triad-node-digest" transform="translate(40, 185)">
+                <rect id="triad-box-digest" class="svg-node-box emerald" width="220" height="105" />
+                <text class="svg-text-title" x="16" y="30">CONTENT DIGEST (The Seal)</text>
+                <text class="svg-text-sub" x="16" y="52" fill="var(--emerald-text)" font-weight="bold">sha256:4a8b9c1d2e3f...</text>
+                <text class="svg-text-sub" x="16" y="74">• SHA-256 hash of manifest</text>
+                <text class="svg-text-sub" x="16" y="94">• 100% Immutable &amp; Tamper-Proof</text>
+              </g>
+
+              <!-- Wire Manifest to Layer Blobs -->
+              <path id="triad-wire-manifest-layers" class="svg-wire active" d="M 610 155 H 680" marker-end="url(#m-arrow-blue)" />
+              <text class="svg-text-wire" x="645" y="145" text-anchor="middle">pulls</text>
+
+              <!-- 4. Filesystem Layers (Blobs) -->
+              <g class="svg-node" id="triad-node-layers" transform="translate(680, 45)">
+                <rect class="svg-node-box" width="230" height="220" />
+                <text class="svg-text-title" x="18" y="32">RAW CONTENT (Layer Blobs)</text>
+                <g transform="translate(18, 48)">
+                  <rect class="svg-node-box blue" width="194" height="42" rx="4" />
+                  <text class="svg-text-sub" x="12" y="20">Layer 1: Alpine OS (7.3MB)</text>
+                  <text class="svg-text-sub" x="12" y="34" font-size="9.5px">sha256:8a1b2c3d...</text>
+                </g>
+                <g transform="translate(18, 100)">
+                  <rect class="svg-node-box emerald" width="194" height="42" rx="4" />
+                  <text class="svg-text-sub" x="12" y="20">Layer 2: Node 20 Runtime</text>
+                  <text class="svg-text-sub" x="12" y="34" font-size="9.5px">sha256:9c2d3e4f...</text>
+                </g>
+                <g transform="translate(18, 152)">
+                  <rect class="svg-node-box purple" width="194" height="42" rx="4" />
+                  <text class="svg-text-sub" x="12" y="20">Layer 3: Todo Express App</text>
+                  <text class="svg-text-sub" x="12" y="34" font-size="9.5px">sha256:7f4e5a6b...</text>
+                </g>
+              </g>
+            </svg>
+
+            <div id="triad-sim-caption" class="diagram-caption">
+              <strong>Full Architecture View:</strong> When you pull <code>ghcr.io/...:sha-e8f91c0</code>, the registry resolves the <strong>Tag</strong> to the <strong>Manifest JSON</strong>. Docker computes the <strong>Content Digest</strong> to verify the manifest was not tampered with, and then downloads the individual <strong>Layer Blobs</strong>.
+            </div>
+          </div>
+        </section>
+
+        <!-- Topic Footer Controls -->
+        <footer class="topic-footer">
+          <button id="prev-btn" class="btn-nav" disabled>
+            ← Previous Topic
+          </button>
+          <button id="complete-btn" class="btn-complete" aria-pressed="false">
+            <span id="complete-icon">✓</span>
+            <span id="complete-label">Mark Topic Complete</span>
+          </button>
+          <button id="next-btn" class="btn-nav">
+            Next Topic →
+          </button>
+        </footer>
+      </main>
+    </div>
 
     <script>
-      const providerDetails = {
-        ghcr: {
-          title: "Why this project uses GHCR",
-          copy:
-            "The repository and workflow already live on GitHub. A publishing job can use its job-scoped GITHUB_TOKEN with packages: write instead of storing a Docker Hub password in repository secrets.",
-          auth: "GITHUB_TOKEN",
-          name: "GHCR",
-          host: "ghcr.io",
-          address:
-            "ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:<commit-sha>",
-          description:
-            "GitHub Actions builds an image, authenticates to GHCR, pushes it to the registry, and EC2 pulls it.",
-          stroke: "var(--github)",
-          wash: "var(--github-wash)",
-        },
-        hub: {
-          title: "When Docker Hub might fit better",
-          copy:
-            "Choose Docker Hub when its public image directory, existing team access, or established repositories suit your users. The build can stay the same, but Actions needs Docker Hub credentials stored as secrets and the EC2 host needs Hub pull access.",
-          auth: "Hub access token",
-          name: "Docker Hub",
-          host: "docker.io",
-          address:
-            "docker.io/s3nsh1-dev/docker-beginner-simulation-client:<commit-sha>",
-          description:
-            "GitHub Actions builds an image, authenticates to Docker Hub, pushes it to the registry, and EC2 pulls it.",
-          stroke: "var(--docker)",
-          wash: "var(--docker-wash)",
-        },
-      };
+      (function () {
+        "use strict";
 
-      const tabs = document.querySelectorAll("[data-provider]");
-      const registryNode = document.querySelector(".svg-node.registry");
-      const figure = document.querySelector(".figure svg");
+        const STORAGE_KEY = "learning-ai:disposable:docker-metadata-cicd";
+        const sections = Array.from(document.querySelectorAll(".topic-section[data-id]"));
+        const topicIds = sections.map((s) => s.dataset.id);
 
-      tabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-          const choice = providerDetails[tab.dataset.provider];
-          document.getElementById("provider-heading").textContent = choice.title;
-          document.getElementById("provider-copy").textContent = choice.copy;
-          document.getElementById("auth-copy").textContent = choice.auth;
-          document.getElementById("registry-title-svg").textContent = choice.name;
-          document.getElementById("registry-host-svg").textContent = choice.host;
-          document.getElementById("image-name-svg").textContent = choice.address
-            .split(":")[0];
-          document.getElementById("provider-address").textContent =
-            choice.address;
-          registryNode.style.fill = choice.wash;
-          registryNode.style.stroke = choice.stroke;
-          figure.setAttribute("aria-label", choice.description);
+        let state = {
+          current: topicIds[0],
+          done: [],
+          theme: "system"
+        };
 
-          tabs.forEach((button) => {
-            button.setAttribute("aria-pressed", String(button === tab));
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (topicIds.includes(parsed.current)) state.current = parsed.current;
+            if (Array.isArray(parsed.done)) state.done = parsed.done.filter((id) => topicIds.includes(id));
+            if (["system", "light", "dark"].includes(parsed.theme)) state.theme = parsed.theme;
+          }
+        } catch (err) {
+          console.warn("localStorage unavailable:", err);
+        }
+
+        const doneSet = new Set(state.done);
+
+        // DOM elements
+        const shell = document.getElementById("shell");
+        const sidebar = document.getElementById("sidebar");
+        const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+        const sidebarToggleBtn = document.getElementById("sidebar-toggle-btn");
+        const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+        const navContainer = document.getElementById("topic-nav-container");
+        const completeBtn = document.getElementById("complete-btn");
+        const completeLabel = document.getElementById("complete-label");
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+        const themeSelect = document.getElementById("theme-select");
+        const progressText = document.getElementById("progress-text");
+        const progressBar = document.getElementById("progress-bar");
+        const progressTrack = document.querySelector(".progress-track");
+        const statusAnnouncer = document.getElementById("status-announcer");
+
+        function saveState() {
+          try {
+            state.done = Array.from(doneSet);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          } catch (err) {
+            console.warn("Unable to save state:", err);
+          }
+        }
+
+        function applyTheme() {
+          if (state.theme === "system") {
+            document.documentElement.removeAttribute("data-theme");
+          } else {
+            document.documentElement.dataset.theme = state.theme;
+          }
+          if (themeSelect) themeSelect.value = state.theme;
+        }
+
+        // Build Sidebar Nav Items
+        sections.forEach((sec, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "topic-btn";
+          btn.dataset.id = sec.dataset.id;
+          btn.id = "nav-btn-" + sec.dataset.id;
+
+          const numSpan = document.createElement("span");
+          numSpan.className = "topic-num";
+          numSpan.textContent = String(idx + 1).padStart(2, "0");
+
+          const titleSpan = document.createElement("span");
+          titleSpan.className = "topic-title-text";
+          titleSpan.textContent = sec.dataset.title;
+
+          const checkSpan = document.createElement("span");
+          checkSpan.className = "topic-check";
+          checkSpan.setAttribute("aria-hidden", "true");
+          checkSpan.textContent = "✓";
+
+          btn.appendChild(numSpan);
+          btn.appendChild(titleSpan);
+          btn.appendChild(checkSpan);
+
+          btn.addEventListener("click", () => {
+            navigateToTopic(sec.dataset.id, true);
+          });
+
+          navContainer.appendChild(btn);
+        });
+
+        function render() {
+          const currentIdx = topicIds.indexOf(state.current);
+
+          sections.forEach((sec) => {
+            sec.hidden = sec.dataset.id !== state.current;
+          });
+
+          Array.from(navContainer.children).forEach((btn) => {
+            const id = btn.dataset.id;
+            const isActive = id === state.current;
+            const isDone = doneSet.has(id);
+
+            if (isActive) {
+              btn.setAttribute("aria-current", "step");
+            } else {
+              btn.removeAttribute("aria-current");
+            }
+
+            btn.classList.toggle("is-complete", isDone);
+            const title = btn.querySelector(".topic-title-text").textContent;
+            btn.setAttribute(
+              "aria-label",
+              `${title}${isDone ? ", complete" : ", incomplete"}`
+            );
+          });
+
+          const count = doneSet.size;
+          const total = topicIds.length;
+          const pct = Math.round((count / total) * 100);
+
+          progressText.textContent = `${count} / ${total} complete`;
+          progressBar.style.width = `${pct}%`;
+          progressTrack.setAttribute("aria-valuenow", String(count));
+
+          prevBtn.disabled = currentIdx === 0;
+          nextBtn.disabled = currentIdx === topicIds.length - 1;
+
+          const isCurrentDone = doneSet.has(state.current);
+          completeBtn.setAttribute("aria-pressed", String(isCurrentDone));
+          completeLabel.textContent = isCurrentDone
+            ? "Mark Topic Incomplete"
+            : "Mark Topic Complete";
+
+          statusAnnouncer.textContent = `Topic ${currentIdx + 1} of ${total}: ${sections[currentIdx].dataset.title}.`;
+        }
+
+        function navigateToTopic(id, shouldFocus) {
+          if (!topicIds.includes(id)) return;
+          state.current = id;
+          saveState();
+          render();
+
+          if (isMobile() && sidebar && sidebar.classList.contains("is-open")) {
+            toggleSidebar(false);
+          }
+
+          if (shouldFocus) {
+            const currentSection = sections.find((s) => s.dataset.id === id);
+            if (currentSection) {
+              const h1 = currentSection.querySelector("h1");
+              if (h1) {
+                h1.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            }
+          }
+        }
+
+        completeBtn.addEventListener("click", () => {
+          if (doneSet.has(state.current)) {
+            doneSet.delete(state.current);
+          } else {
+            doneSet.add(state.current);
+          }
+          saveState();
+          render();
+        });
+
+        prevBtn.addEventListener("click", () => {
+          const idx = topicIds.indexOf(state.current);
+          if (idx > 0) navigateToTopic(topicIds[idx - 1], true);
+        });
+
+        nextBtn.addEventListener("click", () => {
+          const idx = topicIds.indexOf(state.current);
+          if (idx < topicIds.length - 1) navigateToTopic(topicIds[idx + 1], true);
+        });
+
+        if (themeSelect) {
+          themeSelect.addEventListener("change", (e) => {
+            state.theme = e.target.value;
+            applyTheme();
+            saveState();
+          });
+        }
+
+        function isMobile() {
+          return window.innerWidth <= 900;
+        }
+
+        function toggleSidebar(forceState) {
+          if (isMobile()) {
+            const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains("is-open");
+            sidebar.classList.toggle("is-open", isOpen);
+            if (sidebarBackdrop) sidebarBackdrop.classList.toggle("is-open", isOpen);
+            if (sidebarToggleBtn) sidebarToggleBtn.setAttribute("aria-expanded", String(isOpen));
+            document.body.style.overflow = isOpen ? "hidden" : "";
+          } else {
+            const isCollapsed = forceState !== undefined ? !forceState : !shell.classList.contains("sidebar-collapsed");
+            shell.classList.toggle("sidebar-collapsed", isCollapsed);
+            if (sidebarToggleBtn) sidebarToggleBtn.setAttribute("aria-expanded", String(!isCollapsed));
+            try {
+              localStorage.setItem("disposable_sidebar_collapsed", String(isCollapsed));
+            } catch (_) {}
+          }
+        }
+
+        // Restore collapsed preference on desktop
+        try {
+          if (!isMobile() && localStorage.getItem("disposable_sidebar_collapsed") === "true") {
+            shell.classList.add("sidebar-collapsed");
+            if (sidebarToggleBtn) sidebarToggleBtn.setAttribute("aria-expanded", "false");
+          }
+        } catch (_) {}
+
+        if (sidebarToggleBtn) sidebarToggleBtn.addEventListener("click", () => toggleSidebar());
+        if (sidebarCloseBtn) sidebarCloseBtn.addEventListener("click", () => toggleSidebar(false));
+        if (sidebarBackdrop) sidebarBackdrop.addEventListener("click", () => toggleSidebar(false));
+
+        // Acronym Help Panel Toggle
+        const helpToggle = document.getElementById("help-toggle");
+        const helpPanel = document.getElementById("help-panel");
+        const helpClose = document.getElementById("help-close");
+
+        function toggleHelp(show) {
+          const isHidden = show !== undefined ? !show : !helpPanel.hidden;
+          helpPanel.hidden = isHidden;
+          helpToggle.setAttribute("aria-expanded", String(!isHidden));
+        }
+
+        if (helpToggle && helpPanel) {
+          helpToggle.addEventListener("click", () => toggleHelp());
+        }
+        if (helpClose) {
+          helpClose.addEventListener("click", () => toggleHelp(false));
+        }
+
+        // Interactive Diagram 1: Traceability Bridge
+        const bridgeButtons = Array.from(document.querySelectorAll("#bridge-sim-btn-group .sim-btn"));
+        const bridgeCaption = document.getElementById("bridge-sim-caption");
+        const bridgeTxtCiTag = document.getElementById("bridge-txt-ci-tag");
+        const bridgeTxtGhcrTag = document.getElementById("bridge-txt-ghcr-tag");
+        const bridgeTxtEc2Run = document.getElementById("bridge-txt-ec2-run");
+        const bridgeTxtEc2Status = document.getElementById("bridge-txt-ec2-status");
+        const bridgeBoxEc2 = document.getElementById("bridge-box-ec2");
+        const bridgeWireAudit = document.getElementById("bridge-wire-audit");
+        const bridgeTxtAudit = document.getElementById("bridge-txt-audit");
+
+        bridgeButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const mode = btn.dataset.mode;
+            bridgeButtons.forEach((b) => b.classList.toggle("active", b === btn));
+
+            if (mode === "sha") {
+              if (bridgeCaption) {
+                bridgeCaption.innerHTML = "<strong>Traceable Release Active:</strong> The Git commit SHA (<code>e8f91c0</code>) passes from GitHub to the Actions workflow, becomes the Docker image tag in GHCR, and is deployed to EC2. If an incident happens on EC2, engineers have an immediate 1-to-1 reverse audit trail back to GitHub.";
+              }
+              if (bridgeTxtCiTag) {
+                bridgeTxtCiTag.textContent = ":sha-e8f91c0";
+                bridgeTxtCiTag.setAttribute("fill", "var(--blue-text)");
+              }
+              if (bridgeTxtGhcrTag) bridgeTxtGhcrTag.textContent = "Tag: :sha-e8f91c0";
+              if (bridgeTxtEc2Run) bridgeTxtEc2Run.textContent = "image: ...:sha-e8f91c0";
+              if (bridgeTxtEc2Status) {
+                bridgeTxtEc2Status.textContent = "100% Traceable ✓";
+                bridgeTxtEc2Status.setAttribute("fill", "var(--emerald-text)");
+              }
+              if (bridgeBoxEc2) bridgeBoxEc2.setAttribute("class", "svg-node-box emerald");
+              if (bridgeWireAudit) bridgeWireAudit.style.display = "block";
+              if (bridgeTxtAudit) bridgeTxtAudit.style.display = "block";
+            } else {
+              if (bridgeCaption) {
+                bridgeCaption.innerHTML = "<strong>Blind Release Warning:</strong> The image was tagged with <code>:latest</code>. On EC2, you see <code>image: ...:latest</code>. When a production bug occurs, there is zero record of which commit or PR produced the running container. Rollback is a blind guessing game.";
+              }
+              if (bridgeTxtCiTag) {
+                bridgeTxtCiTag.textContent = ":latest (Generic)";
+                bridgeTxtCiTag.setAttribute("fill", "var(--rose-text)");
+              }
+              if (bridgeTxtGhcrTag) bridgeTxtGhcrTag.textContent = "Tag: :latest";
+              if (bridgeTxtEc2Run) bridgeTxtEc2Run.textContent = "image: ...:latest";
+              if (bridgeTxtEc2Status) {
+                bridgeTxtEc2Status.textContent = "Untraceable ✗";
+                bridgeTxtEc2Status.setAttribute("fill", "var(--rose-text)");
+              }
+              if (bridgeBoxEc2) bridgeBoxEc2.setAttribute("class", "svg-node-box rose");
+              if (bridgeWireAudit) bridgeWireAudit.style.display = "none";
+              if (bridgeTxtAudit) bridgeTxtAudit.style.display = "none";
+            }
           });
         });
-      });
 
-      const helpButton = document.getElementById("help-button");
-      const helpPanel = document.getElementById("help-panel");
-      helpButton.addEventListener("click", () => {
-        const open = helpButton.getAttribute("aria-expanded") !== "true";
-        helpButton.setAttribute("aria-expanded", String(open));
-        helpPanel.hidden = !open;
-      });
+        // Interactive Diagram 2: The Triad Inspector
+        const triadButtons = Array.from(document.querySelectorAll("#triad-sim-btn-group .sim-btn"));
+        const triadCaption = document.getElementById("triad-sim-caption");
+        const triadBoxTag = document.getElementById("triad-box-tag");
+        const triadBoxManifest = document.getElementById("triad-box-manifest");
+        const triadBoxDigest = document.getElementById("triad-box-digest");
+        const triadWireTagManifest = document.getElementById("triad-wire-tag-manifest");
+        const triadWireManifestDigest = document.getElementById("triad-wire-manifest-digest");
 
-      const theme = document.getElementById("theme");
-      const themeKey = "where-docker-images-live-theme";
-      const savedTheme = localStorage.getItem(themeKey);
-      if (["system", "light", "dark"].includes(savedTheme)) {
-        theme.value = savedTheme;
-      }
+        const triadCaptions = {
+          all: "<strong>Full Architecture View:</strong> When you pull <code>ghcr.io/...:sha-e8f91c0</code>, the registry resolves the <strong>Tag</strong> to the <strong>Manifest JSON</strong>. Docker computes the <strong>Content Digest</strong> to verify the manifest was not tampered with, and then downloads the individual <strong>Layer Blobs</strong>.",
+          tag: "<strong>Focus: Image Tag (:sha-e8f91c0)</strong> — The human bookmark. It gives a readable name to an image so developers and Compose files can refer to it easily. It is mutable (can be pointed to a new manifest anytime).",
+          manifest: "<strong>Focus: Manifest JSON</strong> — The packing slip. It holds all the critical deployment metadata: target architecture (linux/amd64), environment variables, labels, and the list of individual filesystem layer hashes.",
+          digest: "<strong>Focus: Content Digest (sha256:4a8b...)</strong> — The tamper-proof seal. It is the cryptographic SHA-256 hash computed directly from the Manifest JSON bytes. If any file or layer is altered, the digest changes completely."
+        };
 
-      const applyTheme = () => {
-        localStorage.setItem(themeKey, theme.value);
-        if (theme.value === "system") {
-          document.documentElement.removeAttribute("data-theme");
-        } else {
-          document.documentElement.dataset.theme = theme.value;
-        }
-      };
+        triadButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const view = btn.dataset.view;
+            triadButtons.forEach((b) => b.classList.toggle("active", b === btn));
+            if (triadCaption && triadCaptions[view]) {
+              triadCaption.innerHTML = triadCaptions[view];
+            }
 
-      applyTheme();
-      theme.addEventListener("change", applyTheme);
+            if (triadBoxTag && triadBoxManifest && triadBoxDigest) {
+              if (view === "tag") {
+                triadBoxTag.setAttribute("class", "svg-node-box blue");
+                triadBoxManifest.setAttribute("class", "svg-node-box");
+                triadBoxDigest.setAttribute("class", "svg-node-box");
+              } else if (view === "manifest") {
+                triadBoxTag.setAttribute("class", "svg-node-box");
+                triadBoxManifest.setAttribute("class", "svg-node-box purple");
+                triadBoxDigest.setAttribute("class", "svg-node-box");
+              } else if (view === "digest") {
+                triadBoxTag.setAttribute("class", "svg-node-box");
+                triadBoxManifest.setAttribute("class", "svg-node-box");
+                triadBoxDigest.setAttribute("class", "svg-node-box emerald");
+              } else {
+                triadBoxTag.setAttribute("class", "svg-node-box blue");
+                triadBoxManifest.setAttribute("class", "svg-node-box purple");
+                triadBoxDigest.setAttribute("class", "svg-node-box emerald");
+              }
+            }
+          });
+        });
+
+        // Copy button in code snippets
+        document.querySelectorAll(".copy-btn").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const pre = btn.closest(".code-snippet").querySelector("pre code");
+            if (!pre) return;
+            try {
+              await navigator.clipboard.writeText(pre.textContent);
+              btn.textContent = "Copied!";
+              setTimeout(() => {
+                btn.textContent = "Copy";
+              }, 1800);
+            } catch {
+              btn.textContent = "Failed";
+              setTimeout(() => {
+                btn.textContent = "Copy";
+              }, 1800);
+            }
+          });
+        });
+
+        // Keyboard navigation (Alt + ArrowLeft/Right)
+        document.addEventListener("keydown", (e) => {
+          if (["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)) return;
+          const idx = topicIds.indexOf(state.current);
+          if ((e.key === "ArrowRight" || e.key === "PageDown") && e.altKey) {
+            if (idx < topicIds.length - 1) {
+              e.preventDefault();
+              navigateToTopic(topicIds[idx + 1], true);
+            }
+          } else if ((e.key === "ArrowLeft" || e.key === "PageUp") && e.altKey) {
+            if (idx > 0) {
+              e.preventDefault();
+              navigateToTopic(topicIds[idx - 1], true);
+            }
+          }
+        });
+
+        applyTheme();
+        render();
+      })();
     </script>
   </body>
 </html>
