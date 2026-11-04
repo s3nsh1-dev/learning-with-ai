@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Demystifying CI/CD Deployment: Git SHAs, Image Tags, Digests &amp; Manifests</title>
+    <title>Stage 5: The Production Compose Contract &amp; Architecture</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -398,329 +398,328 @@
       .shell {
         display: grid;
         grid-template-columns: 340px minmax(0, 1fr);
-        gap: 1.5rem;
-        padding: 1.5rem var(--pad-x) 4rem;
-        transition: grid-template-columns 0.25s ease;
-        width: 100%;
+        min-height: calc(100vh - 49px);
+        transition: grid-template-columns 0.22s ease;
       }
 
       .shell.sidebar-collapsed {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .shell.sidebar-collapsed .sidebar {
-        display: none !important;
+        grid-template-columns: 0 minmax(0, 1fr);
       }
 
       .sidebar {
-        position: sticky;
-        top: 4.2rem;
-        align-self: start;
-        max-height: calc(100vh - 5.2rem);
-        overflow-y: auto;
         background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 1.25rem;
-        scrollbar-width: thin;
-        scrollbar-color: var(--line-strong) transparent;
+        border-right: 1px solid var(--line);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .shell.sidebar-collapsed .sidebar {
+        visibility: hidden;
       }
 
-      .sidebar-header-row {
+      .sidebar-head {
+        padding: 1rem 1.1rem 0.8rem;
+        border-bottom: 1px solid var(--line);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
       }
-
-      .stage-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
+      .sidebar-title {
+        font-family: var(--font-ui);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+      }
+      .sidebar-meta {
         font-family: var(--font-mono);
         font-size: 0.72rem;
-        letter-spacing: 0.05em;
-        color: var(--blue-text);
-        background: var(--blue-soft);
-        border: 1px solid var(--blue-line);
-        padding: 0.2rem 0.55rem;
-        border-radius: 4px;
-        font-weight: 600;
+        color: var(--ink-faint);
       }
 
-      .sidebar-close-btn {
-        display: none;
-        background: none;
-        border: 1px solid var(--line);
-        border-radius: 4px;
-        padding: 0.2rem 0.5rem;
-        font-size: 0.78rem;
-        cursor: pointer;
-        color: var(--ink-muted);
-      }
-
-      .sidebar-title {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-top: 0.4rem;
-        margin-bottom: 0.25rem;
-        line-height: 1.35;
-      }
-
-      .sidebar-subtitle {
-        font-size: 0.8rem;
-        color: var(--ink-muted);
-        line-height: 1.45;
-        margin-bottom: 1rem;
-      }
-
-      .progress-card {
-        padding: 0.75rem 0.85rem;
+      .progress-bar-wrap {
+        padding: 0.75rem 1.1rem;
+        border-bottom: 1px solid var(--line);
         background: var(--surface-2);
-        border-radius: 8px;
-        border: 1px solid var(--line);
-        margin-bottom: 1.25rem;
       }
-
-      .progress-label-row {
+      .progress-meta {
         display: flex;
         justify-content: space-between;
-        font-size: 0.76rem;
         font-family: var(--font-ui);
-        font-weight: 600;
+        font-size: 0.76rem;
         color: var(--ink-muted);
-        margin-bottom: 0.45rem;
+        margin-bottom: 0.35rem;
       }
-
       .progress-track {
         height: 6px;
-        background: var(--line);
         border-radius: 999px;
+        background: var(--line);
         overflow: hidden;
       }
-
-      .progress-bar {
+      .progress-fill {
         height: 100%;
+        background: var(--emerald);
         width: 0%;
-        background: var(--blue);
-        border-radius: 999px;
         transition: width 0.25s ease;
       }
 
-      .topic-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
+      .topic-nav-list {
+        list-style: none;
+        padding: 0.6rem 0;
       }
-
-      .topic-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
+      .topic-nav-item {
+        position: relative;
+      }
+      .topic-nav-btn {
         width: 100%;
-        padding: 0.65rem 0.8rem;
-        border: 1px solid transparent;
-        border-radius: 8px;
-        background: transparent;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.65rem;
         text-align: left;
+        background: none;
+        border: none;
+        padding: 0.6rem 1.1rem;
         cursor: pointer;
-        font-size: 0.86rem;
         color: var(--ink-2);
-        transition: all 0.15s ease;
+        font-size: 0.86rem;
+        line-height: 1.4;
+        transition: background 0.12s ease;
       }
-      .topic-btn:hover {
+      .topic-nav-btn:hover {
         background: var(--surface-2);
         color: var(--ink);
       }
-      .topic-btn[aria-current="step"] {
-        background: var(--surface-2);
-        border-color: var(--line-strong);
-        color: var(--ink);
+      .topic-nav-btn.active {
+        background: var(--blue-soft);
+        color: var(--blue-text);
         font-weight: 600;
       }
-      .topic-btn.is-complete .topic-check {
-        color: var(--emerald);
-        border-color: var(--emerald-line);
-        background: var(--emerald-soft);
+      .topic-nav-btn.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--blue);
       }
 
       .topic-num {
         font-family: var(--font-mono);
-        font-size: 0.74rem;
+        font-size: 0.72rem;
         color: var(--ink-faint);
-        min-width: 1.4rem;
+        padding-top: 0.1rem;
+      }
+      .topic-nav-btn.active .topic-num {
+        color: var(--blue);
       }
 
-      .topic-title-text {
-        flex: 1;
-        line-height: 1.35;
+      .topic-check-icon {
+        margin-left: auto;
+        color: var(--emerald);
+        font-size: 0.85rem;
+        display: none;
+      }
+      .topic-nav-btn.completed .topic-check-icon {
+        display: inline-block;
       }
 
-      .topic-check {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 18px;
-        height: 18px;
-        border: 1px solid var(--line);
-        border-radius: 50%;
-        font-size: 0.7rem;
-        color: transparent;
+      /* ------------------------------ Main panel --------------------------- */
+
+      .main-pane {
+        padding: clamp(1.2rem, 2.5vw, 2.4rem) var(--pad-x) 4rem;
+        overflow-y: auto;
       }
 
-      /* ---------------------------- Main Content --------------------------- */
-
-      main {
-        min-width: 0;
-        width: 100%;
-      }
-
-      .topic-section {
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: clamp(1.25rem, 3vw, 2.5rem);
-      }
-
-      .topic-section[hidden] {
-        display: none !important;
-      }
-
-      .topic-header {
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
+      .lesson-header {
+        padding-bottom: 1.4rem;
         border-bottom: 1px solid var(--line);
+        margin-bottom: 2rem;
+      }
+
+      .lesson-kicker {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+      }
+
+      .tag {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 0.16rem 0.5rem;
+        border-radius: 4px;
+        border: 1px solid var(--line);
+        color: var(--ink-muted);
+      }
+      .tag.blue {
+        border-color: var(--blue-line);
+        background: var(--blue-soft);
+        color: var(--blue-text);
+      }
+      .tag.emerald {
+        border-color: var(--emerald-line);
+        background: var(--emerald-soft);
+        color: var(--emerald-text);
+      }
+      .tag.amber {
+        border-color: var(--amber-line);
+        background: var(--amber-soft);
+        color: var(--amber-text);
+      }
+      .tag.purple {
+        border-color: var(--purple-line);
+        background: var(--purple-soft);
+        color: var(--purple-text);
+      }
+
+      h1.lesson-title {
+        font-family: var(--font-heading);
+        font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--ink);
+        margin-bottom: 0.6rem;
+      }
+
+      .lesson-summary {
+        font-size: 1.05rem;
+        color: var(--ink-2);
+        line-height: 1.6;
+      }
+
+      /* ------------------------------ Topic view --------------------------- */
+
+      .topic-view {
+        display: none;
+      }
+      .topic-view.active {
+        display: block;
       }
 
       .topic-eyebrow {
         font-family: var(--font-mono);
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--blue-text);
-        margin-bottom: 0.4rem;
-      }
-
-      .topic-title {
-        font-size: clamp(1.5rem, 2.8vw, 2.2rem);
-        font-weight: 700;
-        line-height: 1.25;
-        color: var(--ink);
-        margin-bottom: 1rem;
-      }
-
-      .user-query-box {
-        background: var(--surface-2);
-        border-left: 4px solid var(--purple);
-        border-radius: 0 8px 8px 0;
-        padding: 0.9rem 1.2rem;
-        margin-top: 1rem;
-        font-size: 0.95rem;
-      }
-      .user-query-box b {
-        color: var(--purple-text);
-        display: block;
         font-size: 0.78rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.25rem;
-      }
-      .user-query-box p {
-        color: var(--ink);
-        font-style: italic;
-      }
-
-      .short-answer-card {
-        background: var(--blue-soft);
-        border: 1px solid var(--blue-line);
-        border-radius: 10px;
-        padding: 1.1rem 1.35rem;
-        margin: 1.5rem 0;
-      }
-      .short-answer-card b {
-        display: block;
-        font-family: var(--font-ui);
-        font-size: 0.8rem;
-        text-transform: uppercase;
         letter-spacing: 0.06em;
-        color: var(--blue-text);
+        text-transform: uppercase;
+        color: var(--ink-faint);
         margin-bottom: 0.35rem;
       }
-      .short-answer-card p {
+
+      h2.topic-title {
+        font-family: var(--font-heading);
+        font-size: clamp(1.2rem, 2vw, 1.65rem);
+        font-weight: 700;
+        line-height: 1.3;
         color: var(--ink);
-        font-size: 1.05rem;
-        font-weight: 500;
-        line-height: 1.6;
-      }
-
-      .section-block {
-        margin-top: 2rem;
-      }
-
-      .section-block h3 {
-        font-size: 1.28rem;
-        font-weight: 600;
-        color: var(--ink);
-        margin-bottom: 0.8rem;
-        line-height: 1.35;
-      }
-
-      .section-block p {
-        color: var(--ink-2);
-        margin-bottom: 1rem;
-      }
-
-      .section-block ul, .section-block ol {
-        margin-left: 1.4rem;
         margin-bottom: 1.2rem;
+      }
+
+      p {
+        margin-bottom: 1.1rem;
         color: var(--ink-2);
       }
 
-      .section-block li {
-        margin-bottom: 0.5rem;
+      p strong {
+        color: var(--ink);
+        font-weight: 600;
       }
 
       code {
         font-family: var(--font-mono);
         font-size: 0.88em;
         background: var(--code-bg);
-        color: var(--ink);
-        padding: 0.15rem 0.4rem;
-        border-radius: 4px;
+        color: var(--code-ink);
         border: 1px solid var(--code-border);
+        padding: 0.1em 0.35em;
+        border-radius: 4px;
+        word-break: break-word;
       }
+
+      /* ------------------------------ Callout boxes ------------------------- */
+
+      .callout {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-left-width: 4px;
+        border-left-color: var(--blue);
+        border-radius: 6px;
+        padding: 1rem 1.2rem;
+        margin: 1.3rem 0;
+      }
+      .callout.blue {
+        border-left-color: var(--blue);
+        background: var(--blue-soft);
+      }
+      .callout.emerald {
+        border-left-color: var(--emerald);
+        background: var(--emerald-soft);
+      }
+      .callout.amber {
+        border-left-color: var(--amber);
+        background: var(--amber-soft);
+      }
+      .callout.rose {
+        border-left-color: var(--rose);
+        background: var(--rose-soft);
+      }
+      .callout.purple {
+        border-left-color: var(--purple);
+        background: var(--purple-soft);
+      }
+      .callout-title {
+        font-family: var(--font-ui);
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 0.35rem;
+      }
+      .callout p {
+        margin-bottom: 0.4rem;
+        font-size: 0.94rem;
+      }
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+
+      /* ------------------------------ Code snippet ------------------------- */
 
       .code-snippet {
-        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
         background: var(--code-bg);
-        border: 1px solid var(--code-border);
-        border-radius: 10px;
-        padding: 1.1rem 1.25rem;
-        margin: 1.25rem 0;
-        overflow-x: auto;
+        margin: 1.2rem 0 1.8rem;
       }
 
-      .code-snippet pre {
+      .code-snippet-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0.9rem;
+        background: var(--surface-2);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .code-file-label {
         font-family: var(--font-mono);
-        font-size: 0.88rem;
-        line-height: 1.55;
-        color: var(--code-ink);
-        margin: 0;
+        font-size: 0.76rem;
+        color: var(--ink-muted);
       }
 
       .copy-btn {
-        position: absolute;
-        top: 0.6rem;
-        right: 0.6rem;
-        background: var(--surface);
+        font-family: var(--font-ui);
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.2rem 0.55rem;
         border: 1px solid var(--line);
         border-radius: 4px;
-        padding: 0.2rem 0.55rem;
-        font-size: 0.72rem;
-        font-family: var(--font-ui);
-        color: var(--ink-muted);
+        background: var(--surface);
+        color: var(--ink-2);
         cursor: pointer;
       }
       .copy-btn:hover {
@@ -728,362 +727,282 @@
         color: var(--ink);
       }
 
-      /* Callout Boxes */
-      .callout {
-        border-radius: 8px;
-        padding: 1rem 1.25rem;
-        margin: 1.25rem 0;
-        font-size: 0.95rem;
-        border-left: 4px solid var(--line-strong);
-      }
-      .callout.tip {
-        background: var(--emerald-soft);
-        border-left-color: var(--emerald);
-      }
-      .callout.tip b {
-        color: var(--emerald-text);
-      }
-      .callout.warning {
-        background: var(--amber-soft);
-        border-left-color: var(--amber);
-      }
-      .callout.warning b {
-        color: var(--amber-text);
-      }
-      .callout.danger {
-        background: var(--rose-soft);
-        border-left-color: var(--rose);
-      }
-      .callout.danger b {
-        color: var(--rose-text);
-      }
-      .callout b {
-        display: block;
-        font-size: 0.78rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.25rem;
+      .code-snippet pre {
+        padding: 0.9rem 1.1rem;
+        overflow-x: auto;
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        line-height: 1.52;
+        color: var(--code-ink);
       }
 
-      /* Comparison Table */
-      .data-table-wrap {
-        overflow-x: auto;
-        margin: 1.5rem 0;
+      /* ------------------------------ Spec Table --------------------------- */
+
+      .table-wrap {
         border: 1px solid var(--line);
         border-radius: 8px;
+        overflow-x: auto;
+        margin: 1.3rem 0 1.8rem;
+        background: var(--surface);
       }
-      .data-table {
+
+      table.spec-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 0.92rem;
+        font-size: 0.88rem;
         text-align: left;
       }
-      .data-table th, .data-table td {
+
+      table.spec-table th,
+      table.spec-table td {
         padding: 0.75rem 1rem;
         border-bottom: 1px solid var(--line);
       }
-      .data-table th {
-        background: var(--surface-2);
+
+      table.spec-table th {
+        font-family: var(--font-ui);
         font-weight: 600;
-        color: var(--ink);
+        color: var(--ink-muted);
+        background: var(--surface-2);
+        font-size: 0.78rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
       }
-      .data-table tr:last-child td {
+
+      table.spec-table tr:last-child td {
         border-bottom: none;
       }
-      .data-table tr:hover td {
-        background: var(--surface-2);
-      }
 
-      /* Interactive Diagrams (Inline SVG) */
-      .diagram-card {
-        background: var(--surface-2);
+      /* ------------------------------ SVG Diagram -------------------------- */
+
+      .diagram-wrapper {
         border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 1.25rem;
-        margin: 1.5rem 0;
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 1.2rem;
+        margin: 1.5rem 0 2rem;
       }
 
-      .diagram-toolbar {
+      .diagram-controls {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        gap: 0.5rem;
         flex-wrap: wrap;
-        gap: 0.75rem;
         margin-bottom: 1rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 1px solid var(--line);
       }
 
-      .diagram-title {
+      .diagram-btn {
         font-family: var(--font-ui);
-        font-size: 0.84rem;
-        font-weight: 600;
-        color: var(--ink);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-
-      .btn-group {
-        display: inline-flex;
-        border-radius: 6px;
-        border: 1px solid var(--line-strong);
-        overflow: hidden;
-        background: var(--surface);
-      }
-
-      .sim-btn {
-        background: transparent;
-        border: none;
-        padding: 0.35rem 0.75rem;
         font-size: 0.8rem;
-        font-weight: 500;
-        color: var(--ink-muted);
+        font-weight: 600;
+        padding: 0.35rem 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface-2);
+        color: var(--ink-2);
         cursor: pointer;
-        border-right: 1px solid var(--line);
         transition: all 0.15s ease;
       }
-      .sim-btn:last-child {
-        border-right: none;
-      }
-      .sim-btn:hover {
-        background: var(--surface-2);
+      .diagram-btn:hover {
+        background: var(--surface);
         color: var(--ink);
+        border-color: var(--line-strong);
       }
-      .sim-btn.active {
+      .diagram-btn.active {
         background: var(--blue-soft);
         color: var(--blue-text);
-        font-weight: 600;
+        border-color: var(--blue-line);
       }
 
       .diagram-caption {
+        margin-top: 0.9rem;
         font-size: 0.88rem;
-        color: var(--ink-2);
-        line-height: 1.55;
-        margin-top: 0.85rem;
-        padding: 0.6rem 0.85rem;
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 6px;
+        line-height: 1.5;
+        color: var(--ink-muted);
+        border-top: 1px solid var(--line);
+        padding-top: 0.75rem;
       }
 
-      .svg-canvas {
+      .interactive-svg {
         width: 100%;
         height: auto;
         display: block;
-        overflow: visible;
       }
 
-      /* SVG node styles */
-      .svg-node {
-        transition: all 0.25s ease;
-      }
-      .svg-node-box {
-        fill: var(--surface);
-        stroke: var(--line-strong);
-        stroke-width: 1.5;
-        rx: 8;
-        transition: all 0.25s ease;
-      }
-      .svg-node-box.blue {
-        fill: var(--blue-soft);
-        stroke: var(--blue);
-      }
-      .svg-node-box.emerald {
-        fill: var(--emerald-soft);
-        stroke: var(--emerald);
-      }
-      .svg-node-box.amber {
-        fill: var(--amber-soft);
-        stroke: var(--amber);
-      }
-      .svg-node-box.rose {
-        fill: var(--rose-soft);
-        stroke: var(--rose);
-      }
-      .svg-node-box.purple {
-        fill: var(--purple-soft);
-        stroke: var(--purple);
-      }
+      /* ----------------------- Bottom action navigation -------------------- */
 
-      .svg-wire {
-        fill: none;
-        stroke: var(--line-strong);
-        stroke-width: 2;
-        stroke-dasharray: none;
-        transition: all 0.25s ease;
-      }
-      .svg-wire.active {
-        stroke: var(--blue);
-        stroke-width: 2.5;
-      }
-      .svg-wire.success {
-        stroke: var(--emerald);
-        stroke-width: 2.5;
-      }
-      .svg-wire.warning {
-        stroke: var(--amber);
-        stroke-width: 2.5;
-      }
-      .svg-wire.danger {
-        stroke: var(--rose);
-        stroke-dasharray: 4 3;
-        stroke-width: 2;
-      }
-
-      .svg-text-title {
-        font-family: var(--font-ui);
-        font-size: 13px;
-        font-weight: 700;
-        fill: var(--ink);
-      }
-      .svg-text-sub {
-        font-family: var(--font-mono);
-        font-size: 11px;
-        fill: var(--ink-muted);
-      }
-      .svg-text-wire {
-        font-family: var(--font-mono);
-        font-size: 10.5px;
-        font-weight: 600;
-        fill: var(--ink-muted);
-      }
-
-      /* Bottom Navigation Bar */
       .topic-footer {
+        margin-top: 2.8rem;
+        padding-top: 1.4rem;
+        border-top: 1px solid var(--line);
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 1rem;
-        margin-top: 3rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--line);
-      }
-
-      .btn-nav {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-family: var(--font-ui);
-        font-size: 0.88rem;
-        font-weight: 600;
-        padding: 0.55rem 1.1rem;
-        border-radius: 8px;
-        border: 1px solid var(--line-strong);
-        background: var(--surface);
-        color: var(--ink);
-        cursor: pointer;
-        transition: all 0.15s ease;
-      }
-      .btn-nav:hover:not(:disabled) {
-        background: var(--surface-2);
-        border-color: var(--ink-muted);
-      }
-      .btn-nav:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
       }
 
       .btn-complete {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
         font-family: var(--font-ui);
         font-size: 0.88rem;
         font-weight: 600;
-        padding: 0.55rem 1.25rem;
-        border-radius: 8px;
+        padding: 0.48rem 1.1rem;
+        border-radius: 6px;
         border: 1px solid var(--emerald-line);
         background: var(--emerald-soft);
         color: var(--emerald-text);
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
         transition: all 0.15s ease;
       }
       .btn-complete:hover {
         background: var(--emerald);
         color: #ffffff;
       }
-      .btn-complete[aria-pressed="true"] {
+      .btn-complete.completed {
         background: var(--emerald);
         color: #ffffff;
       }
 
-      /* Mobile adjustments */
-      @media (max-width: 900px) {
-        .shell {
-          grid-template-columns: minmax(0, 1fr);
-        }
-        .sidebar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          width: 320px;
-          max-width: 85vw;
-          z-index: 100;
-          max-height: 100vh;
-          border-radius: 0;
-          box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
-          transform: translateX(-100%);
-          transition: transform 0.25s ease;
-        }
-        .sidebar.is-open {
-          transform: translateX(0);
-        }
-        .sidebar-close-btn {
-          display: block;
-        }
-        .sidebar-backdrop {
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.4);
-          z-index: 99;
-          display: none;
-        }
-        .sidebar-backdrop.is-open {
-          display: block;
-        }
+      .nav-buttons {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .btn-step {
+        font-family: var(--font-ui);
+        font-size: 0.86rem;
+        font-weight: 600;
+        padding: 0.45rem 1rem;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink-2);
+        cursor: pointer;
+      }
+      .btn-step:hover:not(:disabled) {
+        background: var(--surface-2);
+        color: var(--ink);
+      }
+      .btn-step:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* --------------------------- Interactive Quiz ------------------------ */
+
+      .interactive-quiz {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 1.3rem;
+        margin: 1.8rem 0;
+      }
+
+      .quiz-title {
+        font-family: var(--font-ui);
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .quiz-prompt {
+        font-size: 0.95rem;
+        color: var(--ink);
+        margin-bottom: 1rem;
+      }
+
+      .quiz-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .quiz-opt-btn {
+        text-align: left;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        color: var(--ink-2);
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .quiz-opt-btn:hover {
+        border-color: var(--blue-line);
+        background: var(--blue-soft);
+        color: var(--blue-text);
+      }
+      .quiz-opt-btn.correct {
+        border-color: var(--emerald-line);
+        background: var(--emerald-soft);
+        color: var(--emerald-text);
+        font-weight: 600;
+      }
+      .quiz-opt-btn.incorrect {
+        border-color: var(--rose-line);
+        background: var(--rose-soft);
+        color: var(--rose-text);
+      }
+
+      .quiz-feedback {
+        margin-top: 0.85rem;
+        font-size: 0.86rem;
+        line-height: 1.45;
+        display: none;
+      }
+      .quiz-feedback.show {
+        display: block;
       }
     </style>
   </head>
   <body>
-    <!-- Topbar -->
+    <!-- Persistent Top Navigation Bar -->
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand-group">
           <button
             id="sidebar-toggle-btn"
             class="sidebar-toggle-btn"
-            aria-label="Toggle Topic Sidebar"
+            type="button"
             aria-expanded="true"
+            aria-controls="sidebar"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M1 3h14v2H1V3zm0 4h14v2H1V7zm0 4h14v2H1v-2z" />
-            </svg>
-            <span>Topics</span>
+            <span aria-hidden="true">☰</span>
+            <span>Outline</span>
           </button>
           <div class="brand-spec">
-            <strong>LEARNING WITH AI</strong>
-            <span class="badge-rev">DEEP DIVE EXPLAINER</span>
+            <strong>DEV-LAB</strong>
+            <span class="badge-rev">STAGE 05: PROD COMPOSE CONTRACT</span>
           </div>
-          <nav class="page-nav" aria-label="Page Navigation">
-            <a href="index.html" class="nav-tab">Lesson (Curriculum)</a>
-            <a href="MCQ.html" class="nav-tab">Assessment (MCQ)</a>
-            <a href="disposable.html" class="nav-tab active" aria-current="page">Deep Dive (Scratchpad)</a>
+          <nav class="page-nav" aria-label="Page switcher">
+            <a href="/index.html" class="nav-tab">Lesson</a>
+            <a href="/MCQ.html" class="nav-tab">Assessment</a>
+            <a href="/disposable.html" class="nav-tab active" aria-current="page">Scratchpad</a>
           </nav>
         </div>
+
         <div class="topbar-actions">
           <button
-            id="help-toggle"
+            id="btn-help"
             class="btn-help"
+            type="button"
             aria-expanded="false"
             aria-controls="help-panel"
           >
-            [HELP] Acronyms
+            [HELP]
           </button>
           <div class="theme-picker">
             <label for="theme-select">Theme:</label>
-            <select id="theme-select" class="theme-select">
+            <select id="theme-select" class="theme-select" aria-label="Theme selector">
               <option value="system">System</option>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
@@ -1092,1034 +1011,825 @@
         </div>
       </div>
 
-      <!-- Acronym Help Panel -->
-      <aside id="help-panel" class="help-panel" hidden>
+      <!-- Expandable Acronym Reference Panel -->
+      <div id="help-panel" class="help-panel" hidden>
         <div class="help-content">
           <div class="help-head">
-            <h3>Technical Acronym &amp; Terminology Reference</h3>
-            <button id="help-close" class="help-close-btn" aria-label="Close acronym glossary">Close ✕</button>
+            <h3>Acronym Reference &amp; Core Definitions</h3>
+            <button id="help-close-btn" class="help-close-btn" type="button">Close</button>
           </div>
           <ul class="acronym-list">
-            <li><strong>CI / CD:</strong> Continuous Integration and Continuous Deployment — the automated practice of building, testing, and shipping code on every push.</li>
-            <li><strong>Git SHA:</strong> Secure Hash Algorithm — the 40-character hexadecimal fingerprint (e.g., <code>e8f91c0...</code>) uniquely identifying a commit's source code tree.</li>
-            <li><strong>Image Tag:</strong> A human-readable, mutable label (like <code>:sha-e8f91c0</code> or <code>:v1.2.0</code>) assigned to point to a container image.</li>
-            <li><strong>Content Digest:</strong> The cryptographic, immutable SHA-256 hash (<code>sha256:4a8b...</code>) calculated directly from the image manifest's bytes.</li>
-            <li><strong>Image Manifest:</strong> The JSON specification document listing all filesystem layers, CPU architecture, and configuration of a container image.</li>
-            <li><strong>GHCR:</strong> GitHub Container Registry (<code>ghcr.io</code>) — GitHub's native hosting service for Docker and OCI container images.</li>
-            <li><strong>OCI:</strong> Open Container Initiative — the open industry standard for container formats and runtime specifications.</li>
-            <li><strong>EC2:</strong> Amazon Elastic Compute Cloud — the cloud virtual machine where the production Docker containers actually run.</li>
-            <li><strong>CVE:</strong> Common Vulnerabilities and Exposures — a public database of known software security flaws used by automated image scanners.</li>
+            <li><strong>GHCR (GitHub Container Registry):</strong> The container registry (<code>ghcr.io</code>) hosting our prebuilt, immutable client and server images.</li>
+            <li><strong>OOM (Out Of Memory):</strong> The Linux kernel killer that forcibly kills running processes (like Nginx or Node) when a machine runs out of RAM during local compilation.</li>
+            <li><strong>SHA (Commit Hash):</strong> The immutable cryptographic hash identifying the exact release version (e.g. <code>sha-b94f0e5</code>).</li>
+            <li><strong>Reverse Proxy:</strong> A gateway server (Nginx) that terminates incoming HTTP connections on port 80 and routes internal API traffic to backend services.</li>
+            <li><strong>Pre-flight Dry Run:</strong> Validating configuration schemas and variable interpolation (<code>docker compose config</code>) without launching containers.</li>
+            <li><strong>Least Network Privilege:</strong> Restricting port bindings so only public-facing services (Nginx on 80) listen externally, while internal services (Express on 5000) have no public ports.</li>
           </ul>
         </div>
-      </aside>
+      </div>
     </header>
 
-    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
-
-    <div id="shell" class="shell">
-      <!-- Sidebar Navigation -->
-      <aside id="sidebar" class="sidebar">
-        <div class="sidebar-header-row">
-          <span class="stage-tag">DEEP DIVE · CI/CD &amp; DOCKER</span>
-          <button id="sidebar-close-btn" class="sidebar-close-btn" aria-label="Close sidebar">✕</button>
+    <div class="shell" id="app-shell">
+      <!-- Collapsible Sidebar -->
+      <aside class="sidebar" id="sidebar" aria-label="Lesson Outline">
+        <div class="sidebar-head">
+          <span class="sidebar-title">Stage 5 Curriculum</span>
+          <span class="sidebar-meta" id="sidebar-progress-badge">0 / 5 Done</span>
         </div>
-        <h2 class="sidebar-title">Demystifying Deployment</h2>
-        <p class="sidebar-subtitle">Git SHAs, Image Tags, Manifests &amp; Cryptographic Digests</p>
-
-        <div class="progress-card">
-          <div class="progress-label-row">
-            <span>Progress</span>
-            <span id="progress-text">0 / 4 complete</span>
+        <div class="progress-bar-wrap">
+          <div class="progress-meta">
+            <span>Overall Progress</span>
+            <span id="progress-percent">0%</span>
           </div>
-          <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="4">
-            <div id="progress-bar" class="progress-bar"></div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
           </div>
         </div>
-
-        <nav id="topic-nav-container" class="topic-list" aria-label="Lesson Topics">
-          <!-- Populated by JavaScript -->
+        <nav>
+          <ul class="topic-nav-list" id="topic-nav-list">
+            <li class="topic-nav-item">
+              <button class="topic-nav-btn active" data-topic="overview">
+                <span class="topic-num">01</span>
+                <span>The Production Compose Paradigm Shift</span>
+                <span class="topic-check-icon">✓</span>
+              </button>
+            </li>
+            <li class="topic-nav-item">
+              <button class="topic-nav-btn" data-topic="why-no-build">
+                <span class="topic-num">02</span>
+                <span>Why We Never Build on Production EC2</span>
+                <span class="topic-check-icon">✓</span>
+              </button>
+            </li>
+            <li class="topic-nav-item">
+              <button class="topic-nav-btn" data-topic="network-topology">
+                <span class="topic-num">03</span>
+                <span>Network Topology &amp; Port 80 Ingress</span>
+                <span class="topic-check-icon">✓</span>
+              </button>
+            </li>
+            <li class="topic-nav-item">
+              <button class="topic-nav-btn" data-topic="secrets-decoupling">
+                <span class="topic-num">04</span>
+                <span>Decoupling Release Tags from Secrets</span>
+                <span class="topic-check-icon">✓</span>
+              </button>
+            </li>
+            <li class="topic-nav-item">
+              <button class="topic-nav-btn" data-topic="verification-quiz">
+                <span class="topic-num">05</span>
+                <span>Pre-Flight Validation &amp; Assessment</span>
+                <span class="topic-check-icon">✓</span>
+              </button>
+            </li>
+          </ul>
         </nav>
       </aside>
 
-      <!-- Main Learning Content -->
-      <main id="main-content">
-        <div id="status-announcer" class="sr-only" aria-live="polite"></div>
+      <!-- Main Content Area -->
+      <main class="main-pane">
+        <header class="lesson-header">
+          <div class="lesson-kicker">
+            <span class="tag emerald">STAGE 05 COMPLETE</span>
+            <span class="tag blue">DOCKER-COMPOSE.PROD.YML</span>
+            <span class="tag purple">IMMUTABLE DEPLOYMENT</span>
+          </div>
+          <h1 class="lesson-title">Stage 5: The Production Compose Contract &amp; Architecture</h1>
+          <p class="lesson-summary">
+            A comprehensive architectural walkthrough of the Stage 5 deployment contract: why production pulls prebuilt GHCR images rather than building from source, how network topology restricts attack surface, and how release parameters are cleanly decoupled from database secrets.
+          </p>
+        </header>
 
-        <!-- ================================================================= -->
-        <!-- TOPIC 1: Git Commit SHA in CI/CD -->
-        <!-- ================================================================= -->
-        <section
-          id="topic-1"
-          class="topic-section"
-          data-id="topic-1"
-          data-title="1. Git Commit SHA in CI/CD"
-        >
-          <header class="topic-header">
-            <div class="topic-eyebrow">Topic 01 · Conceptual Foundations</div>
-            <h1 class="topic-title">Git Commit SHA: The Digital Birth Certificate</h1>
-            <div class="user-query-box">
-              <b>Your Question / Confusion:</b>
-              <p>"I am new to this deployment and CI/CD so whenever I read Git commit SHA I think about GitHub commit, and this gets more hard to connect and make sense of."</p>
+        <!-- TOPIC 1: THE PRODUCTION COMPOSE PARADIGM SHIFT -->
+        <section class="topic-view active" id="topic-overview">
+          <div class="topic-eyebrow">Topic 01 · Core Concept</div>
+          <h2 class="topic-heading topic-title">The Production Compose Paradigm Shift</h2>
+
+          <div class="callout emerald">
+            <div class="callout-title">The Golden Rule of Production Infrastructure</div>
+            <p>
+              <strong>A production virtual machine is a RUNTIME HOST, not a compiler.</strong>
+              <br />In local development, Docker Compose builds images from local source code on the fly (<code>build: ./client</code>).
+              In production, the host pulls pre-verified, immutable container images directly from GitHub Container Registry (<code>image: ghcr.io/...:${IMAGE_TAG}</code>).
+            </p>
+          </div>
+
+          <p>
+            In Stage 4, your GitHub Actions CD pipeline built and published two immutable, SHA-tagged images to GHCR:
+            <br />• <code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:sha-b94f0e5</code>
+            <br />• <code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:sha-b94f0e5</code>
+          </p>
+
+          <p>
+            Stage 5 defines the <strong>Production Compose Contract</strong>. We created five key assets in <code>docker-beginner-simulation</code>:
+          </p>
+
+          <div class="table-wrap">
+            <table class="spec-table">
+              <thead>
+                <tr>
+                  <th>Asset File</th>
+                  <th>Role in Production</th>
+                  <th>Git Tracking Policy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong><code>docker-compose.prod.yml</code></strong></td>
+                  <td>The production execution contract. Pulls GHCR images, binds host port 80 to Nginx, keeps Express private, and configures health checks.</td>
+                  <td>Tracked in Git</td>
+                </tr>
+                <tr>
+                  <td><strong><code>release.env</code></strong></td>
+                  <td>Supplies the dynamic release parameter: <code>IMAGE_TAG=sha-b94f0e5</code>. Changed during every CD deployment.</td>
+                  <td><strong>Ignored</strong> (Generated dynamically on host)</td>
+                </tr>
+                <tr>
+                  <td><strong><code>release.env.example</code></strong></td>
+                  <td>Version-controlled template showing how <code>IMAGE_TAG</code> is structured.</td>
+                  <td>Tracked in Git</td>
+                </tr>
+                <tr>
+                  <td><strong><code>server.env</code></strong></td>
+                  <td>Stores sensitive runtime secrets (e.g. Neon <code>DATABASE_URL</code>, <code>PORT=5000</code>). Managed on host with strict <code>chmod 600</code> permissions.</td>
+                  <td><strong>Ignored</strong> (Strictly forbidden in Git)</td>
+                </tr>
+                <tr>
+                  <td><strong><code>server.env.example</code></strong></td>
+                  <td>Template showing required environment variable keys without real credentials.</td>
+                  <td>Tracked in Git</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="topic-footer">
+            <button class="btn-complete" data-complete-topic="overview">
+              <span class="check-mark">✓</span>
+              <span>Mark Topic 01 Complete</span>
+            </button>
+            <div class="nav-buttons">
+              <button class="btn-step" disabled>Previous</button>
+              <button class="btn-step" data-next-topic="why-no-build">Next: Why Never Build on EC2 &rarr;</button>
             </div>
-          </header>
-
-          <div class="short-answer-card">
-            <b>Short Answer:</b>
-            <p>Your intuition is 100% correct: it <em>is</em> the exact commit hash from your Git repository. In CI/CD, we stamp that exact Git SHA onto the Docker image as its name tag so that any running container on EC2 can be traced directly back to the exact lines of code that created it.</p>
           </div>
+        </section>
 
-          <div class="section-block">
-            <h3>Why You Naturally Think of GitHub (And Why You're Right!)</h3>
+        <!-- TOPIC 2: WHY WE NEVER BUILD ON PRODUCTION EC2 -->
+        <section class="topic-view" id="topic-why-no-build">
+          <div class="topic-eyebrow">Topic 02 · Operational Hazards</div>
+          <h2 class="topic-heading topic-title">Why We Never Build on Production EC2</h2>
+
+          <p>
+            Beginner deployments often clone the entire Git repository onto an EC2 instance and run <code>docker compose up --build</code>.
+            While this seems convenient, it introduces three fatal production hazards:
+          </p>
+
+          <div class="callout rose">
+            <div class="callout-title">1. Host Memory Exhaustion (The Linux Kernel OOM Killer)</div>
             <p>
-              When you commit code with <code>git commit -m "fix login bug"</code>, Git computes a unique 40-character cryptographic hash based on the exact files, author, timestamp, and previous commit (for example, <code>e8f91c0b395...</code>, usually shortened to <code>e8f91c0</code>). That hash represents a frozen snapshot of your source code.
-            </p>
-            <p>
-              When people new to CI/CD see <code>e8f91c0</code> appearing in Docker commands, container registries, and EC2 deployment scripts, they often ask: <em>"Why is my Git commit hash showing up inside Docker and AWS?"</em>
-            </p>
-            <p>
-              The reason is simple: <strong>Git and Docker are two completely separate systems that know nothing about each other.</strong>
-            </p>
-            <ul>
-              <li><strong>The Source Code World (Git / GitHub):</strong> Stores text files (<code>.js</code>, <code>.tsx</code>, <code>Dockerfile</code>), branches, and pull requests.</li>
-              <li><strong>The Runtime World (Docker / EC2):</strong> Stores binary filesystem layers, Linux namespaces, and running processes.</li>
-            </ul>
-            <p>
-              If you build a Docker image locally with <code>docker build -t my-app .</code>, Docker packages whatever files happen to be in your folder, slaps the name <code>my-app</code> on it, and forgets everything else. Docker doesn't know who wrote the code, which branch it came from, or whether tests passed.
+              Compiling TypeScript (<code>tsc</code>) and bundling React with Vite requires significant RAM and CPU.
+              On common entry-tier instances like an AWS <code>t2.micro</code> (1 GB RAM), a build command triggers memory spikes above 900 MB.
+              The Linux kernel's Out-Of-Memory (OOM) killer abruptly terminates running processes to save the OS—often killing the active Nginx or Node process, causing immediate total downtime for real users.
             </p>
           </div>
 
-          <div class="section-block">
-            <h3>The Problem: The "Blind Deployment"</h3>
+          <div class="callout amber">
+            <div class="callout-title">2. Toolchain Sprawl &amp; Attack Surface Inflation</div>
             <p>
-              Suppose an engineer tags an image as <code>my-app:latest</code> or <code>my-app:v1</code> and pushes it to an EC2 server. Two days later, at 3:00 AM, the server crashes with a memory leak.
+              If an EC2 server builds from source, it must permanently store Git credentials, source code files, Node.js development runtimes, npm build dependencies, and compiler toolchains.
+              If an attacker breaches the web server, they gain instant access to proprietary source code and development tools.
+              In contrast, a runtime host that only pulls prebuilt images requires zero source code and zero build tools.
             </p>
+          </div>
+
+          <div class="callout blue">
+            <div class="callout-title">3. Invalidation of CI Verification Guarantees</div>
             <p>
-              The engineer on call logs into EC2 and checks running containers. They see <code>my-app:latest</code>.
+              The entire purpose of Stage 3 CI is to verify that code passes linting, tests, and builds.
+              Building on EC2 creates a <em>new, untested binary artifact</em> on the live server.
+              Network blips, upstream npm package updates, or differing glibc versions can result in a broken build running on EC2 that never existed in CI.
             </p>
-            <div class="callout danger">
-              <b>The Nightmare of Untraced Releases:</b>
-              What code is actually running inside that container? Is it yesterday's commit? Last week's commit? Did someone test an experimental branch? Did someone build it on a laptop without committing changes? <strong>Nobody knows.</strong> You cannot debug code if you don't know what code is running.
+          </div>
+
+          <h3>Development vs. Production Compose Comparison</h3>
+          <div class="table-wrap">
+            <table class="spec-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Development (<code>docker-compose.yml</code>)</th>
+                  <th>Production (<code>docker-compose.prod.yml</code>)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Image Directive</strong></td>
+                  <td><code>build: ./client</code> &amp; <code>build: ./server</code></td>
+                  <td><code>image: ghcr.io/...:${IMAGE_TAG}</code></td>
+                </tr>
+                <tr>
+                  <td><strong>Source Code on Host</strong></td>
+                  <td>Full source directory present</td>
+                  <td><strong>Zero source code</strong> (only compose file + env)</td>
+                </tr>
+                <tr>
+                  <td><strong>Public Ports</strong></td>
+                  <td><code>3000:80</code> (Client)</td>
+                  <td><code>80:80</code> (Standard HTTP port)</td>
+                </tr>
+                <tr>
+                  <td><strong>API Port Exposure</strong></td>
+                  <td>Internal (<code>expose: 5000</code>)</td>
+                  <td>Internal (<code>expose: 5000</code>, no host port)</td>
+                </tr>
+                <tr>
+                  <td><strong>Restart Policy</strong></td>
+                  <td><code>restart: unless-stopped</code></td>
+                  <td><code>restart: unless-stopped</code></td>
+                </tr>
+                <tr>
+                  <td><strong>Secrets Management</strong></td>
+                  <td>Local <code>./server/.env</code> file</td>
+                  <td>Host-only <code>./server.env</code> (chmod 600)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="topic-footer">
+            <button class="btn-complete" data-complete-topic="why-no-build">
+              <span class="check-mark">✓</span>
+              <span>Mark Topic 02 Complete</span>
+            </button>
+            <div class="nav-buttons">
+              <button class="btn-step" data-prev-topic="overview">&larr; Previous: Overview</button>
+              <button class="btn-step" data-next-topic="network-topology">Next: Network Topology &rarr;</button>
             </div>
           </div>
+        </section>
 
-          <div class="section-block">
-            <h3>How CI/CD Bridges the Two Worlds</h3>
-            <p>
-              In modern CI/CD, GitHub Actions acts as the bridge. When code merges to <code>main</code>, the GitHub Actions runner automatically receives GitHub's built-in variable: <code>${{ github.sha }}</code>.
-            </p>
-            <div class="code-snippet">
-              <button class="copy-btn">Copy</button>
-              <pre><code># Inside .github/workflows/deploy.yml
-- name: Build and Push Docker Image
-  uses: docker/build-push-action@v5
-  with:
-    context: .
-    push: true
-    # We stamp the exact 7-character Git commit SHA onto the Docker image tag:
-    tags: ghcr.io/s3nsh1-dev/todo-server:sha-${{ github.sha }}</code></pre>
-            </div>
-            <p>
-              Now, when EC2 runs <code>ghcr.io/s3nsh1-dev/todo-server:sha-e8f91c0</code>, the running container has its <strong>digital birth certificate</strong> stamped right on its forehead.
-            </p>
-            <p>
-              If anything fails on EC2, you take <code>e8f91c0</code>, paste it into GitHub or type <code>git checkout e8f91c0</code>, and you immediately see:
-            </p>
-            <ol>
-              <li>The exact line-by-line diff of code running in production.</li>
-              <li>Who authored and approved the pull request.</li>
-              <li>The exact CI test logs (Playwright, Jest, ESLint) that verified this build.</li>
-            </ol>
-          </div>
+        <!-- TOPIC 3: NETWORK TOPOLOGY & PORT 80 INGRESS -->
+        <section class="topic-view" id="topic-network-topology">
+          <div class="topic-eyebrow">Topic 03 · Security Boundaries</div>
+          <h2 class="topic-heading topic-title">Network Topology &amp; Port 80 Ingress</h2>
 
-          <!-- Interactive SVG Diagram 1 -->
-          <div class="diagram-card">
-            <div class="diagram-toolbar">
-              <span class="diagram-title">Mechanism Diagram: The Git-to-EC2 Traceability Bridge</span>
-              <div class="btn-group" id="bridge-sim-btn-group">
-                <button class="sim-btn active" data-mode="sha">Traceable Release (Git SHA Tag)</button>
-                <button class="sim-btn" data-mode="blind">Blind Release (:latest / No SHA)</button>
-              </div>
+          <p>
+            Security in containerized environments relies on <strong>Least Network Privilege</strong>.
+            External internet traffic must never reach backend databases or Node.js application ports directly.
+          </p>
+
+          <!-- Interactive Network SVG -->
+          <div class="diagram-wrapper">
+            <div class="diagram-controls">
+              <button class="diagram-btn active" data-flow="all">Full Production Topology</button>
+              <button class="diagram-btn" data-flow="public">Public HTTP Ingress (Port 80)</button>
+              <button class="diagram-btn" data-flow="internal">Internal Docker Bridge (Port 5000)</button>
+              <button class="diagram-btn" data-flow="database">External Neon DB (Egress)</button>
             </div>
 
             <svg
-              id="svg-bridge"
-              class="svg-canvas"
-              viewBox="0 0 960 260"
+              id="topology-svg"
+              class="interactive-svg"
+              viewBox="0 0 920 320"
+              xmlns="http://www.w3.org/2000/svg"
               role="img"
-              aria-label="Interactive diagram illustrating how Git commit SHAs bridge GitHub repositories and EC2 Docker containers"
+              aria-label="Production Network Topology Diagram"
             >
               <defs>
-                <marker id="m-arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                  <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--blue)" />
+                <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--blue)" />
                 </marker>
-                <marker id="m-arrow-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                  <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--rose)" />
+                <marker id="arrow-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--purple)" />
                 </marker>
-                <marker id="m-arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                  <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--emerald)" />
+                <marker id="arrow-emerald" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--emerald)" />
                 </marker>
               </defs>
 
-              <!-- Node 1: GitHub Source Code -->
-              <g class="svg-node" id="bridge-node-git" transform="translate(30, 40)">
-                <rect class="svg-node-box blue" width="200" height="150" />
-                <text class="svg-text-title" x="20" y="34">1. Git Repository</text>
-                <text class="svg-text-sub" x="20" y="58">Commit: e8f91c0</text>
-                <text class="svg-text-sub" x="20" y="82">Branch: refs/heads/main</text>
-                <text class="svg-text-sub" x="20" y="106">Author: alice@dev.io</text>
-                <text class="svg-text-sub" x="20" y="130" fill="var(--blue-text)">PR #42 Merged ✓</text>
+              <!-- Internet Box -->
+              <g id="node-internet">
+                <rect x="20" y="115" width="120" height="70" rx="8" fill="var(--surface)" stroke="var(--blue-line)" stroke-width="2" />
+                <text x="80" y="145" text-anchor="middle" font-family="var(--font-ui)" font-size="12" font-weight="700" fill="var(--blue-text)">Public Internet</text>
+                <text x="80" y="165" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--ink-muted)">HTTP Clients</text>
               </g>
 
-              <!-- Wire 1: Git to CI -->
-              <path id="bridge-wire-1" class="svg-wire active" d="M 230 115 H 280" marker-end="url(#m-arrow-blue)" />
+              <!-- EC2 Perimeter -->
+              <rect x="180" y="25" width="500" height="260" rx="10" fill="none" stroke="var(--line-strong)" stroke-width="2" stroke-dasharray="6 4" />
+              <text x="200" y="50" font-family="var(--font-mono)" font-size="11" font-weight="700" fill="var(--ink-muted)">AWS EC2 HOST BOUNDARY</text>
 
-              <!-- Node 2: GitHub Actions CI/CD -->
-              <g class="svg-node" id="bridge-node-ci" transform="translate(280, 40)">
-                <rect class="svg-node-box blue" width="200" height="150" />
-                <text class="svg-text-title" x="20" y="34">2. GitHub Actions</text>
-                <text class="svg-text-sub" x="20" y="58">Runner reads ${{ github.sha }}</text>
-                <text class="svg-text-sub" x="20" y="82">Passes Playwright E2E ✓</text>
-                <text class="svg-text-sub" x="20" y="106">Builds &amp; stamps tag:</text>
-                <text id="bridge-txt-ci-tag" class="svg-text-sub" x="20" y="130" fill="var(--blue-text)">:sha-e8f91c0</text>
+              <!-- Docker Bridge Network Box -->
+              <rect id="box-bridge" x="200" y="65" width="460" height="200" rx="8" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5" />
+              <text x="220" y="88" font-family="var(--font-mono)" font-size="10" font-weight="600" fill="var(--ink-muted)">Docker Bridge Network (Internal)</text>
+
+              <!-- Client Container (Nginx) -->
+              <g id="node-client">
+                <rect x="220" y="105" width="180" height="135" rx="8" fill="var(--surface)" stroke="var(--blue)" stroke-width="2" />
+                <rect x="220" y="105" width="180" height="28" rx="8" fill="var(--blue-soft)" />
+                <text x="235" y="124" font-family="var(--font-ui)" font-size="11" font-weight="700" fill="var(--blue-text)">client (Nginx:80)</text>
+                <text x="235" y="152" font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">• Serves React SPA</text>
+                <text x="235" y="172" font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">• Binds ports: 80:80</text>
+                <text x="235" y="192" font-family="var(--font-mono)" font-size="10" fill="var(--blue-text)">• proxy_pass /api/ &rarr;</text>
+                <text x="235" y="210" font-family="var(--font-mono)" font-size="9" fill="var(--ink-faint)">http://server:5000</text>
               </g>
 
-              <!-- Wire 2: CI to Registry -->
-              <path id="bridge-wire-2" class="svg-wire active" d="M 480 115 H 530" marker-end="url(#m-arrow-blue)" />
-
-              <!-- Node 3: Container Registry GHCR -->
-              <g class="svg-node" id="bridge-node-ghcr" transform="translate(530, 40)">
-                <rect class="svg-node-box blue" width="190" height="150" />
-                <text class="svg-text-title" x="20" y="34">3. GHCR Registry</text>
-                <text class="svg-text-sub" x="20" y="58">ghcr.io/s3nsh1-dev/...</text>
-                <text id="bridge-txt-ghcr-tag" class="svg-text-sub" x="20" y="85" font-weight="bold">Tag: :sha-e8f91c0</text>
-                <text class="svg-text-sub" x="20" y="110">Digest: sha256:7f1b...</text>
-                <text class="svg-text-sub" x="20" y="132" fill="var(--emerald-text)">Immutable Artifact</text>
+              <!-- Server Container (Express) -->
+              <g id="node-server">
+                <rect x="460" y="105" width="180" height="135" rx="8" fill="var(--surface)" stroke="var(--purple)" stroke-width="2" />
+                <rect x="460" y="105" width="180" height="28" rx="8" fill="var(--purple-soft)" />
+                <text x="475" y="124" font-family="var(--font-ui)" font-size="11" font-weight="700" fill="var(--purple-text)">server (Express:5000)</text>
+                <text x="475" y="152" font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">• expose: 5000 only</text>
+                <text x="475" y="172" font-family="var(--font-mono)" font-size="10" fill="var(--rose-text)">• NO public host port</text>
+                <text x="475" y="192" font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">• env_file: server.env</text>
+                <text x="475" y="210" font-family="var(--font-mono)" font-size="9" fill="var(--purple-text)">• /api/health probe</text>
               </g>
 
-              <!-- Wire 3: Registry to EC2 -->
-              <path id="bridge-wire-3" class="svg-wire active" d="M 720 115 H 770" marker-end="url(#m-arrow-blue)" />
-
-              <!-- Node 4: EC2 Server -->
-              <g class="svg-node" id="bridge-node-ec2" transform="translate(770, 40)">
-                <rect id="bridge-box-ec2" class="svg-node-box emerald" width="160" height="150" />
-                <text class="svg-text-title" x="18" y="34">4. AWS EC2 Host</text>
-                <text class="svg-text-sub" x="18" y="58">Docker Compose</text>
-                <text id="bridge-txt-ec2-run" class="svg-text-sub" x="18" y="85">image: ...:sha-e8f91c0</text>
-                <text id="bridge-txt-ec2-status" class="svg-text-sub" x="18" y="115" fill="var(--emerald-text)" font-weight="bold">100% Traceable ✓</text>
-                <text class="svg-text-sub" x="18" y="135">Zero Guesswork</text>
+              <!-- Neon PostgreSQL Cloud Box -->
+              <g id="node-db">
+                <rect x="730" y="115" width="165" height="75" rx="8" fill="var(--surface)" stroke="var(--emerald)" stroke-width="2" />
+                <rect x="730" y="115" width="165" height="25" rx="8" fill="var(--emerald-soft)" />
+                <text x="745" y="132" font-family="var(--font-ui)" font-size="11" font-weight="700" fill="var(--emerald-text)">Neon Cloud PostgreSQL</text>
+                <text x="745" y="158" font-family="var(--font-mono)" font-size="9.5" fill="var(--ink-2)">AWS Managed DB</text>
+                <text x="745" y="174" font-family="var(--font-mono)" font-size="9" fill="var(--emerald-text)">SSL Required (port 5432)</text>
               </g>
 
-              <!-- Bidirectional Audit Loop Wire (Only visible in SHA mode) -->
-              <path id="bridge-wire-audit" class="svg-wire success" d="M 850 190 V 225 H 130 V 190" marker-end="url(#m-arrow-emerald)" />
-              <text id="bridge-txt-audit" class="svg-text-wire" x="480" y="242" text-anchor="middle" fill="var(--emerald-text)">
-                Reverse Audit Trail: Instant link from running container back to Git commit &amp; author
-              </text>
+              <!-- Connectors -->
+              <path id="path-public" d="M 140 150 L 220 150" fill="none" stroke="var(--blue)" stroke-width="2.5" marker-end="url(#arrow-blue)" />
+              <path id="path-internal" d="M 400 170 L 460 170" fill="none" stroke="var(--purple)" stroke-width="2.5" marker-end="url(#arrow-purple)" />
+              <path id="path-db" d="M 640 150 L 730 150" fill="none" stroke="var(--emerald)" stroke-width="2.5" marker-end="url(#arrow-emerald)" />
             </svg>
 
-            <div id="bridge-sim-caption" class="diagram-caption">
-              <strong>Traceable Release Active:</strong> The Git commit SHA (<code>e8f91c0</code>) passes from GitHub to the Actions workflow, becomes the Docker image tag in GHCR, and is deployed to EC2. If an incident happens on EC2, engineers have an immediate 1-to-1 reverse audit trail back to GitHub.
+            <div class="diagram-caption" id="diagram-caption">
+              <strong>Complete Production Topology:</strong> Users access Nginx over public port 80. Nginx proxies <code>/api/</code> internally to Express over the Docker bridge network. The server connects outbound over encrypted TLS to Neon DB. The database and backend API are completely shielded from public internet exposure.
+            </div>
+          </div>
+
+          <div class="callout blue">
+            <div class="callout-title">Why Port 80 Replaces Port 3000</div>
+            <p>
+              In local development, the client ran on <code>3000:80</code> so you could visit <code>http://localhost:3000</code> without needing <code>sudo</code>.
+              In production on EC2, standard web traffic enters over port 80 (HTTP).
+              By binding <code>80:80</code>, users can visit your EC2 IP address directly in their browser without typing a port number!
+            </p>
+          </div>
+
+          <div class="topic-footer">
+            <button class="btn-complete" data-complete-topic="network-topology">
+              <span class="check-mark">✓</span>
+              <span>Mark Topic 03 Complete</span>
+            </button>
+            <div class="nav-buttons">
+              <button class="btn-step" data-prev-topic="why-no-build">&larr; Previous: Why No Build</button>
+              <button class="btn-step" data-next-topic="secrets-decoupling">Next: Secrets Decoupling &rarr;</button>
             </div>
           </div>
         </section>
 
-        <!-- ================================================================= -->
-        <!-- TOPIC 2: What is an Image Tag, When, Where, Who -->
-        <!-- ================================================================= -->
-        <section
-          id="topic-2"
-          class="topic-section"
-          data-id="topic-2"
-          data-title="2. Image Tags: What, When, Where &amp; Who"
-          hidden
-        >
-          <header class="topic-header">
-            <div class="topic-eyebrow">Topic 02 · Mechanics &amp; Terminology</div>
-            <h1 class="topic-title">Image Tags: What, When, Where &amp; Who</h1>
-            <div class="user-query-box">
-              <b>Your Question / Confusion:</b>
-              <p>"What is an image tag and when and where is it applied and who?"</p>
-            </div>
-          </header>
+        <!-- TOPIC 4: DECOUPLING RELEASE TAGS FROM SECRETS -->
+        <section class="topic-view" id="topic-secrets-decoupling">
+          <div class="topic-eyebrow">Topic 04 · Configuration Boundaries</div>
+          <h2 class="topic-heading topic-title">Decoupling Release Tags from Runtime Secrets</h2>
 
-          <div class="short-answer-card">
-            <b>Short Answer:</b>
-            <p>An image tag is a human-readable text label attached after the colon in a Docker image address (e.g., <code>:sha-e8f91c0</code> or <code>:v1.2.0</code>). In automated CI/CD, it is applied by GitHub Actions (the "who") right after automated tests pass (the "when"), stored inside the container registry (the "where"), and acts as a bookmark (the "what") so servers know exactly which build to pull.</p>
-          </div>
+          <p>
+            A common mistake in deployment automation is dumping all configuration into a single <code>.env</code> file.
+            This creates a severe operational problem: every time you deploy a new commit SHA, your automation script must edit a file that also contains sensitive database passwords.
+            A typo or script bug could erase the database credentials!
+          </p>
 
-          <div class="section-block">
-            <h3>The Anatomy of a Full Container Image Name</h3>
+          <div class="callout purple">
+            <div class="callout-title">The Clean Architectural Separation</div>
             <p>
-              To understand what an image tag is, look at the full address of a production container image:
-            </p>
-            <div class="code-snippet">
-              <pre><code>ghcr.io / s3nsh1-dev / docker-beginner-simulation-client : sha-e8f91c0
-└──┬──┘   └───┬────┘   └──────────────────┬───────────┘   └───┬──────┘
-   │          │                           │                   │
-1. Host    2. Namespace (Owner)        3. Repository Name   4. TAG (The Label)</code></pre>
-            </div>
-            <p>
-              The tag is the component after the colon (<code>:</code>). If you don't provide a tag when running <code>docker pull ubuntu</code>, Docker quietly defaults to <code>ubuntu:latest</code>.
+              We divide configuration into two distinct files with completely different lifecycles:
+              <br />1. <strong><code>release.env</code> (Dynamic Release Parameters):</strong> Contains <code>IMAGE_TAG=sha-xxxxxxx</code>. Changes on every deployment. Contains no secrets. Safe to log.
+              <br />2. <strong><code>server.env</code> (Static Runtime Secrets):</strong> Contains <code>DATABASE_URL</code> and <code>PORT=5000</code>. Configured once during server setup. Never changes between deployments. Protected with <code>chmod 600</code>.
             </p>
           </div>
 
-          <div class="section-block">
-            <h3>Breaking Down the 4 W's</h3>
+          <h3>1. How <code>docker-compose.prod.yml</code> Wires Both Files</h3>
+          <p>
+            Notice how cleanly the production Compose file references both inputs:
+          </p>
 
-            <div class="data-table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Dimension</th>
-                    <th>CI/CD Production Reality</th>
-                    <th>Local Developer Machine</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>WHAT is it?</strong></td>
-                    <td>A pointer or alias (like a sticky label on a box) that gives a human-readable name to a specific container image manifest.</td>
-                    <td>Same — a named pointer pointing to a local image ID on disk.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>WHEN is it applied?</strong></td>
-                    <td>During the release job in GitHub Actions, <em>immediately after</em> all quality, lint, and end-to-end browser tests have passed.</td>
-                    <td>When running <code>docker build -t name:tag .</code> or <code>docker tag src target:tag</code>.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>WHERE is it applied?</strong></td>
-                    <td>Constructed on the CI runner, then registered inside the <strong>Container Registry</strong> (GHCR) when pushed.</td>
-                    <td>Registered inside the local Docker daemon engine (<code>/var/lib/docker</code>).</td>
-                  </tr>
-                  <tr>
-                    <td><strong>WHO applies it?</strong></td>
-                    <td>The automated CI pipeline (<strong>GitHub Actions runner</strong> running the Docker Buildx build step). No human manually types the command.</td>
-                    <td>The <strong>developer</strong> typing CLI commands in their terminal.</td>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">docker-compose.prod.yml</span>
+              <button class="copy-btn" data-copy-target="prod-compose-code">Copy</button>
             </div>
+            <pre><code id="prod-compose-code">services:
+  client:
+    image: ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:${IMAGE_TAG}
+    init: true
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      server:
+        condition: service_healthy
+
+  server:
+    image: ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:${IMAGE_TAG}
+    restart: unless-stopped
+    expose:
+      - "5000"
+    env_file:
+      - ./server.env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'node -e "fetch(\'http://localhost:5000/api/health\').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s</code></pre>
           </div>
 
-          <div class="section-block">
-            <h3>The Hidden Danger: Image Tags Are Mutable!</h3>
-            <p>
-              Here is the most critical fact about image tags that trips up beginners: <strong>Image tags are mutable pointers.</strong>
-            </p>
-            <p>
-              Think of a tag like a sticky note on a physical filing box. If someone has write access to your container registry, they can pull off the sticky note labelled <code>v1.0</code> or <code>latest</code> and stick it onto a completely different box with completely different code.
-            </p>
-            <div class="callout warning">
-              <b>Why <code>:latest</code> is Forbidden in Production Deployments:</b>
-              If your EC2 <code>docker-compose.yml</code> specifies <code>image: ghcr.io/my-org/todo-client:latest</code>, you have created a time-bomb. If two EC2 servers restart at different times, Server A might pull yesterday's <code>latest</code>, while Server B pulls today's <code>latest</code>. Your production fleet is now running two completely different versions of code simultaneously!
-            </div>
-            <p>
-              To fix this, production pipelines adopt <strong>immutable tagging conventions</strong>:
-            </p>
-            <ul>
-              <li><strong>Git Commit SHA tags:</strong> <code>:sha-e8f91c0</code> (Created for every commit merged into <code>main</code>).</li>
-              <li><strong>Semantic Version tags:</strong> <code>:v1.4.2</code> (Created when a Git release or Git tag is published).</li>
-            </ul>
-          </div>
-        </section>
+          <h3>2. How Variable Interpolation Works</h3>
+          <p>
+            When Docker Compose encounters <code>${IMAGE_TAG}</code> in the <code>image:</code> line, it resolves the value from the environment.
+            By running:
+            <br /><code>docker compose --env-file release.env -f docker-compose.prod.yml config</code>
+            <br />Compose reads <code>IMAGE_TAG</code> from <code>release.env</code>.
+            Simultaneously, the <code>env_file: ./server.env</code> directive passes <code>DATABASE_URL</code> and <code>PORT</code> directly into the Express container at startup.
+          </p>
 
-        <!-- ================================================================= -->
-        <!-- TOPIC 3: Why We Need This Much Metadata -->
-        <!-- ================================================================= -->
-        <section
-          id="topic-3"
-          class="topic-section"
-          data-id="topic-3"
-          data-title="3. Why So Much Deployment Metadata?"
-          hidden
-        >
-          <header class="topic-header">
-            <div class="topic-eyebrow">Topic 03 · Operational Reliability</div>
-            <h1 class="topic-title">Why So Much Metadata with Version Releasing?</h1>
-            <div class="user-query-box">
-              <b>Your Question / Confusion:</b>
-              <p>"Why we need this much metadata with deployment and version releasing?"</p>
-            </div>
-          </header>
-
-          <div class="short-answer-card">
-            <b>Short Answer:</b>
-            <p>Metadata exists because software in production will inevitably fail. Rich metadata (Git commit SHAs, build timestamps, author provenance, base image hashes, and release tags) transforms a catastrophic outage from hours of panic and guessing into an immediate 10-second diagnosis and a 30-second safe rollback.</p>
-          </div>
-
-          <div class="section-block">
-            <h3>The 4 Pillars of Production Metadata</h3>
-            <p>
-              When building hobby projects, you can copy files to a server with <code>scp</code> or <code>rsync</code> and run <code>npm restart</code>. But in real-world systems handling financial transactions, user data, or production traffic, that approach quickly causes outages.
-            </p>
-            <p>Here are the 4 fundamental reasons why CI/CD requires rich deployment metadata:</p>
-
-            <!-- Pillar 1 -->
-            <div class="callout tip">
-              <b>1. Instant Auditability &amp; Provenance ("Who Shipped This Bug?")</b>
-              When customer complaints flood in, you don't have time to inspect file modification dates. You run <code>docker ps</code> on EC2 and see:
-              <br /><code>ghcr.io/s3nsh1-dev/todo-server:sha-e8f91c0</code>
-              <br />In 15 seconds, you know: Pull Request #42, merged by Alice at 2:15 PM, commit message "Update authentication cookie settings".
-            </div>
-
-            <!-- Pillar 2 -->
-            <div class="callout tip">
-              <b>2. Deterministic &amp; Instant Rollback ("Time Travel Without Guessing")</b>
-              If the new release breaks production, you cannot "un-bake" code on the server. Because the CI pipeline pushes every release with its unique Git SHA tag, GHCR still holds the previous stable image (e.g., <code>:sha-3f9e1a0</code>).
-              <br />Rolling back doesn't require rebuilding or recompiling code. You simply tell Docker Compose on EC2 to run <code>image: ...:sha-3f9e1a0</code>. It restarts in seconds with the guaranteed working version.
-            </div>
-
-            <!-- Pillar 3 -->
-            <div class="callout tip">
-              <b>3. Artifact Immutability (Build Once, Run Everywhere)</b>
-              A major rule of software delivery is: <strong>Never rebuild code on the production server.</strong>
-              <br />If you build on EC2, an <code>npm install</code> could fetch a new sub-dependency that was updated 5 minutes ago, or your build tool could run out of memory. Metadata ensures that the exact Docker image built and tested in CI on GitHub Actions is byte-for-byte identical to what runs on EC2.
-            </div>
-
-            <!-- Pillar 4 -->
-            <div class="callout tip">
-              <b>4. Automated Security &amp; Vulnerability Scanning</b>
-              Modern registries scan images for known security vulnerabilities (CVEs). Container metadata tells the scanner: <em>"This image was built using Node 20.11 on Alpine 3.19."</em> When an OpenSSL or Linux kernel vulnerability is announced, security dashboards immediately alert you: <em>"Server running commit sha-e8f91c0 has a critical flaw and must be patched."</em>
-            </div>
-          </div>
-
-          <div class="section-block">
-            <h3>Metadata in Action: Primitive vs. Production Pipelines</h3>
-            <div class="data-table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Scenario</th>
-                    <th>Primitive Deployment (No Metadata / <code>:latest</code>)</th>
-                    <th>Metadata-Driven CI/CD (<code>:sha-e8f91c0</code>)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>Production Outage</strong></td>
-                    <td>Engineers spend 2 hours diffing files on the server trying to figure out what version is running.</td>
-                    <td>10-second inspection of the container tag links directly to the GitHub commit and commit diff.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Emergency Rollback</strong></td>
-                    <td>Panic. You must find the old code, try to build it on the server, and hope npm dependencies still resolve.</td>
-                    <td>Change 1 line in Compose to the previous Git SHA tag. Docker pulls the cached old image and starts in 5 seconds.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Multi-Server Consistency</strong></td>
-                    <td>Server 1 and Server 2 pull <code>:latest</code> at different times and run two different codebases (drift).</td>
-                    <td>Both servers pull <code>:sha-e8f91c0</code>. 100% mathematical guarantee of running identical binaries.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Compliance &amp; Auditing</strong></td>
-                    <td>Fails SOC2 and ISO compliance because there is no paper trail connecting deployed binaries to code reviews.</td>
-                    <td>Passes compliance: every production container links to an approved PR, test run, and author.</td>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="topic-footer">
+            <button class="btn-complete" data-complete-topic="secrets-decoupling">
+              <span class="check-mark">✓</span>
+              <span>Mark Topic 04 Complete</span>
+            </button>
+            <div class="nav-buttons">
+              <button class="btn-step" data-prev-topic="network-topology">&larr; Previous: Network Topology</button>
+              <button class="btn-step" data-next-topic="verification-quiz">Next: Validation &amp; Quiz &rarr;</button>
             </div>
           </div>
         </section>
 
-        <!-- ================================================================= -->
-        <!-- TOPIC 4: Tag vs Digest vs Manifest -->
-        <!-- ================================================================= -->
-        <section
-          id="topic-4"
-          class="topic-section"
-          data-id="topic-4"
-          data-title="4. Tag vs. Digest vs. Manifest"
-          hidden
-        >
-          <header class="topic-header">
-            <div class="topic-eyebrow">Topic 04 · Architecture &amp; Deep Mechanics</div>
-            <h1 class="topic-title">Tag vs. Content Digest vs. Manifest</h1>
-            <div class="user-query-box">
-              <b>Your Question / Confusion:</b>
-              <p>"difference between image tag and content digest and manifest. if both provide unique identification to the image then why need 2 ? according to my understanding image tag is for who want to use the image in his own project so he will get every metadata for work with his project and commit sha uniqueness gives us the the help to have ec2 connect with image + hold an record of what repo is responsible for the image and what is the versioning in this. correct me"</p>
-            </div>
-          </header>
+        <!-- TOPIC 5: PRE-FLIGHT VALIDATION & ASSESSMENT -->
+        <section class="topic-view" id="topic-verification-quiz">
+          <div class="topic-eyebrow">Topic 05 · Pre-Flight Testing</div>
+          <h2 class="topic-heading topic-title">Pre-Flight Validation &amp; Assessment</h2>
 
-          <div class="short-answer-card">
-            <b>Short Answer:</b>
-            <p>An <strong>Image Tag</strong> is a human-friendly bookmark (mutable alias), a <strong>Manifest</strong> is a JSON packing slip listing all filesystem layers and architecture metadata, and a <strong>Content Digest</strong> is the unforgeable cryptographic SHA-256 hash of that manifest. You need both tags and digests because humans cannot remember 64-character hashes, while servers and security systems require mathematical proof that the container was not tampered with.</p>
+          <p>
+            Before deploying anything to EC2, you must verify the contract locally.
+            Docker Compose provides a built-in pre-flight linter: <code>docker compose config</code>.
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">Terminal Verification Command</span>
+              <button class="copy-btn" data-copy-target="config-cmd">Copy</button>
+            </div>
+            <pre><code id="config-cmd">docker compose --env-file release.env -f docker-compose.prod.yml config</code></pre>
           </div>
 
-          <div class="section-block">
-            <h3>Checking Your Understanding: What You Got Right &amp; Corrections</h3>
-            <p>
-              Your intuition touched on several real concepts, but there are three crucial corrections to make in your mental model:
-            </p>
+          <p>
+            This command acts as a comprehensive dry-run validator:
+          </p>
+          <ul style="margin-left: 1.5rem; margin-bottom: 1.2rem; color: var(--ink-2); line-height: 1.7;">
+            <li><strong>Syntax &amp; Indentation Check:</strong> Validates YAML schema correctness.</li>
+            <li><strong>Variable Resolution:</strong> Replaces <code>${IMAGE_TAG}</code> with the concrete value from <code>release.env</code> (e.g. <code>sha-b94f0e5</code>).</li>
+            <li><strong>Port &amp; Network Validation:</strong> Confirms port bindings and healthcheck commands <strong>without launching any containers</strong>.</li>
+            <li><strong>Rollback Simulation:</strong> You can test a rollback instantly by overriding the variable:
+              <br /><code>IMAGE_TAG=sha-previous docker compose -f docker-compose.prod.yml config | grep image:</code>
+            </li>
+          </ul>
 
-            <div class="callout warning">
-              <b>Correction 1: Image Tags do NOT provide unique or guaranteed identification!</b>
-              You asked: <em>"if both provide unique identification to the image then why need 2?"</em>
-              <br />
-              <strong>Correction:</strong> Tags do <strong>not</strong> guarantee uniqueness! An image tag is just a movable label. If you push a tag <code>my-image:v1</code> today, you can push a completely different image with the same tag <code>my-image:v1</code> tomorrow. The tag will now point to the new image, completely erasing the link to the old one.
-              <br />
-              <strong>Only the Content Digest</strong> (<code>sha256:...</code>) is mathematically unique and immutable because it is derived directly from the binary contents of the image.
+          <!-- Interactive Comprehension Quiz -->
+          <div class="interactive-quiz">
+            <div class="quiz-title">
+              <span>🎯 Quick Check: Stage 5 Architecture</span>
             </div>
-
-            <div class="callout warning">
-              <b>Correction 2: The Tag doesn't contain the metadata — the Manifest does!</b>
-              You wrote: <em>"image tag is for who want to use the image in his own project so he will get every metadata for work with his project"</em>
-              <br />
-              <strong>Correction:</strong> The image tag is just a plain string (like <code>:v1.2.0</code> or <code>:sha-e8f91c0</code>). It contains zero metadata inside itself. The <strong>Manifest</strong> is the actual JSON document that contains all the metadata (OS architecture, layer hashes, environment variables, exposed ports, and command entrypoints). The tag is merely an address book entry pointing to that manifest.
+            <div class="quiz-prompt">
+              Why does <code>docker-compose.prod.yml</code> have <code>ports: ["80:80"]</code> on the client container, but only <code>expose: ["5000"]</code> on the server container?
             </div>
-
-            <div class="callout tip">
-              <b>Validation &amp; Nuance: Connecting EC2 and Git Commit SHAs</b>
-              You wrote: <em>"commit sha uniqueness gives us the help to have ec2 connect with image + hold an record of what repo is responsible for the image and what is the versioning in this."</em>
-              <br />
-              <strong>Validation:</strong> You are spot on about the purpose! Stamping the Git commit SHA into the image tag (<code>:sha-e8f91c0</code>) gives EC2 and developers the exact record of which code repository and version created the image.
-              <br />
-              <strong>Nuance:</strong> EC2 doesn't connect to GitHub on its own; your CI workflow explicitly puts the Git SHA into the tag and injects OCI labels into the manifest so Docker Compose knows which image to pull.
+            <div class="quiz-options">
+              <button class="quiz-opt-btn" data-correct="false">
+                A) Because Express cannot bind to port 80 without root privileges.
+              </button>
+              <button class="quiz-opt-btn" data-correct="true">
+                B) Because Nginx acts as the single public gateway (serving the React SPA and reverse-proxying /api/ internally), keeping the Express API shielded from direct public internet attacks.
+              </button>
+              <button class="quiz-opt-btn" data-correct="false">
+                C) Because Docker Compose does not support publishing two ports simultaneously on the same host.
+              </button>
+              <button class="quiz-opt-btn" data-correct="false">
+                D) Because port 5000 is reserved exclusively for the Neon database.
+              </button>
             </div>
+            <div class="quiz-feedback" id="quiz-feedback"></div>
           </div>
 
-          <div class="section-block">
-            <h3>The Shipping Crate Analogy: The Registry Triad</h3>
-            <p>To keep the relationship permanently clear in your head, picture a physical shipping crate:</p>
-
-            <ol>
-              <li>
-                <strong>The Image Tag (The Sticky Note on the Crate):</strong>
-                <br />
-                A label written in marker: <em>"Todo Server Release 42"</em> or <code>:sha-e8f91c0</code>.
-                <br />
-                <strong>Purpose:</strong> Human ergonomics. It is easy for humans to read, type, and remember in Dockerfiles and Compose files.
-                <br />
-                <strong>Limitation:</strong> Anyone with warehouse access can peel the sticker off and put it on a different crate tomorrow.
-              </li>
-              <li style="margin-top: 0.8rem;">
-                <strong>The Manifest (The Itemized Packing Slip):</strong>
-                <br />
-                A plastic pouch attached to the crate containing a detailed JSON document. It lists:
-                <br />
-                - Layer 1: Alpine Linux OS filesystem (size: 7.3 MB, hash: <code>sha256:a1b2...</code>)
-                <br />
-                - Layer 2: Node.js runtime binaries (size: 38.4 MB, hash: <code>sha256:c3d4...</code>)
-                <br />
-                - Layer 3: Application code &amp; dependencies (size: 4.1 MB, hash: <code>sha256:e5f6...</code>)
-                <br />
-                - Architecture: <code>linux/amd64</code> (Intel/AMD x86_64 CPU)
-                <br />
-                - Metadata labels: Git repo URL, commit author, build timestamp.
-              </li>
-              <li style="margin-top: 0.8rem;">
-                <strong>The Content Digest (The Tamper-Proof Cryptographic Barcode):</strong>
-                <br />
-                The mathematical SHA-256 hash calculated from the exact bytes of the Packing Slip (Manifest).
-                <br />
-                Example: <code>sha256:4a8b9c1d2e3f...</code> (64 hexadecimal characters).
-                <br />
-                <strong>Purpose:</strong> Cryptographic security and immutability. If a hacker alters even a single byte inside any layer, or tampers with the manifest text, the calculated hash completely changes, and Docker rejects the download immediately.
-              </li>
-            </ol>
-          </div>
-
-          <div class="section-block">
-            <h3>Why Do We Need Both If Both Identify the Image?</h3>
+          <div class="callout emerald">
+            <div class="callout-title">Ready for Stage 6: Prepare and Secure EC2</div>
             <p>
-              Why not just use tags? Or why not just use digests?
-            </p>
-            <ul>
-              <li>
-                <strong>Why tags alone aren't enough:</strong> Because tags are mutable. If a malicious attacker or an accidental script overwrites <code>node:20-alpine</code> on Docker Hub, every server in the world that downloads <code>node:20-alpine</code> would pull compromised code. Tags cannot prove that code hasn't changed.
-              </li>
-              <li>
-                <strong>Why digests alone aren't enough:</strong> Because humans cannot work with <code>ghcr.io/s3nsh1-dev/client@sha256:7b1e4a5598cf8813bc94a9089012a9...</code>. You cannot easily glance at that hash and know if it is version 1 or version 2, whether it was built today or last year, or whether it contains Alice's PR or Bob's PR.
-              </li>
-            </ul>
-            <p>
-              <strong>The Best Practice:</strong> We use <strong>Tags</strong> for human clarity in development and release management (using Git SHAs: <code>:sha-e8f91c0</code>), while deployment engines and Kubernetes clusters can pin the <strong>Digest</strong> under the hood to ensure cryptographic immutability.
+              With the production contract complete and verified, we are ready for **Stage 6**:
+              <br />1. Launch an Ubuntu 24.04 instance on AWS EC2.
+              <br />2. Configure the Security Group to allow only SSH (port 22) and HTTP (port 80).
+              <br />3. Install Docker and Docker Compose on the host.
+              <br />4. Authenticate EC2 to GHCR with a read-only token to pull your SHA-tagged images.
             </p>
           </div>
 
-          <!-- Interactive SVG Diagram 2 -->
-          <div class="diagram-card">
-            <div class="diagram-toolbar">
-              <span class="diagram-title">Interactive Inspector: The Tag, Manifest &amp; Digest Triad</span>
-              <div class="btn-group" id="triad-sim-btn-group">
-                <button class="sim-btn active" data-view="all">Full Architecture</button>
-                <button class="sim-btn" data-view="tag">1. Image Tag</button>
-                <button class="sim-btn" data-view="manifest">2. Manifest JSON</button>
-                <button class="sim-btn" data-view="digest">3. Content Digest</button>
-              </div>
-            </div>
-
-            <svg
-              id="svg-triad"
-              class="svg-canvas"
-              viewBox="0 0 960 320"
-              role="img"
-              aria-label="Interactive architectural diagram showing the relationship between Image Tag, Manifest JSON, Content Digest, and Filesystem Layers"
-            >
-              <!-- 1. The Tag -->
-              <g class="svg-node" id="triad-node-tag" transform="translate(40, 40)">
-                <rect id="triad-box-tag" class="svg-node-box blue" width="220" height="110" />
-                <text class="svg-text-title" x="18" y="32">IMAGE TAG (Human Bookmark)</text>
-                <text class="svg-text-sub" x="18" y="56" fill="var(--blue-text)" font-weight="bold">:sha-e8f91c0</text>
-                <text class="svg-text-sub" x="18" y="78">• Mutable pointer</text>
-                <text class="svg-text-sub" x="18" y="98">• Human-readable name</text>
-              </g>
-
-              <!-- Wire Tag to Manifest -->
-              <path id="triad-wire-tag-manifest" class="svg-wire active" d="M 260 95 H 330" marker-end="url(#m-arrow-blue)" />
-              <text class="svg-text-wire" x="295" y="85" text-anchor="middle">points to</text>
-
-              <!-- 2. The Manifest -->
-              <g class="svg-node" id="triad-node-manifest" transform="translate(330, 20)">
-                <rect id="triad-box-manifest" class="svg-node-box purple" width="280" height="270" />
-                <text class="svg-text-title" x="18" y="32">MANIFEST JSON (Packing Slip)</text>
-                <text class="svg-text-sub" x="18" y="54" fill="var(--purple-text)">schemaVersion: 2</text>
-                <text class="svg-text-sub" x="18" y="74">architecture: "linux/amd64"</text>
-                <text class="svg-text-sub" x="18" y="94">config: { env: ["NODE_ENV=prod"] }</text>
-                <text class="svg-text-sub" x="18" y="118" font-weight="bold">layers: [</text>
-                <text class="svg-text-sub" x="28" y="138">1. OS: sha256:8a1b... (7.3MB)</text>
-                <text class="svg-text-sub" x="28" y="158">2. Node: sha256:9c2d... (38MB)</text>
-                <text class="svg-text-sub" x="28" y="178">3. App: sha256:7f4e... (4.1MB)</text>
-                <text class="svg-text-sub" x="18" y="202">]</text>
-                <text class="svg-text-sub" x="18" y="226" fill="var(--ink-muted)">labels: { git.sha: "e8f91c0" }</text>
-                <text class="svg-text-sub" x="18" y="248" fill="var(--purple-text)" font-weight="bold">Holds All Metadata!</text>
-              </g>
-
-              <!-- Wire Manifest to Digest -->
-              <path id="triad-wire-manifest-digest" class="svg-wire active" d="M 470 290 V 305 H 150 V 225 H 150" marker-end="url(#m-arrow-blue)" />
-
-              <!-- 3. The Content Digest -->
-              <g class="svg-node" id="triad-node-digest" transform="translate(40, 185)">
-                <rect id="triad-box-digest" class="svg-node-box emerald" width="220" height="105" />
-                <text class="svg-text-title" x="16" y="30">CONTENT DIGEST (The Seal)</text>
-                <text class="svg-text-sub" x="16" y="52" fill="var(--emerald-text)" font-weight="bold">sha256:4a8b9c1d2e3f...</text>
-                <text class="svg-text-sub" x="16" y="74">• SHA-256 hash of manifest</text>
-                <text class="svg-text-sub" x="16" y="94">• 100% Immutable &amp; Tamper-Proof</text>
-              </g>
-
-              <!-- Wire Manifest to Layer Blobs -->
-              <path id="triad-wire-manifest-layers" class="svg-wire active" d="M 610 155 H 680" marker-end="url(#m-arrow-blue)" />
-              <text class="svg-text-wire" x="645" y="145" text-anchor="middle">pulls</text>
-
-              <!-- 4. Filesystem Layers (Blobs) -->
-              <g class="svg-node" id="triad-node-layers" transform="translate(680, 45)">
-                <rect class="svg-node-box" width="230" height="220" />
-                <text class="svg-text-title" x="18" y="32">RAW CONTENT (Layer Blobs)</text>
-                <g transform="translate(18, 48)">
-                  <rect class="svg-node-box blue" width="194" height="42" rx="4" />
-                  <text class="svg-text-sub" x="12" y="20">Layer 1: Alpine OS (7.3MB)</text>
-                  <text class="svg-text-sub" x="12" y="34" font-size="9.5px">sha256:8a1b2c3d...</text>
-                </g>
-                <g transform="translate(18, 100)">
-                  <rect class="svg-node-box emerald" width="194" height="42" rx="4" />
-                  <text class="svg-text-sub" x="12" y="20">Layer 2: Node 20 Runtime</text>
-                  <text class="svg-text-sub" x="12" y="34" font-size="9.5px">sha256:9c2d3e4f...</text>
-                </g>
-                <g transform="translate(18, 152)">
-                  <rect class="svg-node-box purple" width="194" height="42" rx="4" />
-                  <text class="svg-text-sub" x="12" y="20">Layer 3: Todo Express App</text>
-                  <text class="svg-text-sub" x="12" y="34" font-size="9.5px">sha256:7f4e5a6b...</text>
-                </g>
-              </g>
-            </svg>
-
-            <div id="triad-sim-caption" class="diagram-caption">
-              <strong>Full Architecture View:</strong> When you pull <code>ghcr.io/...:sha-e8f91c0</code>, the registry resolves the <strong>Tag</strong> to the <strong>Manifest JSON</strong>. Docker computes the <strong>Content Digest</strong> to verify the manifest was not tampered with, and then downloads the individual <strong>Layer Blobs</strong>.
+          <div class="topic-footer">
+            <button class="btn-complete" data-complete-topic="verification-quiz">
+              <span class="check-mark">✓</span>
+              <span>Mark Topic 05 Complete</span>
+            </button>
+            <div class="nav-buttons">
+              <button class="btn-step" data-prev-topic="secrets-decoupling">&larr; Previous: Secrets Decoupling</button>
+              <button class="btn-step" disabled>All Topics Completed</button>
             </div>
           </div>
         </section>
-
-        <!-- Topic Footer Controls -->
-        <footer class="topic-footer">
-          <button id="prev-btn" class="btn-nav" disabled>
-            ← Previous Topic
-          </button>
-          <button id="complete-btn" class="btn-complete" aria-pressed="false">
-            <span id="complete-icon">✓</span>
-            <span id="complete-label">Mark Topic Complete</span>
-          </button>
-          <button id="next-btn" class="btn-nav">
-            Next Topic →
-          </button>
-        </footer>
       </main>
     </div>
 
+    <!-- Client-Side Navigation, State, and SVG Logic -->
     <script>
       (function () {
-        "use strict";
+        const STORAGE_KEY_TOPIC = "disposable-stage5-active-topic";
+        const STORAGE_KEY_PROGRESS = "disposable-stage5-progress";
+        const STORAGE_KEY_THEME = "disposable-stage5-theme";
 
-        const STORAGE_KEY = "learning-ai:disposable:docker-metadata-cicd";
-        const sections = Array.from(document.querySelectorAll(".topic-section[data-id]"));
-        const topicIds = sections.map((s) => s.dataset.id);
+        const topicIds = [
+          "overview",
+          "why-no-build",
+          "network-topology",
+          "secrets-decoupling",
+          "verification-quiz"
+        ];
 
-        let state = {
+        const state = {
           current: topicIds[0],
-          done: [],
-          theme: "system"
+          completed: new Set(),
         };
 
+        // Load saved state
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            if (topicIds.includes(parsed.current)) state.current = parsed.current;
-            if (Array.isArray(parsed.done)) state.done = parsed.done.filter((id) => topicIds.includes(id));
-            if (["system", "light", "dark"].includes(parsed.theme)) state.theme = parsed.theme;
+          const savedTopic = localStorage.getItem(STORAGE_KEY_TOPIC);
+          if (savedTopic && topicIds.includes(savedTopic)) {
+            state.current = savedTopic;
           }
-        } catch (err) {
-          console.warn("localStorage unavailable:", err);
+          const savedProg = localStorage.getItem(STORAGE_KEY_PROGRESS);
+          if (savedProg) {
+            const arr = JSON.parse(savedProg);
+            if (Array.isArray(arr)) {
+              state.completed = new Set(arr.filter((id) => topicIds.includes(id)));
+            }
+          }
+        } catch (e) {
+          console.warn("Storage load error:", e);
         }
-
-        const doneSet = new Set(state.done);
 
         // DOM elements
-        const shell = document.getElementById("shell");
-        const sidebar = document.getElementById("sidebar");
-        const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+        const shell = document.getElementById("app-shell");
         const sidebarToggleBtn = document.getElementById("sidebar-toggle-btn");
-        const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
-        const navContainer = document.getElementById("topic-nav-container");
-        const completeBtn = document.getElementById("complete-btn");
-        const completeLabel = document.getElementById("complete-label");
-        const prevBtn = document.getElementById("prev-btn");
-        const nextBtn = document.getElementById("next-btn");
+        const helpToggleBtn = document.getElementById("btn-help");
+        const helpPanel = document.getElementById("help-panel");
+        const helpCloseBtn = document.getElementById("help-close-btn");
         const themeSelect = document.getElementById("theme-select");
-        const progressText = document.getElementById("progress-text");
-        const progressBar = document.getElementById("progress-bar");
-        const progressTrack = document.querySelector(".progress-track");
-        const statusAnnouncer = document.getElementById("status-announcer");
+        const progressFill = document.getElementById("progress-fill");
+        const progressPercent = document.getElementById("progress-percent");
+        const progressBadge = document.getElementById("sidebar-progress-badge");
 
-        function saveState() {
-          try {
-            state.done = Array.from(doneSet);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-          } catch (err) {
-            console.warn("Unable to save state:", err);
-          }
-        }
-
-        function applyTheme() {
-          if (state.theme === "system") {
+        // Theme management
+        function applyTheme(theme) {
+          const activeTheme = theme || localStorage.getItem(STORAGE_KEY_THEME) || "system";
+          themeSelect.value = activeTheme;
+          if (activeTheme === "system") {
             document.documentElement.removeAttribute("data-theme");
           } else {
-            document.documentElement.dataset.theme = state.theme;
+            document.documentElement.setAttribute("data-theme", activeTheme);
           }
-          if (themeSelect) themeSelect.value = state.theme;
         }
 
-        // Build Sidebar Nav Items
-        sections.forEach((sec, idx) => {
-          const btn = document.createElement("button");
-          btn.className = "topic-btn";
-          btn.dataset.id = sec.dataset.id;
-          btn.id = "nav-btn-" + sec.dataset.id;
-
-          const numSpan = document.createElement("span");
-          numSpan.className = "topic-num";
-          numSpan.textContent = String(idx + 1).padStart(2, "0");
-
-          const titleSpan = document.createElement("span");
-          titleSpan.className = "topic-title-text";
-          titleSpan.textContent = sec.dataset.title;
-
-          const checkSpan = document.createElement("span");
-          checkSpan.className = "topic-check";
-          checkSpan.setAttribute("aria-hidden", "true");
-          checkSpan.textContent = "✓";
-
-          btn.appendChild(numSpan);
-          btn.appendChild(titleSpan);
-          btn.appendChild(checkSpan);
-
-          btn.addEventListener("click", () => {
-            navigateToTopic(sec.dataset.id, true);
-          });
-
-          navContainer.appendChild(btn);
+        themeSelect.addEventListener("change", (e) => {
+          const val = e.target.value;
+          localStorage.setItem(STORAGE_KEY_THEME, val);
+          applyTheme(val);
         });
 
+        // Sidebar toggle
+        sidebarToggleBtn.addEventListener("click", () => {
+          const isCollapsed = shell.classList.toggle("sidebar-collapsed");
+          sidebarToggleBtn.setAttribute("aria-expanded", String(!isCollapsed));
+        });
+
+        // Help panel toggle
+        helpToggleBtn.addEventListener("click", () => {
+          const isHidden = helpPanel.hidden;
+          helpPanel.hidden = !isHidden;
+          helpToggleBtn.setAttribute("aria-expanded", String(isHidden));
+        });
+
+        helpCloseBtn.addEventListener("click", () => {
+          helpPanel.hidden = true;
+          helpToggleBtn.setAttribute("aria-expanded", "false");
+        });
+
+        // Navigation render
         function render() {
-          const currentIdx = topicIds.indexOf(state.current);
-
-          sections.forEach((sec) => {
-            sec.hidden = sec.dataset.id !== state.current;
+          // Topics visibility
+          document.querySelectorAll(".topic-view").forEach((el) => {
+            el.classList.toggle("active", el.id === `topic-${state.current}`);
           });
 
-          Array.from(navContainer.children).forEach((btn) => {
-            const id = btn.dataset.id;
+          // Sidebar nav items
+          document.querySelectorAll(".topic-nav-btn").forEach((btn) => {
+            const id = btn.getAttribute("data-topic");
             const isActive = id === state.current;
-            const isDone = doneSet.has(id);
-
-            if (isActive) {
-              btn.setAttribute("aria-current", "step");
-            } else {
-              btn.removeAttribute("aria-current");
-            }
-
-            btn.classList.toggle("is-complete", isDone);
-            const title = btn.querySelector(".topic-title-text").textContent;
-            btn.setAttribute(
-              "aria-label",
-              `${title}${isDone ? ", complete" : ", incomplete"}`
-            );
+            const isDone = state.completed.has(id);
+            btn.classList.toggle("active", isActive);
+            btn.classList.toggle("completed", isDone);
           });
 
-          const count = doneSet.size;
+          // Topic completion buttons
+          document.querySelectorAll(".btn-complete").forEach((btn) => {
+            const id = btn.getAttribute("data-complete-topic");
+            const isDone = state.completed.has(id);
+            btn.classList.toggle("completed", isDone);
+            const label = btn.querySelector("span:last-child");
+            if (label) {
+              label.textContent = isDone ? "Completed (Click to Reset)" : "Mark Topic Complete";
+            }
+          });
+
+          // Progress bar
           const total = topicIds.length;
-          const pct = Math.round((count / total) * 100);
+          const done = state.completed.size;
+          const pct = Math.round((done / total) * 100);
+          progressFill.style.width = `${pct}%`;
+          progressPercent.textContent = `${pct}%`;
+          progressBadge.textContent = `${done} / ${total} Done`;
 
-          progressText.textContent = `${count} / ${total} complete`;
-          progressBar.style.width = `${pct}%`;
-          progressTrack.setAttribute("aria-valuenow", String(count));
-
-          prevBtn.disabled = currentIdx === 0;
-          nextBtn.disabled = currentIdx === topicIds.length - 1;
-
-          const isCurrentDone = doneSet.has(state.current);
-          completeBtn.setAttribute("aria-pressed", String(isCurrentDone));
-          completeLabel.textContent = isCurrentDone
-            ? "Mark Topic Incomplete"
-            : "Mark Topic Complete";
-
-          statusAnnouncer.textContent = `Topic ${currentIdx + 1} of ${total}: ${sections[currentIdx].dataset.title}.`;
+          // Save active topic
+          localStorage.setItem(STORAGE_KEY_TOPIC, state.current);
+          window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
-        function navigateToTopic(id, shouldFocus) {
+        function navigateTo(id) {
           if (!topicIds.includes(id)) return;
           state.current = id;
-          saveState();
           render();
-
-          if (isMobile() && sidebar && sidebar.classList.contains("is-open")) {
-            toggleSidebar(false);
-          }
-
-          if (shouldFocus) {
-            const currentSection = sections.find((s) => s.dataset.id === id);
-            if (currentSection) {
-              const h1 = currentSection.querySelector("h1");
-              if (h1) {
-                h1.scrollIntoView({ behavior: "smooth", block: "start" });
-              }
-            }
-          }
         }
 
-        completeBtn.addEventListener("click", () => {
-          if (doneSet.has(state.current)) {
-            doneSet.delete(state.current);
-          } else {
-            doneSet.add(state.current);
-          }
-          saveState();
-          render();
-        });
-
-        prevBtn.addEventListener("click", () => {
-          const idx = topicIds.indexOf(state.current);
-          if (idx > 0) navigateToTopic(topicIds[idx - 1], true);
-        });
-
-        nextBtn.addEventListener("click", () => {
-          const idx = topicIds.indexOf(state.current);
-          if (idx < topicIds.length - 1) navigateToTopic(topicIds[idx + 1], true);
-        });
-
-        if (themeSelect) {
-          themeSelect.addEventListener("change", (e) => {
-            state.theme = e.target.value;
-            applyTheme();
-            saveState();
-          });
-        }
-
-        function isMobile() {
-          return window.innerWidth <= 900;
-        }
-
-        function toggleSidebar(forceState) {
-          if (isMobile()) {
-            const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains("is-open");
-            sidebar.classList.toggle("is-open", isOpen);
-            if (sidebarBackdrop) sidebarBackdrop.classList.toggle("is-open", isOpen);
-            if (sidebarToggleBtn) sidebarToggleBtn.setAttribute("aria-expanded", String(isOpen));
-            document.body.style.overflow = isOpen ? "hidden" : "";
-          } else {
-            const isCollapsed = forceState !== undefined ? !forceState : !shell.classList.contains("sidebar-collapsed");
-            shell.classList.toggle("sidebar-collapsed", isCollapsed);
-            if (sidebarToggleBtn) sidebarToggleBtn.setAttribute("aria-expanded", String(!isCollapsed));
-            try {
-              localStorage.setItem("disposable_sidebar_collapsed", String(isCollapsed));
-            } catch (_) {}
-          }
-        }
-
-        // Restore collapsed preference on desktop
-        try {
-          if (!isMobile() && localStorage.getItem("disposable_sidebar_collapsed") === "true") {
-            shell.classList.add("sidebar-collapsed");
-            if (sidebarToggleBtn) sidebarToggleBtn.setAttribute("aria-expanded", "false");
-          }
-        } catch (_) {}
-
-        if (sidebarToggleBtn) sidebarToggleBtn.addEventListener("click", () => toggleSidebar());
-        if (sidebarCloseBtn) sidebarCloseBtn.addEventListener("click", () => toggleSidebar(false));
-        if (sidebarBackdrop) sidebarBackdrop.addEventListener("click", () => toggleSidebar(false));
-
-        // Acronym Help Panel Toggle
-        const helpToggle = document.getElementById("help-toggle");
-        const helpPanel = document.getElementById("help-panel");
-        const helpClose = document.getElementById("help-close");
-
-        function toggleHelp(show) {
-          const isHidden = show !== undefined ? !show : !helpPanel.hidden;
-          helpPanel.hidden = isHidden;
-          helpToggle.setAttribute("aria-expanded", String(!isHidden));
-        }
-
-        if (helpToggle && helpPanel) {
-          helpToggle.addEventListener("click", () => toggleHelp());
-        }
-        if (helpClose) {
-          helpClose.addEventListener("click", () => toggleHelp(false));
-        }
-
-        // Interactive Diagram 1: Traceability Bridge
-        const bridgeButtons = Array.from(document.querySelectorAll("#bridge-sim-btn-group .sim-btn"));
-        const bridgeCaption = document.getElementById("bridge-sim-caption");
-        const bridgeTxtCiTag = document.getElementById("bridge-txt-ci-tag");
-        const bridgeTxtGhcrTag = document.getElementById("bridge-txt-ghcr-tag");
-        const bridgeTxtEc2Run = document.getElementById("bridge-txt-ec2-run");
-        const bridgeTxtEc2Status = document.getElementById("bridge-txt-ec2-status");
-        const bridgeBoxEc2 = document.getElementById("bridge-box-ec2");
-        const bridgeWireAudit = document.getElementById("bridge-wire-audit");
-        const bridgeTxtAudit = document.getElementById("bridge-txt-audit");
-
-        bridgeButtons.forEach((btn) => {
+        // Topic nav button listeners
+        document.querySelectorAll(".topic-nav-btn").forEach((btn) => {
           btn.addEventListener("click", () => {
-            const mode = btn.dataset.mode;
-            bridgeButtons.forEach((b) => b.classList.toggle("active", b === btn));
+            navigateTo(btn.getAttribute("data-topic"));
+          });
+        });
 
-            if (mode === "sha") {
-              if (bridgeCaption) {
-                bridgeCaption.innerHTML = "<strong>Traceable Release Active:</strong> The Git commit SHA (<code>e8f91c0</code>) passes from GitHub to the Actions workflow, becomes the Docker image tag in GHCR, and is deployed to EC2. If an incident happens on EC2, engineers have an immediate 1-to-1 reverse audit trail back to GitHub.";
-              }
-              if (bridgeTxtCiTag) {
-                bridgeTxtCiTag.textContent = ":sha-e8f91c0";
-                bridgeTxtCiTag.setAttribute("fill", "var(--blue-text)");
-              }
-              if (bridgeTxtGhcrTag) bridgeTxtGhcrTag.textContent = "Tag: :sha-e8f91c0";
-              if (bridgeTxtEc2Run) bridgeTxtEc2Run.textContent = "image: ...:sha-e8f91c0";
-              if (bridgeTxtEc2Status) {
-                bridgeTxtEc2Status.textContent = "100% Traceable ✓";
-                bridgeTxtEc2Status.setAttribute("fill", "var(--emerald-text)");
-              }
-              if (bridgeBoxEc2) bridgeBoxEc2.setAttribute("class", "svg-node-box emerald");
-              if (bridgeWireAudit) bridgeWireAudit.style.display = "block";
-              if (bridgeTxtAudit) bridgeTxtAudit.style.display = "block";
+        // Next / Previous buttons
+        document.querySelectorAll("[data-next-topic]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            navigateTo(btn.getAttribute("data-next-topic"));
+          });
+        });
+        document.querySelectorAll("[data-prev-topic]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            navigateTo(btn.getAttribute("data-prev-topic"));
+          });
+        });
+
+        // Complete topic buttons
+        document.querySelectorAll(".btn-complete").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-complete-topic");
+            if (state.completed.has(id)) {
+              state.completed.delete(id);
             } else {
-              if (bridgeCaption) {
-                bridgeCaption.innerHTML = "<strong>Blind Release Warning:</strong> The image was tagged with <code>:latest</code>. On EC2, you see <code>image: ...:latest</code>. When a production bug occurs, there is zero record of which commit or PR produced the running container. Rollback is a blind guessing game.";
-              }
-              if (bridgeTxtCiTag) {
-                bridgeTxtCiTag.textContent = ":latest (Generic)";
-                bridgeTxtCiTag.setAttribute("fill", "var(--rose-text)");
-              }
-              if (bridgeTxtGhcrTag) bridgeTxtGhcrTag.textContent = "Tag: :latest";
-              if (bridgeTxtEc2Run) bridgeTxtEc2Run.textContent = "image: ...:latest";
-              if (bridgeTxtEc2Status) {
-                bridgeTxtEc2Status.textContent = "Untraceable ✗";
-                bridgeTxtEc2Status.setAttribute("fill", "var(--rose-text)");
-              }
-              if (bridgeBoxEc2) bridgeBoxEc2.setAttribute("class", "svg-node-box rose");
-              if (bridgeWireAudit) bridgeWireAudit.style.display = "none";
-              if (bridgeTxtAudit) bridgeTxtAudit.style.display = "none";
+              state.completed.add(id);
             }
+            localStorage.setItem(
+              STORAGE_KEY_PROGRESS,
+              JSON.stringify(Array.from(state.completed))
+            );
+            render();
           });
         });
 
-        // Interactive Diagram 2: The Triad Inspector
-        const triadButtons = Array.from(document.querySelectorAll("#triad-sim-btn-group .sim-btn"));
-        const triadCaption = document.getElementById("triad-sim-caption");
-        const triadBoxTag = document.getElementById("triad-box-tag");
-        const triadBoxManifest = document.getElementById("triad-box-manifest");
-        const triadBoxDigest = document.getElementById("triad-box-digest");
-        const triadWireTagManifest = document.getElementById("triad-wire-tag-manifest");
-        const triadWireManifestDigest = document.getElementById("triad-wire-manifest-digest");
-
-        const triadCaptions = {
-          all: "<strong>Full Architecture View:</strong> When you pull <code>ghcr.io/...:sha-e8f91c0</code>, the registry resolves the <strong>Tag</strong> to the <strong>Manifest JSON</strong>. Docker computes the <strong>Content Digest</strong> to verify the manifest was not tampered with, and then downloads the individual <strong>Layer Blobs</strong>.",
-          tag: "<strong>Focus: Image Tag (:sha-e8f91c0)</strong> — The human bookmark. It gives a readable name to an image so developers and Compose files can refer to it easily. It is mutable (can be pointed to a new manifest anytime).",
-          manifest: "<strong>Focus: Manifest JSON</strong> — The packing slip. It holds all the critical deployment metadata: target architecture (linux/amd64), environment variables, labels, and the list of individual filesystem layer hashes.",
-          digest: "<strong>Focus: Content Digest (sha256:4a8b...)</strong> — The tamper-proof seal. It is the cryptographic SHA-256 hash computed directly from the Manifest JSON bytes. If any file or layer is altered, the digest changes completely."
-        };
-
-        triadButtons.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const view = btn.dataset.view;
-            triadButtons.forEach((b) => b.classList.toggle("active", b === btn));
-            if (triadCaption && triadCaptions[view]) {
-              triadCaption.innerHTML = triadCaptions[view];
-            }
-
-            if (triadBoxTag && triadBoxManifest && triadBoxDigest) {
-              if (view === "tag") {
-                triadBoxTag.setAttribute("class", "svg-node-box blue");
-                triadBoxManifest.setAttribute("class", "svg-node-box");
-                triadBoxDigest.setAttribute("class", "svg-node-box");
-              } else if (view === "manifest") {
-                triadBoxTag.setAttribute("class", "svg-node-box");
-                triadBoxManifest.setAttribute("class", "svg-node-box purple");
-                triadBoxDigest.setAttribute("class", "svg-node-box");
-              } else if (view === "digest") {
-                triadBoxTag.setAttribute("class", "svg-node-box");
-                triadBoxManifest.setAttribute("class", "svg-node-box");
-                triadBoxDigest.setAttribute("class", "svg-node-box emerald");
-              } else {
-                triadBoxTag.setAttribute("class", "svg-node-box blue");
-                triadBoxManifest.setAttribute("class", "svg-node-box purple");
-                triadBoxDigest.setAttribute("class", "svg-node-box emerald");
-              }
-            }
-          });
-        });
-
-        // Copy button in code snippets
+        // Copy buttons
         document.querySelectorAll(".copy-btn").forEach((btn) => {
           btn.addEventListener("click", async () => {
-            const pre = btn.closest(".code-snippet").querySelector("pre code");
-            if (!pre) return;
+            const targetId = btn.getAttribute("data-copy-target");
+            const codeEl = document.getElementById(targetId);
+            if (!codeEl) return;
             try {
-              await navigator.clipboard.writeText(pre.textContent);
+              await navigator.clipboard.writeText(codeEl.textContent);
+              const orig = btn.textContent;
               btn.textContent = "Copied!";
               setTimeout(() => {
-                btn.textContent = "Copy";
+                btn.textContent = orig;
               }, 1800);
-            } catch {
-              btn.textContent = "Failed";
-              setTimeout(() => {
-                btn.textContent = "Copy";
-              }, 1800);
+            } catch (err) {
+              btn.textContent = "Error";
             }
           });
         });
 
-        // Keyboard navigation (Alt + ArrowLeft/Right)
+        // Diagram switcher
+        const diagramButtons = document.querySelectorAll("[data-flow]");
+        const pathPublic = document.getElementById("path-public");
+        const pathInternal = document.getElementById("path-internal");
+        const pathDb = document.getElementById("path-db");
+        const nodeInternet = document.getElementById("node-internet");
+        const nodeClient = document.getElementById("node-client");
+        const nodeServer = document.getElementById("node-server");
+        const nodeDb = document.getElementById("node-db");
+        const diagramCaption = document.getElementById("diagram-caption");
+
+        const captions = {
+          all: "<strong>Complete Production Topology:</strong> Users access Nginx over public port 80. Nginx proxies <code>/api/</code> internally to Express over the Docker bridge network. The server connects outbound over encrypted TLS to Neon DB. The database and backend API are completely shielded from public internet exposure.",
+          public: "<strong>Public Ingress (Port 80):</strong> Only Nginx binds a public port on the EC2 host (<code>80:80</code>). Browsers fetch React HTML, CSS, and JS bundles directly from Nginx without touching the backend.",
+          internal: "<strong>Internal Bridge (Port 5000):</strong> Nginx reverse-proxies <code>/api/*</code> requests to <code>http://server:5000</code> over the internal Docker network. Express has NO host port binding, so attackers cannot probe or access port 5000 from the internet.",
+          database: "<strong>Database Egress:</strong> Express initiates an outbound connection over TLS to Neon cloud PostgreSQL using <code>DATABASE_URL</code> from <code>server.env</code>. The database is never exposed on the EC2 host.",
+        };
+
+        diagramButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            diagramButtons.forEach((b) => b.classList.toggle("active", b === btn));
+            const flow = btn.getAttribute("data-flow");
+            if (diagramCaption) diagramCaption.innerHTML = captions[flow] || "";
+
+            if (flow === "public") {
+              pathPublic.style.opacity = "1";
+              pathInternal.style.opacity = "0.15";
+              pathDb.style.opacity = "0.15";
+              nodeInternet.style.opacity = "1";
+              nodeClient.style.opacity = "1";
+              nodeServer.style.opacity = "0.2";
+              nodeDb.style.opacity = "0.2";
+            } else if (flow === "internal") {
+              pathPublic.style.opacity = "0.15";
+              pathInternal.style.opacity = "1";
+              pathDb.style.opacity = "0.15";
+              nodeInternet.style.opacity = "0.2";
+              nodeClient.style.opacity = "1";
+              nodeServer.style.opacity = "1";
+              nodeDb.style.opacity = "0.2";
+            } else if (flow === "database") {
+              pathPublic.style.opacity = "0.15";
+              pathInternal.style.opacity = "0.15";
+              pathDb.style.opacity = "1";
+              nodeInternet.style.opacity = "0.2";
+              nodeClient.style.opacity = "0.2";
+              nodeServer.style.opacity = "1";
+              nodeDb.style.opacity = "1";
+            } else {
+              pathPublic.style.opacity = "1";
+              pathInternal.style.opacity = "1";
+              pathDb.style.opacity = "1";
+              nodeInternet.style.opacity = "1";
+              nodeClient.style.opacity = "1";
+              nodeServer.style.opacity = "1";
+              nodeDb.style.opacity = "1";
+            }
+          });
+        });
+
+        // Interactive Quiz Logic
+        const quizFeedback = document.getElementById("quiz-feedback");
+        document.querySelectorAll(".quiz-opt-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const isCorrect = btn.getAttribute("data-correct") === "true";
+            document.querySelectorAll(".quiz-opt-btn").forEach((b) => {
+              b.classList.remove("correct", "incorrect");
+              if (b.getAttribute("data-correct") === "true") b.classList.add("correct");
+            });
+
+            if (!isCorrect) {
+              btn.classList.add("incorrect");
+              quizFeedback.innerHTML = `<span style="color: var(--rose-text); font-weight: 600;">Incorrect.</span> Remember: Least Network Privilege mandates that internal APIs never expose public host ports. Nginx handles all public ingress and proxies internal requests safely.`;
+            } else {
+              quizFeedback.innerHTML = `<span style="color: var(--emerald-text); font-weight: 600;">Correct!</span> Nginx serves as the single public gateway on port 80, shielding the internal Express backend from public port scans and direct attacks.`;
+            }
+            quizFeedback.classList.add("show");
+          });
+        });
+
+        // Keyboard navigation (Alt + Left/Right)
         document.addEventListener("keydown", (e) => {
           if (["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)) return;
           const idx = topicIds.indexOf(state.current);
           if ((e.key === "ArrowRight" || e.key === "PageDown") && e.altKey) {
             if (idx < topicIds.length - 1) {
               e.preventDefault();
-              navigateToTopic(topicIds[idx + 1], true);
+              navigateTo(topicIds[idx + 1]);
             }
           } else if ((e.key === "ArrowLeft" || e.key === "PageUp") && e.altKey) {
             if (idx > 0) {
               e.preventDefault();
-              navigateToTopic(topicIds[idx - 1], true);
+              navigateTo(topicIds[idx - 1]);
             }
           }
         });
 
+        // Initial setup
         applyTheme();
         render();
       })();

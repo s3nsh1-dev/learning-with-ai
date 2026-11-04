@@ -105,7 +105,7 @@ or deployed anything.
 
 ## Stage 4: Publish immutable images to GHCR
 
-**Status:** Current (Combined with Stages 5 & 6 per user request)
+**Status:** Complete
 
 Package the client and server only after trusted checks pass. Learn registry
 authentication, job permissions, build cache, image labels, and immutable
@@ -126,7 +126,7 @@ packages.
 
 ## Stage 5: Define the production Compose contract
 
-**Status:** Current (Combined with Stages 4 & 6 per user request)
+**Status:** Complete
 
 Split local Docker development from production deployment. Learn why
 production pulls prebuilt images instead of building source code on EC2.
