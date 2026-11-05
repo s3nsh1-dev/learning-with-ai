@@ -1041,7 +1041,7 @@
       <aside class="sidebar" id="sidebar" aria-label="Lesson Outline">
         <div class="sidebar-head">
           <span class="sidebar-title">Architectural Deep Dive</span>
-          <span class="sidebar-meta" id="sidebar-progress-badge">0 / 5 Done</span>
+          <span class="sidebar-meta" id="sidebar-progress-badge">0 / 6 Done</span>
         </div>
         <div class="progress-bar-wrap">
           <div class="progress-meta">
@@ -1086,6 +1086,13 @@
               <button class="topic-nav-btn" data-topic="token-security-quiz">
                 <span class="topic-num">05</span>
                 <span>Where Tokens Live &amp; Self-Check</span>
+                <span class="topic-check-icon">✓</span>
+              </button>
+            </li>
+            <li class="topic-nav-item">
+              <button class="topic-nav-btn" data-topic="ec2-prod-setup">
+                <span class="topic-num">06</span>
+                <span>EC2 Host &amp; Prod Setup Guide</span>
                 <span class="topic-check-icon">✓</span>
               </button>
             </li>
@@ -1584,7 +1591,315 @@
             </button>
             <div class="nav-buttons">
               <button class="btn-step" data-prev-topic="ec2-token-role">&larr; Previous: EC2 Token Role</button>
-              <button class="btn-step" disabled>All Topics Completed</button>
+              <button class="btn-step" data-next-topic="ec2-prod-setup">Next: EC2 Setup Guide &rarr;</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TOPIC 6: STEP-BY-STEP EC2 PRODUCTION SETUP -->
+        <section class="topic-view" id="topic-ec2-prod-setup">
+          <div class="topic-eyebrow">Topic 06 · Operations &amp; Runbook</div>
+          <h2 class="topic-heading topic-title">Setting Up the Production EC2 Environment from Scratch</h2>
+
+          <p>
+            You have created an <strong>Ubuntu 24.04 LTS</strong> EC2 instance on AWS, you have your SSH private key (<code>.pem</code>), and you generated your GitHub Classic PAT with <code>read:packages</code>.
+            Docker is not installed yet.
+            Here is the step-by-step engineering runbook to turn this bare machine into a secure, hardened, automated Docker production host.
+          </p>
+
+          <div class="callout blue">
+            <div class="callout-title">The Target Architecture on EC2</div>
+            <p>
+              • <strong>Host OS:</strong> Ubuntu 24.04 LTS x86_64
+              <br />• <strong>Container Engine:</strong> Docker Engine &amp; Docker Compose plugin (v2) from Docker's official apt repository.
+              <br />• <strong>App Root:</strong> <code>/opt/todo-app</code> (owned by user <code>ubuntu</code>).
+              <br />• <strong>Network Boundary:</strong> Port 80 (HTTP) public $\rightarrow$ Nginx container. Port 5000 (Express API) strictly internal $\rightarrow$ unreachable from the Internet.
+              <br />• <strong>Registry Credentials:</strong> Stored in <code>~/.docker/config.json</code> with permission <code>600</code>.
+              <br />• <strong>Database Secret:</strong> Stored on the host in <code>/opt/todo-app/server.env</code> with permission <code>600</code>.
+            </p>
+          </div>
+
+          <!-- Step 1 -->
+          <h3>Step 1: Verify AWS Security Group (Firewall Rules)</h3>
+          <p>
+            Before touching the terminal, confirm your EC2 instance's <strong>Inbound Security Group Rules</strong> in the AWS Console:
+          </p>
+          <div class="table-wrap">
+            <table class="spec-table">
+              <thead>
+                <tr>
+                  <th>Type / Protocol</th>
+                  <th>Port Range</th>
+                  <th>Source</th>
+                  <th>Purpose &amp; Security Justification</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>SSH (TCP)</strong></td>
+                  <td><code>22</code></td>
+                  <td><code>My IP</code> (e.g. <code>x.x.x.x/32</code>)</td>
+                  <td>Restricts remote shell management strictly to your laptop. Never leave SSH open to <code>0.0.0.0/0</code>.</td>
+                </tr>
+                <tr>
+                  <td><strong>HTTP (TCP)</strong></td>
+                  <td><code>80</code></td>
+                  <td><code>0.0.0.0/0</code></td>
+                  <td>Public web visitors connect to Nginx. Nginx handles routing and serves static SPA assets.</td>
+                </tr>
+                <tr>
+                  <td><strong>Custom TCP (Port 5000)</strong></td>
+                  <td><code>5000</code></td>
+                  <td><span class="tag rose">DO NOT ADD (CLOSED)</span></td>
+                  <td>The Express server communicates with Nginx inside Docker's internal virtual bridge network. It must never have a public host port.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Step 2 -->
+          <h3>Step 2: Connect to Your EC2 Instance via SSH</h3>
+          <p>
+            On your local laptop terminal, ensure your downloaded AWS key pair has strict read-only permissions (OpenSSH will refuse to use a key that is readable by other users):
+          </p>
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">Laptop Local Terminal</span>
+              <button class="copy-btn" data-copy-target="ssh-prep-cmd">Copy</button>
+            </div>
+            <pre><code id="ssh-prep-cmd"># 1. Lock down key file permissions
+chmod 400 ~/.ssh/your-ec2-key.pem
+
+# 2. Connect to the EC2 public IPv4 address
+ssh -i ~/.ssh/your-ec2-key.pem ubuntu@&lt;EC2_PUBLIC_IP&gt;</code></pre>
+          </div>
+
+          <!-- Step 3 -->
+          <h3>Step 3: Install Docker Engine &amp; Compose v2 (Official Repos)</h3>
+          <div class="callout amber">
+            <div class="callout-title">Why NOT <code>sudo apt install docker.io</code>?</div>
+            <p>
+              Ubuntu's default <code>docker.io</code> package is frequently months or years out of date, lacks the modern Compose V2 CLI plugin (<code>docker compose</code>), and misses performance fixes.
+              Always configure Docker's official APT repository directly.
+            </p>
+          </div>
+
+          <p>Run the official installation script on your EC2 instance:</p>
+
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">EC2 Shell · Install Docker Engine</span>
+              <button class="copy-btn" data-copy-target="docker-install-cmd">Copy</button>
+            </div>
+            <pre><code id="docker-install-cmd"># Update system packages &amp; install prerequisites
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg
+
+# Add Docker's official GPG signing key
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine, CLI, and Compose v2 plugin
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Verify installation
+docker --version
+docker compose version</code></pre>
+          </div>
+
+          <!-- Step 4 -->
+          <h3>Step 4: Grant Non-Root Docker Permissions</h3>
+          <p>
+            By default, the Docker daemon binds to a Unix socket owned by <code>root</code>.
+            Add the default <code>ubuntu</code> user to the <code>docker</code> group so deployment commands run without <code>sudo</code>:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">EC2 Shell · Group Setup</span>
+              <button class="copy-btn" data-copy-target="docker-group-cmd">Copy</button>
+            </div>
+            <pre><code id="docker-group-cmd">sudo usermod -aG docker ubuntu
+newgrp docker
+
+# Test that docker runs cleanly without sudo:
+docker ps</code></pre>
+          </div>
+
+          <!-- Step 5 -->
+          <h3>Step 5: Create the Deployment Directory (<code>/opt/todo-app</code>)</h3>
+          <p>
+            Under the Linux Filesystem Hierarchy Standard (FHS), <code>/opt</code> is the designated location for self-contained, add-on application software.
+            Create the directory and assign ownership to <code>ubuntu</code>:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">EC2 Shell · App Directory</span>
+              <button class="copy-btn" data-copy-target="app-dir-cmd">Copy</button>
+            </div>
+            <pre><code id="app-dir-cmd">sudo mkdir -p /opt/todo-app
+sudo chown -R ubuntu:ubuntu /opt/todo-app
+cd /opt/todo-app</code></pre>
+          </div>
+
+          <!-- Step 6 -->
+          <h3>Step 6: Authenticate with GHCR (Using Your Read-Only Token)</h3>
+          <p>
+            Now use the <strong>Classic Personal Access Token</strong> (with only <code>read:packages</code>) that you generated earlier.
+            Pipe it to <code>docker login</code> via <code>stdin</code> so the token is never logged in your shell history:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">EC2 Shell · Registry Authentication</span>
+              <button class="copy-btn" data-copy-target="login-ec2-cmd">Copy</button>
+            </div>
+            <pre><code id="login-ec2-cmd"># Replace &lt;YOUR_CLASSIC_PAT&gt; with your actual ghp_... token:
+echo "&lt;YOUR_CLASSIC_PAT&gt;" | docker login ghcr.io -u s3nsh1-dev --password-stdin
+
+# Secure the Docker credentials file on disk:
+chmod 600 ~/.docker/config.json</code></pre>
+          </div>
+
+          <div class="callout emerald">
+            <div class="callout-title">What Just Happened?</div>
+            <p>
+              Docker contacts <code>ghcr.io</code>, validates the token, and writes an authentication entry to <code>~/.docker/config.json</code>.
+              Running <code>chmod 600 ~/.docker/config.json</code> ensures only the <code>ubuntu</code> user can read this file.
+            </p>
+          </div>
+
+          <!-- Step 7 -->
+          <h3>Step 7: Decouple Runtime Secrets (Create <code>server.env</code>)</h3>
+          <p>
+            In Stage 5, we designed our architecture so the production Express container reads its database connection from a host-only environment file.
+            Create <code>/opt/todo-app/server.env</code> with your production <strong>Neon PostgreSQL URL</strong>:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">EC2 Shell · Write server.env</span>
+              <button class="copy-btn" data-copy-target="server-env-cmd">Copy</button>
+            </div>
+            <pre><code id="server-env-cmd">cat &lt;&lt; 'EOF' > /opt/todo-app/server.env
+DATABASE_URL="postgresql://user:password@ep-xyz.us-east-2.aws.neon.tech/neondb?sslmode=require"
+PORT=5000
+NODE_ENV=production
+EOF
+
+# Strict security: readable and writable ONLY by ubuntu (0600)
+chmod 600 /opt/todo-app/server.env</code></pre>
+          </div>
+
+          <!-- Step 8 -->
+          <h3>Step 8: Deploy the Production Compose Contract</h3>
+          <p>
+            Place your <code>docker-compose.prod.yml</code> and <code>release.env</code> inside <code>/opt/todo-app</code>:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">EC2 Shell · Create release.env</span>
+              <button class="copy-btn" data-copy-target="release-env-cmd">Copy</button>
+            </div>
+            <pre><code id="release-env-cmd"># Point to your published GHCR commit SHA:
+echo "IMAGE_TAG=sha-b94f0e5" > /opt/todo-app/release.env</code></pre>
+          </div>
+
+          <p>
+            Create or copy <code>/opt/todo-app/docker-compose.prod.yml</code> (matches the Stage 5 file):
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">/opt/todo-app/docker-compose.prod.yml</span>
+              <button class="copy-btn" data-copy-target="prod-compose-file">Copy</button>
+            </div>
+            <pre><code id="prod-compose-file">name: todo-production
+
+services:
+  client:
+    image: ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:${IMAGE_TAG}
+    container_name: todo-prod-client
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - todo-network
+
+  server:
+    image: ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:${IMAGE_TAG}
+    container_name: todo-prod-server
+    restart: unless-stopped
+    env_file:
+      - ./server.env
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge</code></pre>
+          </div>
+
+          <!-- Step 9 -->
+          <h3>Step 9: Launch the Stack &amp; Verify Production Health</h3>
+          <p>
+            Execute the deployment sequence:
+          </p>
+
+          <div class="code-snippet">
+            <div class="code-snippet-header">
+              <span class="code-file-label">EC2 Shell · Launch Stack</span>
+              <button class="copy-btn" data-copy-target="launch-cmd">Copy</button>
+            </div>
+            <pre><code id="launch-cmd"># 1. Pull the pre-built GHCR images from GitHub Container Registry
+docker compose --env-file release.env -f docker-compose.prod.yml pull
+
+# 2. Launch both containers in detached mode
+docker compose --env-file release.env -f docker-compose.prod.yml up -d
+
+# 3. Check status (wait for server to show 'healthy')
+docker compose -f docker-compose.prod.yml ps
+
+# 4. Test the health endpoint through Nginx on port 80
+curl -I http://localhost/api/health</code></pre>
+          </div>
+
+          <div class="callout emerald">
+            <div class="callout-title">Expected Verification Result</div>
+            <p>
+              When you run <code>curl -I http://localhost/api/health</code>, Nginx should return:
+              <br /><code>HTTP/1.1 200 OK</code>
+              <br />Open <code>http://&lt;EC2_PUBLIC_IP&gt;</code> in your laptop's browser. The Todo app SPA will load and interact directly with your production Neon PostgreSQL database!
+            </p>
+          </div>
+
+          <div class="topic-footer">
+            <button class="btn-complete" data-complete-topic="ec2-prod-setup">
+              <span class="check-mark">✓</span>
+              <span>Mark Topic 06 Complete</span>
+            </button>
+            <div class="nav-buttons">
+              <button class="btn-step" data-prev-topic="token-security-quiz">&larr; Previous: Token Security</button>
+              <button class="btn-step" disabled>All 6 Topics Completed</button>
             </div>
           </div>
         </section>
@@ -1603,7 +1918,8 @@
           "hot-reloading",
           "why-no-hmr-prod",
           "ec2-token-role",
-          "token-security-quiz"
+          "token-security-quiz",
+          "ec2-prod-setup"
         ];
 
         const state = {
