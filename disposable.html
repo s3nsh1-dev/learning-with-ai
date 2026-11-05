@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stage 5: The Production Compose Contract &amp; Architecture</title>
+    <title>Hot Reloading vs. Immutable Images &amp; EC2 GHCR Tokens</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -576,6 +576,11 @@
         background: var(--purple-soft);
         color: var(--purple-text);
       }
+      .tag.rose {
+        border-color: var(--rose-line);
+        background: var(--rose-soft);
+        color: var(--rose-text);
+      }
 
       h1.lesson-title {
         font-family: var(--font-heading);
@@ -981,7 +986,7 @@
           </button>
           <div class="brand-spec">
             <strong>DEV-LAB</strong>
-            <span class="badge-rev">STAGE 05: PROD COMPOSE CONTRACT</span>
+            <span class="badge-rev">DEEP DIVE: HMR &amp; EC2 REGISTRY TOKENS</span>
           </div>
           <nav class="page-nav" aria-label="Page switcher">
             <a href="/index.html" class="nav-tab">Lesson</a>
@@ -1019,12 +1024,13 @@
             <button id="help-close-btn" class="help-close-btn" type="button">Close</button>
           </div>
           <ul class="acronym-list">
-            <li><strong>GHCR (GitHub Container Registry):</strong> The container registry (<code>ghcr.io</code>) hosting our prebuilt, immutable client and server images.</li>
-            <li><strong>OOM (Out Of Memory):</strong> The Linux kernel killer that forcibly kills running processes (like Nginx or Node) when a machine runs out of RAM during local compilation.</li>
-            <li><strong>SHA (Commit Hash):</strong> The immutable cryptographic hash identifying the exact release version (e.g. <code>sha-b94f0e5</code>).</li>
-            <li><strong>Reverse Proxy:</strong> A gateway server (Nginx) that terminates incoming HTTP connections on port 80 and routes internal API traffic to backend services.</li>
-            <li><strong>Pre-flight Dry Run:</strong> Validating configuration schemas and variable interpolation (<code>docker compose config</code>) without launching containers.</li>
-            <li><strong>Least Network Privilege:</strong> Restricting port bindings so only public-facing services (Nginx on 80) listen externally, while internal services (Express on 5000) have no public ports.</li>
+            <li><strong>HMR (Hot Module Replacement):</strong> Updating running browser JS/CSS in milliseconds via WebSockets without full page reload.</li>
+            <li><strong>Bind Mount:</strong> Directly mapping a host folder (e.g. <code>./client:/app</code>) into a container so file edits reflect immediately.</li>
+            <li><strong>PAT (Personal Access Token):</strong> A long-lived GitHub user credential. Dangerous if granted broad permissions.</li>
+            <li><strong>Fine-Grained Token:</strong> A modern GitHub token scoped strictly to single repositories with minimal permissions (e.g. <code>read:packages</code>).</li>
+            <li><strong>GHCR (GitHub Container Registry):</strong> The OCI registry (<code>ghcr.io</code>) where private Docker images are published and pulled.</li>
+            <li><strong>chmod 600:</strong> Linux file permission setting: Read/Write by file owner only; zero access to all other users.</li>
+            <li><strong>Immutable Artifact:</strong> A container image that is frozen at build time and never modified at runtime.</li>
           </ul>
         </div>
       </div>
@@ -1034,7 +1040,7 @@
       <!-- Collapsible Sidebar -->
       <aside class="sidebar" id="sidebar" aria-label="Lesson Outline">
         <div class="sidebar-head">
-          <span class="sidebar-title">Stage 5 Curriculum</span>
+          <span class="sidebar-title">Architectural Deep Dive</span>
           <span class="sidebar-meta" id="sidebar-progress-badge">0 / 5 Done</span>
         </div>
         <div class="progress-bar-wrap">
@@ -1049,37 +1055,37 @@
         <nav>
           <ul class="topic-nav-list" id="topic-nav-list">
             <li class="topic-nav-item">
-              <button class="topic-nav-btn active" data-topic="overview">
+              <button class="topic-nav-btn active" data-topic="summary-answers">
                 <span class="topic-num">01</span>
-                <span>The Production Compose Paradigm Shift</span>
+                <span>What is Hot Reloading (HMR)?</span>
                 <span class="topic-check-icon">✓</span>
               </button>
             </li>
             <li class="topic-nav-item">
-              <button class="topic-nav-btn" data-topic="why-no-build">
+              <button class="topic-nav-btn" data-topic="hot-reloading">
                 <span class="topic-num">02</span>
-                <span>Why We Never Build on Production EC2</span>
+                <span>What Enables Hot Reloading in Dev</span>
                 <span class="topic-check-icon">✓</span>
               </button>
             </li>
             <li class="topic-nav-item">
-              <button class="topic-nav-btn" data-topic="network-topology">
+              <button class="topic-nav-btn" data-topic="why-no-hmr-prod">
                 <span class="topic-num">03</span>
-                <span>Network Topology &amp; Port 80 Ingress</span>
+                <span>Why No Hot Reloading in GHCR Images</span>
                 <span class="topic-check-icon">✓</span>
               </button>
             </li>
             <li class="topic-nav-item">
-              <button class="topic-nav-btn" data-topic="secrets-decoupling">
+              <button class="topic-nav-btn" data-topic="ec2-token-role">
                 <span class="topic-num">04</span>
-                <span>Decoupling Release Tags from Secrets</span>
+                <span>The Read-Only Token on EC2</span>
                 <span class="topic-check-icon">✓</span>
               </button>
             </li>
             <li class="topic-nav-item">
-              <button class="topic-nav-btn" data-topic="verification-quiz">
+              <button class="topic-nav-btn" data-topic="token-security-quiz">
                 <span class="topic-num">05</span>
-                <span>Pre-Flight Validation &amp; Assessment</span>
+                <span>Where Tokens Live &amp; Self-Check</span>
                 <span class="topic-check-icon">✓</span>
               </button>
             </li>
@@ -1091,456 +1097,493 @@
       <main class="main-pane">
         <header class="lesson-header">
           <div class="lesson-kicker">
-            <span class="tag emerald">STAGE 05 COMPLETE</span>
-            <span class="tag blue">DOCKER-COMPOSE.PROD.YML</span>
-            <span class="tag purple">IMMUTABLE DEPLOYMENT</span>
+            <span class="tag blue">DEV ERGONOMICS</span>
+            <span class="tag emerald">IMMUTABLE PRODUCTION</span>
+            <span class="tag purple">EC2 LEAST-PRIVILEGE AUTH</span>
           </div>
-          <h1 class="lesson-title">Stage 5: The Production Compose Contract &amp; Architecture</h1>
+          <h1 class="lesson-title">Hot Reloading Mechanics vs. Immutable Images &amp; The Role of EC2 Registry Tokens</h1>
           <p class="lesson-summary">
-            A comprehensive architectural walkthrough of the Stage 5 deployment contract: why production pulls prebuilt GHCR images rather than building from source, how network topology restricts attack surface, and how release parameters are cleanly decoupled from database secrets.
+            A developer-first guide explaining what powers instant hot reloading in local Docker Compose, why hot reloading is strictly excluded from production GHCR images, and why an EC2 server uses a scoped read-only token to pull private containers.
           </p>
         </header>
 
-        <!-- TOPIC 1: THE PRODUCTION COMPOSE PARADIGM SHIFT -->
-        <section class="topic-view active" id="topic-overview">
-          <div class="topic-eyebrow">Topic 01 · Core Concept</div>
-          <h2 class="topic-heading topic-title">The Production Compose Paradigm Shift</h2>
+        <!-- TOPIC 1: WHAT IS HOT RELOADING & SHORT ANSWERS -->
+        <section class="topic-view active" id="topic-summary-answers">
+          <div class="topic-eyebrow">Topic 01 · First Principles &amp; Quick Reference</div>
+          <h2 class="topic-heading topic-title">What is Hot Reloading (HMR)?</h2>
 
-          <div class="callout emerald">
-            <div class="callout-title">The Golden Rule of Production Infrastructure</div>
+          <p>
+            Before looking at Docker bind mounts or registry security, we must understand the fundamental question:
+            <strong>What actually is Hot Reloading, and why was it invented?</strong>
+          </p>
+
+          <div class="callout blue">
+            <div class="callout-title">The Fundamental Definition</div>
             <p>
-              <strong>A production virtual machine is a RUNTIME HOST, not a compiler.</strong>
-              <br />In local development, Docker Compose builds images from local source code on the fly (<code>build: ./client</code>).
-              In production, the host pulls pre-verified, immutable container images directly from GitHub Container Registry (<code>image: ghcr.io/...:${IMAGE_TAG}</code>).
+              <strong>Hot Reloading</strong> (technically known as <strong>Hot Module Replacement</strong>, or <strong>HMR</strong>) is a development capability where code changes in your source files (JavaScript, TypeScript, JSX, CSS) are injected into the <strong>live running browser application</strong> in milliseconds <em>without performing a full browser page refresh</em>.
             </p>
           </div>
 
+          <h3>The 3 Eras of Frontend Developer Feedback</h3>
           <p>
-            In Stage 4, your GitHub Actions CD pipeline built and published two immutable, SHA-tagged images to GHCR:
-            <br />• <code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:sha-b94f0e5</code>
-            <br />• <code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:sha-b94f0e5</code>
-          </p>
-
-          <p>
-            Stage 5 defines the <strong>Production Compose Contract</strong>. We created five key assets in <code>docker-beginner-simulation</code>:
+            To appreciate what Hot Reloading does, compare the three ways web code updates reach a developer's browser:
           </p>
 
           <div class="table-wrap">
             <table class="spec-table">
               <thead>
                 <tr>
-                  <th>Asset File</th>
-                  <th>Role in Production</th>
-                  <th>Git Tracking Policy</th>
+                  <th>Method</th>
+                  <th>How It Works</th>
+                  <th>What Happens to State (Inputs, Modals, Filters)</th>
+                  <th>Feedback Speed</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><strong><code>docker-compose.prod.yml</code></strong></td>
-                  <td>The production execution contract. Pulls GHCR images, binds host port 80 to Nginx, keeps Express private, and configures health checks.</td>
-                  <td>Tracked in Git</td>
+                  <td><strong>1. Manual Reload</strong></td>
+                  <td>You edit code, wait for a manual rebuild, switch to the browser, and press <kbd>F5</kbd>.</td>
+                  <td><span class="tag rose">100% Wiped</span> — DOM is destroyed, JS restarts from line 1.</td>
+                  <td>Slow (5–15 seconds)</td>
                 </tr>
                 <tr>
-                  <td><strong><code>release.env</code></strong></td>
-                  <td>Supplies the dynamic release parameter: <code>IMAGE_TAG=sha-b94f0e5</code>. Changed during every CD deployment.</td>
-                  <td><strong>Ignored</strong> (Generated dynamically on host)</td>
+                  <td><strong>2. Live Reload</strong></td>
+                  <td>A file watcher detects file saves and automatically triggers <code>window.location.reload()</code>.</td>
+                  <td><span class="tag rose">100% Wiped</span> — Automates the reload, but still destroys all page state.</td>
+                  <td>Medium (1–3 seconds)</td>
                 </tr>
                 <tr>
-                  <td><strong><code>release.env.example</code></strong></td>
-                  <td>Version-controlled template showing how <code>IMAGE_TAG</code> is structured.</td>
-                  <td>Tracked in Git</td>
-                </tr>
-                <tr>
-                  <td><strong><code>server.env</code></strong></td>
-                  <td>Stores sensitive runtime secrets (e.g. Neon <code>DATABASE_URL</code>, <code>PORT=5000</code>). Managed on host with strict <code>chmod 600</code> permissions.</td>
-                  <td><strong>Ignored</strong> (Strictly forbidden in Git)</td>
-                </tr>
-                <tr>
-                  <td><strong><code>server.env.example</code></strong></td>
-                  <td>Template showing required environment variable keys without real credentials.</td>
-                  <td>Tracked in Git</td>
+                  <td><strong>3. Hot Module Replacement (HMR)</strong></td>
+                  <td>The dev server compiles only the changed file and pushes a delta patch over a WebSocket. The browser swaps the module in live RAM.</td>
+                  <td><span class="tag emerald">100% Preserved</span> — Typed text, open dialogs, and navigation state stay intact!</td>
+                  <td>Instant (&lt; 50 ms)</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
+          <h3>The Killer Feature: Preserving UI State</h3>
+          <p>
+            Imagine you are testing a complex checkout wizard on Step 4. You have filled out 12 input fields, chosen a dropdown option, and opened a verification modal.
+            You notice the submit button has bad padding or a typo.
+          </p>
+          <ul style="margin-left: 1.5rem; margin-bottom: 1.2rem; color: var(--ink-2); line-height: 1.7;">
+            <li><strong>With full reload:</strong> You fix the typo, the browser reloads to Step 1, all 12 input fields are wiped, the modal closes, and you must waste 30 seconds clicking back to Step 4 to see if the button looks right.</li>
+            <li><strong>With Hot Reloading:</strong> You fix the typo in your editor. In 40 milliseconds, the button text updates right on your screen. The modal stays open, your 12 filled input fields remain filled, and your cursor does not move.</li>
+          </ul>
+
+          <hr style="border: none; border-top: 1px solid var(--line); margin: 2rem 0;" />
+
+          <h3>Quick Answers: The Two Big Project Questions</h3>
+
+          <div class="callout emerald">
+            <div class="callout-title">Question 1: What enables instant hot reloading in Docker, and why is its absence in GHCR good?</div>
+            <p>
+              • <strong>In local development:</strong> Hot reloading is enabled by a <strong>Host Bind Mount</strong> (<code>volumes: - ./client:/app</code>) connecting your laptop folder to the container, Linux kernel <code>inotify</code> file watchers, Vite's in-memory HMR compiler, and a persistent WebSocket connection to your browser.
+              <br /><br />
+              • <strong>Why its absence in GHCR is good:</strong> GHCR creates <strong>Immutable Production Artifacts</strong>. In production, we do not want a heavy Node.js development server running. We want lightweight, battle-hardened <strong>Nginx</strong> serving pre-compiled static files from <code>/dist</code>. This drops RAM usage from 350MB to 15MB, prevents memory leaks, stops configuration drift, and ensures rock-solid deterministic deployments.
+            </p>
+          </div>
+
+          <div class="callout purple">
+            <div class="callout-title">Question 2: What is the role of the read-only token on EC2, why is PAT bad, and where is it kept?</div>
+            <p>
+              • <strong>Role:</strong> Our GHCR container images are <strong>private packages</strong>. EC2 must authenticate with <code>ghcr.io</code> to pull them during deployment.
+              <br /><br />
+              • <strong>Why PAT is bad:</strong> A classic Personal Access Token has broad account-level permissions (repos, billing, organization access). If an EC2 server gets compromised, an attacker stealing a classic PAT gets full control over your GitHub account.
+              <br /><br />
+              • <strong>Why Fine-Grained Read-Only Token is good:</strong> It follows the <strong>Principle of Least Privilege</strong>. It is scoped strictly to <code>read:packages</code> on this single repository. Even if an attacker steals it, they can only download the image—they cannot push code or touch repositories.
+              <br /><br />
+              • <strong>Where it is kept and secured:</strong> Stored on the EC2 host in <code>~/.docker/config.json</code> locked down with Linux file permissions (<code>chmod 600</code>), accessible solely by the root/docker user.
+            </p>
+          </div>
+
           <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="overview">
+            <button class="btn-complete" data-complete-topic="summary-answers">
               <span class="check-mark">✓</span>
               <span>Mark Topic 01 Complete</span>
             </button>
             <div class="nav-buttons">
               <button class="btn-step" disabled>Previous</button>
-              <button class="btn-step" data-next-topic="why-no-build">Next: Why Never Build on EC2 &rarr;</button>
+              <button class="btn-step" data-next-topic="hot-reloading">Next: How Docker Enables HMR &rarr;</button>
             </div>
           </div>
         </section>
 
-        <!-- TOPIC 2: WHY WE NEVER BUILD ON PRODUCTION EC2 -->
-        <section class="topic-view" id="topic-why-no-build">
-          <div class="topic-eyebrow">Topic 02 · Operational Hazards</div>
-          <h2 class="topic-heading topic-title">Why We Never Build on Production EC2</h2>
+        <!-- TOPIC 2: WHAT ENABLES HOT RELOADING -->
+        <section class="topic-view" id="topic-hot-reloading">
+          <div class="topic-eyebrow">Topic 02 · Developer Ergonomics</div>
+          <h2 class="topic-heading topic-title">What Enables Instant Hot Reloading in Development</h2>
 
           <p>
-            Beginner deployments often clone the entire Git repository onto an EC2 instance and run <code>docker compose up --build</code>.
-            While this seems convenient, it introduces three fatal production hazards:
+            When you edit a React component (e.g. <code>App.tsx</code>) on your laptop while running Docker, how does the browser update in 50 milliseconds without running <code>docker build</code>?
+            Hot reloading is powered by the coordination of <strong>three distinct mechanisms</strong>:
+          </p>
+
+          <div class="callout blue">
+            <div class="callout-title">Mechanism 1: The Docker Bind Mount (Shared Storage)</div>
+            <p>
+              In a development Compose file, you define a volume mount:
+              <br /><code>volumes: - ./client:/app</code> (or <code>./client/src:/app/src</code>)
+              <br />A <strong>bind mount</strong> bypasses the container's internal filesystem and directly maps your laptop's folder into the container.
+              When your code editor saves a file to disk on your Mac/Linux laptop, that exact file byte changes inside the container at the same microsecond.
+            </p>
+          </div>
+
+          <div class="callout purple">
+            <div class="callout-title">Mechanism 2: Linux Inotify / File System Watchers</div>
+            <p>
+              Inside the container, Vite is running in development mode (<code>pnpm dev</code>).
+              Vite keeps an active file watcher on <code>/app/src</code> using Linux kernel <code>inotify</code> events.
+              The moment the bind mount delivers the edited file, Vite detects the modified timestamp.
+            </p>
+          </div>
+
+          <div class="callout emerald">
+            <div class="callout-title">Mechanism 3: WebSocket Hot Module Replacement (HMR)</div>
+            <p>
+              Instead of forcing a full browser refresh (which wipes form inputs and state), Vite re-compiles only the single changed component in memory.
+              It then sends an updated JavaScript snippet across a persistent <strong>WebSocket connection</strong> to your browser:
+              <br /><code>WebSocket &rarr; Browser Client &rarr; React Fast Refresh re-renders the component in the DOM.</code>
+            </p>
+          </div>
+
+          <h3>Why We Love This in Development</h3>
+          <ul style="margin-left: 1.5rem; margin-bottom: 1.2rem; color: var(--ink-2); line-height: 1.7;">
+            <li><strong>Zero Build Lag:</strong> Without bind mounts, every CSS tweak or button fix would require running <code>docker build</code> (taking 2–3 minutes).</li>
+            <li><strong>Preserved State:</strong> You don't lose typed form inputs, open modals, or navigation state while iterating on code.</li>
+            <li><strong>Fast Feedback Loop:</strong> Bugs are caught immediately as you write code.</li>
+          </ul>
+
+          <div class="topic-footer">
+            <button class="btn-complete" data-complete-topic="hot-reloading">
+              <span class="check-mark">✓</span>
+              <span>Mark Topic 02 Complete</span>
+            </button>
+            <div class="nav-buttons">
+              <button class="btn-step" data-prev-topic="summary-answers">&larr; Previous: Short Answers</button>
+              <button class="btn-step" data-next-topic="why-no-hmr-prod">Next: Why No HMR in Prod &rarr;</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TOPIC 3: WHY NO HMR IN PROD -->
+        <section class="topic-view" id="topic-why-no-hmr-prod">
+          <div class="topic-eyebrow">Topic 03 · Production Hardening</div>
+          <h2 class="topic-heading topic-title">Why Its Absence in GHCR Images is Good (and Necessary)</h2>
+
+          <p>
+            If hot reloading is so fast, why don't we put it on EC2?
+            Because in production, <strong>hot reloading is a dangerous anti-pattern</strong>.
+            Here is why omitting hot reloading from GHCR images is essential engineering:
           </p>
 
           <div class="callout rose">
-            <div class="callout-title">1. Host Memory Exhaustion (The Linux Kernel OOM Killer)</div>
+            <div class="callout-title">1. The Principle of Immutable Artifacts</div>
             <p>
-              Compiling TypeScript (<code>tsc</code>) and bundling React with Vite requires significant RAM and CPU.
-              On common entry-tier instances like an AWS <code>t2.micro</code> (1 GB RAM), a build command triggers memory spikes above 900 MB.
-              The Linux kernel's Out-Of-Memory (OOM) killer abruptly terminates running processes to save the OS—often killing the active Nginx or Node process, causing immediate total downtime for real users.
+              In production, you need absolute certainty: <em>What code is running on the server?</em>
+              <br />In GHCR, our client image contains pre-compiled, static assets baked into <code>/usr/share/nginx/html</code> at build time.
+              The container image is tagged with the exact Git commit SHA (e.g. <code>sha-b94f0e5</code>).
+              If EC2 used bind mounts and hot reloading, developers could SSH into the server and edit files live on disk.
+              That creates <strong>Configuration Drift</strong>: your server is running rogue code that exists nowhere in Git!
             </p>
           </div>
 
           <div class="callout amber">
-            <div class="callout-title">2. Toolchain Sprawl &amp; Attack Surface Inflation</div>
+            <div class="callout-title">2. Nginx vs. Vite Dev Server (Massive Performance &amp; Stability)</div>
             <p>
-              If an EC2 server builds from source, it must permanently store Git credentials, source code files, Node.js development runtimes, npm build dependencies, and compiler toolchains.
-              If an attacker breaches the web server, they gain instant access to proprietary source code and development tools.
-              In contrast, a runtime host that only pulls prebuilt images requires zero source code and zero build tools.
+              • <strong>Vite Dev Server (Node.js):</strong> Designed for one developer on a laptop. It uses heavy RAM, parses TypeScript on the fly, and leaks memory over time if left running for weeks under high concurrent traffic.
+              <br />• <strong>Nginx (Production Container):</strong> Written in highly optimized C. It consumes less than 15 MB of RAM, handles tens of thousands of concurrent HTTP requests, and serves pre-gzipped static files with zero CPU overhead.
             </p>
           </div>
 
-          <div class="callout blue">
-            <div class="callout-title">3. Invalidation of CI Verification Guarantees</div>
+          <div class="callout purple">
+            <div class="callout-title">3. Security &amp; Container Isolation</div>
             <p>
-              The entire purpose of Stage 3 CI is to verify that code passes linting, tests, and builds.
-              Building on EC2 creates a <em>new, untested binary artifact</em> on the live server.
-              Network blips, upstream npm package updates, or differing glibc versions can result in a broken build running on EC2 that never existed in CI.
+              A bind mount breaks container isolation by linking the host's physical filesystem directly into the container.
+              If an attacker exploits a vulnerability in a web application with a host bind mount, they can overwrite files on the EC2 host disk (Container Escape).
+              In contrast, our GHCR image runs with <strong>read-only baked files</strong> and no access to the host disk.
             </p>
           </div>
 
-          <h3>Development vs. Production Compose Comparison</h3>
+          <div class="topic-footer">
+            <button class="btn-complete" data-complete-topic="why-no-hmr-prod">
+              <span class="check-mark">✓</span>
+              <span>Mark Topic 03 Complete</span>
+            </button>
+            <div class="nav-buttons">
+              <button class="btn-step" data-prev-topic="hot-reloading">&larr; Previous: Hot Reloading</button>
+              <button class="btn-step" data-next-topic="ec2-token-role">Next: The EC2 Token &rarr;</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TOPIC 4: THE READ-ONLY TOKEN ON EC2 -->
+        <section class="topic-view" id="topic-ec2-token-role">
+          <div class="topic-eyebrow">Topic 04 · Registry Authentication</div>
+          <h2 class="topic-heading topic-title">The Role of the Read-Only Token on EC2</h2>
+
+          <p>
+            You asked: <em>"what is the role of GIT_TOKEN in all these EC2 ghcr image kind of process. i learned that using PAT is bad but TOKEN is good but i am not sure why are we using this token and where its kept and actually secure"</em>
+          </p>
+
+          <h3>1. Why Does EC2 Need a Token at All?</h3>
+          <p>
+            By default, images published to GitHub Container Registry (GHCR) in your private repository are <strong>private packages</strong>.
+            If you log into your EC2 instance and run:
+            <br /><code>docker pull ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:sha-b94f0e5</code>
+            <br />GitHub will reject the request with <strong><code>Error response from daemon: Head "...": unauthorized</code></strong>.
+            EC2 must prove its identity to GitHub before it is allowed to download the container layers.
+          </p>
+
+          <h3>2. Why Can't EC2 Use the GitHub Actions <code>GITHUB_TOKEN</code>?</h3>
+          <p>
+            In Stage 4, our CI pipeline used <code>secrets.GITHUB_TOKEN</code> to push images.
+            Why can't we copy that token to EC2?
+            <br />Because <strong><code>secrets.GITHUB_TOKEN</code> is ephemeral</strong>: it is dynamically minted by GitHub when a workflow run begins, and it is <strong>destroyed the instant the workflow finishes</strong>!
+            It has a lifespan of only a few minutes. It physically does not exist when EC2 wants to pull the image hours or days later.
+          </p>
+
+          <h3>3. The Token Hierarchy: Why Classic PAT is Dangerous vs. Scoped Token</h3>
           <div class="table-wrap">
             <table class="spec-table">
               <thead>
                 <tr>
-                  <th>Feature</th>
-                  <th>Development (<code>docker-compose.yml</code>)</th>
-                  <th>Production (<code>docker-compose.prod.yml</code>)</th>
+                  <th>Token Type</th>
+                  <th>Permission Scope</th>
+                  <th>Blast Radius if Server is Hacked</th>
+                  <th>Verdict</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>Image Directive</strong></td>
-                  <td><code>build: ./client</code> &amp; <code>build: ./server</code></td>
-                  <td><code>image: ghcr.io/...:${IMAGE_TAG}</code></td>
+                  <td><strong>Classic PAT (Broad)</strong></td>
+                  <td><code>repo</code>, <code>admin:org</code>, <code>delete:packages</code>, <code>user</code></td>
+                  <td>Attacker can delete repositories, read private source code, modify billing, and push malicious commits.</td>
+                  <td><span class="tag rose">CRITICAL RISK</span></td>
                 </tr>
                 <tr>
-                  <td><strong>Source Code on Host</strong></td>
-                  <td>Full source directory present</td>
-                  <td><strong>Zero source code</strong> (only compose file + env)</td>
+                  <td><strong>Actions <code>GITHUB_TOKEN</code></strong></td>
+                  <td>Job-scoped, ephemeral</td>
+                  <td>Lives only inside CI runner VM; cannot be placed on EC2.</td>
+                  <td><span class="tag blue">CI ONLY</span></td>
                 </tr>
                 <tr>
-                  <td><strong>Public Ports</strong></td>
-                  <td><code>3000:80</code> (Client)</td>
-                  <td><code>80:80</code> (Standard HTTP port)</td>
-                </tr>
-                <tr>
-                  <td><strong>API Port Exposure</strong></td>
-                  <td>Internal (<code>expose: 5000</code>)</td>
-                  <td>Internal (<code>expose: 5000</code>, no host port)</td>
-                </tr>
-                <tr>
-                  <td><strong>Restart Policy</strong></td>
-                  <td><code>restart: unless-stopped</code></td>
-                  <td><code>restart: unless-stopped</code></td>
-                </tr>
-                <tr>
-                  <td><strong>Secrets Management</strong></td>
-                  <td>Local <code>./server/.env</code> file</td>
-                  <td>Host-only <code>./server.env</code> (chmod 600)</td>
+                  <td><strong>Fine-Grained Read-Only Token</strong></td>
+                  <td><code>read:packages</code> on <code>docker-beginner-simulation</code> ONLY</td>
+                  <td>Attacker can only download the Docker image. Zero write access, zero repo access, zero account control.</td>
+                  <td><span class="tag emerald">RECOMMENDED (Least Privilege)</span></td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="why-no-build">
-              <span class="check-mark">✓</span>
-              <span>Mark Topic 02 Complete</span>
-            </button>
-            <div class="nav-buttons">
-              <button class="btn-step" data-prev-topic="overview">&larr; Previous: Overview</button>
-              <button class="btn-step" data-next-topic="network-topology">Next: Network Topology &rarr;</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- TOPIC 3: NETWORK TOPOLOGY & PORT 80 INGRESS -->
-        <section class="topic-view" id="topic-network-topology">
-          <div class="topic-eyebrow">Topic 03 · Security Boundaries</div>
-          <h2 class="topic-heading topic-title">Network Topology &amp; Port 80 Ingress</h2>
-
-          <p>
-            Security in containerized environments relies on <strong>Least Network Privilege</strong>.
-            External internet traffic must never reach backend databases or Node.js application ports directly.
-          </p>
-
-          <!-- Interactive Network SVG -->
-          <div class="diagram-wrapper">
-            <div class="diagram-controls">
-              <button class="diagram-btn active" data-flow="all">Full Production Topology</button>
-              <button class="diagram-btn" data-flow="public">Public HTTP Ingress (Port 80)</button>
-              <button class="diagram-btn" data-flow="internal">Internal Docker Bridge (Port 5000)</button>
-              <button class="diagram-btn" data-flow="database">External Neon DB (Egress)</button>
-            </div>
-
-            <svg
-              id="topology-svg"
-              class="interactive-svg"
-              viewBox="0 0 920 320"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Production Network Topology Diagram"
-            >
-              <defs>
-                <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--blue)" />
-                </marker>
-                <marker id="arrow-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--purple)" />
-                </marker>
-                <marker id="arrow-emerald" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--emerald)" />
-                </marker>
-              </defs>
-
-              <!-- Internet Box -->
-              <g id="node-internet">
-                <rect x="20" y="115" width="120" height="70" rx="8" fill="var(--surface)" stroke="var(--blue-line)" stroke-width="2" />
-                <text x="80" y="145" text-anchor="middle" font-family="var(--font-ui)" font-size="12" font-weight="700" fill="var(--blue-text)">Public Internet</text>
-                <text x="80" y="165" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--ink-muted)">HTTP Clients</text>
-              </g>
-
-              <!-- EC2 Perimeter -->
-              <rect x="180" y="25" width="500" height="260" rx="10" fill="none" stroke="var(--line-strong)" stroke-width="2" stroke-dasharray="6 4" />
-              <text x="200" y="50" font-family="var(--font-mono)" font-size="11" font-weight="700" fill="var(--ink-muted)">AWS EC2 HOST BOUNDARY</text>
-
-              <!-- Docker Bridge Network Box -->
-              <rect id="box-bridge" x="200" y="65" width="460" height="200" rx="8" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5" />
-              <text x="220" y="88" font-family="var(--font-mono)" font-size="10" font-weight="600" fill="var(--ink-muted)">Docker Bridge Network (Internal)</text>
-
-              <!-- Client Container (Nginx) -->
-              <g id="node-client">
-                <rect x="220" y="105" width="180" height="135" rx="8" fill="var(--surface)" stroke="var(--blue)" stroke-width="2" />
-                <rect x="220" y="105" width="180" height="28" rx="8" fill="var(--blue-soft)" />
-                <text x="235" y="124" font-family="var(--font-ui)" font-size="11" font-weight="700" fill="var(--blue-text)">client (Nginx:80)</text>
-                <text x="235" y="152" font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">• Serves React SPA</text>
-                <text x="235" y="172" font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">• Binds ports: 80:80</text>
-                <text x="235" y="192" font-family="var(--font-mono)" font-size="10" fill="var(--blue-text)">• proxy_pass /api/ &rarr;</text>
-                <text x="235" y="210" font-family="var(--font-mono)" font-size="9" fill="var(--ink-faint)">http://server:5000</text>
-              </g>
-
-              <!-- Server Container (Express) -->
-              <g id="node-server">
-                <rect x="460" y="105" width="180" height="135" rx="8" fill="var(--surface)" stroke="var(--purple)" stroke-width="2" />
-                <rect x="460" y="105" width="180" height="28" rx="8" fill="var(--purple-soft)" />
-                <text x="475" y="124" font-family="var(--font-ui)" font-size="11" font-weight="700" fill="var(--purple-text)">server (Express:5000)</text>
-                <text x="475" y="152" font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">• expose: 5000 only</text>
-                <text x="475" y="172" font-family="var(--font-mono)" font-size="10" fill="var(--rose-text)">• NO public host port</text>
-                <text x="475" y="192" font-family="var(--font-mono)" font-size="10" fill="var(--ink-2)">• env_file: server.env</text>
-                <text x="475" y="210" font-family="var(--font-mono)" font-size="9" fill="var(--purple-text)">• /api/health probe</text>
-              </g>
-
-              <!-- Neon PostgreSQL Cloud Box -->
-              <g id="node-db">
-                <rect x="730" y="115" width="165" height="75" rx="8" fill="var(--surface)" stroke="var(--emerald)" stroke-width="2" />
-                <rect x="730" y="115" width="165" height="25" rx="8" fill="var(--emerald-soft)" />
-                <text x="745" y="132" font-family="var(--font-ui)" font-size="11" font-weight="700" fill="var(--emerald-text)">Neon Cloud PostgreSQL</text>
-                <text x="745" y="158" font-family="var(--font-mono)" font-size="9.5" fill="var(--ink-2)">AWS Managed DB</text>
-                <text x="745" y="174" font-family="var(--font-mono)" font-size="9" fill="var(--emerald-text)">SSL Required (port 5432)</text>
-              </g>
-
-              <!-- Connectors -->
-              <path id="path-public" d="M 140 150 L 220 150" fill="none" stroke="var(--blue)" stroke-width="2.5" marker-end="url(#arrow-blue)" />
-              <path id="path-internal" d="M 400 170 L 460 170" fill="none" stroke="var(--purple)" stroke-width="2.5" marker-end="url(#arrow-purple)" />
-              <path id="path-db" d="M 640 150 L 730 150" fill="none" stroke="var(--emerald)" stroke-width="2.5" marker-end="url(#arrow-emerald)" />
-            </svg>
-
-            <div class="diagram-caption" id="diagram-caption">
-              <strong>Complete Production Topology:</strong> Users access Nginx over public port 80. Nginx proxies <code>/api/</code> internally to Express over the Docker bridge network. The server connects outbound over encrypted TLS to Neon DB. The database and backend API are completely shielded from public internet exposure.
-            </div>
-          </div>
-
-          <div class="callout blue">
-            <div class="callout-title">Why Port 80 Replaces Port 3000</div>
+          <div class="callout emerald">
+            <div class="callout-title">The Principle of Least Privilege in Action</div>
             <p>
-              In local development, the client ran on <code>3000:80</code> so you could visit <code>http://localhost:3000</code> without needing <code>sudo</code>.
-              In production on EC2, standard web traffic enters over port 80 (HTTP).
-              By binding <code>80:80</code>, users can visit your EC2 IP address directly in their browser without typing a port number!
+              Notice the beauty of this security boundary:
+              <br />Even if a rogue actor completely breaches your EC2 server and steals the token, <strong>they cannot harm your project</strong>!
+              The token cannot push backdoored images to GHCR, cannot view other repositories, and cannot delete your packages. It is a strictly read-only key.
             </p>
           </div>
 
           <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="network-topology">
-              <span class="check-mark">✓</span>
-              <span>Mark Topic 03 Complete</span>
-            </button>
-            <div class="nav-buttons">
-              <button class="btn-step" data-prev-topic="why-no-build">&larr; Previous: Why No Build</button>
-              <button class="btn-step" data-next-topic="secrets-decoupling">Next: Secrets Decoupling &rarr;</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- TOPIC 4: DECOUPLING RELEASE TAGS FROM SECRETS -->
-        <section class="topic-view" id="topic-secrets-decoupling">
-          <div class="topic-eyebrow">Topic 04 · Configuration Boundaries</div>
-          <h2 class="topic-heading topic-title">Decoupling Release Tags from Runtime Secrets</h2>
-
-          <p>
-            A common mistake in deployment automation is dumping all configuration into a single <code>.env</code> file.
-            This creates a severe operational problem: every time you deploy a new commit SHA, your automation script must edit a file that also contains sensitive database passwords.
-            A typo or script bug could erase the database credentials!
-          </p>
-
-          <div class="callout purple">
-            <div class="callout-title">The Clean Architectural Separation</div>
-            <p>
-              We divide configuration into two distinct files with completely different lifecycles:
-              <br />1. <strong><code>release.env</code> (Dynamic Release Parameters):</strong> Contains <code>IMAGE_TAG=sha-xxxxxxx</code>. Changes on every deployment. Contains no secrets. Safe to log.
-              <br />2. <strong><code>server.env</code> (Static Runtime Secrets):</strong> Contains <code>DATABASE_URL</code> and <code>PORT=5000</code>. Configured once during server setup. Never changes between deployments. Protected with <code>chmod 600</code>.
-            </p>
-          </div>
-
-          <h3>1. How <code>docker-compose.prod.yml</code> Wires Both Files</h3>
-          <p>
-            Notice how cleanly the production Compose file references both inputs:
-          </p>
-
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">docker-compose.prod.yml</span>
-              <button class="copy-btn" data-copy-target="prod-compose-code">Copy</button>
-            </div>
-            <pre><code id="prod-compose-code">services:
-  client:
-    image: ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:${IMAGE_TAG}
-    init: true
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    depends_on:
-      server:
-        condition: service_healthy
-
-  server:
-    image: ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:${IMAGE_TAG}
-    restart: unless-stopped
-    expose:
-      - "5000"
-    env_file:
-      - ./server.env
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          'node -e "fetch(\'http://localhost:5000/api/health\').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"',
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 15s</code></pre>
-          </div>
-
-          <h3>2. How Variable Interpolation Works</h3>
-          <p>
-            When Docker Compose encounters <code>${IMAGE_TAG}</code> in the <code>image:</code> line, it resolves the value from the environment.
-            By running:
-            <br /><code>docker compose --env-file release.env -f docker-compose.prod.yml config</code>
-            <br />Compose reads <code>IMAGE_TAG</code> from <code>release.env</code>.
-            Simultaneously, the <code>env_file: ./server.env</code> directive passes <code>DATABASE_URL</code> and <code>PORT</code> directly into the Express container at startup.
-          </p>
-
-          <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="secrets-decoupling">
+            <button class="btn-complete" data-complete-topic="ec2-token-role">
               <span class="check-mark">✓</span>
               <span>Mark Topic 04 Complete</span>
             </button>
             <div class="nav-buttons">
-              <button class="btn-step" data-prev-topic="network-topology">&larr; Previous: Network Topology</button>
-              <button class="btn-step" data-next-topic="verification-quiz">Next: Validation &amp; Quiz &rarr;</button>
+              <button class="btn-step" data-prev-topic="why-no-hmr-prod">&larr; Previous: Why No HMR in Prod</button>
+              <button class="btn-step" data-next-topic="token-security-quiz">Next: Where Tokens Live &rarr;</button>
             </div>
           </div>
         </section>
 
-        <!-- TOPIC 5: PRE-FLIGHT VALIDATION & ASSESSMENT -->
-        <section class="topic-view" id="topic-verification-quiz">
-          <div class="topic-eyebrow">Topic 05 · Pre-Flight Testing</div>
-          <h2 class="topic-heading topic-title">Pre-Flight Validation &amp; Assessment</h2>
+        <!-- TOPIC 5: WHERE TOKENS LIVE & SELF-CHECK -->
+        <section class="topic-view" id="topic-token-security-quiz">
+          <div class="topic-eyebrow">Topic 05 · Secret Storage &amp; Verification</div>
+          <h2 class="topic-heading topic-title">Where the Token Lives on EC2 &amp; How It Is Secured</h2>
 
           <p>
-            Before deploying anything to EC2, you must verify the contract locally.
-            Docker Compose provides a built-in pre-flight linter: <code>docker compose config</code>.
+            How does Docker on EC2 store the token, and how do we prevent unauthorized users on the machine from reading it?
+          </p>
+
+          <h3>1. What Happens During <code>docker login</code></h3>
+          <p>
+            During server provisioning in Stage 6, you execute:
           </p>
 
           <div class="code-snippet">
             <div class="code-snippet-header">
-              <span class="code-file-label">Terminal Verification Command</span>
-              <button class="copy-btn" data-copy-target="config-cmd">Copy</button>
+              <span class="code-file-label">EC2 Host Shell</span>
+              <button class="copy-btn" data-copy-target="login-cmd">Copy</button>
             </div>
-            <pre><code id="config-cmd">docker compose --env-file release.env -f docker-compose.prod.yml config</code></pre>
+            <pre><code id="login-cmd">echo "$GHCR_READ_TOKEN" | docker login ghcr.io -u s3nsh1-dev --password-stdin</code></pre>
           </div>
 
           <p>
-            This command acts as a comprehensive dry-run validator:
+            When this command runs, Docker contacts <code>ghcr.io</code>, verifies the credentials, and writes an authentication header into a config file on the EC2 host:
+            <br /><code>/home/ubuntu/.docker/config.json</code> (or <code>/root/.docker/config.json</code>).
           </p>
-          <ul style="margin-left: 1.5rem; margin-bottom: 1.2rem; color: var(--ink-2); line-height: 1.7;">
-            <li><strong>Syntax &amp; Indentation Check:</strong> Validates YAML schema correctness.</li>
-            <li><strong>Variable Resolution:</strong> Replaces <code>${IMAGE_TAG}</code> with the concrete value from <code>release.env</code> (e.g. <code>sha-b94f0e5</code>).</li>
-            <li><strong>Port &amp; Network Validation:</strong> Confirms port bindings and healthcheck commands <strong>without launching any containers</strong>.</li>
-            <li><strong>Rollback Simulation:</strong> You can test a rollback instantly by overriding the variable:
-              <br /><code>IMAGE_TAG=sha-previous docker compose -f docker-compose.prod.yml config | grep image:</code>
-            </li>
-          </ul>
+
+          <h3>2. How the Token is Kept Secure on EC2</h3>
+          <div class="callout purple">
+            <div class="callout-title">The 3 Layers of Host Security</div>
+            <p>
+              1. <strong>Linux File Permissions (<code>chmod 600</code>):</strong>
+              The <code>.docker/config.json</code> file is given permission <code>600</code> (read and write exclusively by the file owner). Any non-root user or web process on the machine is blocked by the Linux OS kernel from opening the file.
+              <br /><br />
+              2. <strong>Strict Secret Boundary:</strong>
+              The token is <strong>never baked into Dockerfiles</strong>, never committed to Git, and never injected into container environment variables. It stays on the EC2 host OS, used solely by the Docker daemon to pull images.
+              <br /><br />
+              3. <strong>SSH Key-Only Server Access:</strong>
+              In Stage 6, password authentication on EC2 is completely disabled. Only administrators possessing the verified SSH private key can connect to the instance.
+            </p>
+          </div>
+
+          <!-- Interactive Comparison Diagram -->
+          <div class="diagram-wrapper">
+            <div class="diagram-controls">
+              <button class="diagram-btn active" data-diagram="dev">Dev Architecture (Bind Mount &amp; HMR)</button>
+              <button class="diagram-btn" data-diagram="prod">Prod Architecture (Nginx &amp; Baked Dist)</button>
+              <button class="diagram-btn" data-diagram="auth">EC2 Authentication (Read-Only Token)</button>
+            </div>
+
+            <svg
+              id="arch-svg"
+              class="interactive-svg"
+              viewBox="0 0 920 300"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Comparison diagram of Development vs Production vs EC2 Authentication"
+            >
+              <defs>
+                <marker id="svg-arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--blue)" />
+                </marker>
+                <marker id="svg-arrow-emerald" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--emerald)" />
+                </marker>
+              </defs>
+
+              <!-- State Group 1: Dev -->
+              <g id="svg-group-dev">
+                <rect x="50" y="50" width="220" height="180" rx="8" fill="var(--surface-2)" stroke="var(--blue-line)" stroke-width="2" />
+                <text x="160" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--blue-text)">Laptop Host Filesystem</text>
+                <rect x="70" y="100" width="180" height="45" rx="6" fill="var(--surface)" stroke="var(--line)" />
+                <text x="85" y="128" font-family="var(--font-mono)" font-size="11" fill="var(--ink)">client/src/App.tsx</text>
+                <text x="160" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--ink-muted)">Developer edits &amp; saves file</text>
+
+                <!-- Arrow -->
+                <path d="M 270 140 L 360 140" fill="none" stroke="var(--blue)" stroke-width="2.5" marker-end="url(#svg-arrow-blue)" />
+                <text x="315" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--blue)">bind mount</text>
+
+                <rect x="370" y="50" width="240" height="180" rx="8" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="2" />
+                <text x="490" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--blue-text)">Dev Container (Vite:3000)</text>
+                <rect x="390" y="100" width="200" height="45" rx="6" fill="var(--surface)" stroke="var(--line)" />
+                <text x="405" y="128" font-family="var(--font-mono)" font-size="11" fill="var(--ink)">inotify &rarr; HMR Compiler</text>
+                <text x="490" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--ink-muted)">WebSocket pushes update</text>
+
+                <!-- Arrow -->
+                <path d="M 610 140 L 700 140" fill="none" stroke="var(--blue)" stroke-width="2.5" marker-end="url(#svg-arrow-blue)" />
+                <text x="655" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--blue)">WebSocket</text>
+
+                <rect x="710" y="50" width="160" height="180" rx="8" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="2" />
+                <text x="790" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--ink)">Local Browser</text>
+                <text x="790" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--emerald)">DOM updates (50ms)</text>
+                <text x="790" y="160" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--ink-muted)">No page reload</text>
+              </g>
+
+              <!-- State Group 2: Prod -->
+              <g id="svg-group-prod" style="display: none;">
+                <rect x="50" y="50" width="230" height="180" rx="8" fill="var(--emerald-soft)" stroke="var(--emerald)" stroke-width="2" />
+                <text x="165" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--emerald-text)">GHCR Release Package</text>
+                <rect x="70" y="100" width="190" height="50" rx="6" fill="var(--surface)" stroke="var(--line)" />
+                <text x="85" y="125" font-family="var(--font-mono)" font-size="10" fill="var(--ink)">sha-b94f0e5</text>
+                <text x="85" y="140" font-family="var(--font-mono)" font-size="9" fill="var(--ink-muted)">Baked static /dist assets</text>
+                <text x="165" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--emerald-text)">Zero source code · Zero compilers</text>
+
+                <path d="M 280 140 L 370 140" fill="none" stroke="var(--emerald)" stroke-width="2.5" marker-end="url(#svg-arrow-emerald)" />
+                <text x="325" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--emerald)">docker pull</text>
+
+                <rect x="380" y="50" width="240" height="180" rx="8" fill="var(--surface-2)" stroke="var(--emerald-line)" stroke-width="2" />
+                <text x="500" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--ink)">EC2 Host Container (Nginx:80)</text>
+                <rect x="400" y="100" width="200" height="45" rx="6" fill="var(--surface)" stroke="var(--line)" />
+                <text x="415" y="128" font-family="var(--font-mono)" font-size="11" fill="var(--ink)">Pre-compiled static files</text>
+                <text x="500" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--ink-muted)">Instant response · Low RAM (15MB)</text>
+
+                <path d="M 620 140 L 710 140" fill="none" stroke="var(--emerald)" stroke-width="2.5" marker-end="url(#svg-arrow-emerald)" />
+                <text x="665" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--emerald)">HTTP :80</text>
+
+                <rect x="720" y="50" width="160" height="180" rx="8" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="2" />
+                <text x="800" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--ink)">Public User</text>
+                <text x="800" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--emerald-text)">Immutable SPA</text>
+                <text x="800" y="160" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--ink-muted)">Deterministic release</text>
+              </g>
+
+              <!-- State Group 3: Auth -->
+              <g id="svg-group-auth" style="display: none;">
+                <rect x="60" y="50" width="230" height="180" rx="8" fill="var(--surface)" stroke="var(--purple)" stroke-width="2" />
+                <text x="175" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--purple-text)">EC2 Server Storage</text>
+                <rect x="80" y="100" width="190" height="50" rx="6" fill="var(--code-bg)" stroke="var(--line)" />
+                <text x="95" y="122" font-family="var(--font-mono)" font-size="10" fill="var(--ink)">~/.docker/config.json</text>
+                <text x="95" y="138" font-family="var(--font-mono)" font-size="9" fill="var(--rose-text)">Permissions: chmod 600</text>
+                <text x="175" y="180" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--purple)">Token: read:packages only</text>
+
+                <path d="M 290 140 L 410 140" fill="none" stroke="var(--purple)" stroke-width="2.5" marker-end="url(#svg-arrow-blue)" />
+                <text x="350" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--purple)">Auth Header</text>
+
+                <rect x="420" y="50" width="240" height="180" rx="8" fill="var(--surface-2)" stroke="var(--blue-line)" stroke-width="2" />
+                <text x="540" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--blue-text)">GitHub Container Registry</text>
+                <rect x="440" y="100" width="200" height="45" rx="6" fill="var(--surface)" stroke="var(--line)" />
+                <text x="455" y="128" font-family="var(--font-mono)" font-size="10" fill="var(--ink)">ghcr.io (Private Package)</text>
+                <text x="540" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--emerald)">✓ Verifies Token &rarr; Sends Layers</text>
+
+                <rect x="700" y="70" width="180" height="140" rx="8" fill="var(--emerald-soft)" stroke="var(--emerald)" stroke-width="1.5" />
+                <text x="790" y="100" text-anchor="middle" font-family="var(--font-ui)" font-size="12" font-weight="700" fill="var(--emerald-text)">Blast Radius</text>
+                <text x="790" y="128" text-anchor="middle" font-family="var(--font-ui)" font-size="10" fill="var(--ink-2)">If EC2 is hacked:</text>
+                <text x="790" y="148" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--rose-text)">CANNOT push code</text>
+                <text x="790" y="166" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--rose-text)">CANNOT delete packages</text>
+              </g>
+            </svg>
+
+            <div class="diagram-caption" id="diagram-caption">
+              <strong>Development Flow:</strong> Bind mounts map laptop source files directly into Vite dev server. Edits update the browser in milliseconds without container rebuilds.
+            </div>
+          </div>
 
           <!-- Interactive Comprehension Quiz -->
           <div class="interactive-quiz">
             <div class="quiz-title">
-              <span>🎯 Quick Check: Stage 5 Architecture</span>
+              <span>🎯 Quick Check: Registry Authentication &amp; Token Security</span>
             </div>
             <div class="quiz-prompt">
-              Why does <code>docker-compose.prod.yml</code> have <code>ports: ["80:80"]</code> on the client container, but only <code>expose: ["5000"]</code> on the server container?
+              Why should you NEVER use your primary GitHub Personal Access Token (PAT) with full repository permissions on an AWS EC2 instance?
             </div>
             <div class="quiz-options">
               <button class="quiz-opt-btn" data-correct="false">
-                A) Because Express cannot bind to port 80 without root privileges.
+                A) Because GitHub automatically rejects classic PATs for any container registry pull.
               </button>
               <button class="quiz-opt-btn" data-correct="true">
-                B) Because Nginx acts as the single public gateway (serving the React SPA and reverse-proxying /api/ internally), keeping the Express API shielded from direct public internet attacks.
+                B) Because if the EC2 host is compromised, an attacker could steal the token and gain complete control over your private repositories, source code, and account settings. A fine-grained read-only token limits the blast radius strictly to pulling images.
               </button>
               <button class="quiz-opt-btn" data-correct="false">
-                C) Because Docker Compose does not support publishing two ports simultaneously on the same host.
+                C) Because classic PATs expire every 10 minutes and break automated Docker deployments.
               </button>
               <button class="quiz-opt-btn" data-correct="false">
-                D) Because port 5000 is reserved exclusively for the Neon database.
+                D) Because Docker on Linux only supports SSH key authentication, not token authentication.
               </button>
             </div>
             <div class="quiz-feedback" id="quiz-feedback"></div>
           </div>
 
-          <div class="callout emerald">
-            <div class="callout-title">Ready for Stage 6: Prepare and Secure EC2</div>
-            <p>
-              With the production contract complete and verified, we are ready for **Stage 6**:
-              <br />1. Launch an Ubuntu 24.04 instance on AWS EC2.
-              <br />2. Configure the Security Group to allow only SSH (port 22) and HTTP (port 80).
-              <br />3. Install Docker and Docker Compose on the host.
-              <br />4. Authenticate EC2 to GHCR with a read-only token to pull your SHA-tagged images.
-            </p>
-          </div>
-
           <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="verification-quiz">
+            <button class="btn-complete" data-complete-topic="token-security-quiz">
               <span class="check-mark">✓</span>
               <span>Mark Topic 05 Complete</span>
             </button>
             <div class="nav-buttons">
-              <button class="btn-step" data-prev-topic="secrets-decoupling">&larr; Previous: Secrets Decoupling</button>
+              <button class="btn-step" data-prev-topic="ec2-token-role">&larr; Previous: EC2 Token Role</button>
               <button class="btn-step" disabled>All Topics Completed</button>
             </div>
           </div>
@@ -1551,16 +1594,16 @@
     <!-- Client-Side Navigation, State, and SVG Logic -->
     <script>
       (function () {
-        const STORAGE_KEY_TOPIC = "disposable-stage5-active-topic";
-        const STORAGE_KEY_PROGRESS = "disposable-stage5-progress";
-        const STORAGE_KEY_THEME = "disposable-stage5-theme";
+        const STORAGE_KEY_TOPIC = "disposable-deep-dive-active-topic";
+        const STORAGE_KEY_PROGRESS = "disposable-deep-dive-progress";
+        const STORAGE_KEY_THEME = "disposable-deep-dive-theme";
 
         const topicIds = [
-          "overview",
-          "why-no-build",
-          "network-topology",
-          "secrets-decoupling",
-          "verification-quiz"
+          "summary-answers",
+          "hot-reloading",
+          "why-no-hmr-prod",
+          "ec2-token-role",
+          "token-security-quiz"
         ];
 
         const state = {
@@ -1733,62 +1776,27 @@
         });
 
         // Diagram switcher
-        const diagramButtons = document.querySelectorAll("[data-flow]");
-        const pathPublic = document.getElementById("path-public");
-        const pathInternal = document.getElementById("path-internal");
-        const pathDb = document.getElementById("path-db");
-        const nodeInternet = document.getElementById("node-internet");
-        const nodeClient = document.getElementById("node-client");
-        const nodeServer = document.getElementById("node-server");
-        const nodeDb = document.getElementById("node-db");
+        const diagramButtons = document.querySelectorAll("[data-diagram]");
+        const groupDev = document.getElementById("svg-group-dev");
+        const groupProd = document.getElementById("svg-group-prod");
+        const groupAuth = document.getElementById("svg-group-auth");
         const diagramCaption = document.getElementById("diagram-caption");
 
         const captions = {
-          all: "<strong>Complete Production Topology:</strong> Users access Nginx over public port 80. Nginx proxies <code>/api/</code> internally to Express over the Docker bridge network. The server connects outbound over encrypted TLS to Neon DB. The database and backend API are completely shielded from public internet exposure.",
-          public: "<strong>Public Ingress (Port 80):</strong> Only Nginx binds a public port on the EC2 host (<code>80:80</code>). Browsers fetch React HTML, CSS, and JS bundles directly from Nginx without touching the backend.",
-          internal: "<strong>Internal Bridge (Port 5000):</strong> Nginx reverse-proxies <code>/api/*</code> requests to <code>http://server:5000</code> over the internal Docker network. Express has NO host port binding, so attackers cannot probe or access port 5000 from the internet.",
-          database: "<strong>Database Egress:</strong> Express initiates an outbound connection over TLS to Neon cloud PostgreSQL using <code>DATABASE_URL</code> from <code>server.env</code>. The database is never exposed on the EC2 host.",
+          dev: "<strong>Development Flow:</strong> Bind mounts map laptop source files directly into Vite dev server. Edits update the browser in milliseconds without container rebuilds.",
+          prod: "<strong>Production Flow:</strong> GHCR provides immutable pre-compiled /dist assets served by ultra-fast Nginx on port 80. Zero compilers, zero source code, zero memory leaks.",
+          auth: "<strong>EC2 Authentication Flow:</strong> EC2 uses a strictly scoped Fine-Grained Read-Only Token stored in ~/.docker/config.json with chmod 600. Even if breached, the token cannot push code or compromise account settings.",
         };
 
         diagramButtons.forEach((btn) => {
           btn.addEventListener("click", () => {
             diagramButtons.forEach((b) => b.classList.toggle("active", b === btn));
-            const flow = btn.getAttribute("data-flow");
-            if (diagramCaption) diagramCaption.innerHTML = captions[flow] || "";
+            const mode = btn.getAttribute("data-diagram");
+            if (diagramCaption) diagramCaption.innerHTML = captions[mode] || "";
 
-            if (flow === "public") {
-              pathPublic.style.opacity = "1";
-              pathInternal.style.opacity = "0.15";
-              pathDb.style.opacity = "0.15";
-              nodeInternet.style.opacity = "1";
-              nodeClient.style.opacity = "1";
-              nodeServer.style.opacity = "0.2";
-              nodeDb.style.opacity = "0.2";
-            } else if (flow === "internal") {
-              pathPublic.style.opacity = "0.15";
-              pathInternal.style.opacity = "1";
-              pathDb.style.opacity = "0.15";
-              nodeInternet.style.opacity = "0.2";
-              nodeClient.style.opacity = "1";
-              nodeServer.style.opacity = "1";
-              nodeDb.style.opacity = "0.2";
-            } else if (flow === "database") {
-              pathPublic.style.opacity = "0.15";
-              pathInternal.style.opacity = "0.15";
-              pathDb.style.opacity = "1";
-              nodeInternet.style.opacity = "0.2";
-              nodeClient.style.opacity = "0.2";
-              nodeServer.style.opacity = "1";
-              nodeDb.style.opacity = "1";
-            } else {
-              pathPublic.style.opacity = "1";
-              pathInternal.style.opacity = "1";
-              pathDb.style.opacity = "1";
-              nodeInternet.style.opacity = "1";
-              nodeClient.style.opacity = "1";
-              nodeServer.style.opacity = "1";
-              nodeDb.style.opacity = "1";
-            }
+            groupDev.style.display = mode === "dev" ? "inline" : "none";
+            groupProd.style.display = mode === "prod" ? "inline" : "none";
+            groupAuth.style.display = mode === "auth" ? "inline" : "none";
           });
         });
 
@@ -1803,10 +1811,9 @@
             });
 
             if (!isCorrect) {
-              btn.classList.add("incorrect");
-              quizFeedback.innerHTML = `<span style="color: var(--rose-text); font-weight: 600;">Incorrect.</span> Remember: Least Network Privilege mandates that internal APIs never expose public host ports. Nginx handles all public ingress and proxies internal requests safely.`;
+              quizFeedback.innerHTML = `<span style="color: var(--rose-text); font-weight: 600;">Incorrect.</span> Remember: Classic PATs grant wide account-level permissions. If a production server is compromised, an attacker with a classic PAT could delete repos or access private data. A scoped read-only token limits the damage strictly to pulling that image.`;
             } else {
-              quizFeedback.innerHTML = `<span style="color: var(--emerald-text); font-weight: 600;">Correct!</span> Nginx serves as the single public gateway on port 80, shielding the internal Express backend from public port scans and direct attacks.`;
+              quizFeedback.innerHTML = `<span style="color: var(--emerald-text); font-weight: 600;">Correct!</span> Least Privilege demands that a runtime server only receives read-only permissions for the exact package it needs to run, keeping your source code and account safe.`;
             }
             quizFeedback.classList.add("show");
           });
