@@ -1,1 +1,2 @@
-Stage 2, 3 & 4: Make tests safe, build the PR gate, and publish immutable images to GHCR
+Stage 6: Prepare and secure EC2
+
