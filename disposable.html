@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hot Reloading vs. Immutable Images &amp; EC2 GHCR Tokens</title>
+    <title>Stage 6 Practical Guide · EC2 Provisioning &amp; Smoke Test</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,7 +12,7 @@
     />
     <style>
       /* ==================================================================
-         Visual Explainer Stylesheet
+         Visual Explainer Stylesheet — Stage 6 Practical Walkthrough
          Standard Lexend typography across body, controls, and headings.
          Fluid, full-width responsive layout (Strictly no centered shells or max-width).
          ================================================================== */
@@ -160,7 +160,7 @@
 
       body {
         font-family: var(--font-body);
-        font-size: 1.02rem;
+        font-size: 1rem;
         line-height: 1.68;
         color: var(--ink);
         background: var(--bg);
@@ -248,417 +248,587 @@
       .sidebar-toggle-btn:hover {
         background: var(--surface-2);
         color: var(--ink);
-        border-color: var(--line-strong);
-      }
-      .sidebar-toggle-btn[aria-expanded="false"] {
-        background: transparent;
-        color: var(--ink-muted);
-        border-color: var(--line);
-      }
-      .sidebar-toggle-btn[aria-expanded="true"] {
-        background: var(--blue-soft);
-        color: var(--blue-text);
-        border-color: var(--blue-line);
       }
 
       .page-nav {
         display: flex;
         align-items: center;
-        gap: 0.2rem;
-        border-left: 1px solid var(--line);
-        padding-left: 0.9rem;
-        margin-left: 0.25rem;
+        gap: 0.35rem;
+        margin-left: 0.5rem;
       }
 
       .nav-tab {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.28rem 0.65rem;
+        border-radius: 6px;
         font-family: var(--font-ui);
-        font-size: 0.86rem;
-        text-decoration: none;
-        padding: 0.32rem 0.65rem;
-        border-radius: 4px;
+        font-size: 0.82rem;
+        font-weight: 500;
         color: var(--ink-muted);
+        text-decoration: none;
+        transition: all 0.15s ease;
       }
       .nav-tab:hover {
-        color: var(--ink);
         background: var(--surface-2);
+        color: var(--ink);
       }
       .nav-tab.active {
-        color: var(--ink);
-        background: var(--surface-2);
+        background: var(--blue-soft);
+        color: var(--blue-text);
         font-weight: 600;
       }
 
       .topbar-actions {
         display: flex;
         align-items: center;
-        gap: 0.7rem;
+        gap: 0.65rem;
       }
 
       .btn-help {
-        font-family: var(--font-ui);
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        padding: 0.3rem 0.7rem;
-        border: 1px solid var(--line-strong);
-        border-radius: 4px;
-        background: transparent;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.28rem 0.55rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
         color: var(--ink-2);
         cursor: pointer;
+        transition: all 0.15s ease;
       }
       .btn-help:hover {
         background: var(--surface-2);
-      }
-      .btn-help[aria-expanded="true"] {
-        background: var(--surface-2);
-        border-color: var(--blue);
-        color: var(--blue-text);
+        color: var(--ink);
       }
 
       .theme-picker {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
+        gap: 0.35rem;
         font-family: var(--font-ui);
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         color: var(--ink-muted);
       }
 
       .theme-select {
-        font-family: var(--font-ui);
-        font-size: 0.8rem;
-        padding: 0.3rem 0.45rem;
-        border: 1px solid var(--line-strong);
-        border-radius: 4px;
+        padding: 0.24rem 0.5rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
         background: var(--surface);
+        font-size: 0.76rem;
         color: var(--ink);
         cursor: pointer;
       }
 
-      /* ---------------------------- Help panel ----------------------------- */
+      /* ------------------------------ Help Panel ------------------------------ */
 
       .help-panel {
-        border-bottom: 1px solid var(--line);
-        background: var(--surface);
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(2px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
       }
       .help-panel[hidden] {
         display: none !important;
       }
 
       .help-content {
-        padding: 1.1rem var(--pad-x) 1.35rem;
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+        width: 100%;
+        max-width: 640px;
+        max-height: 85vh;
+        overflow-y: auto;
+        padding: 1.5rem 1.8rem;
       }
 
       .help-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 1rem;
-        padding-bottom: 0.6rem;
-        margin-bottom: 0.85rem;
+        padding-bottom: 0.75rem;
         border-bottom: 1px solid var(--line);
+        margin-bottom: 1.25rem;
       }
+
       .help-head h3 {
-        font-family: var(--font-ui);
-        font-size: 0.86rem;
-        font-weight: 600;
+        font-family: var(--font-heading);
+        font-size: 1.15rem;
+        font-weight: 700;
         color: var(--ink);
       }
 
       .help-close-btn {
         background: none;
-        border: 1px solid var(--line);
-        border-radius: 4px;
-        padding: 0.15rem 0.5rem;
-        font-size: 0.8rem;
+        border: none;
+        font-size: 1.25rem;
         color: var(--ink-muted);
         cursor: pointer;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
       }
       .help-close-btn:hover {
         background: var(--surface-2);
+        color: var(--ink);
       }
 
       .acronym-list {
         list-style: none;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 0.65rem 2rem;
-        font-size: 0.87rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+
+      .acronym-list li {
+        font-size: 0.92rem;
         line-height: 1.5;
         color: var(--ink-2);
       }
+
       .acronym-list strong {
+        color: var(--blue-text);
         font-family: var(--font-mono);
-        font-size: 0.82em;
-        color: var(--ink);
       }
 
-      /* ------------------------- Layout: sidebar + main -------------------- */
+      /* ------------------------------ Layout Shell ------------------------------ */
 
       .shell {
-        display: grid;
-        grid-template-columns: 340px minmax(0, 1fr);
+        display: flex;
         min-height: calc(100vh - 49px);
-        transition: grid-template-columns 0.22s ease;
+        width: 100%;
       }
 
-      .shell.sidebar-collapsed {
-        grid-template-columns: 0 minmax(0, 1fr);
+      .sidebar-backdrop {
+        display: none;
       }
+
+      /* ------------------------------ Sidebar ------------------------------ */
 
       .sidebar {
+        width: 320px;
+        flex-shrink: 0;
         background: var(--surface);
         border-right: 1px solid var(--line);
-        overflow-y: auto;
-        overflow-x: hidden;
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                    margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        z-index: 30;
       }
-      .shell.sidebar-collapsed .sidebar {
-        visibility: hidden;
+
+      .sidebar-inner {
+        padding: 1.25rem 1rem;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow-y: auto;
       }
 
       .sidebar-head {
-        padding: 1rem 1.1rem 0.8rem;
+        padding-bottom: 1rem;
         border-bottom: 1px solid var(--line);
+      }
+
+      .sidebar-header-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-      }
-      .sidebar-title {
-        font-family: var(--font-ui);
-        font-size: 0.76rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--ink-muted);
-      }
-      .sidebar-meta {
-        font-family: var(--font-mono);
-        font-size: 0.72rem;
-        color: var(--ink-faint);
+        margin-bottom: 0.4rem;
       }
 
-      .progress-bar-wrap {
-        padding: 0.75rem 1.1rem;
-        border-bottom: 1px solid var(--line);
-        background: var(--surface-2);
+      .stage-tag {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--emerald-text);
+        background: var(--emerald-soft);
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        border: 1px solid var(--emerald-line);
       }
-      .progress-meta {
+
+      .sidebar-close-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--ink-muted);
+        cursor: pointer;
+      }
+      .sidebar-close-btn:hover {
+        background: var(--surface-2);
+        color: var(--ink);
+      }
+
+      .stage-name {
+        font-family: var(--font-heading);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1.35;
+        margin-bottom: 0.85rem;
+      }
+
+      .progress-box {
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .progress-labels {
         display: flex;
         justify-content: space-between;
         font-family: var(--font-ui);
         font-size: 0.76rem;
+        font-weight: 500;
         color: var(--ink-muted);
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.45rem;
       }
+
       .progress-track {
+        display: block;
         height: 6px;
         border-radius: 999px;
         background: var(--line);
         overflow: hidden;
       }
-      .progress-fill {
+
+      .progress-bar-fill {
+        display: block;
         height: 100%;
-        background: var(--emerald);
         width: 0%;
-        transition: width 0.25s ease;
+        background: linear-gradient(90deg, var(--emerald), #22c55e);
+        border-radius: 999px;
+        transition: width 0.3s ease;
       }
 
-      .topic-nav-list {
-        list-style: none;
-        padding: 0.6rem 0;
-      }
-      .topic-nav-item {
-        position: relative;
-      }
-      .topic-nav-btn {
-        width: 100%;
+      .topic-nav {
         display: flex;
-        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.3rem;
+        margin-top: 1rem;
+        flex: 1;
+      }
+
+      .topic-nav-btn {
+        display: flex;
+        align-items: center;
         gap: 0.65rem;
+        width: 100%;
         text-align: left;
-        background: none;
-        border: none;
-        padding: 0.6rem 1.1rem;
-        cursor: pointer;
-        color: var(--ink-2);
+        padding: 0.6rem 0.75rem;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        font-family: var(--font-ui);
         font-size: 0.86rem;
-        line-height: 1.4;
-        transition: background 0.12s ease;
+        line-height: 1.35;
+        color: var(--ink-2);
+        cursor: pointer;
+        transition: all 0.15s ease;
       }
       .topic-nav-btn:hover {
         background: var(--surface-2);
         color: var(--ink);
+        border-color: var(--line);
       }
       .topic-nav-btn.active {
         background: var(--blue-soft);
         color: var(--blue-text);
+        border-color: var(--blue-line);
         font-weight: 600;
-      }
-      .topic-nav-btn.active::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: var(--blue);
       }
 
       .topic-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
         font-family: var(--font-mono);
         font-size: 0.72rem;
-        color: var(--ink-faint);
-        padding-top: 0.1rem;
+        font-weight: 600;
+        color: var(--ink-muted);
+        flex-shrink: 0;
       }
       .topic-nav-btn.active .topic-num {
-        color: var(--blue);
+        background: var(--blue);
+        color: #ffffff;
+        border-color: var(--blue);
+      }
+      .topic-nav-btn.completed .topic-num {
+        background: var(--emerald-soft);
+        color: var(--emerald-text);
+        border-color: var(--emerald-line);
+      }
+
+      .topic-nav-title {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .topic-check-icon {
-        margin-left: auto;
+        font-size: 0.78rem;
         color: var(--emerald);
-        font-size: 0.85rem;
-        display: none;
+        opacity: 0;
+        transition: opacity 0.15s ease;
       }
       .topic-nav-btn.completed .topic-check-icon {
-        display: inline-block;
+        opacity: 1;
       }
 
-      /* ------------------------------ Main panel --------------------------- */
+      .sidebar-footnote {
+        font-size: 0.76rem;
+        color: var(--ink-muted);
+        padding-top: 1rem;
+        border-top: 1px solid var(--line);
+        margin-top: 1rem;
+        line-height: 1.45;
+      }
 
-      .main-pane {
-        padding: clamp(1.2rem, 2.5vw, 2.4rem) var(--pad-x) 4rem;
-        overflow-y: auto;
+      /* Collapsed sidebar state */
+      .shell.sidebar-collapsed .sidebar {
+        margin-left: -320px;
+      }
+
+      /* ------------------------------ Main Content ------------------------------ */
+
+      main {
+        flex: 1;
+        min-width: 0;
+        background: var(--bg);
+        padding: 1.5rem var(--pad-x) 4rem var(--pad-x);
+      }
+
+      .lesson-frame {
+        width: 100%;
       }
 
       .lesson-header {
-        padding-bottom: 1.4rem;
+        padding-bottom: 1.5rem;
         border-bottom: 1px solid var(--line);
         margin-bottom: 2rem;
       }
 
-      .lesson-kicker {
+      .lesson-badge-row {
         display: flex;
-        align-items: center;
-        gap: 0.6rem;
         flex-wrap: wrap;
-        margin-bottom: 0.5rem;
+        gap: 0.45rem;
+        margin-bottom: 0.75rem;
       }
 
-      .tag {
+      .meta-tag {
         font-family: var(--font-mono);
         font-size: 0.7rem;
         font-weight: 600;
-        letter-spacing: 0.05em;
         text-transform: uppercase;
-        padding: 0.16rem 0.5rem;
+        letter-spacing: 0.04em;
+        padding: 0.18rem 0.5rem;
         border-radius: 4px;
         border: 1px solid var(--line);
+        background: var(--surface);
         color: var(--ink-muted);
       }
-      .tag.blue {
-        border-color: var(--blue-line);
-        background: var(--blue-soft);
-        color: var(--blue-text);
-      }
-      .tag.emerald {
-        border-color: var(--emerald-line);
+      .meta-tag.emerald {
         background: var(--emerald-soft);
         color: var(--emerald-text);
+        border-color: var(--emerald-line);
       }
-      .tag.amber {
-        border-color: var(--amber-line);
+      .meta-tag.blue {
+        background: var(--blue-soft);
+        color: var(--blue-text);
+        border-color: var(--blue-line);
+      }
+      .meta-tag.amber {
         background: var(--amber-soft);
         color: var(--amber-text);
-      }
-      .tag.purple {
-        border-color: var(--purple-line);
-        background: var(--purple-soft);
-        color: var(--purple-text);
-      }
-      .tag.rose {
-        border-color: var(--rose-line);
-        background: var(--rose-soft);
-        color: var(--rose-text);
+        border-color: var(--amber-line);
       }
 
-      h1.lesson-title {
+      h1 {
         font-family: var(--font-heading);
-        font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+        font-size: clamp(1.6rem, 3vw, 2.3rem);
         font-weight: 700;
         line-height: 1.25;
         color: var(--ink);
-        margin-bottom: 0.6rem;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.75rem;
       }
 
-      .lesson-summary {
-        font-size: 1.05rem;
+      .lesson-lead {
+        font-size: 1.08rem;
         color: var(--ink-2);
         line-height: 1.6;
       }
 
-      /* ------------------------------ Topic view --------------------------- */
+      /* ------------------------------ Topic Sections ------------------------------ */
 
-      .topic-view {
+      .topic-section {
         display: none;
       }
-      .topic-view.active {
+      .topic-section.active {
         display: block;
+        animation: fadeIn 0.2s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .topic-eyebrow {
         font-family: var(--font-mono);
         font-size: 0.78rem;
+        font-weight: 600;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: var(--ink-faint);
+        color: var(--blue-text);
         margin-bottom: 0.35rem;
       }
 
-      h2.topic-title {
+      .topic-heading {
         font-family: var(--font-heading);
-        font-size: clamp(1.2rem, 2vw, 1.65rem);
+        font-size: clamp(1.35rem, 2.4vw, 1.85rem);
         font-weight: 700;
         line-height: 1.3;
         color: var(--ink);
-        margin-bottom: 1.2rem;
+        letter-spacing: -0.015em;
+        margin-bottom: 1.25rem;
+      }
+
+      h3 {
+        font-family: var(--font-heading);
+        font-size: 1.18rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin: 2rem 0 0.75rem 0;
       }
 
       p {
-        margin-bottom: 1.1rem;
+        margin-bottom: 1.15rem;
         color: var(--ink-2);
       }
 
-      p strong {
-        color: var(--ink);
-        font-weight: 600;
+      ul, ol {
+        margin: 0 0 1.25rem 1.5rem;
+        color: var(--ink-2);
+      }
+
+      li {
+        margin-bottom: 0.45rem;
       }
 
       code {
         font-family: var(--font-mono);
         font-size: 0.88em;
+        padding: 0.15em 0.35em;
+        border-radius: 4px;
         background: var(--code-bg);
         color: var(--code-ink);
         border: 1px solid var(--code-border);
-        padding: 0.1em 0.35em;
-        border-radius: 4px;
-        word-break: break-word;
       }
 
-      /* ------------------------------ Callout boxes ------------------------- */
+      /* ------------------------------ Code Snippets ------------------------------ */
 
-      .callout {
+      .code-snippet {
+        margin: 1.25rem 0 1.5rem 0;
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .code-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.45rem 0.85rem;
+        background: var(--surface-2);
+        border-bottom: 1px solid var(--line);
+        font-family: var(--font-mono);
+        font-size: 0.76rem;
+        color: var(--ink-muted);
+      }
+
+      .code-file {
+        font-weight: 600;
+        color: var(--ink-2);
+      }
+
+      .copy-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.18rem 0.5rem;
+        font-family: var(--font-ui);
+        font-size: 0.72rem;
+        font-weight: 500;
         background: var(--surface);
         border: 1px solid var(--line);
-        border-left-width: 4px;
-        border-left-color: var(--blue);
-        border-radius: 6px;
-        padding: 1rem 1.2rem;
-        margin: 1.3rem 0;
+        border-radius: 4px;
+        color: var(--ink-2);
+        cursor: pointer;
+        transition: all 0.12s ease;
       }
-      .callout.blue {
-        border-left-color: var(--blue);
+      .copy-btn:hover {
+        background: var(--line);
+        color: var(--ink);
+      }
+
+      pre {
+        padding: 0.9rem 1.1rem;
+        overflow-x: auto;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        color: var(--code-ink);
+      }
+
+      pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: inherit;
+        color: inherit;
+      }
+
+      /* ------------------------------ Callouts & Tables ------------------------------ */
+
+      .callout {
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+        border-left: 4px solid var(--blue);
         background: var(--blue-soft);
+        margin: 1.5rem 0;
       }
       .callout.emerald {
         border-left-color: var(--emerald);
@@ -672,342 +842,286 @@
         border-left-color: var(--rose);
         background: var(--rose-soft);
       }
-      .callout.purple {
-        border-left-color: var(--purple);
-        background: var(--purple-soft);
-      }
+
       .callout-title {
-        font-family: var(--font-ui);
-        font-size: 0.88rem;
+        font-family: var(--font-heading);
+        font-size: 0.92rem;
         font-weight: 700;
-        color: var(--ink);
         margin-bottom: 0.35rem;
-      }
-      .callout p {
-        margin-bottom: 0.4rem;
-        font-size: 0.94rem;
-      }
-      .callout p:last-child {
-        margin-bottom: 0;
-      }
-
-      /* ------------------------------ Code snippet ------------------------- */
-
-      .code-snippet {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        overflow: hidden;
-        background: var(--code-bg);
-        margin: 1.2rem 0 1.8rem;
-      }
-
-      .code-snippet-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.55rem 0.9rem;
-        background: var(--surface-2);
-        border-bottom: 1px solid var(--line);
-      }
-
-      .code-file-label {
-        font-family: var(--font-mono);
-        font-size: 0.76rem;
-        color: var(--ink-muted);
-      }
-
-      .copy-btn {
-        font-family: var(--font-ui);
-        font-size: 0.72rem;
-        font-weight: 600;
-        padding: 0.2rem 0.55rem;
-        border: 1px solid var(--line);
-        border-radius: 4px;
-        background: var(--surface);
-        color: var(--ink-2);
-        cursor: pointer;
-      }
-      .copy-btn:hover {
-        background: var(--surface-2);
         color: var(--ink);
       }
 
-      .code-snippet pre {
-        padding: 0.9rem 1.1rem;
+      .table-frame {
         overflow-x: auto;
-        font-family: var(--font-mono);
-        font-size: 0.82rem;
-        line-height: 1.52;
-        color: var(--code-ink);
-      }
-
-      /* ------------------------------ Spec Table --------------------------- */
-
-      .table-wrap {
+        margin: 1.5rem 0;
         border: 1px solid var(--line);
         border-radius: 8px;
-        overflow-x: auto;
-        margin: 1.3rem 0 1.8rem;
         background: var(--surface);
       }
 
-      table.spec-table {
+      table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 0.88rem;
-        text-align: left;
+        font-size: 0.9rem;
       }
 
-      table.spec-table th,
-      table.spec-table td {
+      th, td {
         padding: 0.75rem 1rem;
+        text-align: left;
         border-bottom: 1px solid var(--line);
       }
 
-      table.spec-table th {
-        font-family: var(--font-ui);
-        font-weight: 600;
-        color: var(--ink-muted);
+      th {
         background: var(--surface-2);
-        font-size: 0.78rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
+        font-weight: 600;
+        color: var(--ink);
       }
 
-      table.spec-table tr:last-child td {
+      tr:last-child td {
         border-bottom: none;
       }
 
-      /* ------------------------------ SVG Diagram -------------------------- */
+      /* ------------------------------ Interactive Diagrams ------------------------------ */
 
-      .diagram-wrapper {
-        border: 1px solid var(--line);
-        border-radius: 8px;
+      .interactive-diagram {
+        margin: 2rem 0;
         background: var(--surface);
-        padding: 1.2rem;
-        margin: 1.5rem 0 2rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 1.25rem;
       }
 
-      .diagram-controls {
+      .diagram-toolbar {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 0.5rem;
         flex-wrap: wrap;
+        gap: 0.75rem;
         margin-bottom: 1rem;
       }
 
-      .diagram-btn {
-        font-family: var(--font-ui);
-        font-size: 0.8rem;
+      .diagram-title {
+        font-size: 0.95rem;
         font-weight: 600;
-        padding: 0.35rem 0.8rem;
+        color: var(--ink);
+      }
+
+      .sim-btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+
+      .sim-btn {
+        padding: 0.32rem 0.65rem;
         border: 1px solid var(--line);
         border-radius: 6px;
         background: var(--surface-2);
+        font-family: var(--font-ui);
+        font-size: 0.78rem;
+        font-weight: 500;
         color: var(--ink-2);
         cursor: pointer;
         transition: all 0.15s ease;
       }
-      .diagram-btn:hover {
-        background: var(--surface);
+      .sim-btn:hover {
+        background: var(--line);
         color: var(--ink);
-        border-color: var(--line-strong);
       }
-      .diagram-btn.active {
+      .sim-btn.active {
         background: var(--blue-soft);
         color: var(--blue-text);
         border-color: var(--blue-line);
+        font-weight: 600;
       }
 
       .diagram-caption {
-        margin-top: 0.9rem;
-        font-size: 0.88rem;
-        line-height: 1.5;
-        color: var(--ink-muted);
-        border-top: 1px solid var(--line);
-        padding-top: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
+        color: var(--ink-2);
       }
 
-      .interactive-svg {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
+      /* ------------------------------ Footer Navigation ------------------------------ */
 
-      /* ----------------------- Bottom action navigation -------------------- */
-
-      .topic-footer {
-        margin-top: 2.8rem;
-        padding-top: 1.4rem;
-        border-top: 1px solid var(--line);
+      .lesson-footer {
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 1rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--line);
+        margin-top: 3rem;
       }
 
       .btn-complete {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--line-strong);
+        background: var(--surface);
         font-family: var(--font-ui);
         font-size: 0.88rem;
         font-weight: 600;
-        padding: 0.48rem 1.1rem;
-        border-radius: 6px;
-        border: 1px solid var(--emerald-line);
-        background: var(--emerald-soft);
-        color: var(--emerald-text);
+        color: var(--ink-2);
         cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.45rem;
         transition: all 0.15s ease;
       }
       .btn-complete:hover {
-        background: var(--emerald);
-        color: #ffffff;
+        background: var(--surface-2);
+        color: var(--ink);
       }
       .btn-complete.completed {
-        background: var(--emerald);
-        color: #ffffff;
+        background: var(--emerald-soft);
+        border-color: var(--emerald-line);
+        color: var(--emerald-text);
       }
 
       .nav-buttons {
         display: flex;
         align-items: center;
-        gap: 0.6rem;
+        gap: 0.65rem;
       }
 
-      .btn-step {
-        font-family: var(--font-ui);
-        font-size: 0.86rem;
-        font-weight: 600;
-        padding: 0.45rem 1rem;
-        border-radius: 6px;
-        border: 1px solid var(--line);
-        background: var(--surface);
-        color: var(--ink-2);
-        cursor: pointer;
-      }
-      .btn-step:hover:not(:disabled) {
-        background: var(--surface-2);
-        color: var(--ink);
-      }
-      .btn-step:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-      }
-
-      /* --------------------------- Interactive Quiz ------------------------ */
-
-      .interactive-quiz {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--surface);
-        padding: 1.3rem;
-        margin: 1.8rem 0;
-      }
-
-      .quiz-title {
-        font-family: var(--font-ui);
-        font-size: 0.92rem;
-        font-weight: 700;
-        color: var(--ink);
-        margin-bottom: 0.6rem;
-        display: flex;
+      .btn-nav {
+        display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-      }
-
-      .quiz-prompt {
-        font-size: 0.95rem;
-        color: var(--ink);
-        margin-bottom: 1rem;
-      }
-
-      .quiz-options {
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-
-      .quiz-opt-btn {
-        text-align: left;
-        padding: 0.75rem 1rem;
-        border-radius: 6px;
+        gap: 0.4rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 8px;
         border: 1px solid var(--line);
-        background: var(--surface-2);
-        color: var(--ink-2);
+        background: var(--surface);
+        font-family: var(--font-ui);
         font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--ink);
         cursor: pointer;
         transition: all 0.15s ease;
       }
-      .quiz-opt-btn:hover {
-        border-color: var(--blue-line);
-        background: var(--blue-soft);
-        color: var(--blue-text);
+      .btn-nav:hover:not(:disabled) {
+        background: var(--surface-2);
       }
-      .quiz-opt-btn.correct {
-        border-color: var(--emerald-line);
-        background: var(--emerald-soft);
-        color: var(--emerald-text);
+      .btn-nav:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .btn-nav.primary {
+        background: var(--blue);
+        color: #ffffff;
+        border-color: var(--blue);
         font-weight: 600;
       }
-      .quiz-opt-btn.incorrect {
-        border-color: var(--rose-line);
-        background: var(--rose-soft);
-        color: var(--rose-text);
+      .btn-nav.primary:hover:not(:disabled) {
+        background: #174ea6;
       }
 
-      .quiz-feedback {
-        margin-top: 0.85rem;
-        font-size: 0.86rem;
-        line-height: 1.45;
-        display: none;
+      .status-announcer {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
-      .quiz-feedback.show {
-        display: block;
+
+      /* ------------------------------ Responsive Media Queries ------------------------------ */
+
+      @media (max-width: 860px) {
+        .shell {
+          position: relative;
+        }
+        .sidebar {
+          position: fixed;
+          top: 49px;
+          bottom: 0;
+          left: 0;
+          transform: translateX(-100%);
+          margin-left: 0 !important;
+        }
+        .shell.sidebar-open .sidebar {
+          transform: translateX(0);
+        }
+        .sidebar-backdrop {
+          display: block;
+          position: fixed;
+          inset: 49px 0 0 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 25;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+        .shell.sidebar-open .sidebar-backdrop {
+          opacity: 1;
+          pointer-events: auto;
+        }
       }
     </style>
   </head>
   <body>
-    <!-- Persistent Top Navigation Bar -->
+    <!-- Top Bar Navigation -->
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand-group">
           <button
-            id="sidebar-toggle-btn"
             class="sidebar-toggle-btn"
-            type="button"
+            id="sidebar-toggle-btn"
+            aria-label="Toggle Topic Sidebar"
             aria-expanded="true"
-            aria-controls="sidebar"
           >
-            <span aria-hidden="true">☰</span>
-            <span>Outline</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+            </svg>
+            <span>Topics</span>
           </button>
           <div class="brand-spec">
-            <strong>DEV-LAB</strong>
-            <span class="badge-rev">DEEP DIVE: HMR &amp; EC2 REGISTRY TOKENS</span>
+            <span>PRACTICAL EXECUTION</span>
+            <span class="badge-rev">STAGE 06 / 08</span>
           </div>
           <nav class="page-nav" aria-label="Page switcher">
             <a href="/index.html" class="nav-tab">Lesson</a>
             <a href="/MCQ.html" class="nav-tab">Assessment</a>
-            <a href="/disposable.html" class="nav-tab active" aria-current="page">Scratchpad</a>
+            <a href="/disposable.html" class="nav-tab active" aria-current="page"
+              >Scratchpad</a
+            >
           </nav>
         </div>
-
         <div class="topbar-actions">
           <button
-            id="btn-help"
             class="btn-help"
-            type="button"
+            id="help-toggle"
             aria-expanded="false"
             aria-controls="help-panel"
           >
-            [HELP]
+            HELP
           </button>
           <div class="theme-picker">
             <label for="theme-select">Theme:</label>
-            <select id="theme-select" class="theme-select" aria-label="Theme selector">
+            <select
+              id="theme-select"
+              class="theme-select"
+              aria-label="Appearance Mode"
+            >
               <option value="system">System</option>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
@@ -1016,946 +1130,828 @@
         </div>
       </div>
 
-      <!-- Expandable Acronym Reference Panel -->
-      <div id="help-panel" class="help-panel" hidden>
+      <!-- In-Page Technical Glossary -->
+      <div class="help-panel" id="help-panel" hidden>
         <div class="help-content">
           <div class="help-head">
-            <h3>Acronym Reference &amp; Core Definitions</h3>
-            <button id="help-close-btn" class="help-close-btn" type="button">Close</button>
+            <h3>Stage 6 Practical Technical Glossary</h3>
+            <button
+              class="help-close-btn"
+              id="help-close"
+              aria-label="Close Help"
+            >
+              ✕
+            </button>
           </div>
           <ul class="acronym-list">
-            <li><strong>HMR (Hot Module Replacement):</strong> Updating running browser JS/CSS in milliseconds via WebSockets without full page reload.</li>
-            <li><strong>Bind Mount:</strong> Directly mapping a host folder (e.g. <code>./client:/app</code>) into a container so file edits reflect immediately.</li>
-            <li><strong>PAT (Personal Access Token):</strong> A long-lived GitHub user credential. Dangerous if granted broad permissions.</li>
-            <li><strong>Fine-Grained Token:</strong> A modern GitHub token scoped strictly to single repositories with minimal permissions (e.g. <code>read:packages</code>).</li>
-            <li><strong>GHCR (GitHub Container Registry):</strong> The OCI registry (<code>ghcr.io</code>) where private Docker images are published and pulled.</li>
-            <li><strong>chmod 600:</strong> Linux file permission setting: Read/Write by file owner only; zero access to all other users.</li>
-            <li><strong>Immutable Artifact:</strong> A container image that is frozen at build time and never modified at runtime.</li>
+            <li>
+              <strong>EC2</strong> — <em>Elastic Compute Cloud</em>: AWS virtual machines running an Ubuntu 24.04 LTS host to run our Docker container stack.
+            </li>
+            <li>
+              <strong>SG</strong> — <em>Security Group</em>: AWS hypervisor-level virtual firewall regulating inbound traffic (HTTP port 80, SSH port 22) and dropping unauthorized probes.
+            </li>
+            <li>
+              <strong>SSH</strong> — <em>Secure Shell</em>: Cryptographically secured protocol on TCP port 22 using private keys (<code>.pem</code>) to manage remote hosts.
+            </li>
+            <li>
+              <strong>GHCR</strong> — <em>GitHub Container Registry</em>: GitHub's private OCI registry (<code>ghcr.io</code>) hosting our SHA-tagged Docker images.
+            </li>
+            <li>
+              <strong>PAT</strong> — <em>Personal Access Token</em>: GitHub authentication secret scoped strictly to <code>read:packages</code> so EC2 can pull private images without repo write access.
+            </li>
+            <li>
+              <strong>CIDR</strong> — <em>Classless Inter-Domain Routing</em>: IP address range notation (e.g., <code>0.0.0.0/0</code> for public internet, <code>IP/32</code> for a single host).
+            </li>
+            <li>
+              <strong>APT</strong> — <em>Advanced Package Tool</em>: Debian/Ubuntu package manager used to install Docker Engine from the official upstream repository.
+            </li>
+            <li>
+              <strong>chmod 400</strong> — <em>Owner Read-Only</em>: Mandatory permission for private SSH keys; OpenSSH refuses connections if permissions are wider.
+            </li>
+            <li>
+              <strong>chmod 600</strong> — <em>Owner Read-Write</em>: Secure permission for <code>server.env</code> and <code>release.env</code> so non-root processes cannot read database secrets.
+            </li>
           </ul>
         </div>
       </div>
     </header>
 
-    <div class="shell" id="app-shell">
+    <div
+      class="sidebar-backdrop"
+      id="sidebar-backdrop"
+      aria-hidden="true"
+    ></div>
+
+    <div class="shell" id="shell">
       <!-- Collapsible Sidebar -->
-      <aside class="sidebar" id="sidebar" aria-label="Lesson Outline">
-        <div class="sidebar-head">
-          <span class="sidebar-title">Architectural Deep Dive</span>
-          <span class="sidebar-meta" id="sidebar-progress-badge">0 / 6 Done</span>
-        </div>
-        <div class="progress-bar-wrap">
-          <div class="progress-meta">
-            <span>Overall Progress</span>
-            <span id="progress-percent">0%</span>
+      <aside class="sidebar" id="sidebar" aria-label="Practical Topics Navigation">
+        <div class="sidebar-inner">
+          <div class="sidebar-head">
+            <div class="sidebar-header-row">
+              <span class="stage-tag">Stage 6 Hands-On</span>
+              <button
+                class="sidebar-close-btn"
+                id="sidebar-close-btn"
+                aria-label="Collapse sidebar"
+                title="Collapse sidebar"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <h2 class="stage-name">Stage 6 Execution Playbook</h2>
+
+            <div class="progress-box">
+              <div class="progress-labels">
+                <span>Practical Progress</span>
+                <span id="progress-text">0 / 5 complete</span>
+              </div>
+              <div
+                class="progress-track"
+                role="progressbar"
+                aria-label="Stage 6 practical progress"
+                aria-valuemin="0"
+                aria-valuemax="5"
+                aria-valuenow="0"
+              >
+                <span class="progress-bar-fill" id="progress-bar"></span>
+              </div>
+            </div>
           </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="progress-fill"></div>
+
+          <nav
+            class="topic-nav"
+            aria-label="Stage 6 Practical Topics"
+            id="topic-nav-container"
+          >
+            <!-- Generated dynamically -->
+          </nav>
+
+          <div class="sidebar-footnote">
+            <strong>Explicit Completion Rule:</strong> Topics are marked complete only when you click the complete button after executing the step.
           </div>
         </div>
-        <nav>
-          <ul class="topic-nav-list" id="topic-nav-list">
-            <li class="topic-nav-item">
-              <button class="topic-nav-btn active" data-topic="summary-answers">
-                <span class="topic-num">01</span>
-                <span>What is Hot Reloading (HMR)?</span>
-                <span class="topic-check-icon">✓</span>
-              </button>
-            </li>
-            <li class="topic-nav-item">
-              <button class="topic-nav-btn" data-topic="hot-reloading">
-                <span class="topic-num">02</span>
-                <span>What Enables Hot Reloading in Dev</span>
-                <span class="topic-check-icon">✓</span>
-              </button>
-            </li>
-            <li class="topic-nav-item">
-              <button class="topic-nav-btn" data-topic="why-no-hmr-prod">
-                <span class="topic-num">03</span>
-                <span>Why No Hot Reloading in GHCR Images</span>
-                <span class="topic-check-icon">✓</span>
-              </button>
-            </li>
-            <li class="topic-nav-item">
-              <button class="topic-nav-btn" data-topic="ec2-token-role">
-                <span class="topic-num">04</span>
-                <span>The Read-Only Token on EC2</span>
-                <span class="topic-check-icon">✓</span>
-              </button>
-            </li>
-            <li class="topic-nav-item">
-              <button class="topic-nav-btn" data-topic="token-security-quiz">
-                <span class="topic-num">05</span>
-                <span>Where Tokens Live &amp; Self-Check</span>
-                <span class="topic-check-icon">✓</span>
-              </button>
-            </li>
-            <li class="topic-nav-item">
-              <button class="topic-nav-btn" data-topic="ec2-prod-setup">
-                <span class="topic-num">06</span>
-                <span>EC2 Host &amp; Prod Setup Guide</span>
-                <span class="topic-check-icon">✓</span>
-              </button>
-            </li>
-          </ul>
-        </nav>
       </aside>
 
-      <!-- Main Content Area -->
-      <main class="main-pane">
-        <header class="lesson-header">
-          <div class="lesson-kicker">
-            <span class="tag blue">DEV ERGONOMICS</span>
-            <span class="tag emerald">IMMUTABLE PRODUCTION</span>
-            <span class="tag purple">EC2 LEAST-PRIVILEGE AUTH</span>
-          </div>
-          <h1 class="lesson-title">Hot Reloading Mechanics vs. Immutable Images &amp; The Role of EC2 Registry Tokens</h1>
-          <p class="lesson-summary">
-            A developer-first guide explaining what powers instant hot reloading in local Docker Compose, why hot reloading is strictly excluded from production GHCR images, and why an EC2 server uses a scoped read-only token to pull private containers.
-          </p>
-        </header>
-
-        <!-- TOPIC 1: WHAT IS HOT RELOADING & SHORT ANSWERS -->
-        <section class="topic-view active" id="topic-summary-answers">
-          <div class="topic-eyebrow">Topic 01 · First Principles &amp; Quick Reference</div>
-          <h2 class="topic-heading topic-title">What is Hot Reloading (HMR)?</h2>
-
-          <p>
-            Before looking at Docker bind mounts or registry security, we must understand the fundamental question:
-            <strong>What actually is Hot Reloading, and why was it invented?</strong>
-          </p>
-
-          <div class="callout blue">
-            <div class="callout-title">The Fundamental Definition</div>
-            <p>
-              <strong>Hot Reloading</strong> (technically known as <strong>Hot Module Replacement</strong>, or <strong>HMR</strong>) is a development capability where code changes in your source files (JavaScript, TypeScript, JSX, CSS) are injected into the <strong>live running browser application</strong> in milliseconds <em>without performing a full browser page refresh</em>.
-            </p>
-          </div>
-
-          <h3>The 3 Eras of Frontend Developer Feedback</h3>
-          <p>
-            To appreciate what Hot Reloading does, compare the three ways web code updates reach a developer's browser:
-          </p>
-
-          <div class="table-wrap">
-            <table class="spec-table">
-              <thead>
-                <tr>
-                  <th>Method</th>
-                  <th>How It Works</th>
-                  <th>What Happens to State (Inputs, Modals, Filters)</th>
-                  <th>Feedback Speed</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>1. Manual Reload</strong></td>
-                  <td>You edit code, wait for a manual rebuild, switch to the browser, and press <kbd>F5</kbd>.</td>
-                  <td><span class="tag rose">100% Wiped</span> — DOM is destroyed, JS restarts from line 1.</td>
-                  <td>Slow (5–15 seconds)</td>
-                </tr>
-                <tr>
-                  <td><strong>2. Live Reload</strong></td>
-                  <td>A file watcher detects file saves and automatically triggers <code>window.location.reload()</code>.</td>
-                  <td><span class="tag rose">100% Wiped</span> — Automates the reload, but still destroys all page state.</td>
-                  <td>Medium (1–3 seconds)</td>
-                </tr>
-                <tr>
-                  <td><strong>3. Hot Module Replacement (HMR)</strong></td>
-                  <td>The dev server compiles only the changed file and pushes a delta patch over a WebSocket. The browser swaps the module in live RAM.</td>
-                  <td><span class="tag emerald">100% Preserved</span> — Typed text, open dialogs, and navigation state stay intact!</td>
-                  <td>Instant (&lt; 50 ms)</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3>The Killer Feature: Preserving UI State</h3>
-          <p>
-            Imagine you are testing a complex checkout wizard on Step 4. You have filled out 12 input fields, chosen a dropdown option, and opened a verification modal.
-            You notice the submit button has bad padding or a typo.
-          </p>
-          <ul style="margin-left: 1.5rem; margin-bottom: 1.2rem; color: var(--ink-2); line-height: 1.7;">
-            <li><strong>With full reload:</strong> You fix the typo, the browser reloads to Step 1, all 12 input fields are wiped, the modal closes, and you must waste 30 seconds clicking back to Step 4 to see if the button looks right.</li>
-            <li><strong>With Hot Reloading:</strong> You fix the typo in your editor. In 40 milliseconds, the button text updates right on your screen. The modal stays open, your 12 filled input fields remain filled, and your cursor does not move.</li>
-          </ul>
-
-          <hr style="border: none; border-top: 1px solid var(--line); margin: 2rem 0;" />
-
-          <h3>Quick Answers: The Two Big Project Questions</h3>
-
-          <div class="callout emerald">
-            <div class="callout-title">Question 1: What enables instant hot reloading in Docker, and why is its absence in GHCR good?</div>
-            <p>
-              • <strong>In local development:</strong> Hot reloading is enabled by a <strong>Host Bind Mount</strong> (<code>volumes: - ./client:/app</code>) connecting your laptop folder to the container, Linux kernel <code>inotify</code> file watchers, Vite's in-memory HMR compiler, and a persistent WebSocket connection to your browser.
-              <br /><br />
-              • <strong>Why its absence in GHCR is good:</strong> GHCR creates <strong>Immutable Production Artifacts</strong>. In production, we do not want a heavy Node.js development server running. We want lightweight, battle-hardened <strong>Nginx</strong> serving pre-compiled static files from <code>/dist</code>. This drops RAM usage from 350MB to 15MB, prevents memory leaks, stops configuration drift, and ensures rock-solid deterministic deployments.
-            </p>
-          </div>
-
-          <div class="callout purple">
-            <div class="callout-title">Question 2: What is the role of the read-only token on EC2, why is PAT bad, and where is it kept?</div>
-            <p>
-              • <strong>Role:</strong> Our GHCR container images are <strong>private packages</strong>. EC2 must authenticate with <code>ghcr.io</code> to pull them during deployment.
-              <br /><br />
-              • <strong>Why PAT is bad:</strong> A classic Personal Access Token has broad account-level permissions (repos, billing, organization access). If an EC2 server gets compromised, an attacker stealing a classic PAT gets full control over your GitHub account.
-              <br /><br />
-              • <strong>Why Fine-Grained Read-Only Token is good:</strong> It follows the <strong>Principle of Least Privilege</strong>. It is scoped strictly to <code>read:packages</code> on this single repository. Even if an attacker steals it, they can only download the image—they cannot push code or touch repositories.
-              <br /><br />
-              • <strong>Where it is kept and secured:</strong> Stored on the EC2 host in <code>~/.docker/config.json</code> locked down with Linux file permissions (<code>chmod 600</code>), accessible solely by the root/docker user.
-            </p>
-          </div>
-
-          <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="summary-answers">
-              <span class="check-mark">✓</span>
-              <span>Mark Topic 01 Complete</span>
-            </button>
-            <div class="nav-buttons">
-              <button class="btn-step" disabled>Previous</button>
-              <button class="btn-step" data-next-topic="hot-reloading">Next: How Docker Enables HMR &rarr;</button>
+      <!-- Main Lesson Articles -->
+      <main id="main">
+        <article class="lesson-frame">
+          <header class="lesson-header">
+            <div class="lesson-badge-row">
+              <span class="meta-tag emerald">PRACTICAL STEP-BY-STEP</span>
+              <span class="meta-tag blue">AWS EC2 HARDENING</span>
+              <span class="meta-tag amber">GHCR PULL &amp; SMOKE TEST</span>
             </div>
-          </div>
-        </section>
-
-        <!-- TOPIC 2: WHAT ENABLES HOT RELOADING -->
-        <section class="topic-view" id="topic-hot-reloading">
-          <div class="topic-eyebrow">Topic 02 · Developer Ergonomics</div>
-          <h2 class="topic-heading topic-title">What Enables Instant Hot Reloading in Development</h2>
-
-          <p>
-            When you edit a React component (e.g. <code>App.tsx</code>) on your laptop while running Docker, how does the browser update in 50 milliseconds without running <code>docker build</code>?
-            Hot reloading is powered by the coordination of <strong>three distinct mechanisms</strong>:
-          </p>
-
-          <div class="callout blue">
-            <div class="callout-title">Mechanism 1: The Docker Bind Mount (Shared Storage)</div>
-            <p>
-              In a development Compose file, you define a volume mount:
-              <br /><code>volumes: - ./client:/app</code> (or <code>./client/src:/app/src</code>)
-              <br />A <strong>bind mount</strong> bypasses the container's internal filesystem and directly maps your laptop's folder into the container.
-              When your code editor saves a file to disk on your Mac/Linux laptop, that exact file byte changes inside the container at the same microsecond.
+            <h1>Docker Beginner Simulation: Stage 6 Practical Execution</h1>
+            <p class="lesson-lead">
+              You have completed the theoretical principles for Stages 4, 5, and 6. Here is the exact, concrete sequence of terminal commands and cloud configurations required to provision, secure, authenticate, and smoke-test your real EC2 host using your real repository artifacts.
             </p>
-          </div>
+          </header>
 
-          <div class="callout purple">
-            <div class="callout-title">Mechanism 2: Linux Inotify / File System Watchers</div>
+          <!-- ============================================================
+               TOPIC 1: REPOSITORY & GHCR READINESS
+               ============================================================ -->
+          <section
+            class="topic-section active"
+            data-id="topic-ghcr-readiness"
+            data-title="1. Repo &amp; GHCR Image Verification"
+          >
+            <div class="topic-eyebrow">Step 01 / Prerequisites</div>
+            <h2 class="topic-heading">Current Repository Status &amp; GHCR Verification</h2>
+
             <p>
-              Inside the container, Vite is running in development mode (<code>pnpm dev</code>).
-              Vite keeps an active file watcher on <code>/app/src</code> using Linux kernel <code>inotify</code> events.
-              The moment the bind mount delivers the edited file, Vite detects the modified timestamp.
+              In your <code>docker-beginner-simulation</code> project, the infrastructure artifacts are already authored:
             </p>
-          </div>
+            <ul>
+              <li><code>.github/workflows/ci.yml</code> defines the automated CI test pipeline and the <code>publish-images</code> job targeting <code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-client</code> and <code>server</code> with immutable SHA tags.</li>
+              <li><code>docker-compose.prod.yml</code> defines the production contract: client on port 80, Express on private port 5000, and <code>env_file: ./server.env</code>.</li>
+              <li><code>server.env</code> points to your active Neon PostgreSQL database.</li>
+              <li><code>release.env</code> holds the release variable <code>IMAGE_TAG=sha-b94f0e5</code>.</li>
+            </ul>
 
-          <div class="callout emerald">
-            <div class="callout-title">Mechanism 3: WebSocket Hot Module Replacement (HMR)</div>
-            <p>
-              Instead of forcing a full browser refresh (which wipes form inputs and state), Vite re-compiles only the single changed component in memory.
-              It then sends an updated JavaScript snippet across a persistent <strong>WebSocket connection</strong> to your browser:
-              <br /><code>WebSocket &rarr; Browser Client &rarr; React Fast Refresh re-renders the component in the DOM.</code>
-            </p>
-          </div>
-
-          <h3>Why We Love This in Development</h3>
-          <ul style="margin-left: 1.5rem; margin-bottom: 1.2rem; color: var(--ink-2); line-height: 1.7;">
-            <li><strong>Zero Build Lag:</strong> Without bind mounts, every CSS tweak or button fix would require running <code>docker build</code> (taking 2–3 minutes).</li>
-            <li><strong>Preserved State:</strong> You don't lose typed form inputs, open modals, or navigation state while iterating on code.</li>
-            <li><strong>Fast Feedback Loop:</strong> Bugs are caught immediately as you write code.</li>
-          </ul>
-
-          <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="hot-reloading">
-              <span class="check-mark">✓</span>
-              <span>Mark Topic 02 Complete</span>
-            </button>
-            <div class="nav-buttons">
-              <button class="btn-step" data-prev-topic="summary-answers">&larr; Previous: Short Answers</button>
-              <button class="btn-step" data-next-topic="why-no-hmr-prod">Next: Why No HMR in Prod &rarr;</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- TOPIC 3: WHY NO HMR IN PROD -->
-        <section class="topic-view" id="topic-why-no-hmr-prod">
-          <div class="topic-eyebrow">Topic 03 · Production Hardening</div>
-          <h2 class="topic-heading topic-title">Why Its Absence in GHCR Images is Good (and Necessary)</h2>
-
-          <p>
-            If hot reloading is so fast, why don't we put it on EC2?
-            Because in production, <strong>hot reloading is a dangerous anti-pattern</strong>.
-            Here is why omitting hot reloading from GHCR images is essential engineering:
-          </p>
-
-          <div class="callout rose">
-            <div class="callout-title">1. The Principle of Immutable Artifacts</div>
-            <p>
-              In production, you need absolute certainty: <em>What code is running on the server?</em>
-              <br />In GHCR, our client image contains pre-compiled, static assets baked into <code>/usr/share/nginx/html</code> at build time.
-              The container image is tagged with the exact Git commit SHA (e.g. <code>sha-b94f0e5</code>).
-              If EC2 used bind mounts and hot reloading, developers could SSH into the server and edit files live on disk.
-              That creates <strong>Configuration Drift</strong>: your server is running rogue code that exists nowhere in Git!
-            </p>
-          </div>
-
-          <div class="callout amber">
-            <div class="callout-title">2. Nginx vs. Vite Dev Server (Massive Performance &amp; Stability)</div>
-            <p>
-              • <strong>Vite Dev Server (Node.js):</strong> Designed for one developer on a laptop. It uses heavy RAM, parses TypeScript on the fly, and leaks memory over time if left running for weeks under high concurrent traffic.
-              <br />• <strong>Nginx (Production Container):</strong> Written in highly optimized C. It consumes less than 15 MB of RAM, handles tens of thousands of concurrent HTTP requests, and serves pre-gzipped static files with zero CPU overhead.
-            </p>
-          </div>
-
-          <div class="callout purple">
-            <div class="callout-title">3. Security &amp; Container Isolation</div>
-            <p>
-              A bind mount breaks container isolation by linking the host's physical filesystem directly into the container.
-              If an attacker exploits a vulnerability in a web application with a host bind mount, they can overwrite files on the EC2 host disk (Container Escape).
-              In contrast, our GHCR image runs with <strong>read-only baked files</strong> and no access to the host disk.
-            </p>
-          </div>
-
-          <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="why-no-hmr-prod">
-              <span class="check-mark">✓</span>
-              <span>Mark Topic 03 Complete</span>
-            </button>
-            <div class="nav-buttons">
-              <button class="btn-step" data-prev-topic="hot-reloading">&larr; Previous: Hot Reloading</button>
-              <button class="btn-step" data-next-topic="ec2-token-role">Next: The EC2 Token &rarr;</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- TOPIC 4: THE READ-ONLY TOKEN ON EC2 -->
-        <section class="topic-view" id="topic-ec2-token-role">
-          <div class="topic-eyebrow">Topic 04 · Registry Authentication</div>
-          <h2 class="topic-heading topic-title">The Role of the Read-Only Token on EC2</h2>
-
-          <p>
-            You asked: <em>"what is the role of GIT_TOKEN in all these EC2 ghcr image kind of process. i learned that using PAT is bad but TOKEN is good but i am not sure why are we using this token and where its kept and actually secure"</em>
-          </p>
-
-          <h3>1. Why Does EC2 Need a Token at All?</h3>
-          <p>
-            By default, images published to GitHub Container Registry (GHCR) in your private repository are <strong>private packages</strong>.
-            If you log into your EC2 instance and run:
-            <br /><code>docker pull ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:sha-b94f0e5</code>
-            <br />GitHub will reject the request with <strong><code>Error response from daemon: Head "...": unauthorized</code></strong>.
-            EC2 must prove its identity to GitHub before it is allowed to download the container layers.
-          </p>
-
-          <h3>2. Why Can't EC2 Use the GitHub Actions <code>GITHUB_TOKEN</code>?</h3>
-          <p>
-            In Stage 4, our CI pipeline used <code>secrets.GITHUB_TOKEN</code> to push images.
-            Why can't we copy that token to EC2?
-            <br />Because <strong><code>secrets.GITHUB_TOKEN</code> is ephemeral</strong>: it is dynamically minted by GitHub when a workflow run begins, and it is <strong>destroyed the instant the workflow finishes</strong>!
-            It has a lifespan of only a few minutes. It physically does not exist when EC2 wants to pull the image hours or days later.
-          </p>
-
-          <h3>3. The Token Hierarchy: Why Classic PAT is Dangerous vs. Scoped Token</h3>
-          <div class="table-wrap">
-            <table class="spec-table">
-              <thead>
-                <tr>
-                  <th>Token Type</th>
-                  <th>Permission Scope</th>
-                  <th>Blast Radius if Server is Hacked</th>
-                  <th>Verdict</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Classic PAT (Broad)</strong></td>
-                  <td><code>repo</code>, <code>admin:org</code>, <code>delete:packages</code>, <code>user</code></td>
-                  <td>Attacker can delete repositories, read private source code, modify billing, and push malicious commits.</td>
-                  <td><span class="tag rose">CRITICAL RISK</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Actions <code>GITHUB_TOKEN</code></strong></td>
-                  <td>Job-scoped, ephemeral</td>
-                  <td>Lives only inside CI runner VM; cannot be placed on EC2.</td>
-                  <td><span class="tag blue">CI ONLY</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Fine-Grained Read-Only Token</strong></td>
-                  <td><code>read:packages</code> on <code>docker-beginner-simulation</code> ONLY</td>
-                  <td>Attacker can only download the Docker image. Zero write access, zero repo access, zero account control.</td>
-                  <td><span class="tag emerald">RECOMMENDED (Least Privilege)</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="callout emerald">
-            <div class="callout-title">The Principle of Least Privilege in Action</div>
-            <p>
-              Notice the beauty of this security boundary:
-              <br />Even if a rogue actor completely breaches your EC2 server and steals the token, <strong>they cannot harm your project</strong>!
-              The token cannot push backdoored images to GHCR, cannot view other repositories, and cannot delete your packages. It is a strictly read-only key.
-            </p>
-          </div>
-
-          <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="ec2-token-role">
-              <span class="check-mark">✓</span>
-              <span>Mark Topic 04 Complete</span>
-            </button>
-            <div class="nav-buttons">
-              <button class="btn-step" data-prev-topic="why-no-hmr-prod">&larr; Previous: Why No HMR in Prod</button>
-              <button class="btn-step" data-next-topic="token-security-quiz">Next: Where Tokens Live &rarr;</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- TOPIC 5: WHERE TOKENS LIVE & SELF-CHECK -->
-        <section class="topic-view" id="topic-token-security-quiz">
-          <div class="topic-eyebrow">Topic 05 · Secret Storage &amp; Verification</div>
-          <h2 class="topic-heading topic-title">Where the Token Lives on EC2 &amp; How It Is Secured</h2>
-
-          <p>
-            How does Docker on EC2 store the token, and how do we prevent unauthorized users on the machine from reading it?
-          </p>
-
-          <h3>1. What Happens During <code>docker login</code></h3>
-          <p>
-            During server provisioning in Stage 6, you execute:
-          </p>
-
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">EC2 Host Shell</span>
-              <button class="copy-btn" data-copy-target="login-cmd">Copy</button>
-            </div>
-            <pre><code id="login-cmd">echo "$GHCR_READ_TOKEN" | docker login ghcr.io -u s3nsh1-dev --password-stdin</code></pre>
-          </div>
-
-          <p>
-            When this command runs, Docker contacts <code>ghcr.io</code>, verifies the credentials, and writes an authentication header into a config file on the EC2 host:
-            <br /><code>/home/ubuntu/.docker/config.json</code> (or <code>/root/.docker/config.json</code>).
-          </p>
-
-          <h3>2. How the Token is Kept Secure on EC2</h3>
-          <div class="callout purple">
-            <div class="callout-title">The 3 Layers of Host Security</div>
-            <p>
-              1. <strong>Linux File Permissions (<code>chmod 600</code>):</strong>
-              The <code>.docker/config.json</code> file is given permission <code>600</code> (read and write exclusively by the file owner). Any non-root user or web process on the machine is blocked by the Linux OS kernel from opening the file.
-              <br /><br />
-              2. <strong>Strict Secret Boundary:</strong>
-              The token is <strong>never baked into Dockerfiles</strong>, never committed to Git, and never injected into container environment variables. It stays on the EC2 host OS, used solely by the Docker daemon to pull images.
-              <br /><br />
-              3. <strong>SSH Key-Only Server Access:</strong>
-              In Stage 6, password authentication on EC2 is completely disabled. Only administrators possessing the verified SSH private key can connect to the instance.
-            </p>
-          </div>
-
-          <!-- Interactive Comparison Diagram -->
-          <div class="diagram-wrapper">
-            <div class="diagram-controls">
-              <button class="diagram-btn active" data-diagram="dev">Dev Architecture (Bind Mount &amp; HMR)</button>
-              <button class="diagram-btn" data-diagram="prod">Prod Architecture (Nginx &amp; Baked Dist)</button>
-              <button class="diagram-btn" data-diagram="auth">EC2 Authentication (Read-Only Token)</button>
+            <div class="callout amber">
+              <div class="callout-title">⚠️ The Golden Rule: Publish Before Pulling</div>
+              <p>
+                The EC2 host cannot build images from source. Before starting EC2, the client and server images <strong>must exist in GitHub Container Registry</strong>. The <code>publish-images</code> job in <code>ci.yml</code> triggers on pushes to the <code>main</code> branch.
+              </p>
             </div>
 
-            <svg
-              id="arch-svg"
-              class="interactive-svg"
-              viewBox="0 0 920 300"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Comparison diagram of Development vs Production vs EC2 Authentication"
-            >
-              <defs>
-                <marker id="svg-arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--blue)" />
-                </marker>
-                <marker id="svg-arrow-emerald" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--emerald)" />
-                </marker>
-              </defs>
-
-              <!-- State Group 1: Dev -->
-              <g id="svg-group-dev">
-                <rect x="50" y="50" width="220" height="180" rx="8" fill="var(--surface-2)" stroke="var(--blue-line)" stroke-width="2" />
-                <text x="160" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--blue-text)">Laptop Host Filesystem</text>
-                <rect x="70" y="100" width="180" height="45" rx="6" fill="var(--surface)" stroke="var(--line)" />
-                <text x="85" y="128" font-family="var(--font-mono)" font-size="11" fill="var(--ink)">client/src/App.tsx</text>
-                <text x="160" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--ink-muted)">Developer edits &amp; saves file</text>
-
-                <!-- Arrow -->
-                <path d="M 270 140 L 360 140" fill="none" stroke="var(--blue)" stroke-width="2.5" marker-end="url(#svg-arrow-blue)" />
-                <text x="315" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--blue)">bind mount</text>
-
-                <rect x="370" y="50" width="240" height="180" rx="8" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="2" />
-                <text x="490" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--blue-text)">Dev Container (Vite:3000)</text>
-                <rect x="390" y="100" width="200" height="45" rx="6" fill="var(--surface)" stroke="var(--line)" />
-                <text x="405" y="128" font-family="var(--font-mono)" font-size="11" fill="var(--ink)">inotify &rarr; HMR Compiler</text>
-                <text x="490" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--ink-muted)">WebSocket pushes update</text>
-
-                <!-- Arrow -->
-                <path d="M 610 140 L 700 140" fill="none" stroke="var(--blue)" stroke-width="2.5" marker-end="url(#svg-arrow-blue)" />
-                <text x="655" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--blue)">WebSocket</text>
-
-                <rect x="710" y="50" width="160" height="180" rx="8" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="2" />
-                <text x="790" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--ink)">Local Browser</text>
-                <text x="790" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--emerald)">DOM updates (50ms)</text>
-                <text x="790" y="160" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--ink-muted)">No page reload</text>
-              </g>
-
-              <!-- State Group 2: Prod -->
-              <g id="svg-group-prod" style="display: none;">
-                <rect x="50" y="50" width="230" height="180" rx="8" fill="var(--emerald-soft)" stroke="var(--emerald)" stroke-width="2" />
-                <text x="165" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--emerald-text)">GHCR Release Package</text>
-                <rect x="70" y="100" width="190" height="50" rx="6" fill="var(--surface)" stroke="var(--line)" />
-                <text x="85" y="125" font-family="var(--font-mono)" font-size="10" fill="var(--ink)">sha-b94f0e5</text>
-                <text x="85" y="140" font-family="var(--font-mono)" font-size="9" fill="var(--ink-muted)">Baked static /dist assets</text>
-                <text x="165" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--emerald-text)">Zero source code · Zero compilers</text>
-
-                <path d="M 280 140 L 370 140" fill="none" stroke="var(--emerald)" stroke-width="2.5" marker-end="url(#svg-arrow-emerald)" />
-                <text x="325" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--emerald)">docker pull</text>
-
-                <rect x="380" y="50" width="240" height="180" rx="8" fill="var(--surface-2)" stroke="var(--emerald-line)" stroke-width="2" />
-                <text x="500" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--ink)">EC2 Host Container (Nginx:80)</text>
-                <rect x="400" y="100" width="200" height="45" rx="6" fill="var(--surface)" stroke="var(--line)" />
-                <text x="415" y="128" font-family="var(--font-mono)" font-size="11" fill="var(--ink)">Pre-compiled static files</text>
-                <text x="500" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--ink-muted)">Instant response · Low RAM (15MB)</text>
-
-                <path d="M 620 140 L 710 140" fill="none" stroke="var(--emerald)" stroke-width="2.5" marker-end="url(#svg-arrow-emerald)" />
-                <text x="665" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--emerald)">HTTP :80</text>
-
-                <rect x="720" y="50" width="160" height="180" rx="8" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="2" />
-                <text x="800" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--ink)">Public User</text>
-                <text x="800" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--emerald-text)">Immutable SPA</text>
-                <text x="800" y="160" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--ink-muted)">Deterministic release</text>
-              </g>
-
-              <!-- State Group 3: Auth -->
-              <g id="svg-group-auth" style="display: none;">
-                <rect x="60" y="50" width="230" height="180" rx="8" fill="var(--surface)" stroke="var(--purple)" stroke-width="2" />
-                <text x="175" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--purple-text)">EC2 Server Storage</text>
-                <rect x="80" y="100" width="190" height="50" rx="6" fill="var(--code-bg)" stroke="var(--line)" />
-                <text x="95" y="122" font-family="var(--font-mono)" font-size="10" fill="var(--ink)">~/.docker/config.json</text>
-                <text x="95" y="138" font-family="var(--font-mono)" font-size="9" fill="var(--rose-text)">Permissions: chmod 600</text>
-                <text x="175" y="180" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--purple)">Token: read:packages only</text>
-
-                <path d="M 290 140 L 410 140" fill="none" stroke="var(--purple)" stroke-width="2.5" marker-end="url(#svg-arrow-blue)" />
-                <text x="350" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--purple)">Auth Header</text>
-
-                <rect x="420" y="50" width="240" height="180" rx="8" fill="var(--surface-2)" stroke="var(--blue-line)" stroke-width="2" />
-                <text x="540" y="80" text-anchor="middle" font-family="var(--font-ui)" font-size="13" font-weight="700" fill="var(--blue-text)">GitHub Container Registry</text>
-                <rect x="440" y="100" width="200" height="45" rx="6" fill="var(--surface)" stroke="var(--line)" />
-                <text x="455" y="128" font-family="var(--font-mono)" font-size="10" fill="var(--ink)">ghcr.io (Private Package)</text>
-                <text x="540" y="180" text-anchor="middle" font-family="var(--font-ui)" font-size="11" fill="var(--emerald)">✓ Verifies Token &rarr; Sends Layers</text>
-
-                <rect x="700" y="70" width="180" height="140" rx="8" fill="var(--emerald-soft)" stroke="var(--emerald)" stroke-width="1.5" />
-                <text x="790" y="100" text-anchor="middle" font-family="var(--font-ui)" font-size="12" font-weight="700" fill="var(--emerald-text)">Blast Radius</text>
-                <text x="790" y="128" text-anchor="middle" font-family="var(--font-ui)" font-size="10" fill="var(--ink-2)">If EC2 is hacked:</text>
-                <text x="790" y="148" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--rose-text)">CANNOT push code</text>
-                <text x="790" y="166" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--rose-text)">CANNOT delete packages</text>
-              </g>
-            </svg>
-
-            <div class="diagram-caption" id="diagram-caption">
-              <strong>Development Flow:</strong> Bind mounts map laptop source files directly into Vite dev server. Edits update the browser in milliseconds without container rebuilds.
-            </div>
-          </div>
-
-          <!-- Interactive Comprehension Quiz -->
-          <div class="interactive-quiz">
-            <div class="quiz-title">
-              <span>🎯 Quick Check: Registry Authentication &amp; Token Security</span>
-            </div>
-            <div class="quiz-prompt">
-              Why should you NEVER use your primary GitHub Personal Access Token (PAT) with full repository permissions on an AWS EC2 instance?
-            </div>
-            <div class="quiz-options">
-              <button class="quiz-opt-btn" data-correct="false">
-                A) Because GitHub automatically rejects classic PATs for any container registry pull.
-              </button>
-              <button class="quiz-opt-btn" data-correct="true">
-                B) Because if the EC2 host is compromised, an attacker could steal the token and gain complete control over your private repositories, source code, and account settings. A fine-grained read-only token limits the blast radius strictly to pulling images.
-              </button>
-              <button class="quiz-opt-btn" data-correct="false">
-                C) Because classic PATs expire every 10 minutes and break automated Docker deployments.
-              </button>
-              <button class="quiz-opt-btn" data-correct="false">
-                D) Because Docker on Linux only supports SSH key authentication, not token authentication.
-              </button>
-            </div>
-            <div class="quiz-feedback" id="quiz-feedback"></div>
-          </div>
-
-          <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="token-security-quiz">
-              <span class="check-mark">✓</span>
-              <span>Mark Topic 05 Complete</span>
-            </button>
-            <div class="nav-buttons">
-              <button class="btn-step" data-prev-topic="ec2-token-role">&larr; Previous: EC2 Token Role</button>
-              <button class="btn-step" data-next-topic="ec2-prod-setup">Next: EC2 Setup Guide &rarr;</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- TOPIC 6: STEP-BY-STEP EC2 PRODUCTION SETUP -->
-        <section class="topic-view" id="topic-ec2-prod-setup">
-          <div class="topic-eyebrow">Topic 06 · Operations &amp; Runbook</div>
-          <h2 class="topic-heading topic-title">Setting Up the Production EC2 Environment from Scratch</h2>
-
-          <p>
-            You have created an <strong>Ubuntu 24.04 LTS</strong> EC2 instance on AWS, you have your SSH private key (<code>.pem</code>), and you generated your GitHub Classic PAT with <code>read:packages</code>.
-            Docker is not installed yet.
-            Here is the step-by-step engineering runbook to turn this bare machine into a secure, hardened, automated Docker production host.
-          </p>
-
-          <div class="callout blue">
-            <div class="callout-title">The Target Architecture on EC2</div>
+            <h3>Action 1: Confirm or Trigger GHCR Image Publication</h3>
             <p>
-              • <strong>Host OS:</strong> Ubuntu 24.04 LTS x86_64
-              <br />• <strong>Container Engine:</strong> Docker Engine &amp; Docker Compose plugin (v2) from Docker's official apt repository.
-              <br />• <strong>App Root:</strong> <code>/opt/todo-app</code> (owned by user <code>ubuntu</code>).
-              <br />• <strong>Network Boundary:</strong> Port 80 (HTTP) public $\rightarrow$ Nginx container. Port 5000 (Express API) strictly internal $\rightarrow$ unreachable from the Internet.
-              <br />• <strong>Registry Credentials:</strong> Stored in <code>~/.docker/config.json</code> with permission <code>600</code>.
-              <br />• <strong>Database Secret:</strong> Stored on the host in <code>/opt/todo-app/server.env</code> with permission <code>600</code>.
+              Ensure all your committed work is pushed to the <code>main</code> branch of your GitHub repository:
             </p>
-          </div>
 
-          <!-- Step 1 -->
-          <h3>Step 1: Verify AWS Security Group (Firewall Rules)</h3>
-          <p>
-            Before touching the terminal, confirm your EC2 instance's <strong>Inbound Security Group Rules</strong> in the AWS Console:
-          </p>
-          <div class="table-wrap">
-            <table class="spec-table">
-              <thead>
-                <tr>
-                  <th>Type / Protocol</th>
-                  <th>Port Range</th>
-                  <th>Source</th>
-                  <th>Purpose &amp; Security Justification</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>SSH (TCP)</strong></td>
-                  <td><code>22</code></td>
-                  <td><code>My IP</code> (e.g. <code>x.x.x.x/32</code>)</td>
-                  <td>Restricts remote shell management strictly to your laptop. Never leave SSH open to <code>0.0.0.0/0</code>.</td>
-                </tr>
-                <tr>
-                  <td><strong>HTTP (TCP)</strong></td>
-                  <td><code>80</code></td>
-                  <td><code>0.0.0.0/0</code></td>
-                  <td>Public web visitors connect to Nginx. Nginx handles routing and serves static SPA assets.</td>
-                </tr>
-                <tr>
-                  <td><strong>Custom TCP (Port 5000)</strong></td>
-                  <td><code>5000</code></td>
-                  <td><span class="tag rose">DO NOT ADD (CLOSED)</span></td>
-                  <td>The Express server communicates with Nginx inside Docker's internal virtual bridge network. It must never have a public host port.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">Local Workstation (docker-beginner-simulation repo)</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># Check current git status
+git status
 
-          <!-- Step 2 -->
-          <h3>Step 2: Connect to Your EC2 Instance via SSH</h3>
-          <p>
-            On your local laptop terminal, ensure your downloaded AWS key pair has strict read-only permissions (OpenSSH will refuse to use a key that is readable by other users):
-          </p>
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">Laptop Local Terminal</span>
-              <button class="copy-btn" data-copy-target="ssh-prep-cmd">Copy</button>
+# If you have pending commits, commit and push to main:
+git add .
+git commit -m "feat(ci): complete stage 4 and 5 production artifacts"
+git push origin main</code></pre>
             </div>
-            <pre><code id="ssh-prep-cmd"># 1. Lock down key file permissions
-chmod 400 ~/.ssh/your-ec2-key.pem
 
-# 2. Connect to the EC2 public IPv4 address
-ssh -i ~/.ssh/your-ec2-key.pem ubuntu@&lt;EC2_PUBLIC_IP&gt;</code></pre>
-          </div>
-
-          <!-- Step 3 -->
-          <h3>Step 3: Install Docker Engine &amp; Compose v2 (Official Repos)</h3>
-          <div class="callout amber">
-            <div class="callout-title">Why NOT <code>sudo apt install docker.io</code>?</div>
             <p>
-              Ubuntu's default <code>docker.io</code> package is frequently months or years out of date, lacks the modern Compose V2 CLI plugin (<code>docker compose</code>), and misses performance fixes.
-              Always configure Docker's official APT repository directly.
+              Open GitHub in your browser: <code>https://github.com/s3nsh1-dev/docker-beginner-simulation/actions</code>. Confirm that the latest run on <code>main</code> ran all checks (Client, Server, E2E) and succeeded at <strong>Build &amp; Publish GHCR Images</strong>.
             </p>
-          </div>
 
-          <p>Run the official installation script on your EC2 instance:</p>
+            <h3>Action 2: Note Your Published Commit SHA Tag</h3>
+            <p>
+              Check the short Git commit SHA of that commit (e.g. <code>b94f0e5</code>). The published container tags in GHCR will be:
+            </p>
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">GHCR Image Identifiers</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:sha-&lt;SHORT_SHA&gt;
+ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:sha-&lt;SHORT_SHA&gt;
 
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">EC2 Shell · Install Docker Engine</span>
-              <button class="copy-btn" data-copy-target="docker-install-cmd">Copy</button>
+# Example matching release.env:
+ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:sha-b94f0e5
+ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:sha-b94f0e5</code></pre>
             </div>
-            <pre><code id="docker-install-cmd"># Update system packages &amp; install prerequisites
+
+            <h3>Action 3: Generate a Least-Privilege Personal Access Token (PAT)</h3>
+            <p>
+              EC2 needs credentials to pull private GHCR packages. Never use your main account password or a token with repository write permissions.
+            </p>
+            <ol>
+              <li>Go to GitHub &rarr; <strong>Settings</strong> &rarr; <strong>Developer Settings</strong> &rarr; <strong>Personal Access Tokens</strong> &rarr; <strong>Tokens (classic)</strong>.</li>
+              <li>Click <strong>Generate new token (classic)</strong>.</li>
+              <li>Note: <code>ec2-todo-deploy-token</code>. Expiration: 30 days (or 90 days).</li>
+              <li>Under Scopes, check <strong>ONLY</strong>: <code>read:packages</code> (Download packages from GitHub Package Registry).</li>
+              <li>Generate and copy the token (starts with <code>ghp_...</code>). Keep it safe on your workstation for Step 3.</li>
+            </ol>
+          </section>
+
+          <!-- ============================================================
+               TOPIC 2: AWS EC2 & SECURITY GROUP
+               ============================================================ -->
+          <section
+            class="topic-section"
+            data-id="topic-ec2-setup"
+            data-title="2. AWS EC2 &amp; Security Group Setup"
+          >
+            <div class="topic-eyebrow">Step 02 / Cloud Perimeter</div>
+            <h2 class="topic-heading">AWS EC2 Launch &amp; Security Group Hardening</h2>
+
+            <p>
+              We launch a single Ubuntu 24.04 LTS instance. We configure AWS Security Groups at the hypervisor level to enforce the principle of least network privilege.
+            </p>
+
+            <div class="table-frame">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Setting</th>
+                    <th>Recommended Value</th>
+                    <th>Why This Choice</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>AMI</strong></td>
+                    <td><code>Ubuntu Server 24.04 LTS (HVM), SSD Volume Type</code></td>
+                    <td>Official modern Linux base, x86_64 architecture.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Instance Type</strong></td>
+                    <td><code>t3.micro</code> (or <code>t2.micro</code>)</td>
+                    <td>AWS Free Tier eligible, 1 vCPU, 1 GB RAM (sufficient for React Nginx + Express).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Key Pair</strong></td>
+                    <td><code>todo-deploy-key.pem</code> (RSA / OpenSSH)</td>
+                    <td>Provides key-only SSH access. Never allow password authentication.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Storage</strong></td>
+                    <td><code>16 GiB gp3</code></td>
+                    <td>Provides ample space for Docker layers and cached images.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Action 1: Configure Security Group Ingress Rules</h3>
+            <p>
+              When launching the instance, create a new Security Group named <code>todo-app-sg</code> with these exact rules:
+            </p>
+
+            <div class="table-frame">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Protocol &amp; Port</th>
+                    <th>Source</th>
+                    <th>Purpose</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>SSH</strong></td>
+                    <td><code>TCP 22</code></td>
+                    <td><code>My IP</code> (e.g. <code>203.0.113.50/32</code>)</td>
+                    <td>Restricts administrative shell access exclusively to your workstation.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>HTTP</strong></td>
+                    <td><code>TCP 80</code></td>
+                    <td><code>0.0.0.0/0</code> (Anywhere IPv4)</td>
+                    <td>Allows public visitors to reach your Nginx reverse proxy.</td>
+                  </tr>
+                  <tr style="background: var(--rose-soft); color: var(--rose-text);">
+                    <td><strong>CUSTOM</strong></td>
+                    <td><code>TCP 5432 &amp; 5000</code></td>
+                    <td><strong>BLOCKED (Do NOT add)</strong></td>
+                    <td>Database &amp; Express API remain isolated on the private Docker bridge network.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Action 2: Harden SSH Key Permissions Locally</h3>
+            <p>
+              OpenSSH requires that private key files are readable <em>only</em> by their owner. If permissions are too open (<code>0644</code>), OpenSSH will reject the key with <code>WARNING: UNPROTECTED PRIVATE KEY FILE!</code>.
+            </p>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">Local Workstation Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># Move the downloaded key to your secure SSH folder
+mkdir -p ~/.ssh
+mv ~/Downloads/todo-deploy-key.pem ~/.ssh/
+
+# Apply mandatory owner-read-only permissions (chmod 400)
+chmod 400 ~/.ssh/todo-deploy-key.pem
+
+# Connect to your newly launched instance
+# (Replace &lt;EC2_PUBLIC_IP&gt; with your instance's IPv4 address from AWS Console)
+ssh -i ~/.ssh/todo-deploy-key.pem ubuntu@&lt;EC2_PUBLIC_IP&gt;</code></pre>
+            </div>
+
+            <div class="callout emerald">
+              <div class="callout-title">✓ Connection Checkpoint</div>
+              <p>
+                When prompted: <code>Are you sure you want to continue connecting (yes/no/[fingerprint])?</code> type <code>yes</code>. You are now inside your EC2 host terminal: <code>ubuntu@ip-172-31-xx-xx:~$</code>.
+              </p>
+            </div>
+          </section>
+
+          <!-- ============================================================
+               TOPIC 3: DOCKER & GHCR AUTH
+               ============================================================ -->
+          <section
+            class="topic-section"
+            data-id="topic-docker-provisioning"
+            data-title="3. Docker Engine &amp; GHCR Authentication"
+          >
+            <div class="topic-eyebrow">Step 03 / Host Runtime</div>
+            <h2 class="topic-heading">Docker Engine Installation &amp; Private Registry Login</h2>
+
+            <p>
+              Now that you are connected via SSH, provision the container engine. <strong>Do not run <code>apt install docker.io</code></strong> — that installs Ubuntu's outdated snapshot lacking the Compose v2 CLI plugin. We install official Docker CE directly from Docker's upstream repository.
+            </p>
+
+            <h3>Action 1: Install Official Docker CE &amp; Compose Plugin</h3>
+            <p>
+              Run this complete provisioning block inside the EC2 SSH session:
+            </p>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal (Ubuntu 24.04 LTS)</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># 1. Update system package index and install prerequisite tools
 sudo apt-get update
 sudo apt-get install -y ca-certificates curl gnupg
 
-# Add Docker's official GPG signing key
+# 2. Add Docker's official GPG signing key
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-# Add the repository to Apt sources
+# 3. Add official Docker repository to Apt sources
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-# Install Docker Engine, CLI, and Compose v2 plugin
+# 4. Install Docker Engine, CLI, Containerd, and Compose Plugin
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# Verify installation
-docker --version
-docker compose version</code></pre>
-          </div>
+# 5. Add 'ubuntu' user to docker group (enables non-root docker commands)
+sudo usermod -aG docker ubuntu
 
-          <!-- Step 4 -->
-          <h3>Step 4: Grant Non-Root Docker Permissions</h3>
-          <p>
-            By default, the Docker daemon binds to a Unix socket owned by <code>root</code>.
-            Add the default <code>ubuntu</code> user to the <code>docker</code> group so deployment commands run without <code>sudo</code>:
-          </p>
-
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">EC2 Shell · Group Setup</span>
-              <button class="copy-btn" data-copy-target="docker-group-cmd">Copy</button>
-            </div>
-            <pre><code id="docker-group-cmd">sudo usermod -aG docker ubuntu
+# 6. Activate group permissions immediately in current shell
 newgrp docker
 
-# Test that docker runs cleanly without sudo:
-docker ps</code></pre>
-          </div>
-
-          <!-- Step 5 -->
-          <h3>Step 5: Create the Deployment Directory (<code>/opt/todo-app</code>)</h3>
-          <p>
-            Under the Linux Filesystem Hierarchy Standard (FHS), <code>/opt</code> is the designated location for self-contained, add-on application software.
-            Create the directory and assign ownership to <code>ubuntu</code>:
-          </p>
-
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">EC2 Shell · App Directory</span>
-              <button class="copy-btn" data-copy-target="app-dir-cmd">Copy</button>
+# 7. Verify Docker works without sudo
+docker version
+docker compose version</code></pre>
             </div>
-            <pre><code id="app-dir-cmd">sudo mkdir -p /opt/todo-app
+
+            <h3>Action 2: Authenticate with GHCR using <code>--password-stdin</code></h3>
+            <p>
+              Log in to GitHub Container Registry using the Personal Access Token (PAT) you generated in Step 1.
+            </p>
+            <div class="callout rose">
+              <div class="callout-title">⚠️ Security Warning: Never use -p &lt;token&gt;</div>
+              <p>
+                Using <code>-p $TOKEN</code> reveals the credential to anyone running <code>ps aux</code> and logs it in <code>~/.bash_history</code>. Always pipe the token into <code>--password-stdin</code>.
+              </p>
+            </div>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal (Secure GHCR Login)</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># Replace YOUR_GITHUB_USERNAME with your GitHub handle (e.g. s3nsh1-dev)
+# Replace ghp_xxxx with your PAT token
+echo "ghp_YOUR_TOKEN_HERE" | docker login ghcr.io -u s3nsh1-dev --password-stdin</code></pre>
+            </div>
+
+            <p>
+              You should see the confirmation: <code>Login Succeeded</code>. Docker stores the authentication token in <code>~/.docker/config.json</code>.
+            </p>
+
+            <h3>Action 3: Verify Image Pull from GHCR</h3>
+            <p>
+              Prove that your credentials can pull the private images published by CI:
+            </p>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># Pull both images using your release SHA tag (e.g. sha-b94f0e5)
+docker pull ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:sha-b94f0e5
+docker pull ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:sha-b94f0e5
+
+# Verify images are stored on host disk
+docker images</code></pre>
+            </div>
+          </section>
+
+          <!-- ============================================================
+               TOPIC 4: FILE DEPLOYMENT & PERMISSIONS
+               ============================================================ -->
+          <section
+            class="topic-section"
+            data-id="topic-file-deployment"
+            data-title="4. Deployment Directory &amp; Permissions"
+          >
+            <div class="topic-eyebrow">Step 04 / Configuration</div>
+            <h2 class="topic-heading">Setting Up <code>/opt/todo-app</code> &amp; File Permissions</h2>
+
+            <p>
+              In production, we maintain a dedicated root directory <code>/opt/todo-app</code>. It contains only three configuration files:
+            </p>
+            <ol>
+              <li><code>docker-compose.prod.yml</code> — Defines the multi-container topology.</li>
+              <li><code>release.env</code> — Declares the current immutable <code>IMAGE_TAG</code>.</li>
+              <li><code>server.env</code> — Contains the Neon PostgreSQL database URL and port.</li>
+            </ol>
+
+            <h3>Action 1: Create Host Directory</h3>
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>sudo mkdir -p /opt/todo-app
 sudo chown -R ubuntu:ubuntu /opt/todo-app
 cd /opt/todo-app</code></pre>
-          </div>
-
-          <!-- Step 6 -->
-          <h3>Step 6: Authenticate with GHCR (Using Your Read-Only Token)</h3>
-          <p>
-            Now use the <strong>Classic Personal Access Token</strong> (with only <code>read:packages</code>) that you generated earlier.
-            Pipe it to <code>docker login</code> via <code>stdin</code> so the token is never logged in your shell history:
-          </p>
-
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">EC2 Shell · Registry Authentication</span>
-              <button class="copy-btn" data-copy-target="login-ec2-cmd">Copy</button>
             </div>
-            <pre><code id="login-ec2-cmd"># Replace &lt;YOUR_CLASSIC_PAT&gt; with your actual ghp_... token:
-echo "&lt;YOUR_CLASSIC_PAT&gt;" | docker login ghcr.io -u s3nsh1-dev --password-stdin
 
-# Secure the Docker credentials file on disk:
-chmod 600 ~/.docker/config.json</code></pre>
-          </div>
-
-          <div class="callout emerald">
-            <div class="callout-title">What Just Happened?</div>
+            <h3>Action 2: Copy Deployment Files to EC2</h3>
             <p>
-              Docker contacts <code>ghcr.io</code>, validates the token, and writes an authentication entry to <code>~/.docker/config.json</code>.
-              Running <code>chmod 600 ~/.docker/config.json</code> ensures only the <code>ubuntu</code> user can read this file.
+              You can transfer the files from your <strong>local workstation</strong> via <code>scp</code>, or create them directly in the EC2 terminal:
             </p>
-          </div>
 
-          <!-- Step 7 -->
-          <h3>Step 7: Decouple Runtime Secrets (Create <code>server.env</code>)</h3>
-          <p>
-            In Stage 5, we designed our architecture so the production Express container reads its database connection from a host-only environment file.
-            Create <code>/opt/todo-app/server.env</code> with your production <strong>Neon PostgreSQL URL</strong>:
-          </p>
-
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">EC2 Shell · Write server.env</span>
-              <button class="copy-btn" data-copy-target="server-env-cmd">Copy</button>
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">Option A: From Local Workstation via SCP</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># Run from inside docker-beginner-simulation on your local laptop:
+scp -i ~/.ssh/todo-deploy-key.pem \
+  docker-compose.prod.yml release.env server.env \
+  ubuntu@&lt;EC2_PUBLIC_IP&gt;:/opt/todo-app/</code></pre>
             </div>
-            <pre><code id="server-env-cmd">cat &lt;&lt; 'EOF' > /opt/todo-app/server.env
-DATABASE_URL="postgresql://user:password@ep-xyz.us-east-2.aws.neon.tech/neondb?sslmode=require"
-PORT=5000
-NODE_ENV=production
-EOF
 
-# Strict security: readable and writable ONLY by ubuntu (0600)
-chmod 600 /opt/todo-app/server.env</code></pre>
-          </div>
+            <p>
+              Alternatively, create them directly on the EC2 host:
+            </p>
 
-          <!-- Step 8 -->
-          <h3>Step 8: Deploy the Production Compose Contract</h3>
-          <p>
-            Place your <code>docker-compose.prod.yml</code> and <code>release.env</code> inside <code>/opt/todo-app</code>:
-          </p>
-
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">EC2 Shell · Create release.env</span>
-              <button class="copy-btn" data-copy-target="release-env-cmd">Copy</button>
-            </div>
-            <pre><code id="release-env-cmd"># Point to your published GHCR commit SHA:
-echo "IMAGE_TAG=sha-b94f0e5" > /opt/todo-app/release.env</code></pre>
-          </div>
-
-          <p>
-            Create or copy <code>/opt/todo-app/docker-compose.prod.yml</code> (matches the Stage 5 file):
-          </p>
-
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">/opt/todo-app/docker-compose.prod.yml</span>
-              <button class="copy-btn" data-copy-target="prod-compose-file">Copy</button>
-            </div>
-            <pre><code id="prod-compose-file">name: todo-production
-
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">Option B: Directly on EC2 Host Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code># 1. Create docker-compose.prod.yml
+cat << 'EOF' > /opt/todo-app/docker-compose.prod.yml
 services:
   client:
     image: ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:${IMAGE_TAG}
-    container_name: todo-prod-client
+    init: true
     restart: unless-stopped
     ports:
       - "80:80"
     depends_on:
       server:
         condition: service_healthy
-    networks:
-      - todo-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   server:
     image: ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:${IMAGE_TAG}
-    container_name: todo-prod-server
     restart: unless-stopped
+    expose:
+      - "5000"
     env_file:
       - ./server.env
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          'node -e "fetch(''http://localhost:5000/api/health'').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"',
+        ]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 15s
-    networks:
-      - todo-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+EOF
 
-networks:
-  todo-network:
-    driver: bridge</code></pre>
-          </div>
+# 2. Create release.env
+cat << 'EOF' > /opt/todo-app/release.env
+IMAGE_TAG=sha-b94f0e5
+EOF
 
-          <!-- Step 9 -->
-          <h3>Step 9: Launch the Stack &amp; Verify Production Health</h3>
-          <p>
-            Execute the deployment sequence:
-          </p>
-
-          <div class="code-snippet">
-            <div class="code-snippet-header">
-              <span class="code-file-label">EC2 Shell · Launch Stack</span>
-              <button class="copy-btn" data-copy-target="launch-cmd">Copy</button>
+# 3. Create server.env (Neon PostgreSQL connection)
+cat << 'EOF' > /opt/todo-app/server.env
+DATABASE_URL=postgresql://neondb_owner:npg_XLH6srTOnD5J@ep-tiny-snow-b3xbjqhp-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+PORT=5000
+EOF</code></pre>
             </div>
-            <pre><code id="launch-cmd"># 1. Pull the pre-built GHCR images from GitHub Container Registry
-docker compose --env-file release.env -f docker-compose.prod.yml pull
 
-# 2. Launch both containers in detached mode
-docker compose --env-file release.env -f docker-compose.prod.yml up -d
-
-# 3. Check status (wait for server to show 'healthy')
-docker compose -f docker-compose.prod.yml ps
-
-# 4. Test the health endpoint through Nginx on port 80
-curl -I http://localhost/api/health</code></pre>
-          </div>
-
-          <div class="callout emerald">
-            <div class="callout-title">Expected Verification Result</div>
+            <h3>Action 3: Restrict File Permissions (chmod 600)</h3>
             <p>
-              When you run <code>curl -I http://localhost/api/health</code>, Nginx should return:
-              <br /><code>HTTP/1.1 200 OK</code>
-              <br />Open <code>http://&lt;EC2_PUBLIC_IP&gt;</code> in your laptop's browser. The Todo app SPA will load and interact directly with your production Neon PostgreSQL database!
+              <code>server.env</code> contains your production database credentials. Lock it down so other users and processes cannot read it:
             </p>
-          </div>
 
-          <div class="topic-footer">
-            <button class="btn-complete" data-complete-topic="ec2-prod-setup">
-              <span class="check-mark">✓</span>
-              <span>Mark Topic 06 Complete</span>
-            </button>
-            <div class="nav-buttons">
-              <button class="btn-step" data-prev-topic="token-security-quiz">&larr; Previous: Token Security</button>
-              <button class="btn-step" disabled>All 6 Topics Completed</button>
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>chmod 600 /opt/todo-app/server.env
+chmod 600 /opt/todo-app/release.env
+ls -la /opt/todo-app</code></pre>
             </div>
-          </div>
-        </section>
+
+            <h3>Action 4: Validate Configuration Dry-Run</h3>
+            <p>
+              Before launching, test that Docker Compose successfully resolves the environment variables without syntax errors:
+            </p>
+
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>cd /opt/todo-app
+docker compose -f docker-compose.prod.yml --env-file release.env config</code></pre>
+            </div>
+
+            <p>
+              The output will display the fully rendered YAML specification with <code>${IMAGE_TAG}</code> replaced by <code>sha-b94f0e5</code>.
+            </p>
+          </section>
+
+          <!-- ============================================================
+               TOPIC 5: STACK LAUNCH & SMOKE TEST
+               ============================================================ -->
+          <section
+            class="topic-section"
+            data-id="topic-smoke-testing"
+            data-title="5. Launch Stack &amp; 4-Tier Smoke Testing"
+          >
+            <div class="topic-eyebrow">Step 05 / Verification</div>
+            <h2 class="topic-heading">Stack Startup &amp; 4-Tier Smoke Test Verification</h2>
+
+            <p>
+              With the files in place, launch the containers in detached mode and execute the four verification tiers required to prove Stage 6 acceptance criteria.
+            </p>
+
+            <h3>Action 1: Start Production Stack</h3>
+            <div class="code-snippet">
+              <div class="code-header">
+                <span class="code-file">EC2 Host Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>cd /opt/todo-app
+docker compose -f docker-compose.prod.yml --env-file release.env up -d</code></pre>
+            </div>
+
+            <!-- Interactive Architecture Diagram -->
+            <div class="interactive-diagram">
+              <div class="diagram-toolbar">
+                <span class="diagram-title">Interactive Mechanism: 4-Tier Verification Architecture</span>
+                <div class="sim-btn-group" id="diag-btn-group">
+                  <button class="sim-btn active" data-flow="all">Full Architecture</button>
+                  <button class="sim-btn" data-flow="tier1">Tier 1: Containers</button>
+                  <button class="sim-btn" data-flow="tier23">Tiers 2 &amp; 3: Local Probe</button>
+                  <button class="sim-btn" data-flow="tier4">Tier 4: Public Ingress</button>
+                </div>
+              </div>
+
+              <div class="diagram-caption" id="diag-caption">
+                <strong>Full Architecture:</strong> Traffic hits Security Group port 80 &rarr; Nginx container &rarr; private bridge network &rarr; Express server &rarr; remote Neon PostgreSQL database over SSL.
+              </div>
+
+              <svg viewBox="0 0 920 280" width="100%" height="auto" style="display: block; overflow: visible; font-family: var(--font-body, 'Lexend', sans-serif);" aria-label="EC2 Deployment Verification Architecture">
+                <defs>
+                  <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--blue)" />
+                  </marker>
+                  <marker id="arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--emerald)" />
+                  </marker>
+                  <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--purple)" />
+                  </marker>
+                </defs>
+
+                <!-- Internet User -->
+                <g id="diag-node-browser">
+                  <rect x="20" y="40" width="140" height="60" rx="8" fill="var(--surface)" stroke="var(--blue)" stroke-width="2" />
+                  <text x="90" y="66" text-anchor="middle" font-size="11" font-weight="700" fill="var(--blue-text)">Web Browser</text>
+                  <text x="90" y="84" text-anchor="middle" font-size="10" fill="var(--ink-muted)">http://&lt;EC2_IP&gt;</text>
+                </g>
+
+                <!-- AWS SG Firewall -->
+                <g id="diag-node-sg">
+                  <rect x="200" y="25" width="120" height="230" rx="8" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="2" />
+                  <text x="260" y="48" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)">SECURITY GROUP</text>
+                  <rect x="215" y="65" width="90" height="40" rx="5" fill="var(--emerald-soft)" stroke="var(--emerald)" stroke-width="1.5" />
+                  <text x="260" y="85" text-anchor="middle" font-size="10" font-weight="600" fill="var(--emerald-text)">ALLOW: 80</text>
+                  <text x="260" y="98" text-anchor="middle" font-size="8" fill="var(--ink-muted)">0.0.0.0/0</text>
+                  <rect x="215" y="125" width="90" height="40" rx="5" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.5" />
+                  <text x="260" y="145" text-anchor="middle" font-size="10" font-weight="600" fill="var(--blue-text)">ALLOW: 22</text>
+                  <text x="260" y="158" text-anchor="middle" font-size="8" fill="var(--ink-muted)">My IP/32</text>
+                  <rect x="215" y="185" width="90" height="45" rx="5" fill="var(--rose-soft)" stroke="var(--rose)" stroke-width="1.5" />
+                  <text x="260" y="205" text-anchor="middle" font-size="9" font-weight="600" fill="var(--rose-text)">DROP: 5432</text>
+                  <text x="260" y="220" text-anchor="middle" font-size="8" fill="var(--rose-text)">No rule</text>
+                </g>
+
+                <!-- EC2 Docker Host -->
+                <rect x="360" y="25" width="360" height="230" rx="10" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="2" />
+                <text x="540" y="48" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">EC2 HOST (Ubuntu 24.04 · /opt/todo-app)</text>
+
+                <!-- Client Container -->
+                <g id="diag-node-client">
+                  <rect x="385" y="70" width="140" height="70" rx="6" fill="var(--emerald-soft)" stroke="var(--emerald-line)" stroke-width="1.5" />
+                  <text x="455" y="95" text-anchor="middle" font-size="11" font-weight="700" fill="var(--emerald-text)">Client (Nginx)</text>
+                  <text x="455" y="112" text-anchor="middle" font-size="9" fill="var(--ink-muted)">Port 80:80</text>
+                  <text x="455" y="127" text-anchor="middle" font-size="9" fill="var(--emerald-text)">Static /dist + Proxy</text>
+                </g>
+
+                <!-- Server Container -->
+                <g id="diag-node-server">
+                  <rect x="560" y="70" width="140" height="70" rx="6" fill="var(--purple-soft)" stroke="var(--purple-line)" stroke-width="1.5" />
+                  <text x="630" y="95" text-anchor="middle" font-size="11" font-weight="700" fill="var(--purple-text)">Server (Express 5)</text>
+                  <text x="630" y="112" text-anchor="middle" font-size="9" fill="var(--ink-muted)">Expose 5000 (Internal)</text>
+                  <text x="630" y="127" text-anchor="middle" font-size="9" fill="var(--purple-text)">Healthcheck: /api/health</text>
+                </g>
+
+                <!-- Docker Bridge Network Box -->
+                <rect x="385" y="165" width="315" height="45" rx="5" fill="var(--surface-2)" stroke="var(--line)" stroke-dasharray="3 3" />
+                <text x="542" y="192" text-anchor="middle" font-size="10" font-weight="600" fill="var(--ink-muted)">Docker Default Bridge Network (Private Inter-Container DNS)</text>
+
+                <!-- Neon DB (External) -->
+                <g id="diag-node-db">
+                  <rect x="760" y="75" width="135" height="60" rx="8" fill="var(--amber-soft)" stroke="var(--amber-line)" stroke-width="1.5" />
+                  <text x="827" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="var(--amber-text)">Neon Postgres</text>
+                  <text x="827" y="118" text-anchor="middle" font-size="9" fill="var(--ink-muted)">SSL Port 5432</text>
+                </g>
+
+                <!-- Connection Wires -->
+                <path id="wire-browser-sg" d="M 160 70 L 215 80" stroke="var(--blue)" stroke-width="2" marker-end="url(#arrow-blue)" fill="none" />
+                <path id="wire-sg-nginx" d="M 305 85 L 385 100" stroke="var(--emerald)" stroke-width="2" marker-end="url(#arrow-emerald)" fill="none" />
+                <path id="wire-nginx-server" d="M 525 105 L 560 105" stroke="var(--purple)" stroke-width="2" marker-end="url(#arrow-purple)" fill="none" />
+                <path id="wire-server-db" d="M 700 105 L 760 105" stroke="var(--amber)" stroke-width="2" fill="none" />
+              </svg>
+            </div>
+
+            <h3>Action 2: Execute the 4-Tier Verification Suite</h3>
+
+            <div class="callout blue" style="margin-bottom: 1.5rem;">
+              <div class="callout-title">Tier 1: Container Lifecycle &amp; Health Probe</div>
+              <p>Inside the EC2 terminal, verify that both containers are running and the server healthcheck has transitioned to <code>healthy</code>:</p>
+              <div class="code-snippet">
+                <pre><code>docker compose -f docker-compose.prod.yml --env-file release.env ps
+
+# Expected Output:
+# NAME                   IMAGE                                                    COMMAND                  SERVICE   STATUS                    PORTS
+# todo-app-client-1      ghcr.io/s3nsh1-dev/docker-beginner-simulation-client:... "/docker-entrypoint.…"   client    running                   0.0.0.0:80->80/tcp
+# todo-app-server-1      ghcr.io/s3nsh1-dev/docker-beginner-simulation-server:... "node dist/index.js"     server    running (healthy)         5000/tcp</code></pre>
+              </div>
+            </div>
+
+            <div class="callout blue" style="margin-bottom: 1.5rem;">
+              <div class="callout-title">Tier 2: Host Localhost Nginx Port 80 Response</div>
+              <p>Confirm Nginx is actively listening and responding on port 80 inside the host:</p>
+              <div class="code-snippet">
+                <pre><code>curl -I http://localhost
+
+# Expected Output:
+# HTTP/1.1 200 OK
+# Server: nginx/...
+# Content-Type: text/html</code></pre>
+              </div>
+            </div>
+
+            <div class="callout emerald" style="margin-bottom: 1.5rem;">
+              <div class="callout-title">Tier 3: Deep Database Query via Reverse Proxy</div>
+              <p>Hit the health endpoint through Nginx. This exercises Nginx &rarr; Express 5 &rarr; Neon PostgreSQL (running <code>SELECT 1;</code>):</p>
+              <div class="code-snippet">
+                <pre><code>curl -s http://localhost/api/health
+
+# Expected Output:
+# {"status":"ok","db":"connected","timestamp":"2026-11-12T..."}</code></pre>
+              </div>
+            </div>
+
+            <div class="callout emerald" style="margin-bottom: 1.5rem;">
+              <div class="callout-title">Tier 4: External Public IP Ingress &amp; Full CRUD</div>
+              <p>From your <strong>local laptop browser</strong>, navigate to your EC2 instance's public IPv4 address:</p>
+              <div class="code-snippet">
+                <pre><code>http://&lt;EC2_PUBLIC_IP&gt;</code></pre>
+              </div>
+              <p>
+                <strong>Perform final UI checks:</strong>
+              </p>
+              <ol>
+                <li>The React Todo dashboard renders cleanly.</li>
+                <li>Add a test task: <code>"Verify Stage 6 EC2 deployment"</code>.</li>
+                <li>Toggle the task to completed.</li>
+                <li>Refresh the browser page: confirm the task state persists from Neon PostgreSQL!</li>
+              </ol>
+            </div>
+
+            <h3>Stage 6 Complete: Ready for Stage 7 Continuous Deployment</h3>
+            <p>
+              Congratulations! Your EC2 instance is fully hardened, Docker Engine is installed via upstream repositories, GHCR authentication is isolated with a read-only token, file permissions are locked down with <code>chmod 600</code>, and the multi-container stack passes all four healthcheck tiers.
+            </p>
+            <p>
+              You are now ready to take the <strong>Stage 6 Assessment in MCQ.html</strong> and proceed to <strong>Stage 7</strong> (Automating SSH deployment directly from GitHub Actions)!
+            </p>
+          </section>
+
+          <!-- Footer Navigation -->
+          <footer class="lesson-footer">
+            <button class="btn-complete" id="complete-btn" aria-pressed="false">
+              <span class="btn-check-icon" aria-hidden="true">✓</span>
+              <span id="complete-label">Mark Topic Complete</span>
+            </button>
+
+            <div class="nav-buttons">
+              <button class="btn-nav" id="prev-btn" disabled>&larr; Previous</button>
+              <button class="btn-nav primary" id="next-btn">
+                Next Topic &rarr;
+              </button>
+            </div>
+          </footer>
+        </article>
+
+        <div
+          class="status-announcer"
+          id="status-announcer"
+          aria-live="polite"
+        ></div>
       </main>
     </div>
 
-    <!-- Client-Side Navigation, State, and SVG Logic -->
+    <!-- Interactive Scripts -->
     <script>
       (function () {
-        const STORAGE_KEY_TOPIC = "disposable-deep-dive-active-topic";
-        const STORAGE_KEY_PROGRESS = "disposable-deep-dive-progress";
-        const STORAGE_KEY_THEME = "disposable-deep-dive-theme";
+        "use strict";
 
-        const topicIds = [
-          "summary-answers",
-          "hot-reloading",
-          "why-no-hmr-prod",
-          "ec2-token-role",
-          "token-security-quiz",
-          "ec2-prod-setup"
-        ];
+        const STORAGE_KEY_TOPIC = "learning-ai:stage-6-practical:active-topic";
+        const STORAGE_KEY_PROGRESS = "learning-ai:stage-6-practical:completed-topics";
+        const STORAGE_KEY_THEME = "learning-ai:stage-6-practical:theme";
 
-        const state = {
-          current: topicIds[0],
-          completed: new Set(),
-        };
+        const topicSections = Array.from(document.querySelectorAll(".topic-section"));
+        const topicIds = topicSections.map((sec) => sec.dataset.id);
 
-        // Load saved state
+        let completedTopics = new Set();
         try {
-          const savedTopic = localStorage.getItem(STORAGE_KEY_TOPIC);
-          if (savedTopic && topicIds.includes(savedTopic)) {
-            state.current = savedTopic;
-          }
-          const savedProg = localStorage.getItem(STORAGE_KEY_PROGRESS);
-          if (savedProg) {
-            const arr = JSON.parse(savedProg);
-            if (Array.isArray(arr)) {
-              state.completed = new Set(arr.filter((id) => topicIds.includes(id)));
-            }
+          const saved = localStorage.getItem(STORAGE_KEY_PROGRESS);
+          if (saved) {
+            completedTopics = new Set(JSON.parse(saved));
           }
         } catch (e) {
-          console.warn("Storage load error:", e);
+          console.warn("Could not load progress", e);
+        }
+
+        let currentTopic = topicIds[0];
+        const savedTopic = localStorage.getItem(STORAGE_KEY_TOPIC);
+        if (savedTopic && topicIds.includes(savedTopic)) {
+          currentTopic = savedTopic;
         }
 
         // DOM elements
-        const shell = document.getElementById("app-shell");
+        const navContainer = document.getElementById("topic-nav-container");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+        const completeBtn = document.getElementById("complete-btn");
+        const completeLabel = document.getElementById("complete-label");
+        const statusAnnouncer = document.getElementById("status-announcer");
+        const shell = document.getElementById("shell");
         const sidebarToggleBtn = document.getElementById("sidebar-toggle-btn");
-        const helpToggleBtn = document.getElementById("btn-help");
+        const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+        const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+        const helpToggle = document.getElementById("help-toggle");
         const helpPanel = document.getElementById("help-panel");
-        const helpCloseBtn = document.getElementById("help-close-btn");
+        const helpClose = document.getElementById("help-close");
         const themeSelect = document.getElementById("theme-select");
-        const progressFill = document.getElementById("progress-fill");
-        const progressPercent = document.getElementById("progress-percent");
-        const progressBadge = document.getElementById("sidebar-progress-badge");
 
-        // Theme management
+        // Theme Handling
         function applyTheme(theme) {
           const activeTheme = theme || localStorage.getItem(STORAGE_KEY_THEME) || "system";
           themeSelect.value = activeTheme;
@@ -1972,189 +1968,247 @@ curl -I http://localhost/api/health</code></pre>
           applyTheme(val);
         });
 
-        // Sidebar toggle
+        // Sidebar Toggle
         sidebarToggleBtn.addEventListener("click", () => {
-          const isCollapsed = shell.classList.toggle("sidebar-collapsed");
-          sidebarToggleBtn.setAttribute("aria-expanded", String(!isCollapsed));
+          if (window.innerWidth <= 860) {
+            shell.classList.toggle("sidebar-open");
+          } else {
+            shell.classList.toggle("sidebar-collapsed");
+          }
         });
 
-        // Help panel toggle
-        helpToggleBtn.addEventListener("click", () => {
-          const isHidden = helpPanel.hidden;
-          helpPanel.hidden = !isHidden;
-          helpToggleBtn.setAttribute("aria-expanded", String(isHidden));
+        sidebarCloseBtn.addEventListener("click", () => {
+          if (window.innerWidth <= 860) {
+            shell.classList.remove("sidebar-open");
+          } else {
+            shell.classList.add("sidebar-collapsed");
+          }
         });
 
-        helpCloseBtn.addEventListener("click", () => {
+        sidebarBackdrop.addEventListener("click", () => {
+          shell.classList.remove("sidebar-open");
+        });
+
+        // Help Panel
+        helpToggle.addEventListener("click", () => {
+          helpPanel.hidden = false;
+          helpToggle.setAttribute("aria-expanded", "true");
+        });
+
+        helpClose.addEventListener("click", () => {
           helpPanel.hidden = true;
-          helpToggleBtn.setAttribute("aria-expanded", "false");
+          helpToggle.setAttribute("aria-expanded", "false");
         });
 
-        // Navigation render
-        function render() {
-          // Topics visibility
-          document.querySelectorAll(".topic-view").forEach((el) => {
-            el.classList.toggle("active", el.id === `topic-${state.current}`);
-          });
+        helpPanel.addEventListener("click", (e) => {
+          if (e.target === helpPanel) {
+            helpPanel.hidden = true;
+            helpToggle.setAttribute("aria-expanded", "false");
+          }
+        });
 
-          // Sidebar nav items
-          document.querySelectorAll(".topic-nav-btn").forEach((btn) => {
-            const id = btn.getAttribute("data-topic");
-            const isActive = id === state.current;
-            const isDone = state.completed.has(id);
-            btn.classList.toggle("active", isActive);
-            btn.classList.toggle("completed", isDone);
-          });
+        // Build Nav Buttons
+        topicSections.forEach((sec, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "topic-nav-btn";
+          btn.dataset.id = sec.dataset.id;
+          btn.setAttribute("role", "tab");
 
-          // Topic completion buttons
-          document.querySelectorAll(".btn-complete").forEach((btn) => {
-            const id = btn.getAttribute("data-complete-topic");
-            const isDone = state.completed.has(id);
-            btn.classList.toggle("completed", isDone);
-            const label = btn.querySelector("span:last-child");
-            if (label) {
-              label.textContent = isDone ? "Completed (Click to Reset)" : "Mark Topic Complete";
+          const num = document.createElement("span");
+          num.className = "topic-num";
+          num.textContent = String(idx + 1);
+
+          const title = document.createElement("span");
+          title.className = "topic-nav-title";
+          title.textContent = sec.dataset.title || `Topic ${idx + 1}`;
+
+          const icon = document.createElement("span");
+          icon.className = "topic-check-icon";
+          icon.textContent = "✓";
+
+          btn.appendChild(num);
+          btn.appendChild(title);
+          btn.appendChild(icon);
+
+          btn.addEventListener("click", () => {
+            navigateToTopic(sec.dataset.id, true);
+            if (window.innerWidth <= 860) {
+              shell.classList.remove("sidebar-open");
             }
           });
 
-          // Progress bar
-          const total = topicIds.length;
-          const done = state.completed.size;
-          const pct = Math.round((done / total) * 100);
-          progressFill.style.width = `${pct}%`;
-          progressPercent.textContent = `${pct}%`;
-          progressBadge.textContent = `${done} / ${total} Done`;
+          navContainer.appendChild(btn);
+        });
 
-          // Save active topic
-          localStorage.setItem(STORAGE_KEY_TOPIC, state.current);
+        function updateProgress() {
+          const count = completedTopics.size;
+          const total = topicIds.length;
+          progressText.textContent = `${count} / ${total} complete`;
+          const pct = Math.round((count / total) * 100);
+          progressBar.style.width = `${pct}%`;
+
+          document.querySelectorAll(".topic-nav-btn").forEach((btn) => {
+            const id = btn.dataset.id;
+            btn.classList.toggle("completed", completedTopics.has(id));
+          });
+        }
+
+        function navigateToTopic(topicId, announce) {
+          if (!topicIds.includes(topicId)) return;
+          currentTopic = topicId;
+          localStorage.setItem(STORAGE_KEY_TOPIC, currentTopic);
+
+          topicSections.forEach((sec) => {
+            const isActive = sec.dataset.id === currentTopic;
+            sec.classList.toggle("active", isActive);
+            if (isActive && announce) {
+              const heading = sec.querySelector(".topic-heading");
+              if (heading) {
+                statusAnnouncer.textContent = `Navigated to ${heading.textContent}`;
+              }
+            }
+          });
+
+          document.querySelectorAll(".topic-nav-btn").forEach((btn) => {
+            const isActive = btn.dataset.id === currentTopic;
+            btn.classList.toggle("active", isActive);
+            btn.setAttribute("aria-selected", String(isActive));
+          });
+
+          const isCompleted = completedTopics.has(currentTopic);
+          completeBtn.classList.toggle("completed", isCompleted);
+          completeBtn.setAttribute("aria-pressed", String(isCompleted));
+          completeLabel.textContent = isCompleted ? "Completed ✓" : "Mark Topic Complete";
+
+          const curIdx = topicIds.indexOf(currentTopic);
+          prevBtn.disabled = curIdx === 0;
+          nextBtn.disabled = curIdx === topicIds.length - 1;
+
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
-        function navigateTo(id) {
-          if (!topicIds.includes(id)) return;
-          state.current = id;
-          render();
-        }
+        completeBtn.addEventListener("click", () => {
+          if (completedTopics.has(currentTopic)) {
+            completedTopics.delete(currentTopic);
+          } else {
+            completedTopics.add(currentTopic);
+          }
+          localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify(Array.from(completedTopics)));
+          updateProgress();
 
-        // Topic nav button listeners
-        document.querySelectorAll(".topic-nav-btn").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            navigateTo(btn.getAttribute("data-topic"));
-          });
+          const isCompleted = completedTopics.has(currentTopic);
+          completeBtn.classList.toggle("completed", isCompleted);
+          completeBtn.setAttribute("aria-pressed", String(isCompleted));
+          completeLabel.textContent = isCompleted ? "Completed ✓" : "Mark Topic Complete";
+          statusAnnouncer.textContent = isCompleted
+            ? "Topic marked as complete."
+            : "Topic marked as incomplete.";
         });
 
-        // Next / Previous buttons
-        document.querySelectorAll("[data-next-topic]").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            navigateTo(btn.getAttribute("data-next-topic"));
-          });
-        });
-        document.querySelectorAll("[data-prev-topic]").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            navigateTo(btn.getAttribute("data-prev-topic"));
-          });
+        prevBtn.addEventListener("click", () => {
+          const curIdx = topicIds.indexOf(currentTopic);
+          if (curIdx > 0) {
+            navigateToTopic(topicIds[curIdx - 1], true);
+          }
         });
 
-        // Complete topic buttons
-        document.querySelectorAll(".btn-complete").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const id = btn.getAttribute("data-complete-topic");
-            if (state.completed.has(id)) {
-              state.completed.delete(id);
-            } else {
-              state.completed.add(id);
-            }
-            localStorage.setItem(
-              STORAGE_KEY_PROGRESS,
-              JSON.stringify(Array.from(state.completed))
-            );
-            render();
-          });
-        });
-
-        // Copy buttons
-        document.querySelectorAll(".copy-btn").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            const targetId = btn.getAttribute("data-copy-target");
-            const codeEl = document.getElementById(targetId);
-            if (!codeEl) return;
-            try {
-              await navigator.clipboard.writeText(codeEl.textContent);
-              const orig = btn.textContent;
-              btn.textContent = "Copied!";
-              setTimeout(() => {
-                btn.textContent = orig;
-              }, 1800);
-            } catch (err) {
-              btn.textContent = "Error";
-            }
-          });
-        });
-
-        // Diagram switcher
-        const diagramButtons = document.querySelectorAll("[data-diagram]");
-        const groupDev = document.getElementById("svg-group-dev");
-        const groupProd = document.getElementById("svg-group-prod");
-        const groupAuth = document.getElementById("svg-group-auth");
-        const diagramCaption = document.getElementById("diagram-caption");
-
-        const captions = {
-          dev: "<strong>Development Flow:</strong> Bind mounts map laptop source files directly into Vite dev server. Edits update the browser in milliseconds without container rebuilds.",
-          prod: "<strong>Production Flow:</strong> GHCR provides immutable pre-compiled /dist assets served by ultra-fast Nginx on port 80. Zero compilers, zero source code, zero memory leaks.",
-          auth: "<strong>EC2 Authentication Flow:</strong> EC2 uses a strictly scoped Fine-Grained Read-Only Token stored in ~/.docker/config.json with chmod 600. Even if breached, the token cannot push code or compromise account settings.",
-        };
-
-        diagramButtons.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            diagramButtons.forEach((b) => b.classList.toggle("active", b === btn));
-            const mode = btn.getAttribute("data-diagram");
-            if (diagramCaption) diagramCaption.innerHTML = captions[mode] || "";
-
-            groupDev.style.display = mode === "dev" ? "inline" : "none";
-            groupProd.style.display = mode === "prod" ? "inline" : "none";
-            groupAuth.style.display = mode === "auth" ? "inline" : "none";
-          });
-        });
-
-        // Interactive Quiz Logic
-        const quizFeedback = document.getElementById("quiz-feedback");
-        document.querySelectorAll(".quiz-opt-btn").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const isCorrect = btn.getAttribute("data-correct") === "true";
-            document.querySelectorAll(".quiz-opt-btn").forEach((b) => {
-              b.classList.remove("correct", "incorrect");
-              if (b.getAttribute("data-correct") === "true") b.classList.add("correct");
-            });
-
-            if (!isCorrect) {
-              quizFeedback.innerHTML = `<span style="color: var(--rose-text); font-weight: 600;">Incorrect.</span> Remember: Classic PATs grant wide account-level permissions. If a production server is compromised, an attacker with a classic PAT could delete repos or access private data. A scoped read-only token limits the damage strictly to pulling that image.`;
-            } else {
-              quizFeedback.innerHTML = `<span style="color: var(--emerald-text); font-weight: 600;">Correct!</span> Least Privilege demands that a runtime server only receives read-only permissions for the exact package it needs to run, keeping your source code and account safe.`;
-            }
-            quizFeedback.classList.add("show");
-          });
+        nextBtn.addEventListener("click", () => {
+          const curIdx = topicIds.indexOf(currentTopic);
+          if (curIdx < topicIds.length - 1) {
+            navigateToTopic(topicIds[curIdx + 1], true);
+          }
         });
 
         // Keyboard navigation (Alt + Left/Right)
         document.addEventListener("keydown", (e) => {
           if (["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)) return;
-          const idx = topicIds.indexOf(state.current);
+          const idx = topicIds.indexOf(currentTopic);
           if ((e.key === "ArrowRight" || e.key === "PageDown") && e.altKey) {
             if (idx < topicIds.length - 1) {
               e.preventDefault();
-              navigateTo(topicIds[idx + 1]);
+              navigateToTopic(topicIds[idx + 1], true);
             }
           } else if ((e.key === "ArrowLeft" || e.key === "PageUp") && e.altKey) {
             if (idx > 0) {
               e.preventDefault();
-              navigateTo(topicIds[idx - 1]);
+              navigateToTopic(topicIds[idx - 1], true);
             }
           }
         });
 
-        // Initial setup
+        // Copy Code Buttons
+        document.querySelectorAll(".copy-btn").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const pre = btn.closest(".code-snippet").querySelector("pre code");
+            if (!pre) return;
+            try {
+              await navigator.clipboard.writeText(pre.textContent);
+              btn.textContent = "Copied!";
+              setTimeout(() => {
+                btn.textContent = "Copy";
+              }, 1800);
+            } catch (err) {
+              btn.textContent = "Failed";
+              setTimeout(() => {
+                btn.textContent = "Copy";
+              }, 1800);
+            }
+          });
+        });
+
+        // Interactive Mechanism Diagram Switcher
+        const diagBtns = Array.from(document.querySelectorAll("#diag-btn-group .sim-btn"));
+        const diagCaption = document.getElementById("diag-caption");
+        const wireBrowserSg = document.getElementById("wire-browser-sg");
+        const wireSgNginx = document.getElementById("wire-sg-nginx");
+        const wireNginxServer = document.getElementById("wire-nginx-server");
+        const wireServerDb = document.getElementById("wire-server-db");
+
+        const diagDescriptions = {
+          all: "<strong>Full Architecture:</strong> Traffic hits Security Group port 80 &rarr; Nginx container &rarr; private bridge network &rarr; Express server &rarr; remote Neon PostgreSQL database over SSL.",
+          tier1: "<strong>Tier 1 (Host Containers):</strong> Both client and server containers are running under Docker daemon. The server healthcheck runs locally inside the container every 10 seconds.",
+          tier23: "<strong>Tiers 2 &amp; 3 (Local Probes):</strong> <code>curl -I http://localhost</code> tests Nginx port 80 binding. <code>curl http://localhost/api/health</code> exercises Nginx proxy &rarr; Express API &rarr; Neon PostgreSQL <code>SELECT 1;</code>.",
+          tier4: "<strong>Tier 4 (Public Ingress):</strong> Remote browser sends HTTP request to EC2 Public IPv4 on port 80. Security Group allows port 80; Nginx serves the React bundle and proxies API requests seamlessly."
+        };
+
+        diagBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const flow = btn.dataset.flow;
+            diagBtns.forEach((b) => b.classList.toggle("active", b === btn));
+            if (diagCaption && diagDescriptions[flow]) {
+              diagCaption.innerHTML = diagDescriptions[flow];
+            }
+
+            if (wireBrowserSg && wireSgNginx && wireNginxServer && wireServerDb) {
+              if (flow === "tier1") {
+                wireBrowserSg.style.opacity = "0.2";
+                wireSgNginx.style.opacity = "0.2";
+                wireNginxServer.style.opacity = "1";
+                wireServerDb.style.opacity = "0.2";
+              } else if (flow === "tier23") {
+                wireBrowserSg.style.opacity = "0.2";
+                wireSgNginx.style.opacity = "1";
+                wireNginxServer.style.opacity = "1";
+                wireServerDb.style.opacity = "1";
+              } else if (flow === "tier4") {
+                wireBrowserSg.style.opacity = "1";
+                wireSgNginx.style.opacity = "1";
+                wireNginxServer.style.opacity = "0.2";
+                wireServerDb.style.opacity = "0.2";
+              } else {
+                wireBrowserSg.style.opacity = "1";
+                wireSgNginx.style.opacity = "1";
+                wireNginxServer.style.opacity = "1";
+                wireServerDb.style.opacity = "1";
+              }
+            }
+          });
+        });
+
+        // Initialize UI
         applyTheme();
-        render();
+        updateProgress();
+        navigateToTopic(currentTopic, false);
       })();
     </script>
   </body>
